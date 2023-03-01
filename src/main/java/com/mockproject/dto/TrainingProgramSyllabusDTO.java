@@ -14,6 +14,6 @@ import java.io.Serializable;
 public class TrainingProgramSyllabusDTO implements Serializable {
     private long id;
     private boolean status;
-    private SyllabusDTO syllabusDTO;
-    private TrainingProgramDTO trainingProgramDTO;
+    private long syllabusId;
+    private long trainingProgramId;
 }

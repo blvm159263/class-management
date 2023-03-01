@@ -14,6 +14,6 @@ import java.io.Serializable;
 public class TrainingClassAdminDTO implements Serializable {
     private long id;
     private boolean status;
-    private UserDTO admin;
-    private TrainingClassDTO trainingClassDTO;
+    private long adminId;
+    private long trainingClassId;
 }

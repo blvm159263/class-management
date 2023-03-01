@@ -18,7 +18,7 @@ public class UnitDetailDTO implements Serializable {
     private BigDecimal duration;
     private boolean type;
     private boolean status;
-    private UnitDTO unitDTO;
-    private DeliveryTypeDTO deliveryTypeDTO;
-    private OutputStandardDTO outputStandardDTO;
+    private long unitId;
+    private long deliveryTypeId;
+    private long outputStandardId;
 }
