@@ -20,6 +20,6 @@ public class TrainingProgramDTO implements Serializable {
     private BigDecimal hour;
     private int day;
     private boolean status;
-    private UserDTO creator;
-    private UserDTO lastModifier;
+    private long creatorId;
+    private long lastModifierId;
 }

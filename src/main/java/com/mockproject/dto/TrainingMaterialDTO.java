@@ -21,6 +21,6 @@ public class TrainingMaterialDTO implements Serializable {
     private String type;
     private BigDecimal size;
     private boolean status;
-    private UnitDetailDTO unitDetailDTO;
-    private UserDTO userDTO;
+    private long unitDetailId;
+    private long userId;
 }

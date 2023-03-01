@@ -14,8 +14,8 @@ import java.io.Serializable;
 public class TrainingClassUnitInformationDTO implements Serializable {
     private long id;
     private boolean status;
-    private UserDTO trainer;
-    private UnitDTO unitDTO;
-    private TrainingClassDTO trainingClassDTO;
-    private TowerDTO towerDTO;
+    private long trainerId;
+    private long unitId;
+    private long trainingClassId;
+    private long towerId;
 }

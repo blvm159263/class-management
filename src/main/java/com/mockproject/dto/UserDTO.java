@@ -15,7 +15,6 @@ import java.time.LocalDate;
 public class UserDTO implements Serializable {
     private long id;
     private String email;
-    private String password;
     private String fullName;
     private String image;
     private int state;
@@ -23,7 +22,7 @@ public class UserDTO implements Serializable {
     private String phone;
     private boolean gender;
     private boolean status;
-    private RoleDTO roleDTO;
-    private LevelDTO levelDTO;
-    private AttendeeDTO attendeeDTO;
+    private long roleId;
+    private long levelId;
+    private long attendeeId;
 }

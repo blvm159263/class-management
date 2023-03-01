@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class RolePermissionScopeDTO implements Serializable {
     private long id;
     private boolean status;
-    private RoleDTO roleDTO;
-    private PermissionDTO permissionDTO;
-    private PermissionScopeDTO permissionScopeDTO;
+    private long roleId;
+    private long permissionId;
+    private long permissionScopeId;
 }

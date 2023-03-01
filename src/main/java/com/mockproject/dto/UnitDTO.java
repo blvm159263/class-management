@@ -18,5 +18,5 @@ public class UnitDTO implements Serializable {
     private int unitNumber;
     private BigDecimal duration;
     private boolean status;
-    private SessionDTO sessionDTO;
+    private long sessionId;
 }

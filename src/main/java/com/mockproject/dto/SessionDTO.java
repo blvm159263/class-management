@@ -15,5 +15,5 @@ public class SessionDTO implements Serializable {
     private long id;
     private int sessionNumber;
     private boolean status;
-    private SyllabusDTO syllabusDTO;
+    private long syllabusId;
 }
