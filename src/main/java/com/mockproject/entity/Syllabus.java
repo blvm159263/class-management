@@ -35,25 +35,25 @@ public class Syllabus implements Serializable {
             name = "syllabus_name",
             nullable = false
     )
-    private String syllabusName;
+    private String name;
 
     @Column(
             name = "syllabus_code",
             length = 50
     )
-    private String syllabusCode;
+    private String code;
 
     @Column(
             name = "syllabus_version",
             length = 50
     )
-    private String syllabusVersion;
+    private String version;
 
     @Column(
             name = "syllabus_level",
             length = 50
     )
-    private String syllabusLevel;
+    private String level;
 
     @Column(
             name = "attendee_amount"
