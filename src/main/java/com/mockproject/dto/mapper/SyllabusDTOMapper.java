@@ -34,6 +34,7 @@ public class SyllabusDTOMapper implements Function<Syllabus, SyllabusDTO> {
                 syllabus.getMarkingDes(),
                 syllabus.getWaiverCriteriaDes(),
                 syllabus.getOtherDes(),
+                syllabus.isState(),
                 syllabus.isStatus(),
                 syllabus.getCreator().getId(),
                 syllabus.getLastModifier().getId()
