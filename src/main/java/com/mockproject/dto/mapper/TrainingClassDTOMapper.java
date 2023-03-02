@@ -3,9 +3,11 @@ package com.mockproject.dto.mapper;
 
 import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.TrainingClass;
+import org.springframework.stereotype.Service;
 
 import java.util.function.Function;
 
+@Service
 public class TrainingClassDTOMapper implements Function<TrainingClass, TrainingClassDTO> {
 
     @Override
