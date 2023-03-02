@@ -3,9 +3,11 @@ package com.mockproject.dto.mapper;
 
 import com.mockproject.dto.LocationDTO;
 import com.mockproject.entity.Location;
+import org.springframework.stereotype.Service;
 
 import java.util.function.Function;
 
+@Service
 public class LocationDTOMapper implements Function<Location, LocationDTO> {
 
     @Override

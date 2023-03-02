@@ -3,9 +3,11 @@ package com.mockproject.dto.mapper;
 
 import com.mockproject.dto.TowerDTO;
 import com.mockproject.entity.Tower;
+import org.springframework.stereotype.Service;
 
 import java.util.function.Function;
 
+@Service
 public class TowerDTOMapper implements Function<Tower, TowerDTO> {
 
     @Override
