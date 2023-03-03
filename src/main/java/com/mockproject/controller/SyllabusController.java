@@ -19,7 +19,7 @@ public class SyllabusController {
     public SyllabusService syllabusService;
 
     @GetMapping
-    public ResponseEntity<List<SyllabusDTO>> getAll(){
+    public ResponseEntity<List<Syllabus>> getAll(){
         return ResponseEntity.ok(syllabusService.getAll());
     }
 

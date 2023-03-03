@@ -48,6 +48,7 @@ public class SyllabusDTOMapper implements Function<Syllabus, SyllabusDTO> {
         List<SyllabusDTO> syllabusDTOList = new ArrayList<>();
 
         list.forEach((i) -> syllabusDTOList.add(apply(i)));
+
         return syllabusDTOList;
     }
 }

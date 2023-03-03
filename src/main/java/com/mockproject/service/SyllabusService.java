@@ -20,9 +20,8 @@ public class SyllabusService implements ISyllabusService {
 
     private final SyllabusDTOMapper mapper;
 
-    public List<SyllabusDTO> getAll(){
-        List<Syllabus> a = syllabusRepository.findAll();
+    public List<Syllabus> getAll(){
 
-        return mapper.toDTOs(a);
+        return syllabusRepository.findAll();
     }
 }

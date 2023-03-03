@@ -50,7 +50,7 @@ public class UnitDetail implements Serializable {
     private boolean status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonManagedReference(value = "unit_unitdetail")
+    @JsonBackReference(value = "unit_unitdetail")
     @JoinColumn(name = "unit_id")
     private Unit unit;
 
@@ -65,6 +65,6 @@ public class UnitDetail implements Serializable {
     private OutputStandard outputStandard;
 
     @OneToMany(mappedBy = "unitDetail", fetch = FetchType.EAGER)
-    @JsonBackReference
+    @JsonManagedReference
     private List<TrainingMaterial> listMaterials;
 }
