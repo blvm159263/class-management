@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
@@ -162,8 +164,8 @@ public class Syllabus implements Serializable {
     @JoinColumn(name = "last_modifier_id")
     private User lastModifier;
 
-    @OneToMany(mappedBy = "syllabus", fetch = FetchType.LAZY)
-    @JsonBackReference
+    @OneToMany(mappedBy = "syllabus", fetch = FetchType.EAGER)
+    @JsonBackReference(value = "syllabus_session")
     private List<Session> listSessions;
 
     @OneToMany(mappedBy = "syllabus", fetch = FetchType.LAZY)

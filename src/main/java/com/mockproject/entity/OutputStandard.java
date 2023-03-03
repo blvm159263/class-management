@@ -49,7 +49,7 @@ public class OutputStandard implements Serializable {
     @Column(name = "status")
     private boolean status;
 
-    @OneToMany(mappedBy = "outputStandard", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "outputStandard", fetch = FetchType.EAGER)
     @JsonBackReference
     private List<UnitDetail> listUnitDetail;
 }
