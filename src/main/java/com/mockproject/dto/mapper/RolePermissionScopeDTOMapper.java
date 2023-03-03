@@ -3,9 +3,11 @@ package com.mockproject.dto.mapper;
 
 import com.mockproject.dto.RolePermissionScopeDTO;
 import com.mockproject.entity.RolePermissionScope;
+import org.springframework.stereotype.Service;
 
 import java.util.function.Function;
 
+@Service
 public class RolePermissionScopeDTOMapper implements Function<RolePermissionScope, RolePermissionScopeDTO> {
 
     @Override

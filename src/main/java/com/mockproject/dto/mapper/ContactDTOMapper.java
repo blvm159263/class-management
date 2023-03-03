@@ -3,9 +3,11 @@ package com.mockproject.dto.mapper;
 
 import com.mockproject.dto.ContactDTO;
 import com.mockproject.entity.Contact;
+import org.springframework.stereotype.Service;
 
 import java.util.function.Function;
 
+@Service
 public class ContactDTOMapper implements Function<Contact, ContactDTO> {
 
 
