@@ -1,6 +1,7 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.mapper.UserDTOMapper;
+import com.mockproject.entity.User;
 import com.mockproject.repository.UserRepository;
 import com.mockproject.service.interfaces.IUserService;
 import jakarta.transaction.Transactional;

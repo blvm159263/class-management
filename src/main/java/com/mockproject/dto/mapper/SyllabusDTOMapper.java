@@ -3,6 +3,7 @@ package com.mockproject.dto.mapper;
 
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.Syllabus;
+import com.mockproject.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,8 +40,7 @@ public class SyllabusDTOMapper implements Function<Syllabus, SyllabusDTO> {
                 syllabus.isState(),
                 syllabus.isStatus(),
                 syllabus.getCreator().getId(),
-                syllabus.getLastModifier().getId(),
-                syllabus.getListSessions()
+                syllabus.getLastModifier().getId()
         );
     }
 
@@ -50,5 +50,35 @@ public class SyllabusDTOMapper implements Function<Syllabus, SyllabusDTO> {
         list.forEach((i) -> syllabusDTOList.add(apply(i)));
 
         return syllabusDTOList;
+    }
+
+    public Syllabus toEntity(SyllabusDTO dto, User user) {
+        Syllabus entity = Syllabus.builder()
+                .name(dto.getName())
+                .code(dto.getCode())
+                .version(dto.getVersion())
+                .level(dto.getLevel())
+                .attendee(dto.getAttendee())
+                .technicalRequirements(dto.getTechnicalRequirements())
+                .courseObjectives(dto.getCourseObjectives())
+                .dateCreated(dto.getDateCreated())
+                .lastDateModified(dto.getLastDateModified())
+                .quiz(dto.getQuiz())
+                .assignment(dto.getAssignment())
+                .finalExam(dto.getFinalExam())
+                .finalTheory(dto.getFinalTheory())
+                .finalPractice(dto.getFinalPractice())
+                .gpa(dto.getGpa())
+                .trainingDes(dto.getTrainingDes())
+                .reTestDes(dto.getReTestDes())
+                .markingDes(dto.getMarkingDes())
+                .waiverCriteriaDes(dto.getWaiverCriteriaDes())
+                .otherDes(dto.getOtherDes())
+                .state(dto.isState())
+                .status(dto.isStatus())
+                .creator(user)
+                .lastModifier(user)
+                .build();
+        return entity;
     }
 }

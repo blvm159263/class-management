@@ -3,10 +3,14 @@ package com.mockproject.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Nationalized;
@@ -31,7 +35,6 @@ public class Syllabus implements Serializable {
     )
     private long id;
 
-    @Lob
     @Nationalized
     @Column(
             name = "syllabus_name",
@@ -62,14 +65,12 @@ public class Syllabus implements Serializable {
     )
     private int attendee;
 
-    @Lob
     @Nationalized
     @Column(
             name = "technical_requirements"
     )
     private String technicalRequirements;
 
-    @Lob
     @Nationalized
     @Column(
             name = "course_objectives"
@@ -116,35 +117,30 @@ public class Syllabus implements Serializable {
     )
     private BigDecimal gpa;
 
-    @Lob
     @Nationalized
     @Column(
             name = "training_description"
     )
     private String trainingDes;
 
-    @Lob
     @Nationalized
     @Column(
             name = "re_test_description"
     )
     private String reTestDes;
 
-    @Lob
     @Nationalized
     @Column(
             name = "marking_description"
     )
     private String markingDes;
 
-    @Lob
     @Nationalized
     @Column(
             name = "waiver_criteria_description"
     )
     private String waiverCriteriaDes;
 
-    @Lob
     @Nationalized
     @Column(
             name = "other_description"
