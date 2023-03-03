@@ -151,6 +151,9 @@ public class Syllabus implements Serializable {
     )
     private String otherDes;
 
+    @Column(name = "state")
+    private boolean state;
+
     @Column(name = "status")
     private boolean status;
 

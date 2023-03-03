@@ -37,6 +37,7 @@ public class SyllabusDTO implements Serializable {
     private String markingDes;
     private String waiverCriteriaDes;
     private String otherDes;
+    private boolean state;
     private boolean status;
     private long creatorId;
     private long lastModifierId;
