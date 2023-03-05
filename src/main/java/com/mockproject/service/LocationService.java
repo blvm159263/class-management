@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.mapper.LocationDTOMapper;
 import com.mockproject.repository.LocationRepository;
 import com.mockproject.service.interfaces.ILocationService;
 import jakarta.transaction.Transactional;
@@ -14,5 +13,4 @@ public class LocationService implements ILocationService {
 
     private final LocationRepository repository;
 
-    private final LocationDTOMapper mapper;
 }
