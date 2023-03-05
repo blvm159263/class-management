@@ -165,7 +165,7 @@ public class Syllabus implements Serializable {
     @JoinColumn(name = "last_modifier_id")
     private User lastModifier;
 
-    @OneToMany(mappedBy = "syllabus", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "syllabus", fetch = FetchType.EAGER)
     @JsonBackReference
     private List<Session> listSessions;
 

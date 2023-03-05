@@ -1,6 +1,7 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.mapper.UserDTOMapper;
+import com.mockproject.entity.User;
 import com.mockproject.repository.UserRepository;
 import com.mockproject.service.interfaces.IUserService;
 import jakarta.transaction.Transactional;
@@ -14,4 +15,9 @@ public class UserService implements IUserService {
     private final UserRepository repository;
 
     private final UserDTOMapper mapper;
+
+    @Override
+    public User get(long id) {
+        return repository.getReferenceById(id);
+    }
 }

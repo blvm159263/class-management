@@ -39,9 +39,9 @@ public class TrainingMaterial implements Serializable {
             name = "data",
             nullable = false
     )
-    private String data;
+    private byte[] data;
 
-    @Lob
+//    @Lob
     @Nationalized
     @Column(
             name = "name",

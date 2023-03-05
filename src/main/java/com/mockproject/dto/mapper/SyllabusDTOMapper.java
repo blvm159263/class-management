@@ -5,6 +5,7 @@ import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.Syllabus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.function.Function;
 
 @Service
@@ -37,7 +38,8 @@ public class SyllabusDTOMapper implements Function<Syllabus, SyllabusDTO> {
                 syllabus.isState(),
                 syllabus.isStatus(),
                 syllabus.getCreator().getId(),
-                syllabus.getLastModifier().getId()
+                syllabus.getLastModifier().getId(),
+                new SessionDTOMapper().apply(syllabus.getListSessions())
         );
     }
 }
