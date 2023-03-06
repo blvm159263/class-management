@@ -1,0 +1,55 @@
+package com.mockproject.mapper;
+
+import com.mockproject.dto.TrainingClassUnitInformationDTO;
+import com.mockproject.entity.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
+
+@Mapper(componentModel = "spring")
+public interface TrainingClassUnitInformationMapper {
+
+    TrainingClassUnitInformationMapper INSTANCE = Mappers.getMapper(TrainingClassUnitInformationMapper.class);
+
+
+    @Mapping(target = "unitId", source = "unit.id")
+    @Mapping(target = "trainingClassId", source = "trainingClass.id")
+    @Mapping(target = "trainerId", source = "trainer.id")
+    @Mapping(target = "towerId", source = "tower.id")
+    TrainingClassUnitInformationDTO toDTO(TrainingClassUnitInformation trainingClassUnitInformation);
+
+    @Mapping(target = "unit", source = "unitId", qualifiedByName = "mapUnit")
+    @Mapping(target = "trainingClass", source = "trainingClassId", qualifiedByName = "mapTrainingClass")
+    @Mapping(target = "trainer", source = "trainerId", qualifiedByName = "mapTrainer")
+    @Mapping(target = "tower", source = "towerId", qualifiedByName = "mapTower")
+    TrainingClassUnitInformation toEntity(TrainingClassUnitInformationDTO dto);
+
+    @Named("mapTrainingClass")
+    default TrainingClass mapTrainingClass(long id) {
+        TrainingClass trainingClass = new TrainingClass();
+        trainingClass.setId(id);
+        return trainingClass;
+    }
+
+    @Named("mapUnit")
+    default Unit mapUnit(long id) {
+        Unit unit = new Unit();
+        unit.setId(id);
+        return unit;
+    }
+
+    @Named("mapTrainer")
+    default User mapTrainer(long id) {
+        User user = new User();
+        user.setId(id);
+        return user;
+    }
+
+    @Named("mapTower")
+    default Tower mapTower(long id) {
+        Tower tower = new Tower();
+        tower.setId(id);
+        return tower;
+    }
+}

@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.mapper.SyllabusDTOMapper;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.service.interfaces.ISyllabusService;
 import jakarta.transaction.Transactional;
@@ -14,5 +13,4 @@ public class SyllabusService implements ISyllabusService {
 
     private final SyllabusRepository repository;
 
-    private final SyllabusDTOMapper mapper;
 }

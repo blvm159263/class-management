@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.mapper.OutputStandardDTOMapper;
 import com.mockproject.repository.OutputStandardRepository;
 import com.mockproject.service.interfaces.IOutputStandardService;
 import jakarta.transaction.Transactional;
@@ -14,5 +13,4 @@ public class OutputStandardService implements IOutputStandardService {
 
     private final OutputStandardRepository repository;
 
-    private final OutputStandardDTOMapper mapper;
 }

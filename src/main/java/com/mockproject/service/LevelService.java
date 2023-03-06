@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.mapper.LevelDTOMapper;
 import com.mockproject.repository.LevelRepository;
 import com.mockproject.service.interfaces.ILevelService;
 import jakarta.transaction.Transactional;
@@ -14,5 +13,4 @@ public class LevelService implements ILevelService {
 
     private final LevelRepository repository;
 
-    private final LevelDTOMapper mapper;
 }

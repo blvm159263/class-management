@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.mapper.DeliveryTypeDTOMapper;
 import com.mockproject.repository.DeliveryTypeRepository;
 import com.mockproject.service.interfaces.IDeliveryTypeService;
 import jakarta.transaction.Transactional;
@@ -14,5 +13,4 @@ public class DeliveryTypeService implements IDeliveryTypeService {
 
     private final DeliveryTypeRepository repository;
 
-    private final DeliveryTypeDTOMapper mapper;
 }
