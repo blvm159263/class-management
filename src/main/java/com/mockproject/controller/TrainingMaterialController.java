@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.zip.DataFormatException;
 
 @RestController
 @RequestMapping("api/training-material")
@@ -27,7 +28,7 @@ public class TrainingMaterialController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<?> getFile(@PathVariable("id") long id){
+    public ResponseEntity<?> getFile(@PathVariable("id") long id) throws DataFormatException, IOException {
         TrainingMaterialDTO trainingMaterialDTO = trainingMaterialService.getFile(id);
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(trainingMaterialDTO.getType()))
