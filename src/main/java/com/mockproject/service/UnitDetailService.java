@@ -8,14 +8,16 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Transactional
 @AllArgsConstructor
 public class UnitDetailService implements IUnitDetailService {
-    private final UnitDetailRepository repository;
+    private final UnitDetailRepository unitDetailRepository;
 
-//    public int createUnitDetail(UnitDetail unitDetail){
-//
-//    };
+    public List<UnitDetail> getAllUnitDetailByUnitId(long unitId, boolean status) {
+        return unitDetailRepository.findByUnitIdAndStatus(unitId, status);
+    }
 
 }

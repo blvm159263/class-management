@@ -5,6 +5,8 @@ import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.User;
 import com.mockproject.service.SyllabusService;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

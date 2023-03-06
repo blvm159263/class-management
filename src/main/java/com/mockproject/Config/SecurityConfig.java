@@ -64,7 +64,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
 
-        http.authorizeHttpRequests().requestMatchers("/User/Login", "/swagger-ui/**", "/v3/api-docs/**","/v2/api-docs/**").permitAll()
+        http.authorizeHttpRequests().requestMatchers("/User/Login", "/swagger-ui/**", "/v3/api-docs/**","/v2/api-docs/**", "/api/syllabus/**", "/api/unit-detail/**", "/api/training-material/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore( jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
