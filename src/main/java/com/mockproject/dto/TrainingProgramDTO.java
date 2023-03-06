@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class TrainingProgramDTO implements Serializable {
     private long id;
+    private String name;
     private LocalDate dateCreated;
     private LocalDate lastDateModified;
     private BigDecimal hour;

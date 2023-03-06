@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -28,6 +29,13 @@ public class TrainingProgram implements Serializable {
     )
     private long id;
 
+    @Lob
+    @Nationalized
+    @Column(
+            name = "program_name"
+    )
+    private String name;
+
     @Column(
             name = "date_created",
             nullable = false
@@ -35,8 +43,7 @@ public class TrainingProgram implements Serializable {
     private LocalDate dateCreated;
 
     @Column(
-            name = "last_date_modified",
-            nullable = false
+            name = "last_date_modified"
     )
     private LocalDate lastDateModified;
 
