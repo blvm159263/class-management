@@ -67,8 +67,7 @@ public class User implements Serializable {
     private int state;
 
     @Column(
-            name = "date_of_birth",
-            nullable = false
+            name = "date_of_birth"
     )
     private LocalDate dob;
 
