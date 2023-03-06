@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.mapper.PermissionDTOMapper;
 import com.mockproject.repository.PermissionRepository;
 import com.mockproject.service.interfaces.IPermissionService;
 import jakarta.transaction.Transactional;
@@ -14,5 +13,4 @@ public class PermissionService implements IPermissionService {
 
     private final PermissionRepository repository;
 
-    private final PermissionDTOMapper mapper;
 }

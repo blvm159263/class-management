@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.mapper.TrainingProgramSyllabusDTOMapper;
 import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.service.interfaces.ITrainingProgramSyllabusService;
 import jakarta.transaction.Transactional;
@@ -13,5 +12,4 @@ import org.springframework.stereotype.Service;
 public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusService {
     private final TrainingProgramSyllabusRepository repository;
 
-    private final TrainingProgramSyllabusDTOMapper mapper;
 }

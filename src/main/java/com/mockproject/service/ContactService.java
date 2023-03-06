@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.mapper.ContactDTOMapper;
 import com.mockproject.repository.ContactRepository;
 import com.mockproject.service.interfaces.IContactService;
 import jakarta.transaction.Transactional;
@@ -13,5 +12,4 @@ import org.springframework.stereotype.Service;
 public class ContactService implements IContactService {
     private final ContactRepository repository;
 
-    private final ContactDTOMapper mapper;
 }
