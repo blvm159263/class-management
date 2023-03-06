@@ -37,13 +37,13 @@ public class Session implements Serializable {
     @Column(name = "status")
     private boolean status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference(value = "syllabus_session")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonManagedReference(value = "syllabus_session")
     @JoinColumn(name = "syllabus_id")
     private Syllabus syllabus;
 
 
-    @OneToMany(mappedBy = "session", fetch = FetchType.EAGER)
-    @JsonManagedReference(value = "session_unit")
+    @OneToMany(mappedBy = "session", fetch = FetchType.LAZY)
+    @JsonBackReference(value = "session_unit")
     private List<Unit> listUnit;
 }

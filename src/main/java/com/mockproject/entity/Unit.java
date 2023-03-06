@@ -51,12 +51,12 @@ public class Unit implements Serializable {
     private boolean status;
 
     @ManyToOne
-    @JsonBackReference(value = "session_unit")
+    @JsonManagedReference(value = "session_unit")
     @JoinColumn(name = "session_id")
     private Session session;
 
-    @OneToMany(mappedBy = "unit", fetch = FetchType.EAGER)
-    @JsonManagedReference(value = "unit_unitdetail")
+    @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY)
+    @JsonBackReference(value = "unit_unitdetail")
     private List<UnitDetail> listUnitDetail;
 
     @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY)
