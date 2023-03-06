@@ -15,6 +15,7 @@ public interface TrainingProgramMapper {
 
     @Mapping(target = "lastModifierId", source = "lastModifier.id")
     @Mapping(target = "creatorId", source = "creator.id")
+//    @Mapping(target = "name", source = "name")
     TrainingProgramDTO toDTO(TrainingProgram trainingProgram);
 
     @Mapping(target = "lastModifier", source = "lastModifierId", qualifiedByName = "mapModifier")
