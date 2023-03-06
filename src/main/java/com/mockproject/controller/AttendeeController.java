@@ -1,6 +1,6 @@
 package com.mockproject.controller;
 
-import com.mockproject.service.interfaces.IFsuService;
+import com.mockproject.service.interfaces.IAttendeeService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("api/fsu")
-public class FsuController {
+@RequestMapping("api/attendee")
+public class AttendeeController {
 
-    private final IFsuService service;
+    private final IAttendeeService service;
 
     @GetMapping("")
-    public ResponseEntity<?> listAll(){
+    public ResponseEntity<?> listAllTrue(){
         return ResponseEntity.ok(service.listAllTrue());
     }
 }
