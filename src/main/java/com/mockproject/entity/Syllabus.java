@@ -60,6 +60,16 @@ public class Syllabus implements Serializable {
     )
     private int attendee;
 
+    @Column(
+            name = "duration_hour"
+    )
+    private BigDecimal hour;
+
+    @Column(
+            name = "duration_day"
+    )
+    private int day;
+
     @Lob
     @Nationalized
     @Column(
