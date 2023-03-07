@@ -50,7 +50,7 @@ public class Tower implements Serializable {
     @JoinColumn(name = "location_id")
     private Location location;
 
-//    @OneToMany(mappedBy = "tower", fetch = FetchType.LAZY)
-//    @JsonBackReference
-//    private List<TrainingClassUnitInformation> listTrainingClassUnitInformations;
+    @OneToMany(mappedBy = "tower", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<TrainingClassUnitInformation> listTrainingClassUnitInformations;
 }

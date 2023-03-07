@@ -20,7 +20,7 @@ public interface TrainingClassFilterMap {
     @Mapping(source = "trainingClass.className", target = "className")
     @Mapping(source = "trainingClass.classCode", target = "classCode")
     @Mapping(source = "trainingClass.startTime", target = "startTime")
-    @Mapping(source = "admins", target = "adminName",
+    @Mapping(source = "trainingClass.listTrainingClassAdmins", target = "adminName",
             qualifiedByName = "mapTrainingClassAdminsToAdminNames")
     @Mapping(source = "trainingClass.attendee.attendeeName", target = "attendee")
     @Mapping(source = "trainers",target = "trainerName")
@@ -33,8 +33,7 @@ public interface TrainingClassFilterMap {
                                                                     List<String> trainers,
                                                                     String durationDay,
                                                                     LocalDate date,
-                                                                    List<UnitResponseDTO> unit,
-                                                                    List<TrainingClassAdmin> admins);
+                                                                    List<UnitResponseDTO> unit);
 
     @Named("mapTrainingClassAdminsToAdminNames")
     default List<String>mapTrainingClassAdminsToAdminNames(List<TrainingClassAdmin> admins){

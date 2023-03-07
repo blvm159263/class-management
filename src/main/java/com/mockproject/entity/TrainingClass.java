@@ -157,15 +157,15 @@ public class TrainingClass implements Serializable {
     @JoinColumn(name = "approver_id")
     private User approver;
 
-//    @OneToMany(mappedBy = "trainingClass", fetch = FetchType.LAZY)
-//    @JsonBackReference
-//    private List<TrainingClassUnitInformation> listTrainingClassUnitInformations;
-//
-//    @OneToMany(mappedBy = "trainingClass", fetch = FetchType.LAZY)
-//    @JsonBackReference
-//    private List<ClassSchedule> listClassSchedules;
-//
-//    @OneToMany(mappedBy = "trainingClass", fetch = FetchType.LAZY)
-//    @JsonBackReference
-//    private List<TrainingClassAdmin> listTrainingClassAdmins;
+    @OneToMany(mappedBy = "trainingClass", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<TrainingClassUnitInformation> listTrainingClassUnitInformations;
+
+    @OneToMany(mappedBy = "trainingClass", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<ClassSchedule> listClassSchedules;
+
+    @OneToMany(mappedBy = "trainingClass", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<TrainingClassAdmin> listTrainingClassAdmins;
 }

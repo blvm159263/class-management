@@ -11,7 +11,6 @@ import java.util.List;
 public interface ClassScheduleRepository extends JpaRepository<ClassSchedule, Long> {
 
     List<ClassSchedule> findAllByDateBetweenAndTrainingClassId(LocalDate StartDate, LocalDate endDate, Long id);
-    List<ClassSchedule> findAllByDate(LocalDate date);
 
     Long countAllByDateBetweenAndTrainingClassId(LocalDate StartDate,LocalDate endDate,Long id);
     Long countAllByDateBeforeAndTrainingClassId(LocalDate date,Long id);

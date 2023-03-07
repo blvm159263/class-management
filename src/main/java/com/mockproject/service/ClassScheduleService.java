@@ -33,7 +33,7 @@ public class ClassScheduleService implements IClassScheduleService {
 
     private final ClassScheduleRepository repository;
     private final TrainingClassRepository trainingClassRepository;
-    private final ClassScheduleRepository classScheduleRepository;
+
     private final ILocationService locationService;
     private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
     private TrainingClassFilterMap trainingClassFilterMap;
@@ -64,11 +64,7 @@ public class ClassScheduleService implements IClassScheduleService {
 
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(LocalDate date) {
-        var trainingClasses = classScheduleRepository.findAllByDate(date).stream().map(classSchedule1 -> {
-            return classSchedule1.getTrainingClass();
-        }).distinct().collect(Collectors.toList());
-//        return trainingClassRepository.findAllByListClassSchedulesDate(date)
-        return trainingClasses
+        return trainingClassRepository.findAllByListClassSchedulesDate(date)
                 .stream().map(trainingClass -> {
                     var learnedDay = repository.countAllByDateBeforeAndTrainingClassId(date, trainingClass.getId()) + 1;
                     var locationNames = locationService.findLocationByTrainingClassID(trainingClass.getId())
@@ -77,10 +73,10 @@ public class ClassScheduleService implements IClassScheduleService {
                     var durationDay = String.valueOf(learnedDay).concat("/" + trainingClass.getDay());
                     var syllabusesList = trainingClass.getTrainingProgram().getListTrainingProgramSyllabuses()
                             .stream().map(TrainingProgramSyllabus::getSyllabus).collect(Collectors.toList());
-                    var trainingClassAdmin = trainingClassAdminRepository.findAllByTrainingClassId(trainingClass.getId());
-//                    var admin= trainingClassAdmin.stream().map(classAdmin->{
-//                       return classAdmin.getAdmin().getFullName();
-//                    }).collect(Collectors.toList());
+                    var trainingClassAdmin= trainingClassAdminRepository.findAllByTrainingClassId(trainingClass.getId());
+                    var Admin= trainingClassAdmin.stream().map(classAdmin->{
+                       return classAdmin.getAdmin().getFullName();
+                    });
                     List<UnitResponseDTO> unit = new ArrayList<>();
                     //check syllabus to get unit
                     for (int i = 0; i < syllabusesList.size(); i++) {
@@ -108,16 +104,14 @@ public class ClassScheduleService implements IClassScheduleService {
                             locationNames,
                             trainerName,
                             durationDay,
-                            date,
-                            unit,
-                            trainingClassAdmin);
+                            date, unit);
                 }).collect(Collectors.toList());
     }
 
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(LocalDate startDate, LocalDate endDate) {
-        List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
-        for (LocalDate date = startDate; !date.isAfter(endDate.plusDays(1)); date = date.plusDays(1)) {
+        List<TrainingClassFilterResponseDTO> result= new ArrayList<>();
+        for(LocalDate date= startDate; !date.isAfter(endDate.plusDays(1));date=date.plusDays(1)){
             getTrainingClassByDay(date).stream().forEach(trainingClassFilterResponseDTO -> result.add(trainingClassFilterResponseDTO));
         }
         return result;
