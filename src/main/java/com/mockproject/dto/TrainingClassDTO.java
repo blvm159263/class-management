@@ -32,6 +32,7 @@ public class TrainingClassDTO implements Serializable {
     private LocalDate dateApproved;
     private LocalDate lastDateModified;
     private boolean status;
+    private long locationId;
     private long attendeeId;
     private long trainingProgramId;
     private long fsuId;
