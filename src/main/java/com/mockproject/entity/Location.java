@@ -44,7 +44,7 @@ public class Location implements Serializable {
     @Column(name = "status")
     private boolean status;
 
-    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
-    @JsonBackReference
-    private List<Tower> listTowers;
+//    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
+//    @JsonBackReference
+//    private List<Tower> listTowers;
 }

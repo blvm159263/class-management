@@ -1,8 +1,11 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.ClassScheduleDTO;
+import com.mockproject.dto.TrainingClassFilterResponseDTO;
 import com.mockproject.entity.ClassSchedule;
+import com.mockproject.entity.TrainingClass;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IClassScheduleService {
@@ -12,4 +15,12 @@ public interface IClassScheduleService {
     List<ClassSchedule> listEntity();
 
     ClassSchedule save(ClassScheduleDTO dto);
+
+    Long countDayBefore(LocalDate date, Long id);
+
+    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(LocalDate date);
+
+    public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(LocalDate startDay, LocalDate endDay  );
+
+
 }
