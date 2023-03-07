@@ -22,6 +22,8 @@ public class SyllabusDTO implements Serializable {
     private String version;
     private String level;
     private int attendee;
+    private BigDecimal hour;
+    private int day;
     private String technicalRequirements;
     private String courseObjectives;
     private LocalDate dateCreated;

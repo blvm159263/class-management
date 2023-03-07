@@ -28,8 +28,7 @@ public class TrainingMaterial implements Serializable {
     private long id;
 
     @Column(
-            name = "upload_date",
-            nullable = false
+            name = "upload_date"
     )
     private LocalDate uploadDate;
 
@@ -41,7 +40,6 @@ public class TrainingMaterial implements Serializable {
     )
     private byte[] data;
 
-//    @Lob
     @Nationalized
     @Column(
             name = "name",

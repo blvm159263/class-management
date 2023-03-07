@@ -1,0 +1,46 @@
+package com.mockproject.mapper;
+
+import com.mockproject.dto.UnitDetailDTO;
+import com.mockproject.entity.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
+
+@Mapper(componentModel = "spring")
+public interface UnitDetailMapper {
+
+    UnitDetailMapper INSTANCE = Mappers.getMapper(UnitDetailMapper.class);
+
+    @Mapping(target = "unitId", source = "unit.id")
+    @Mapping(target = "outputStandardId", source = "outputStandard.id")
+    @Mapping(target = "deliveryTypeId", source = "deliveryType.id")
+    UnitDetailDTO toDTO(UnitDetail unitDetail);
+
+    @Mapping(target = "unit", source = "unitId", qualifiedByName = "mapUnit")
+    @Mapping(target = "outputStandard", source = "outputStandardId", qualifiedByName = "mapOutputStandard")
+    @Mapping(target = "deliveryType", source = "deliveryTypeId", qualifiedByName = "mapDeliveryType")
+    UnitDetail toEntity(UnitDetailDTO dto);
+
+    @Named("mapUnit")
+    default Unit mapUnit(long id) {
+        Unit unit = new Unit();
+        unit.setId(id);
+        return unit;
+    }
+
+    @Named("mapOutputStandard")
+    default OutputStandard mapOutputStandard(long id) {
+        OutputStandard outputStandard = new OutputStandard();
+        outputStandard.setId(id);
+        return outputStandard;
+    }
+
+    @Named("mapDeliveryType")
+    default DeliveryType mapDeliveryType(long id) {
+        DeliveryType deliveryType = new DeliveryType();
+        deliveryType.setId(id);
+        return deliveryType;
+    }
+
+}

@@ -1,8 +1,8 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.TrainingMaterialDTO;
-import com.mockproject.dto.mapper.TrainingMaterialDTOMapper;
 import com.mockproject.entity.TrainingMaterial;
+import com.mockproject.mapper.TrainingMaterialMapper;
 import com.mockproject.repository.TrainingMaterialRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
 import com.mockproject.service.interfaces.IUnitDetailService;
@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.zip.DataFormatException;
 
 @Service
@@ -25,7 +26,7 @@ import java.util.zip.DataFormatException;
 public class TrainingMaterialService implements ITrainingMaterialService {
     private final TrainingMaterialRepository repository;
 
-    private final TrainingMaterialDTOMapper mapper;
+    private final TrainingMaterialMapper mapper;
     @Autowired
     private final IUnitDetailService unitDetailService;
     @Autowired
@@ -39,20 +40,39 @@ public class TrainingMaterialService implements ITrainingMaterialService {
         TrainingMaterial trainingMaterial = repository.save(TrainingMaterial.builder()
                 .uploadDate(LocalDate.now())
                 .data(FileUtils.compressFile(file.getBytes()))
-                .name(file.getName())
+                .name(file.getOriginalFilename())
                 .type(file.getContentType())
                 .size(new BigDecimal(file.getSize()))
                 .status(true)
                 .unitDetail(unitDetailService.get(unitDetailId))
                 .user(userService.get(userId))
                 .build());
-        return mapper.apply(trainingMaterial);
+        return mapper.toDTO(trainingMaterial);
     }
 
     @Override
     public TrainingMaterialDTO getFile(long id) throws DataFormatException, IOException {
-        TrainingMaterial trainingMaterial = repository.getReferenceById(id);
-        trainingMaterial.setData(FileUtils.decompressFile(trainingMaterial.getData()));
-        return mapper.apply(trainingMaterial);
+        Optional<TrainingMaterial> trainingMaterial = repository.findById(id);
+        trainingMaterial.orElseThrow(() -> new RuntimeException("ID doesn't exist"));
+        trainingMaterial.get().setData(FileUtils.decompressFile(trainingMaterial.get().getData()));
+        return mapper.toDTO(trainingMaterial.get());
     }
+
+    @Override
+    public TrainingMaterialDTO updateFile(long id, MultipartFile file, long unitDetailsId, long userId) throws IOException {
+        Optional<TrainingMaterial> trainingMaterial = repository.findById(id);
+        trainingMaterial.orElseThrow(() -> new RuntimeException("ID doesn't exist"));
+        return mapper.toDTO(repository.save(TrainingMaterial.builder()
+                .id(id)
+                .data(FileUtils.compressFile(file.getBytes()))
+                .name(file.getOriginalFilename())
+                .type(file.getContentType())
+                .size(new BigDecimal(file.getSize()))
+                .uploadDate(LocalDate.now())
+                .unitDetail(unitDetailService.get(unitDetailsId))
+                .user(userService.get(userId))
+                .build()));
+    }
+
+
 }

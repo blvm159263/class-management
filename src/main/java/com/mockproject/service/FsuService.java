@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.mapper.FsuDTOMapper;
 import com.mockproject.repository.FsuRepository;
 import com.mockproject.service.interfaces.IFsuService;
 import jakarta.transaction.Transactional;
@@ -14,5 +13,4 @@ public class FsuService implements IFsuService {
 
     private final FsuRepository repository;
 
-    private final FsuDTOMapper mapper;
 }

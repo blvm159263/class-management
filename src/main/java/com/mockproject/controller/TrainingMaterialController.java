@@ -34,4 +34,13 @@ public class TrainingMaterialController {
                 .contentType(MediaType.valueOf(trainingMaterialDTO.getType()))
                 .body(trainingMaterialDTO.getData());
     }
+
+    @PutMapping("{id}")
+    public ResponseEntity<TrainingMaterialDTO> updateFile(
+            @PathVariable("id") long id,
+            @RequestParam(name = "file") MultipartFile file,
+            @RequestParam(name = "unit_detail_id") long unitDetailId,
+            @RequestParam(name = "user_id") long userId) throws IOException {
+        return ResponseEntity.ok(trainingMaterialService.updateFile(id, file, unitDetailId, userId));
+    }
 }
