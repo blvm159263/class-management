@@ -23,12 +23,12 @@ public class SyllabusController {
     @GetMapping("/list")
     public ResponseEntity<?> getSyllabusList(
             @RequestParam(defaultValue = "2000-01-01") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate fromDate,
-            @RequestParam(defaultValue = "#{T(java.time.LocalDateTime).now()}") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate startDate,
+            @RequestParam(defaultValue = "#{T(java.time.LocalDateTime).now()}") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate toDate,
             @RequestParam(defaultValue = "")String search,
             @RequestParam(defaultValue = "0") Optional<Integer> page,
             @RequestParam(defaultValue = "dateCreated,asc") String[] sort
             ){
-        return ResponseEntity.ok(syllabusService.getListSyllabus(true,  fromDate, startDate, search, sort, page));
+        return ResponseEntity.ok(syllabusService.getListSyllabus(true,  fromDate, toDate, search, sort, page));
     }
 
 }
