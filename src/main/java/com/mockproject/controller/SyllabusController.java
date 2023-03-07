@@ -35,7 +35,7 @@ public class SyllabusController {
         return ResponseEntity.ok(syllabus);
     }
 
-    @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/create")
     public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus){
         long syllabusID = syllabusService.create(syllabus);
         return ResponseEntity.ok(syllabusID);
