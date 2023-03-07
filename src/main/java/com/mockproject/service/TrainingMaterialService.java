@@ -2,6 +2,8 @@ package com.mockproject.service;
 
 import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.entity.TrainingMaterial;
+import com.mockproject.entity.UnitDetail;
+import com.mockproject.entity.User;
 import com.mockproject.mapper.TrainingMaterialMapper;
 import com.mockproject.repository.TrainingMaterialRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
@@ -17,6 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
 
@@ -32,11 +37,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
     @Autowired
     private final IUserService userService;
 
-
-    @Override
-    public TrainingMaterialDTO uploadFile(MultipartFile file, long unitDetailId, long userId) throws IOException {
-        if(file.getSize() > 40*1024*1024)
-            throw new RuntimeException("The maximum file size is 40MB");
+    private TrainingMaterialDTO uploadAFile(MultipartFile file, UnitDetail unitDetail, User user) throws IOException {
         TrainingMaterial trainingMaterial = repository.save(TrainingMaterial.builder()
                 .uploadDate(LocalDate.now())
                 .data(FileUtils.compressFile(file.getBytes()))
@@ -44,10 +45,27 @@ public class TrainingMaterialService implements ITrainingMaterialService {
                 .type(file.getContentType())
                 .size(new BigDecimal(file.getSize()))
                 .status(true)
-                .unitDetail(unitDetailService.get(unitDetailId))
-                .user(userService.get(userId))
+                .unitDetail(unitDetail)
+                .user(user)
                 .build());
         return mapper.toDTO(trainingMaterial);
+    }
+
+    @Override
+    public List<TrainingMaterialDTO> uploadFile(MultipartFile[] files, long unitDetailsId, long userId) {
+        User user = userService.get(userId);
+        UnitDetail unitDetail = unitDetailService.get(unitDetailsId);
+        List<TrainingMaterialDTO> trainingMaterialDTOS = new ArrayList<>();
+        Arrays.asList(files).forEach(
+            (file) -> {
+            try {
+                trainingMaterialDTOS.add(uploadAFile(file, unitDetail, user));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        );
+        return trainingMaterialDTOS;
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.zip.DataFormatException;
 
 @RestController
@@ -18,13 +19,14 @@ import java.util.zip.DataFormatException;
 public class TrainingMaterialController {
     @Autowired
     private final ITrainingMaterialService trainingMaterialService;
+
     @PostMapping("upload-file")
-    public ResponseEntity<TrainingMaterialDTO> uploadFile(
-            @RequestParam(name = "file") MultipartFile file,
+    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(
+            @RequestParam(name = "file") MultipartFile[] files,
             @RequestParam(name = "unit_detail_id") long unitDetailId,
             @RequestParam(name = "user_id") long userId
-            ) throws IOException {
-        return ResponseEntity.ok(trainingMaterialService.uploadFile(file, unitDetailId, userId));
+    ) throws IOException{
+        return ResponseEntity.ok(trainingMaterialService.uploadFile(files, unitDetailId, userId));
     }
 
     @GetMapping("{id}")
