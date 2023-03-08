@@ -1,9 +1,8 @@
 package com.mockproject.service;
 
-import com.mockproject.Specification.TrainingClassSpecification;
+import com.mockproject.specification.TrainingClassSpecification;
 import com.mockproject.dto.*;
 import com.mockproject.entity.ClassSchedule;
-import com.mockproject.entity.Location;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.mapper.ClassScheduleMapper;
@@ -13,11 +12,9 @@ import com.mockproject.repository.TrainingClassAdminRepository;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.repository.TrainingClassUnitInformationRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
-import com.mockproject.service.interfaces.ILocationService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

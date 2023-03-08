@@ -1,13 +1,10 @@
-package com.mockproject.Specification;
+package com.mockproject.specification;
 
 import com.mockproject.dto.TimeRangeDTO;
 import com.mockproject.dto.TrainingClassFilterRequestDTO;
 import com.mockproject.entity.ClassSchedule;
 import com.mockproject.entity.TrainingClass;
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 
