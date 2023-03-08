@@ -33,12 +33,12 @@ public class TrainingMaterialController {
         return ResponseEntity.ok(trainingMaterialService.getFiles());
     }
 
-    @GetMapping("{id}")
+    @GetMapping("get-file/{id}")
     public ResponseEntity<TrainingMaterialDTO> getFile(@PathVariable("id") long id) throws DataFormatException, IOException {
         return ResponseEntity.ok(trainingMaterialService.getFile(id));
     }
 
-    @PutMapping("{id}")
+    @PutMapping("update-file/{id}")
     public ResponseEntity<TrainingMaterialDTO> updateFile(
             @PathVariable("id") long id,
             @RequestParam(name = "file") MultipartFile file,
@@ -47,7 +47,7 @@ public class TrainingMaterialController {
         return ResponseEntity.ok(trainingMaterialService.updateFile(id, file, unitDetailId, userId));
     }
 
-    @DeleteMapping("{id}")
+    @PutMapping("delete-file/{id}")
     public ResponseEntity<TrainingMaterialDTO> deleteFile(
             @PathVariable("id") long id
     ){
