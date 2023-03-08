@@ -56,7 +56,6 @@ public class SyllabusService implements ISyllabusService {
                 pages.getTotalElements());
     }
 
-    @Override
     public Sort.Direction getSortDirection(String direction) {
         if (direction.equals("asc")) {
             return Sort.Direction.ASC;
