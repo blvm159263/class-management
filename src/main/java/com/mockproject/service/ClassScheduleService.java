@@ -61,7 +61,7 @@ public class ClassScheduleService implements IClassScheduleService {
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(LocalDate date) {
         return trainingClassRepository.findAllByListClassSchedulesDate(date)
-                .stream().map(trainingClass ->getTrainingClassDetail(trainingClass,date)).collect(Collectors.toList());
+                .stream().map(trainingClass -> getTrainingClassDetail(trainingClass,date)).collect(Collectors.toList());
     }
 
     @Override
