@@ -1,23 +1,43 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.ClassScheduleDTO;
+import com.mockproject.dto.TrainingClassFilterResponseDTO;
+import com.mockproject.dto.UnitDTO;
+import com.mockproject.dto.UnitResponseDTO;
 import com.mockproject.entity.ClassSchedule;
+import com.mockproject.entity.Location;
+import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.mapper.ClassScheduleMapper;
+import com.mockproject.mapper.TrainingClassFilterMap;
 import com.mockproject.repository.ClassScheduleRepository;
+import com.mockproject.repository.TrainingClassAdminRepository;
+import com.mockproject.repository.TrainingClassRepository;
+import com.mockproject.repository.TrainingClassUnitInformationRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
+import com.mockproject.service.interfaces.ILocationService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @AllArgsConstructor
-public class ClassScheduleService implements IClassScheduleService{
+@Slf4j
+public class ClassScheduleService implements IClassScheduleService {
 
     private final ClassScheduleRepository repository;
+    private final TrainingClassRepository trainingClassRepository;
+
+    private final ILocationService locationService;
+    private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
+    private TrainingClassFilterMap trainingClassFilterMap;
+    private TrainingClassAdminRepository trainingClassAdminRepository;
 
     @Override
     public List<ClassScheduleDTO> listAll() {
@@ -36,5 +56,65 @@ public class ClassScheduleService implements IClassScheduleService{
         return repository.save(ClassScheduleMapper.INSTANCE.toEntity(dto));
     }
 
+    @Override
+    public Long countDayBefore(LocalDate date, Long id) {
+        return repository.countAllByDateBeforeAndTrainingClassId(date, id);
+    }
+
+
+    @Override
+    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(LocalDate date) {
+        return trainingClassRepository.findAllByListClassSchedulesDate(date)
+                .stream().map(trainingClass -> {
+                    var learnedDay = repository.countAllByDateBeforeAndTrainingClassId(date, trainingClass.getId()) + 1;
+                    var locationNames = locationService.findLocationByTrainingClassID(trainingClass.getId())
+                            .stream()
+                            .map(Location::getLocationName).collect(Collectors.toList());
+                    var durationDay = String.valueOf(learnedDay).concat("/" + trainingClass.getDay());
+                    var syllabusesList = trainingClass.getTrainingProgram().getListTrainingProgramSyllabuses()
+                            .stream().map(TrainingProgramSyllabus::getSyllabus).collect(Collectors.toList());
+                    var trainingClassAdmin= trainingClassAdminRepository.findAllByTrainingClassId(trainingClass.getId());
+                    var Admin= trainingClassAdmin.stream().map(classAdmin->{
+                       return classAdmin.getAdmin().getFullName();
+                    });
+                    List<UnitResponseDTO> unit = new ArrayList<>();
+                    //check syllabus to get unit
+                    for (int i = 0; i < syllabusesList.size(); i++) {
+                        log.info(learnedDay + " " + syllabusesList.get(i).getDay());
+                        if (learnedDay > syllabusesList.get(i).getDay()) {
+                            learnedDay -= syllabusesList.get(i).getDay();
+                        } else {
+                            Long finalLearnedDay = learnedDay;
+                            log.info(syllabusesList.get(i).getCode());
+                            unit = syllabusesList.get(i).getListSessions()
+                                    .stream().filter(session -> session.getSessionNumber() == finalLearnedDay)
+                                    .flatMap(session -> session.getListUnit().stream())
+                                    .map(Unit -> {
+                                        UnitResponseDTO unitDTO = new UnitResponseDTO();
+                                        unitDTO.setUnitTitle(Unit.getUnitTitle());
+                                        unitDTO.setUnitNumber(Unit.getUnitNumber());
+                                        return unitDTO;
+                                    }).collect(Collectors.toList());
+                        }
+                    }
+
+                    var trainerName = trainingClassUnitInformationRepository.findAllByTrainingClassId(trainingClass.getId())
+                            .stream().map(trainingClassUnitInformation -> trainingClassUnitInformation.getTrainer().getFullName()).collect(Collectors.toList());
+                    return trainingClassFilterMap.toTrainingClassFilterResponseDTO(trainingClass,
+                            locationNames,
+                            trainerName,
+                            durationDay,
+                            date, unit);
+                }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(LocalDate startDate, LocalDate endDate) {
+        List<TrainingClassFilterResponseDTO> result= new ArrayList<>();
+        for(LocalDate date= startDate; !date.isAfter(endDate.plusDays(1));date=date.plusDays(1)){
+            getTrainingClassByDay(date).stream().forEach(trainingClassFilterResponseDTO -> result.add(trainingClassFilterResponseDTO));
+        }
+        return result;
+    }
 
 }
