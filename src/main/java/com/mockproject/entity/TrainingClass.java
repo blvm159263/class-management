@@ -100,20 +100,17 @@ public class TrainingClass implements Serializable {
     private LocalDate dateCreated;
 
     @Column(
-            name = "date_reviewed",
-            nullable = false
+            name = "date_reviewed"
     )
     private LocalDate dateReviewed;
 
     @Column(
-            name = "date_approved",
-            nullable = false
+            name = "date_approved"
     )
     private LocalDate dateApproved;
 
     @Column(
-            name = "last_date_modified",
-            nullable = false
+            name = "last_date_modified"
     )
     private LocalDate lastDateModified;
 
@@ -129,6 +126,11 @@ public class TrainingClass implements Serializable {
     @JsonManagedReference
     @JoinColumn(name = "training_program_id")
     private TrainingProgram trainingProgram;
+
+    @ManyToOne
+    @JsonManagedReference
+    @JoinColumn(name = "location_id")
+    private Location location;
 
     @ManyToOne
     @JsonManagedReference
