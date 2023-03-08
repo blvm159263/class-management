@@ -3,20 +3,19 @@ package com.mockproject.service;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.User;
 
 import com.mockproject.mapper.SyllabusMapper;
-import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.service.interfaces.ISyllabusService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -44,5 +43,12 @@ public class SyllabusService implements ISyllabusService {
     public long create(SyllabusDTO syllabus){
         Syllabus newSyllabus = syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabus));
         return newSyllabus.getId();
+    }
+
+    public Syllabus editSyllabus(long id, SyllabusDTO syllabusDTO){
+        Optional<Syllabus> syllabus = Optional.ofNullable(syllabusRepository.findByIdAndStatus(id, true));
+        syllabus.orElseThrow(() -> new RuntimeException("Syllabus doesn't exist or has been deleted."));
+        Syllabus updateSyllabus = syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabusDTO));
+        return updateSyllabus;
     }
 }
