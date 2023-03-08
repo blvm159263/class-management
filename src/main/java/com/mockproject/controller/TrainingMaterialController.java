@@ -4,7 +4,6 @@ import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,12 +28,14 @@ public class TrainingMaterialController {
         return ResponseEntity.ok(trainingMaterialService.uploadFile(files, unitDetailId, userId));
     }
 
+    @GetMapping()
+    public ResponseEntity<List<TrainingMaterialDTO>> getFiles(){
+        return ResponseEntity.ok(trainingMaterialService.getFiles());
+    }
+
     @GetMapping("{id}")
-    public ResponseEntity<?> getFile(@PathVariable("id") long id) throws DataFormatException, IOException {
-        TrainingMaterialDTO trainingMaterialDTO = trainingMaterialService.getFile(id);
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(trainingMaterialDTO.getType()))
-                .body(trainingMaterialDTO.getData());
+    public ResponseEntity<TrainingMaterialDTO> getFile(@PathVariable("id") long id) throws DataFormatException, IOException {
+        return ResponseEntity.ok(trainingMaterialService.getFile(id));
     }
 
     @PutMapping("{id}")
@@ -44,5 +45,12 @@ public class TrainingMaterialController {
             @RequestParam(name = "unit_detail_id") long unitDetailId,
             @RequestParam(name = "user_id") long userId) throws IOException {
         return ResponseEntity.ok(trainingMaterialService.updateFile(id, file, unitDetailId, userId));
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<TrainingMaterialDTO> deleteFile(
+            @PathVariable("id") long id
+    ){
+        return ResponseEntity.ok(trainingMaterialService.deleteFile(id));
     }
 }

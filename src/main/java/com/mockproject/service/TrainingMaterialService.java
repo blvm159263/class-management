@@ -78,6 +78,22 @@ public class TrainingMaterialService implements ITrainingMaterialService {
     }
 
     @Override
+    public List<TrainingMaterialDTO> getFiles(){
+        List<TrainingMaterialDTO> trainingMaterialDTOS = new ArrayList<>();
+        repository.findAll().forEach(trainingMaterial -> {
+            try {
+                TrainingMaterialDTO trainingMaterialDTO = mapper.toDTO(trainingMaterial);
+
+                trainingMaterialDTO.setData(FileUtils.decompressFile(trainingMaterialDTO.getData()));
+                trainingMaterialDTOS.add(trainingMaterialDTO);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return trainingMaterialDTOS;
+    }
+
+    @Override
     public TrainingMaterialDTO updateFile(long id, MultipartFile file, long unitDetailsId, long userId) throws IOException {
         Optional<TrainingMaterial> trainingMaterial = repository.findById(id);
         trainingMaterial.orElseThrow(() -> new RuntimeException("ID doesn't exist"));
@@ -93,5 +109,11 @@ public class TrainingMaterialService implements ITrainingMaterialService {
                 .build()));
     }
 
-
+    @Override
+    public TrainingMaterialDTO deleteFile(long id){
+        Optional<TrainingMaterial> trainingMaterial = repository.findById(id);
+        trainingMaterial.orElseThrow(() -> new RuntimeException("ID doesn't exist"));
+        trainingMaterial.get().setStatus(false);
+        return mapper.toDTO(trainingMaterial.get());
+    }
 }
