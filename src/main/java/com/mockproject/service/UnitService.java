@@ -1,7 +1,10 @@
 package com.mockproject.service;
 
+import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
+import com.mockproject.entity.Session;
 import com.mockproject.entity.Unit;
+import com.mockproject.mapper.SessionMapper;
 import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.IUnitService;
@@ -14,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -35,5 +39,14 @@ public class UnitService implements IUnitService {
             unitRepository.save(UnitMapper.INSTANCE.toEntity(i));
         });
         return true;
+    }
+
+    public Unit editUnit(long id, long sessionId, UnitDTO unitDTO){
+        Optional<Unit> unit = Optional.ofNullable(unitRepository.findByIdAndSessionIdAndStatus(id, sessionId, true));
+        unit.orElseThrow(() -> new RuntimeException("Unit doesn't exist."));
+        unitDTO.setSessionId(sessionId);
+        unitDTO.setId(id);
+        Unit updateUnit = unitRepository.save(UnitMapper.INSTANCE.toEntity(unitDTO));
+        return updateUnit;
     }
 }

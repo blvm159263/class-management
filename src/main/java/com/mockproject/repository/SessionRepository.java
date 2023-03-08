@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface SessionRepository extends JpaRepository<Session, Long> {
     List<Session> findSessionBySyllabusIdAndStatus(long syllabusID, boolean status);
+
+    Session findSessionBySyllabusIdAndStatusAndId(long syllabusID, boolean status, long id);
 }

@@ -1,6 +1,8 @@
 package com.mockproject.controller;
 
+import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
+import com.mockproject.entity.Unit;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.service.UnitDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,4 +29,9 @@ public class UnitDetailController {
         return ResponseEntity.ok(unitDetailService.createUnitDetail(unitId,listUnitDetail));
     }
 
+    @PutMapping("/edit/{unitId}/{id}")
+    public ResponseEntity<UnitDetail> editUnitDetail(@PathVariable("id") long id, @PathVariable("unitId") long unitId, @RequestBody UnitDetailDTO unitDetailDTO){
+        UnitDetail updateUnitDetail = unitDetailService.editUnitDetail(id, unitId, unitDetailDTO);
+        return ResponseEntity.ok(updateUnitDetail);
+    }
 }

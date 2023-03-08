@@ -46,4 +46,5 @@ public class Session implements Serializable {
     @OneToMany(mappedBy = "session", fetch = FetchType.LAZY)
     @JsonBackReference(value = "session_unit")
     private List<Unit> listUnit;
+
 }

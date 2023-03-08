@@ -26,4 +26,10 @@ public class SessionController {
     public ResponseEntity<Boolean> createSessions(@PathVariable("id") long syllabusId, @RequestBody List<SessionDTO> listSession){
         return ResponseEntity.ok(sessionService.createSession(syllabusId, listSession));
     }
+
+    @PutMapping("/edit/{syllabusId}/{id}")
+    public ResponseEntity<Session> editSession(@PathVariable("id") long id, @PathVariable("syllabusId") long syllabusId,@RequestBody SessionDTO sessionDTO){
+        Session updateSession = sessionService.editSession(id, syllabusId, sessionDTO);
+        return ResponseEntity.ok(updateSession);
+    }
 }

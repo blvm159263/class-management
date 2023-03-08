@@ -48,6 +48,7 @@ public class SyllabusService implements ISyllabusService {
     public Syllabus editSyllabus(long id, SyllabusDTO syllabusDTO){
         Optional<Syllabus> syllabus = Optional.ofNullable(syllabusRepository.findByIdAndStatus(id, true));
         syllabus.orElseThrow(() -> new RuntimeException("Syllabus doesn't exist or has been deleted."));
+        syllabusDTO.setId(id);
         Syllabus updateSyllabus = syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabusDTO));
         return updateSyllabus;
     }
