@@ -9,8 +9,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TrainingClassRepository extends JpaRepository<TrainingClass, Long> {
 
-//    @Query("SELECT c FROM TrainingClass c " +
-//            "WHERE c.status = ?1 " +
-//            "AND c.")
-//    Page<TrainingClass> getListClass();
+    @Query("SELECT c FROM TrainingClass c " +
+            "WHERE c.status = ?1 " +
+            "AND c.location.locationName IN ?2 " +
+            "AND c.startDate BETWEEN ?3 AND ?4 " +
+            "AND c.startTime BETWEEN ?5 AND ?6 ")
+    Page<TrainingClass> getListClass();
 }
