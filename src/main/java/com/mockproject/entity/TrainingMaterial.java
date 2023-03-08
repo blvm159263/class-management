@@ -33,12 +33,11 @@ public class TrainingMaterial implements Serializable {
     private LocalDate uploadDate;
 
     @Lob
-    @Nationalized
     @Column(
             name = "data",
             nullable = false
     )
-    private String data;
+    private byte[] data;
 
     @Lob
     @Nationalized
