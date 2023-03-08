@@ -26,10 +26,12 @@ public class SyllabusService implements ISyllabusService {
     private final SyllabusRepository syllabusRepository;
     private final SessionService sessionService;
 
+    @Override
     public List<Syllabus> getAll(){
         return syllabusRepository.findByStateAndStatus(true, true);
     }
 
+    @Override
     public Syllabus getSyllabus(long id){
         Syllabus syllabus = syllabusRepository.findByIdAndStateAndStatus(id, true, true);
         if (syllabus != null){
