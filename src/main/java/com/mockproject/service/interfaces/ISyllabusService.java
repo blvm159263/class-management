@@ -15,7 +15,5 @@ public interface ISyllabusService {
                                       LocalDate fromDate, LocalDate toDate,
                                       String search, String[] sort, Optional<Integer> page);
 
-    Sort.Direction getSortDirection(String direction);
-
     List<Long> getListSyllabusIdByOSD(String osd);
 }

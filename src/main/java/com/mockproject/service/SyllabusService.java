@@ -56,7 +56,6 @@ public class SyllabusService implements ISyllabusService {
                 pages.getTotalElements());
     }
 
-    @Override
     public Sort.Direction getSortDirection(String direction) {
         if (direction.equals("asc")) {
             return Sort.Direction.ASC;
@@ -68,16 +67,8 @@ public class SyllabusService implements ISyllabusService {
 
     @Override
     public List<Long> getListSyllabusIdByOSD(String osd) {
-        List<OutputStandard> osdT = outputStandardRepo.findByStandardCodeContainingIgnoreCase(osd);
-        List<UnitDetail> detailList = unitDetailRepo.findByOutputStandardIn(osdT);
-        return detailList.stream()
-                .filter(distinctByKey(p -> p.getUnit().getSession().getSyllabus().getId()))
-                .map(ob -> ob.getUnit().getSession().getSyllabus().getId()).collect(Collectors.toList());
-    }
-
-    private static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor)
-    {
-        Map<Object, Boolean> map = new ConcurrentHashMap<>();
-        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+        List<UnitDetail> detailList = unitDetailRepo.findByStatusAndOutputStandardIn(true, outputStandardRepo.findByStandardCodeContainingIgnoreCase(osd));
+        return detailList.stream().map(ob
+                -> ob.getUnit().getSession().getSyllabus().getId()).collect(Collectors.toList());
     }
 }

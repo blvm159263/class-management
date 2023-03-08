@@ -114,6 +114,11 @@ public class TrainingClass implements Serializable {
     )
     private LocalDate lastDateModified;
 
+    @Column(
+            name = "period"
+    )
+    private int period;
+
     @Column(name = "status")
     private boolean status;
 
@@ -126,6 +131,11 @@ public class TrainingClass implements Serializable {
     @JsonManagedReference
     @JoinColumn(name = "training_program_id")
     private TrainingProgram trainingProgram;
+
+    @ManyToOne
+    @JsonManagedReference
+    @JoinColumn(name = "location_id")
+    private Location location;
 
     @ManyToOne
     @JsonManagedReference
