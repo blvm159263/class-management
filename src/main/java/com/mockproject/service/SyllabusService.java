@@ -67,7 +67,7 @@ public class SyllabusService implements ISyllabusService {
 
     @Override
     public List<Long> getListSyllabusIdByOSD(String osd) {
-        List<UnitDetail> detailList = unitDetailRepo.findByStatusAndOutputStandardIn(true, outputStandardRepo.findByStandardCodeContainingIgnoreCase(osd));
+        List<UnitDetail> detailList = unitDetailRepo.findByStatusAndOutputStandardIn(true, outputStandardRepo.findByStatusAndStandardCodeContainingIgnoreCase(true, osd));
         return detailList.stream().map(ob
                 -> ob.getUnit().getSession().getSyllabus().getId()).collect(Collectors.toList());
     }
