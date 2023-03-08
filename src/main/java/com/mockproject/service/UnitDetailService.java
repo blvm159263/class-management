@@ -31,4 +31,8 @@ public class UnitDetailService implements IUnitDetailService {
         return true;
     }
 
+    public UnitDetail getUnitDetailById(long id, boolean status){
+        return unitDetailRepository.findByIdAndStatus(id, status);
+    }
+
 }
