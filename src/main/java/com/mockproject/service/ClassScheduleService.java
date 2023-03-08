@@ -72,9 +72,9 @@ public class ClassScheduleService implements IClassScheduleService {
 
         var trainingClassFiltered= trainingClassRepository.findAll(TrainingClassSpecification.findByFilter(filterRequestDTO));
         List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
-        log.info(String.valueOf(trainingClassFiltered.size()));
         trainingClassFiltered.stream().distinct().forEach(trainingClass -> {
             trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
+                if(classSchedule.getDate().isAfter(filterRequestDTO.getStartDate().minusDays(1))&&classSchedule.getDate().isBefore(filterRequestDTO.getEndDate().plusDays(1)))
                 result.add(getTrainingClassDetail(trainingClass,classSchedule.getDate()));
             });
         });
