@@ -72,8 +72,9 @@ public class TrainingMaterialService implements ITrainingMaterialService {
     public TrainingMaterialDTO getFile(long id) throws DataFormatException, IOException {
         Optional<TrainingMaterial> trainingMaterial = repository.findById(id);
         trainingMaterial.orElseThrow(() -> new RuntimeException("ID doesn't exist"));
-        trainingMaterial.get().setData(FileUtils.decompressFile(trainingMaterial.get().getData()));
-        return mapper.toDTO(trainingMaterial.get());
+        TrainingMaterialDTO trainingMaterialDTO = mapper.toDTO(trainingMaterial.get());
+        trainingMaterialDTO.setData(FileUtils.decompressFile(trainingMaterialDTO.getData()));
+        return trainingMaterialDTO;
     }
 
     @Override
