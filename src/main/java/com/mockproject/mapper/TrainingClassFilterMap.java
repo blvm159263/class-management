@@ -26,10 +26,10 @@ public interface TrainingClassFilterMap {
     @Mapping(source = "trainers",target = "trainerName")
     @Mapping(source = "date", target = "day")
     @Mapping(source = "durationDay", target = "durationDay")
-    @Mapping(source = "LocationNames", target = "locationName")
+    @Mapping(source = "trainingClass.location.locationName", target = "locationName")
     @Mapping(source = "unit", target = "units")
     TrainingClassFilterResponseDTO toTrainingClassFilterResponseDTO(TrainingClass trainingClass,
-                                                                    List<String>LocationNames,
+//                                                                    List<String>LocationNames,
                                                                     List<String> trainers,
                                                                     String durationDay,
                                                                     LocalDate date,

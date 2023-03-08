@@ -1,6 +1,7 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.ClassScheduleDTO;
+import com.mockproject.dto.TrainingClassFilterRequestDTO;
 import com.mockproject.dto.TrainingClassFilterResponseDTO;
 import com.mockproject.entity.ClassSchedule;
 import com.mockproject.entity.TrainingClass;
@@ -20,7 +21,9 @@ public interface IClassScheduleService {
 
     public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(LocalDate date);
 
-    public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(LocalDate startDay, LocalDate endDay  );
+    public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(TrainingClassFilterRequestDTO filterRequestDTO);
+
+    public TrainingClassFilterResponseDTO getTrainingClassDetail(TrainingClass trainingClass,LocalDate date);
 
 
 }

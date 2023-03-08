@@ -21,7 +21,7 @@ public class TrainingClassFilterResponseDTO {
     private String attendee;
     private LocalDate day;
     private String durationDay;
-    private List<String> LocationName;
+    private String LocationName;
     private List<UnitResponseDTO> units;
 }
 
