@@ -18,15 +18,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AttendeeService implements IAttendeeService {
 
-    private final AttendeeRepository repository;
+    private final AttendeeRepository attendeeRepo;
 
     @Override
-    public List<AttendeeDTO> listAll() {
-        return repository.findAll().stream().map(AttendeeMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    public List<AttendeeDTO> getAllAttendee() {
+        return attendeeRepo.findAll().stream().map(AttendeeMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override
     public Attendee save(AttendeeDTO dto) {
-        return repository.save(AttendeeMapper.INSTANCE.toEntity(dto));
+        return attendeeRepo.save(AttendeeMapper.INSTANCE.toEntity(dto));
     }
 }

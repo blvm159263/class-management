@@ -43,11 +43,11 @@ public class TrainingClassService implements ITrainingClassService{
         }
         Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
         Page<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
-                isOnline, state, attendeeId, fsu, classUnitRepo
+                isOnline, state, attendeeId, fsu, trainerId!=0 ? classUnitRepo
                         .findByStatusAndAndTrainerId( true, trainerId)
-                        .stream()
-                        .map(t -> t.getTrainingClass().getId())
-                        .collect(Collectors.toList()), search, pageable);
+                        .stream().map(t -> t.getTrainingClass().getId())
+                        .collect(Collectors.toList()) :
+                        classRepo.findAllByStatus(true).stream().map(c -> c.getId()).collect(Collectors.toList()), search, pageable);
         return new PageImpl<>(
                 pages.stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
                 pages.getPageable(),
@@ -61,5 +61,10 @@ public class TrainingClassService implements ITrainingClassService{
             return Sort.Direction.DESC;
         }
         return Sort.Direction.ASC;
+    }
+
+    @Override
+    public List<TrainingClassDTO> getAllClass() {
+        return classRepo.findAllByStatus(true).stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 }

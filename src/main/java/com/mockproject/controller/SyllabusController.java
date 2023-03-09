@@ -28,7 +28,8 @@ public class SyllabusController {
             @RequestParam(defaultValue = "0") Optional<Integer> page,
             @RequestParam(defaultValue = "dateCreated,asc") String[] sort)
     {
-        return ResponseEntity.ok(syllabusService.getListSyllabus(true,  fromDate, toDate, search, sort, page));
+        return ResponseEntity
+                .ok(syllabusService.getListSyllabus(true,  fromDate, toDate, search, sort, page));
     }
 
 }

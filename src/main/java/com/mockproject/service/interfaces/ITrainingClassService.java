@@ -14,4 +14,6 @@ public interface ITrainingClassService {
                                         List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                         List<Integer> period, String isOnline, String state, List<Long> attendeeId,
                                         String fsu, long trainerId, String search, String[] sort, Optional<Integer> page);
+
+    List<TrainingClassDTO> getAllClass();
 }

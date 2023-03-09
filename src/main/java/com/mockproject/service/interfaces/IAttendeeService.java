@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IAttendeeService {
 
-    List<AttendeeDTO> listAll();
+    List<AttendeeDTO> getAllAttendee();
 
     Attendee save(AttendeeDTO dto);
 }

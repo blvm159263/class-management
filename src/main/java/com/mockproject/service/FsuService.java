@@ -10,6 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -20,5 +23,10 @@ public class FsuService implements IFsuService {
     @Override
     public FsuDTO getFsuById(long id) {
         return FsuMapper.INSTANCE.toDTO(fsuRepo.findById(id).orElse(new Fsu()));
+    }
+
+    @Override
+    public List<FsuDTO> getAllFsu() {
+        return fsuRepo.findAll().stream().map(FsuMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 }
