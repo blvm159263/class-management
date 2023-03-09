@@ -58,9 +58,11 @@ public class TrainingMaterialService{
     public TrainingMaterialDTO getFile(long id) throws DataFormatException, IOException {
         Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findById(id);
         trainingMaterial.orElseThrow(() -> new RuntimeException("ID doesn't exist"));
-        trainingMaterial.get().setData(FileUtils.decompressFile(trainingMaterial.get().getData()));
-        return TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterial.get());
+        TrainingMaterialDTO trainingMaterialDTO = TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterial.get());
+        trainingMaterialDTO.setData(FileUtils.decompressFile(trainingMaterialDTO.getData()));
+        return trainingMaterialDTO;
     }
+
 
     public List<TrainingMaterialDTO> uploadFile(MultipartFile[] files, long unitDetailsId, long userId) {
         User user = userService.getUserById(userId);

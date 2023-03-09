@@ -23,14 +23,14 @@ public class FileUtils {
         return byteArrayOutputStream.toByteArray();
     }
 
-    public static byte[] decompressFile(byte[] data) throws DataFormatException, IOException {
+    public static byte[] decompressFile(byte[] compressedData) throws DataFormatException, IOException {
         Inflater inflater = new Inflater();
-        inflater.setInput(data);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] tmp = new byte[10*1024];
+        inflater.setInput(compressedData);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(compressedData.length);
+        byte[] bufferBytes = new byte[10*1024];
         while (!inflater.finished()){
-            int count = inflater.inflate(tmp);
-            outputStream.write(tmp, 0, count);
+            int count = inflater.inflate(bufferBytes);
+            outputStream.write(bufferBytes, 0, count);
         }
         outputStream.close();
         return outputStream.toByteArray();

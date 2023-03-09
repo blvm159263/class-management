@@ -43,11 +43,11 @@ public class TrainingMaterialController {
     }
 
     @GetMapping("/get-file/{id}")
-    public ResponseEntity<?> getFile(@PathVariable("id") long id) throws DataFormatException, IOException {
+    public ResponseEntity<TrainingMaterialDTO> getFile(@PathVariable("id") long id) throws DataFormatException, IOException {
         TrainingMaterialDTO trainingMaterialDTO = trainingMaterialService.getFile(id);
         return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(trainingMaterialDTO.getType()))
-                .body(trainingMaterialDTO.getData());
+               // .contentType(MediaType.valueOf(trainingMaterialDTO.getType()))
+                .body(trainingMaterialDTO);
     }
 
     @PutMapping("/{id}")
