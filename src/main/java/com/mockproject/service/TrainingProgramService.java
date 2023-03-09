@@ -29,7 +29,7 @@ public class TrainingProgramService implements ITrainingProgramService{
     public long countAll(){
         return repository.count();
     }
-    public List<TrainingProgram> getByCreatorId(String keyword){
-        return repository.findAllByCreatorId(keyword);
+    public List<TrainingProgram> getByCreatorFullname(String keyword){
+        return repository.getAllByCreatorFullNameContains(keyword);
     }
 }

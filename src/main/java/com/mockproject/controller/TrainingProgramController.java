@@ -4,6 +4,7 @@ import com.mockproject.entity.TrainingProgram;
 import com.mockproject.service.TrainingProgramService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,11 +41,27 @@ public class TrainingProgramController {
                                               HttpServletResponse response,
                                               Model model,
                                               HttpServletRequest request) throws IOException {
-        List<TrainingProgram> resultList=new ArrayList<>();
-        if (keyword!=null){
-            resultList= trainingProgramService.getByName(keyword);
-        }else {
+        HttpSession session=request.getSession();
+        List<String> listKeyword=(List<String>) session.getAttribute("LIST_KEYWORD");
+        if(listKeyword==null && keyword==null) {
             response.sendRedirect("/trainingprogram");
+        }
+        if (listKeyword==null){
+            listKeyword=new ArrayList<>();
+        }
+        listKeyword.add(keyword);
+        session.setAttribute("LIST_KEYWORD",listKeyword);
+        for (String s:listKeyword){
+            System.out.println(s);
+        }
+        List<TrainingProgram> resultList=new ArrayList<>();
+        for (String key:listKeyword){
+            for (TrainingProgram p:trainingProgramService.getByName(key)){
+                resultList.add(p);
+            }
+            for (TrainingProgram p:trainingProgramService.getByCreatorFullname(key)){
+                resultList.add(p);
+            }
         }
         return resultList;
     }

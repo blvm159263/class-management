@@ -10,5 +10,5 @@ import java.util.List;
 public interface TrainingProgramRepository extends JpaRepository<TrainingProgram, Long> {
     List<TrainingProgram> getTrainingProgramByNameContains(String name);
 
-    List<TrainingProgram> findAllByCreatorId(String id);
+    List<TrainingProgram> getAllByCreatorFullNameContains(String name);
 }
