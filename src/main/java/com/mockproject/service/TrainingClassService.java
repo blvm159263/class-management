@@ -8,18 +8,24 @@ import org.springframework.stereotype.Service;
 
 import com.mockproject.dto.AttendeeDTO;
 import com.mockproject.dto.ClassScheduleDTO;
+import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.dto.TrainingProgramDTO;
+import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.dto.UserDTO;
 import com.mockproject.mapper.AttendeeMapper;
 import com.mockproject.mapper.ClassScheduleMapper;
+import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.mapper.TrainingClassMapper;
 import com.mockproject.mapper.TrainingProgramMapper;
+import com.mockproject.mapper.TrainingProgramSyllabusMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.AttendeeRepository;
 import com.mockproject.repository.ClassScheduleRepository;
+import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.repository.TrainingProgramRepository;
+import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.repository.UserRepository;
 import com.mockproject.service.interfaces.ITrainingClassService;
 
@@ -33,6 +39,8 @@ public class TrainingClassService implements ITrainingClassService{
 
     private final TrainingClassRepository classRepository;
     private final TrainingProgramRepository programRepository;
+    private final SyllabusRepository syllabusRepository;
+    private final TrainingProgramSyllabusRepository programSyllabusRepository;
     private final AttendeeRepository attendeeRepository;
     private final UserRepository userRepository;
     private final ClassScheduleRepository classScheduleRepository;
@@ -55,21 +63,45 @@ public class TrainingClassService implements ITrainingClassService{
 	}
 	
 	@Override
-	public List<TrainingProgramDTO> findProgramDetail(Long id) {
+	public List<TrainingProgramDTO> findProgram(Long id) {
 		List<TrainingProgramDTO> programDetail = new ArrayList<>();
 		long proID = findClassDetail(id).get(0).getTrainingProgramId();
 		List<TrainingProgramDTO> getProgram = programRepository.findById(proID).stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
-		getProgram.forEach((attendee) -> {
-			if (attendee.isStatus()) {
-				programDetail.add(attendee);
+		getProgram.forEach((program) -> {
+			if (program.isStatus()) {
+				programDetail.add(program);
 			}
         });
-		if (!getProgram.isEmpty()) {
-		}
-		else {
+		if (programDetail.isEmpty()) {
 			System.out.println("Empty");
 		}
 		return programDetail;
+	}
+	
+	@Override
+	public List<SyllabusDTO> findProgramDetail(Long id) {
+		List<SyllabusDTO> programSyllabusDetail = new ArrayList<>();
+		long proID = findProgram(id).get(0).getId();
+		List<TrainingProgramSyllabusDTO> getProgramSyllabus = programSyllabusRepository.findAll().stream().map(TrainingProgramSyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
+		getProgramSyllabus.forEach((program) -> {
+			if (program.getTrainingProgramId() == proID) {
+				if (program.isStatus()) {
+					long syllabusID = program.getSyllabusId();
+					List<SyllabusDTO> getSyllabus = syllabusRepository.findById(syllabusID).stream().map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
+					getSyllabus.forEach((syllabus) -> {
+						if (syllabus.getId() == syllabusID) {
+							if (syllabus.isStatus()) {
+								programSyllabusDetail.add(syllabus);
+							}
+						}
+					});
+				}
+			}
+        });
+		if (programSyllabusDetail.isEmpty()) {
+			System.out.println("Empty");
+		}
+		return programSyllabusDetail;
 	}
 
 	@Override
@@ -82,9 +114,7 @@ public class TrainingClassService implements ITrainingClassService{
 				attendeeDetail.add(attendee);
 			}
         });
-		if (!attendeeDetail.isEmpty()) {
-		}
-		else {
+		if (attendeeDetail.isEmpty()) {
 			System.out.println("Empty");
 		}
 		return attendeeDetail;
@@ -103,7 +133,7 @@ public class TrainingClassService implements ITrainingClassService{
 				}
 			}
         });
-		if (userDetail.isEmpty()) {
+		if (classAttendee.isEmpty()) {
 			System.out.println("Empty");
 		}
 		return classAttendee;
@@ -121,9 +151,7 @@ public class TrainingClassService implements ITrainingClassService{
 				}
 			}
         });
-		if (!getClass.isEmpty()) {
-		}
-		else {
+		if (classSchedule.isEmpty()) {
 			System.out.println("Empty");
 		}
 		return classSchedule;
