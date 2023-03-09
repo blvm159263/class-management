@@ -1,5 +1,6 @@
 package com.mockproject.service;
 
+import com.mockproject.dto.SearchUserFillerDTO;
 import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.User;
 import com.mockproject.mapper.AttendeeMapper;
@@ -33,8 +34,17 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserDTO> getAllByPageAndRowPerPage(long page, long rowPerPage) {
+
         return repository.getAllByPageAndRowPerPage(page, rowPerPage).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
+    @Override
+    public List<UserDTO> searchByFillter(SearchUserFillerDTO userFillerDTO) {
 
+
+        return repository.searchByFiller(userFillerDTO.getId(), userFillerDTO.getDob(), userFillerDTO.getEmail() , userFillerDTO.getFullname(), userFillerDTO.getGender(), userFillerDTO.getPhone(), userFillerDTO.getState(), userFillerDTO.getAttendee_id(), userFillerDTO.getLevel_id(), userFillerDTO.getRole_id())
+                .stream()
+                .map(UserMapper.INSTANCE::toDTO)
+                .collect(Collectors.toList());
+    }
 }

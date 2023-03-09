@@ -34,5 +34,14 @@ public class RoleService implements IRoleService {
         return repository.save(RoleMapper.INSTANCE.toEntity(roleDTO));
     }
 
+    @Override
+    public Boolean checkDuplicatedByRoleName(String name) {
+        System.out.println(repository.findAllByRoleName(name).size() + "===================================================================");
+        if (repository.findAllByRoleName(name).size() > 1){
+            return true;
+        } else
+        return false;
+    }
+
 
 }

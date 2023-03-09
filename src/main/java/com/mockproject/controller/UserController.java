@@ -168,25 +168,38 @@ public class UserController {
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity updateAllRole(@RequestBody List<FormRoleDTO> formRoleDTOList){
 
-        List<RoleDTO> listRoleDTOS = new ArrayList<>();
-        List<RolePermissionScopeDTO> rolePermissionScopeDTOList = new ArrayList<>();
         for (FormRoleDTO fdto: formRoleDTOList) {
+            if (roleService.checkDuplicatedByRoleName(fdto.getRoleName())) return ResponseEntity.badRequest().body("Role " + fdto.getRoleName() + " is duplicated!");
             if(fdto.getId() != 0){
                 //listRoleDTOS.add(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
                 roleService.save(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
-                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getRoleName());
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getClassPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Class"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getSyllabusPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Syllabus"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getLeaningMaterialPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Learning material"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getTraningProgramPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Training program"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getUserPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("User"));
 
             } else {
-               // listRoleDTOS.add(new RoleDTO(fdto.getRoleName(), true));
                 RoleDTO roleSave = RoleMapper.INSTANCE.toDTO(roleService.save(new RoleDTO(fdto.getRoleName(), true)));
-
                 for (PermissionScopeDTO permissionScopeDTO: permissionScopeService.getAll() ) {
                     rolePermissionScopeService.save(new RolePermissionScopeDTO(true,roleSave.getId(), permissionService.getPermissionIdByName("Access denied") ,permissionScopeDTO.getId()));
                 }
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getClassPermission(), roleSave.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Class"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getSyllabusPermission(), roleSave.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Syllabus"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getLeaningMaterialPermission(), roleSave.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Learning material"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getTraningProgramPermission(), roleSave.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Training program"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getUserPermission(), roleSave.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("User"));
             }
         }
         return ResponseEntity.ok("hihi");
     }
 
-
+    @PostMapping("/searchByFillet")
+    public ResponseEntity searchByFillter(@RequestBody SearchUserFillerDTO searchUserFillerDTO){
+        List<UserDTO> result = userService.searchByFillter(searchUserFillerDTO);
+        if (result != null && !result.isEmpty())
+            return ResponseEntity.ok(result);
+        else
+            return ResponseEntity.badRequest().body("Not found user!");
+    }
 }

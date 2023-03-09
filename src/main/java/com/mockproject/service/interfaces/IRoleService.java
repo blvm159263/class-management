@@ -11,4 +11,6 @@ public interface IRoleService {
     List<Role> updateListRole (List<RoleDTO> listRoleDTO);
 
     Role save(RoleDTO roleDTO);
+
+    Boolean checkDuplicatedByRoleName(String name);
 }
