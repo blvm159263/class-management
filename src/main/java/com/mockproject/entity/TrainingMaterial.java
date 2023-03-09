@@ -34,7 +34,6 @@ public class TrainingMaterial implements Serializable {
     private LocalDate uploadDate;
 
     @Lob
-    @Nationalized
     @Column(
             name = "data",
             nullable = false
