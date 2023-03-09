@@ -5,9 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TrainingMaterialRepository extends JpaRepository<TrainingMaterial, Long> {
-    List<TrainingMaterial> findByUnitDetailIdAndStatus(long unitDetailId, boolean status);
+    Optional<TrainingMaterial> findByIdAndStatus(long trainingMaterialId, boolean status);
 
+    Optional<List<TrainingMaterial>> findAllByUnitDetailIdAndStatus(long unitDetailId, boolean status);
 }

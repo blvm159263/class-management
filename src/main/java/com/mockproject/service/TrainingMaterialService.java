@@ -5,6 +5,7 @@ import com.mockproject.entity.TrainingMaterial;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.entity.User;
 import com.mockproject.mapper.TrainingMaterialMapper;
+import com.mockproject.mapper.TrainingMaterialMapperImpl;
 import com.mockproject.repository.TrainingMaterialRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
 import com.mockproject.service.interfaces.IUnitDetailService;
@@ -13,8 +14,11 @@ import com.mockproject.utils.FileUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -36,11 +40,6 @@ public class TrainingMaterialService{
     @Autowired
     private final UserService userService;
 
-    public List<TrainingMaterial> getAllTrainingMaterialByUnitDetailId(long unitDetailId, boolean status){
-        List<TrainingMaterial> listTrainingMaterial = trainingMaterialRepository.findByUnitDetailIdAndStatus(unitDetailId, status);
-        return listTrainingMaterial;
-    }
-
     private TrainingMaterialDTO uploadAFile(MultipartFile file, UnitDetail unitDetail, User user) throws IOException {
         TrainingMaterial trainingMaterial = trainingMaterialRepository.save(TrainingMaterial.builder()
                 .uploadDate(LocalDate.now())
@@ -55,9 +54,9 @@ public class TrainingMaterialService{
         return TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterial);
     }
 
-    public TrainingMaterialDTO getFile(long id) throws DataFormatException, IOException {
-        Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findById(id);
-        trainingMaterial.orElseThrow(() -> new RuntimeException("ID doesn't exist"));
+    public TrainingMaterialDTO getFile(long id, boolean status) throws DataFormatException, IOException {
+        Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(id, status);
+        trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         TrainingMaterialDTO trainingMaterialDTO = TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterial.get());
         trainingMaterialDTO.setData(FileUtils.decompressFile(trainingMaterialDTO.getData()));
         return trainingMaterialDTO;
@@ -73,7 +72,7 @@ public class TrainingMaterialService{
                     try {
                         trainingMaterialDTOS.add(uploadAFile(file, unitDetail, user));
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new ResponseStatusException(HttpStatus.NO_CONTENT);
                     }
                 }
         );
@@ -82,7 +81,7 @@ public class TrainingMaterialService{
 
     public TrainingMaterialDTO updateFile(long id, MultipartFile file, long unitDetailsId, long userId) throws IOException {
         Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findById(id);
-        trainingMaterial.orElseThrow(() -> new RuntimeException("ID doesn't exist"));
+        trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         return TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterialRepository.save(TrainingMaterial.builder()
                 .id(id)
                 .data(FileUtils.compressFile(file.getBytes()))
@@ -93,5 +92,41 @@ public class TrainingMaterialService{
                 .unitDetail(unitDetailService.getUnitDetailById(unitDetailsId, true))
                 .user(userService.getUserById(userId))
                 .build()));
+    }
+
+    public List<TrainingMaterialDTO> getFiles(long unitDetailId, boolean status){
+        List<TrainingMaterialDTO> trainingMaterialDTOS = new ArrayList<>();
+        trainingMaterialRepository.findAllByUnitDetailIdAndStatus(unitDetailId, status).get().forEach(trainingMaterial -> {
+            try {
+                TrainingMaterialDTO trainingMaterialDTO = TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterial);
+
+                trainingMaterialDTO.setData(FileUtils.decompressFile(trainingMaterialDTO.getData()));
+                trainingMaterialDTOS.add(trainingMaterialDTO);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return trainingMaterialDTOS;
+    }
+
+
+    public boolean deleteTrainingMaterial(long trainingMaterialId, boolean status){
+        try {
+            Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(trainingMaterialId, status);
+            trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+            trainingMaterial.get().setStatus(false);
+            trainingMaterialRepository.save(trainingMaterial.get());
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean deleteTrainingMaterials(long unitDetailId, boolean status){
+        Optional<List<TrainingMaterial>> listTrainingMaterial = trainingMaterialRepository.findAllByUnitDetailIdAndStatus(unitDetailId, true);
+        listTrainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        listTrainingMaterial.get().forEach((i) -> deleteTrainingMaterial(i.getId(), true));
+        return true;
     }
 }

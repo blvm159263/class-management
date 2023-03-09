@@ -27,11 +27,11 @@ public class TrainingMaterialController {
     @Autowired
     TrainingMaterialService trainingMaterialService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<List<TrainingMaterial>> getAllTrainingMaterialByUnitDetailId(@PathVariable("id") long id){
-        List<TrainingMaterial> listTrainingMaterial = trainingMaterialService.getAllTrainingMaterialByUnitDetailId(id, true);
-        return ResponseEntity.ok(listTrainingMaterial);
+    @GetMapping("get-all/{id}")
+    public ResponseEntity<List<TrainingMaterialDTO>> getFiles(@PathVariable("id") long unitDetailId){
+        return ResponseEntity.ok(trainingMaterialService.getFiles(unitDetailId, true));
     }
+
 
     @PostMapping("/upload-file")
     public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(
@@ -44,7 +44,7 @@ public class TrainingMaterialController {
 
     @GetMapping("/get-file/{id}")
     public ResponseEntity<TrainingMaterialDTO> getFile(@PathVariable("id") long id) throws DataFormatException, IOException {
-        TrainingMaterialDTO trainingMaterialDTO = trainingMaterialService.getFile(id);
+        TrainingMaterialDTO trainingMaterialDTO = trainingMaterialService.getFile(id, true);
         return ResponseEntity.ok()
                // .contentType(MediaType.valueOf(trainingMaterialDTO.getType()))
                 .body(trainingMaterialDTO);
@@ -57,6 +57,16 @@ public class TrainingMaterialController {
             @RequestParam(name = "unit_detail_id") long unitDetailId,
             @RequestParam(name = "user_id") long userId) throws IOException {
         return ResponseEntity.ok(trainingMaterialService.updateFile(id, file, unitDetailId, userId));
+    }
+
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<Boolean> deleteFile(@PathVariable("id") long trainingMaterialId){
+        return ResponseEntity.ok(trainingMaterialService.deleteTrainingMaterial(trainingMaterialId, true));
+    }
+
+    @PutMapping("/delete-files/{id}")
+    public ResponseEntity<Boolean> deleteFiles(@PathVariable("id") long unitDetailId){
+        return ResponseEntity.ok(trainingMaterialService.deleteTrainingMaterials(unitDetailId, true));
     }
 }
 
