@@ -40,4 +40,10 @@ public class SyllabusController {
         long syllabusID = syllabusService.create(syllabus);
         return ResponseEntity.ok(syllabusID);
     }
+
+    @PutMapping("edit/{id}")
+    public ResponseEntity<Syllabus> editSyllabus(@PathVariable("id") long id, @RequestBody SyllabusDTO syllabusDTO){
+        Syllabus editsyllabus = syllabusService.editSyllabus(id, syllabusDTO);
+        return ResponseEntity.ok(editsyllabus);
+    }
 }

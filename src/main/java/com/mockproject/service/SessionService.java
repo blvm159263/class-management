@@ -11,7 +11,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -32,5 +34,14 @@ public class SessionService implements ISessionService {
             sessionRepository.save(SessionMapper.INSTANCE.toEntity(i));
         });
         return true;
+    }
+
+    public Session editSession(long id, long syllabusId, SessionDTO sessionDTO){
+        Optional<Session> session = Optional.ofNullable(sessionRepository.findSessionBySyllabusIdAndStatusAndId(syllabusId, true, id));
+        session.orElseThrow(() -> new RuntimeException("Session doesn't exist."));
+        sessionDTO.setId(id);
+        sessionDTO.setSyllabusId(syllabusId);
+        Session updateSession = sessionRepository.save(SessionMapper.INSTANCE.toEntity(sessionDTO));
+        return updateSession;
     }
 }

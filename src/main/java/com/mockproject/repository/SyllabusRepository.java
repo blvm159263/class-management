@@ -12,4 +12,6 @@ public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
     Syllabus findByIdAndStateAndStatus(long id, boolean state, boolean status);
 
     List<Syllabus> findByStateAndStatus(boolean state, boolean status);
+
+    Syllabus findByIdAndStatus(long id, boolean status);
 }
