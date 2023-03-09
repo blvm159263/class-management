@@ -8,6 +8,7 @@ import com.mockproject.repository.UserRepository;
 import com.mockproject.service.interfaces.IUserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService implements IUserService {
 
     private static final long SUPER_ADMIN = 1;
@@ -30,5 +31,17 @@ public class UserService implements IUserService {
         Role role = new Role();
         role.setId(CLASS_ADMIN);
         return repository.findByRoleAndStatus(role,true).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDTO> listTrainerTrue() {
+        Role role = new Role();
+        role.setId(TRAINER);
+        return repository.findByRoleAndStatus(role,true).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDTO getUserById(long id) {
+        return repository.findById(id).map(UserMapper.INSTANCE::toDTO).orElse(null);
     }
 }

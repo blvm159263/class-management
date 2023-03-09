@@ -9,7 +9,7 @@ import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.service.interfaces.ISyllabusService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SyllabusService implements ISyllabusService {
 
     private final SyllabusRepository syllabusRepository;
@@ -31,8 +31,13 @@ public class SyllabusService implements ISyllabusService {
         List<TrainingProgramSyllabus> listTPS = trainingProgramSyllabusRepository.findByTrainingProgramAndStatus(tp, true);
         List<Syllabus> listSyllabus = new ArrayList<>();
 //        listTPS.forEach(p -> listSyllabus.add(syllabusRepository.findById(p.getSyllabus())));
+        if(listTPS.isEmpty()){
+            throw new RuntimeException();
+        }
         listTPS.forEach(p -> listSyllabus.add(p.getSyllabus()));
         return listSyllabus.stream().map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
+
+
 
 }

@@ -5,7 +5,7 @@ import com.mockproject.mapper.ContactMapper;
 import com.mockproject.repository.ContactRepository;
 import com.mockproject.service.interfaces.IContactService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ContactService implements IContactService {
 
     private final ContactRepository repository;

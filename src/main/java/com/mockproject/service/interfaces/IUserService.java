@@ -7,4 +7,8 @@ import java.util.List;
 public interface IUserService {
 
     List<UserDTO> listClassAdminTrue();
+
+    List<UserDTO> listTrainerTrue();
+
+    UserDTO getUserById(long id);
 }

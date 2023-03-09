@@ -6,7 +6,7 @@ import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.repository.ClassScheduleRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,8 +14,9 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ClassScheduleService implements IClassScheduleService{
+
 
     private final ClassScheduleRepository repository;
 
@@ -26,9 +27,8 @@ public class ClassScheduleService implements IClassScheduleService{
 
     @Override
     public List<ClassSchedule> listEntity() {
-//        List<ClassScheduleDTO> list = repository.findAll().stream().map(ClassScheduleMapper.INSTANCE::toClassScheduleDTO).collect(Collectors.toList());
-//        return list.stream().map(ClassScheduleMapper.INSTANCE::toEntity).collect(Collectors.toList());
-        return repository.findAll();
+        List<ClassScheduleDTO> list = repository.findAll().stream().map(ClassScheduleMapper.INSTANCE::toDTO).toList();
+        return list.stream().map(ClassScheduleMapper.INSTANCE::toEntity).collect(Collectors.toList());
     }
 
     @Override

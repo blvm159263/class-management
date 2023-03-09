@@ -6,6 +6,7 @@ import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TrainingProgramService implements ITrainingProgramService{
 
     private final TrainingProgramRepository repository;
