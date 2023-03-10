@@ -16,7 +16,17 @@ import java.util.List;
 @Transactional
 @AllArgsConstructor
 public class TrainingProgramService implements ITrainingProgramService{
-    private final TrainingProgramRepository repository;
+    private final TrainingProgramRepository trainingProgramRepository;
+    public List<TrainingProgram> getPrograms(){
+        return trainingProgramRepository.findAll();
+    }
+
+
+    @Override
+    public List<TrainingProgram> searchProgramP(String query) {
+        List<TrainingProgram> trainingPrograms = trainingProgramRepository.searchProgramP(query);
+        return trainingPrograms;
+    }
 
     public List<TrainingProgram> getAll(Integer pageNo, Integer pageSize){
         Pageable paging = PageRequest.of(pageNo, pageSize);
