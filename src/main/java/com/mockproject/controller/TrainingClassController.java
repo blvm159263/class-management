@@ -3,6 +3,7 @@ package com.mockproject.controller;
 import com.mockproject.service.interfaces.IFsuService;
 import com.mockproject.service.interfaces.ILocationService;
 import com.mockproject.service.interfaces.ITrainingClassService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/class")
+@SecurityRequirement(name = "Authorization")
 public class TrainingClassController {
+    public static final String VIEW = "ROLE_View_Training program";
+    public static final String MODIFY = "ROLE_Modify_Training program";
+    public static final String CREATE = "ROLE_Create_Training program";
+    public static final String FULL_ACCESS = "ROLE_Full access_Training program";
 
     private final ITrainingClassService classService;
 

@@ -1,11 +1,14 @@
 package com.mockproject.repository;
 
 import com.mockproject.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,4 +42,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "and [status] = 1", nativeQuery = true)
     public List<User> searchByFiller(Long id, LocalDate dob, String email, String fullname, Boolean gender, String phone, Long state, Long attendee_id, Long level_id, Long role_id);
 
+
+    @Query(value = "select u from User u " +
+            "where  ( ( :#{#list.size()} = 0 )  or u.role.id in :list)")
+    Page<User> searchByRoleId(List<Long> list, Pageable pageable);
 }
