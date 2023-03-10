@@ -20,8 +20,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/syllabus")
+@SecurityRequirement(name = "Authorization")
 public class SyllabusController {
-
+    public static final String VIEW = "ROLE_View_Syllabus";
+    public static final String MODIFY = "ROLE_Modify_Syllabus";
+    public static final String CREATE = "ROLE_Create_Syllabus";
+    public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
     @Autowired
     public SyllabusService syllabusService;
 

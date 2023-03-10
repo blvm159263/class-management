@@ -1,6 +1,7 @@
 package com.mockproject.service;
 
 
+import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.entity.User;

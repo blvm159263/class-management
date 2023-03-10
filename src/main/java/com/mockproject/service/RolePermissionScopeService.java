@@ -9,6 +9,7 @@ import com.mockproject.repository.RolePermissionScopeRepository;
 import com.mockproject.service.interfaces.IRolePermissionScopeService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RolePermissionScopeService implements IRolePermissionScopeService {
 
     private final RolePermissionScopeRepository repository;
@@ -42,7 +43,7 @@ public class RolePermissionScopeService implements IRolePermissionScopeService {
 
         long permissionId = permissionRepository.getPermissionsByPermissionName(permissionName).getId();
 
-        RolePermissionScopeDTO rolePermissionScopeDTO = RolePermissionScopeMapper.INSTANCE.toDTO(repository.findByRoleIdAndAndPermissionScopeId(roleId, permissionId));
+        RolePermissionScopeDTO rolePermissionScopeDTO = RolePermissionScopeMapper.INSTANCE.toDTO(repository.findByRoleIdAndAndPermissionScopeId(roleId, scopeId));
 
         rolePermissionScopeDTO.setPermissionId(permissionId);
 

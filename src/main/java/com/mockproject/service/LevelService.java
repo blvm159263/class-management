@@ -4,11 +4,12 @@ import com.mockproject.repository.LevelRepository;
 import com.mockproject.service.interfaces.ILevelService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LevelService implements ILevelService {
 
     private final LevelRepository repository;

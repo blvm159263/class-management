@@ -7,6 +7,7 @@ import com.mockproject.repository.RoleRepository;
 import com.mockproject.service.interfaces.IRoleService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RoleService implements IRoleService {
 
     private final RoleRepository repository;
@@ -32,6 +33,15 @@ public class RoleService implements IRoleService {
     @Override
     public Role save(RoleDTO roleDTO) {
         return repository.save(RoleMapper.INSTANCE.toEntity(roleDTO));
+    }
+
+    @Override
+    public Boolean checkDuplicatedByRoleName(String name) {
+        System.out.println(repository.findAllByRoleName(name).size() + "===================================================================");
+        if (repository.findAllByRoleName(name).size() > 1){
+            return true;
+        } else
+        return false;
     }
 
 

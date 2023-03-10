@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 public class UserService implements IUserService {
     private final UserRepository repository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Override
     public List<UserDTO> getAll(){
         return repository.findAllBy().stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
@@ -41,5 +44,11 @@ public class UserService implements IUserService {
 
     public User getUserById(long id){
         return userRepository.findById(id).get();
+    }
+    public void encodePassword(){
+        for (User user: repository.findAllBy()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            repository.save(user);
+        }
     }
 }
