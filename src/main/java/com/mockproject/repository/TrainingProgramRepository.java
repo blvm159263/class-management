@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface TrainingProgramRepository extends JpaRepository<TrainingProgram, Long> {
+    List<TrainingProgram> getTrainingProgramByNameContains(String name);
 
-    @Query("SELECT tp FROM TrainingProgram tp WHERE tp.creator.fullName LIKE CONCAT('%', :query, '%') OR tp.name LIKE CONCAT('%', :query, '%')")
-    public List<TrainingProgram> searchProgramP(String query);
+    List<TrainingProgram> getAllByCreatorFullNameContains(String name);
 }
