@@ -1,10 +1,10 @@
 package com.mockproject.repository;
 
 import com.mockproject.entity.TrainingClass;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface TrainingClassRepository extends JpaRepository<TrainingClass, Long> {
@@ -13,4 +13,6 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
 //            "WHERE c.status = ?1 " +
 //            "AND c.")
 //    Page<TrainingClass> getListClass();
+
+    List<TrainingClass> findByClassCode(String code);
 }

@@ -10,4 +10,6 @@ public interface IAttendeeService {
     List<AttendeeDTO> listAll();
 
     Attendee save(AttendeeDTO dto);
+
+    AttendeeDTO getAttendeeByClassCode(String code);
 }

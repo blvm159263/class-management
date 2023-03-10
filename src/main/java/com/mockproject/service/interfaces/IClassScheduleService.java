@@ -12,4 +12,6 @@ public interface IClassScheduleService {
     List<ClassSchedule> listEntity();
 
     ClassSchedule save(ClassScheduleDTO dto);
+
+    List<ClassScheduleDTO> getScheduleByClassCode(String code);
 }
