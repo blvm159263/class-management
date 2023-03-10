@@ -24,7 +24,7 @@ public class Fsu implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Column(
             name = "fsu_name",

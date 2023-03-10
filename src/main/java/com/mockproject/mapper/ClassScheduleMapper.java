@@ -22,7 +22,7 @@ public interface ClassScheduleMapper {
 
 
     @Named("mapTrainingClass")
-    default TrainingClass mapTrainingClass(long id) {
+    default TrainingClass mapTrainingClass(Long id) {
         TrainingClass trainingClass = new TrainingClass();
         trainingClass.setId(id);
         return trainingClass;

@@ -23,21 +23,21 @@ public interface UnitDetailMapper {
     UnitDetail toEntity(UnitDetailDTO dto);
 
     @Named("mapUnit")
-    default Unit mapUnit(long id) {
+    default Unit mapUnit(Long id) {
         Unit unit = new Unit();
         unit.setId(id);
         return unit;
     }
 
     @Named("mapOutputStandard")
-    default OutputStandard mapOutputStandard(long id) {
+    default OutputStandard mapOutputStandard(Long id) {
         OutputStandard outputStandard = new OutputStandard();
         outputStandard.setId(id);
         return outputStandard;
     }
 
     @Named("mapDeliveryType")
-    default DeliveryType mapDeliveryType(long id) {
+    default DeliveryType mapDeliveryType(Long id) {
         DeliveryType deliveryType = new DeliveryType();
         deliveryType.setId(id);
         return deliveryType;

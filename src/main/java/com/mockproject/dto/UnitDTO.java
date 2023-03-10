@@ -13,10 +13,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UnitDTO implements Serializable {
-    private long id;
+    private Long id;
     private String unitTitle;
     private int unitNumber;
     private BigDecimal duration;
     private boolean status;
-    private long sessionId;
+    private Long sessionId;
 }
