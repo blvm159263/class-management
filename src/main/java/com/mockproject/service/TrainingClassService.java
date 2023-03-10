@@ -49,8 +49,6 @@ public class TrainingClassService implements ITrainingClassService{
                     .stream().map(t -> t.getTrainingClass().getId())
                     .collect(Collectors.toList());
             classId.add(-1L);
-        }else{
-            classId = new ArrayList<>();
         }
         Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
         Page<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
