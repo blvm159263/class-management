@@ -8,7 +8,6 @@ import com.mockproject.repository.ClassScheduleRepository;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

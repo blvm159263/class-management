@@ -20,4 +20,19 @@ public class UserController {
     public List<UserDTO> getTrainerByClassCode(@PathVariable("classCode") String code) {
         return userService.getTrainerByClassCode(code);
     }
+
+    @GetMapping("trainingClass/creator/{classCode}")
+    public UserDTO getCreatorByClassCode(@PathVariable("classCode") String code) {
+        return userService.getCreatorByClassCode(code);
+    }
+
+    @GetMapping("trainingClass/reviewer/{classCode}")
+    public UserDTO getReviewerByClassCode(@PathVariable("classCode") String code) {
+        return userService.getReviewerByClassCode(code);
+    }
+
+    @GetMapping("trainingClass/approver/{classCode}")
+    public UserDTO getApproverByClassCode(@PathVariable("classCode") String code) {
+        return userService.getApproverByClassCode(code);
+    }
 }

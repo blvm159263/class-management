@@ -1,15 +1,13 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.*;
+import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.TrainingClass;
-import com.mockproject.mapper.*;
+import com.mockproject.mapper.TrainingClassMapper;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
