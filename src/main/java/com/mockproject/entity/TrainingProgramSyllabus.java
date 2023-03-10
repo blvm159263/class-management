@@ -22,7 +22,7 @@ public class TrainingProgramSyllabus implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Column(name = "status")
     private boolean status;

@@ -24,7 +24,7 @@ public class OutputStandard implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Column(
             name = "output_standard_code",
