@@ -19,11 +19,6 @@ public class TrainingProgramController {
     @Autowired
     private final TrainingProgramService trainingProgramService;
 
-    @GetMapping(path = "/training_program")
-    public List<TrainingProgram> getPrograms() {
-        return trainingProgramService.getPrograms();
-    }
-
     @GetMapping("/search")
     public ResponseEntity<List<TrainingProgram>> searchProgramP(@RequestParam("query") String query){
         return ResponseEntity.ok(trainingProgramService.searchProgramP(query));

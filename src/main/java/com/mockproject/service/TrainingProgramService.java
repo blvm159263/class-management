@@ -17,10 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 public class TrainingProgramService implements ITrainingProgramService{
     private final TrainingProgramRepository trainingProgramRepository;
-    public List<TrainingProgram> getPrograms(){
-        return trainingProgramRepository.findAll();
-    }
-
 
     @Override
     public List<TrainingProgram> searchProgramP(String query) {
