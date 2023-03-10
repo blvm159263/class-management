@@ -1,33 +1,29 @@
 package com.mockproject.controller;
 
+import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
 import com.mockproject.service.TrainingProgramService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
+@RequestMapping("/view")
 public class TrainingProgramController {
     private final TrainingProgramService trainingProgramService;
 
-    @GetMapping(path = "/training_program")
-    public List<TrainingProgram> getPrograms() {
-        return trainingProgramService.getPrograms();
-    }
-
     @GetMapping("/trainingprogram")
     public List<TrainingProgram> getAllTrainingProgram(@RequestParam(defaultValue = "0") Integer pageNo,
-                                                       @RequestParam(defaultValue = "10") Integer pageSize,
-                                                       Model model)
+                                                          @RequestParam(defaultValue = "10") Integer pageSize,
+                                                          Model model)
     {
         long rows=trainingProgramService.countAll();
         long totalPage=rows/pageSize;
@@ -57,13 +53,16 @@ public class TrainingProgramController {
         }
         List<TrainingProgram> resultList=new ArrayList<>();
         for (String key:listKeyword){
-            for (TrainingProgram p:trainingProgramService.getByName(key)){
+            for (TrainingProgram p:trainingProgramService.getByName(keyword)){
                 resultList.add(p);
             }
-            for (TrainingProgram p:trainingProgramService.getByCreatorFullname(key)){
+            for (TrainingProgram p:trainingProgramService.getByCreatorFullname(keyword)){
                 resultList.add(p);
             }
         }
+
+
         return resultList;
+
     }
 }
