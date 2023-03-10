@@ -28,11 +28,15 @@ public class TrainingClassAdminService implements ITrainingClassAdminService {
 
     private final TrainingClassRepository trainingClassRepository;
 
+    private final TrainingClassAdminRepository trainingClassAdminRepository;
+
 
     @Override
     public List<UserDTO> getAdminByClassCode(String code) {
-        TrainingClass tc = trainingClassRepository.findByClassCode(code).get(0);
-        List<TrainingClassAdmin> trainingClassAdmins = tc.getListTrainingClassAdmins();
+        TrainingClass tc = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
+        List<TrainingClassAdmin> trainingClassAdmins = tc.getListTrainingClassAdmins().stream()
+                .filter(TrainingClassAdmin :: isStatus)
+                .toList();
         List<User> userList = trainingClassAdmins.stream().map(TrainingClassAdmin::getAdmin).toList();
         return userList.stream().map(UserMapper.INSTANCE::toDTO).toList();
     }

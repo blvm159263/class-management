@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainingProgramSyllabusDTO implements Serializable {
-    private long id;
+    private Long id;
     private boolean status;
     private long syllabusId;
     private long trainingProgramId;

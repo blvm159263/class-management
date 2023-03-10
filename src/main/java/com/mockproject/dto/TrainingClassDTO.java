@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainingClassDTO implements Serializable {
-    private long id;
+    private Long id;
     private String className;
     private String classCode;
     private LocalDate startDate;
@@ -33,9 +33,9 @@ public class TrainingClassDTO implements Serializable {
     private LocalDate lastDateModified;
     private int period;
     private boolean status;
-    private long locationId;
-    private long attendeeId;
-    private long trainingProgramId;
+    private Long locationId;
+    private Long attendeeId;
+    private Long trainingProgramId;
     private long fsuId;
     private long contactId;
     private long creatorId;

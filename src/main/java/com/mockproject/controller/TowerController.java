@@ -18,7 +18,7 @@ public class TowerController {
     private final ITowerService towerService;
 
     @GetMapping("traningClass/{classCode}")
-    public List<TowerDTO> getTowerByClassCode(@PathVariable ("classCode") String code) {
-        return towerService.getTowerByClassCode(code);
+    public List<TowerDTO> getTowerByClassCode(@PathVariable ("classCode") String code, boolean status) {
+        return towerService.getTowerByClassCode(code, status);
     }
 }

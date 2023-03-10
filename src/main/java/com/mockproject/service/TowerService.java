@@ -26,8 +26,8 @@ public class TowerService implements ITowerService {
     private final TrainingClassRepository trainingClassRepository;
 
     @Override
-    public List<TowerDTO> getTowerByClassCode(String code) {
-        TrainingClass tc = trainingClassRepository.findByClassCode(code).get(0);
+    public List<TowerDTO> getTowerByClassCode(String code, boolean status) {
+        TrainingClass tc = trainingClassRepository.findByClassCodeAndStatus(code, status).get(0);
         List<TrainingClassUnitInformation> classUnitInformations = tc.getListTrainingClassUnitInformations();
         List<Tower> towers = classUnitInformations.stream().map(TrainingClassUnitInformation :: getTower).toList();
         return towers.stream().map(TowerMapper.INSTANCE::toDTO).toList();

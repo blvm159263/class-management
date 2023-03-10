@@ -2,6 +2,7 @@ package com.mockproject.controller;
 
 
 import com.mockproject.dto.AttendeeDTO;
+import com.mockproject.entity.Attendee;
 import com.mockproject.service.interfaces.IAttendeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

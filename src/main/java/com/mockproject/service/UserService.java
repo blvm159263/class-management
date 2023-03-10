@@ -24,8 +24,8 @@ public class UserService implements IUserService {
     private final TrainingClassRepository trainingClassRepository;
 
     @Override
-    public List<UserDTO> getTrainerByClassCode(String code) {
-        TrainingClass trainingClass = trainingClassRepository.findByClassCode(code).get(0);
+    public List<UserDTO> getTrainerByClassCode(String code, boolean status) {
+        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, status).get(0);
         List<TrainingClassUnitInformation> classUnitInformations = trainingClass.getListTrainingClassUnitInformations();
         List<User> trainer = classUnitInformations.stream().map(TrainingClassUnitInformation :: getTrainer).distinct().toList();
         return trainer.stream().map(UserMapper.INSTANCE :: toDTO).toList();

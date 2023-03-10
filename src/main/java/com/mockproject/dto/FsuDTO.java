@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FsuDTO implements Serializable {
-    private long id;
+    private Long id;
     private String fsuName;
     private String description;
     private boolean status;

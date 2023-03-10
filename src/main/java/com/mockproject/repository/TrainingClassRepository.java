@@ -14,5 +14,5 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
 //            "AND c.")
 //    Page<TrainingClass> getListClass();
 
-    List<TrainingClass> findByClassCode(String code);
+    List<TrainingClass> findByClassCodeAndStatus(String code, boolean status);
 }

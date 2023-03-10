@@ -17,7 +17,7 @@ public class UserController {
     private final IUserService userService;
 
     @GetMapping("trainingClass/trainer/{classCode}")
-    public List<UserDTO> getTrainerByClassCode(@PathVariable("classCode") String code) {
-        return userService.getTrainerByClassCode(code);
+    public List<UserDTO> getTrainerByClassCode(@PathVariable("classCode") String code, boolean status) {
+        return userService.getTrainerByClassCode(code, status);
     }
 }

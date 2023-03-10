@@ -15,7 +15,7 @@ public class FsuController {
     private final IFsuService fsuService;
 
     @GetMapping("trainingClass/{classCode}")
-    public FsuDTO getFsuByClassCode(@PathVariable("classCode") String code) {
-        return fsuService.getFsuByClassCode(code);
+    public FsuDTO getFsuByClassCode(@PathVariable("classCode") String code, boolean status) {
+        return fsuService.getFsuByClassCode(code, status);
     }
 }
