@@ -129,6 +129,11 @@ public class TrainingClass implements Serializable {
 
     @ManyToOne
     @JsonManagedReference
+    @JoinColumn(name = "location_id")
+    private Location location;
+
+    @ManyToOne
+    @JsonManagedReference
     @JoinColumn(name = "fsu_id")
     private Fsu fsu;
 

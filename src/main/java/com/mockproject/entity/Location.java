@@ -47,4 +47,8 @@ public class Location implements Serializable {
     @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonBackReference
     private List<Tower> listTowers;
+
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<TrainingClass> listClasses;
 }
