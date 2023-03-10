@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DeliveryTypeRepository extends JpaRepository<DeliveryType, Long> {
 
-    DeliveryType findByIdAndStatus(long id, boolean status);
+    DeliveryType findByIdAndStatus(Long id, boolean status);
 
 }

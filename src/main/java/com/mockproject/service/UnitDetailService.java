@@ -17,7 +17,7 @@ import java.util.List;
 public class UnitDetailService implements IUnitDetailService {
     private final UnitDetailRepository repository;
 
-    public List<UnitDetailDTO> listByUnitIdTrue(long id) {
+    public List<UnitDetailDTO> listByUnitIdTrue(Long id) {
         Unit unit = new Unit();
         unit.setId(id);
         return repository.findByUnitAndStatus(unit,true).stream().map(UnitDetailMapper.INSTANCE::toDTO).toList();

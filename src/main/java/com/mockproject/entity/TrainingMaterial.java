@@ -25,7 +25,7 @@ public class TrainingMaterial implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Column(
             name = "upload_date"

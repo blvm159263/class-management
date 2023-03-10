@@ -74,7 +74,7 @@ class UserServiceTest {
     }
 
     /**
-     * Method under test: {@link UserService#getUserById(long)}
+     * Method under test: {@link UserService#getUserById(Long)}
      */
     @Test
     void canGetUserById() {

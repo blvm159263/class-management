@@ -10,5 +10,5 @@ public interface IUserService {
 
     List<UserDTO> listTrainerTrue();
 
-    UserDTO getUserById(long id);
+    UserDTO getUserById(Long id);
 }

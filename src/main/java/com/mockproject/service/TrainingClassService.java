@@ -13,20 +13,18 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class TrainingClassService implements ITrainingClassService{
+public class TrainingClassService implements ITrainingClassService {
 
     private final TrainingClassRepository repository;
 
 
     @Override
-    public TrainingClassDTO create(TrainingClassDTO trainingClassDTO) {
-        try{
-            TrainingClass trainingClass = repository.save(TrainingClassMapper.INSTANCE.toEntity(trainingClassDTO));
-            return TrainingClassMapper.INSTANCE.toDTO(trainingClass);
+    public Long create(TrainingClassDTO trainingClassDTO) {
+        TrainingClass entity = TrainingClassMapper.INSTANCE.toEntity(trainingClassDTO);
+        TrainingClass trainingClass = repository.save(entity);
+        if (trainingClass != null) {
+            return trainingClass.getId();
         }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
-//        return train;
+        return null;
     }
 }

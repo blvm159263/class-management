@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ITowerService {
 
-    List<TowerDTO> listByTowerIdTrue(long id);
+    List<TowerDTO> listByTowerIdTrue(Long id);
 }

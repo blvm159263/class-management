@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ISyllabusService {
 
-    List<SyllabusDTO> listByTrainingProgramIdTrue(long trainingProgramId);
+    List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId);
 
 
 }

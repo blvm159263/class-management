@@ -12,8 +12,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainingClassAdminDTO implements Serializable {
-    private long id;
+    private Long id;
     private boolean status;
-    private long adminId;
-    private long trainingClassId;
+    private Long adminId;
+    private Long trainingClassId;
 }

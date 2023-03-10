@@ -4,5 +4,5 @@ import com.mockproject.dto.TrainingClassDTO;
 
 public interface ITrainingClassService {
 
-    TrainingClassDTO create(TrainingClassDTO trainingClassDTO);
+    Long create(TrainingClassDTO trainingClassDTO);
 }

@@ -30,12 +30,12 @@ class DeliveryTypeServiceTest {
     DeliveryType deliveryType3 = new DeliveryType(3L, "Practice", true, null);
 
     /**
-     * Method under test: {@link DeliveryTypeService#getByIdTrue(long)}
+     * Method under test: {@link DeliveryTypeService#getByIdTrue(Long)}
      */
     @Test
     void canGetDeliveryTypeByIdTrue() {
 
-        long id = 3L;
+        Long id = 3L;
 
         when(deliveryTypeRepository.findByIdAndStatus(id, true)).thenReturn(deliveryType3);
         DeliveryTypeDTO result = deliveryTypeService.getByIdTrue(3L);

@@ -23,7 +23,7 @@ public class DeliveryType implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Column(
             name = "delivery_type_name",

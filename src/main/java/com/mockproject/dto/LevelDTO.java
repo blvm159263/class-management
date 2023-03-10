@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LevelDTO implements Serializable {
-    private long id;
+    private Long id;
     private String levelCode;
     private String description;
     private boolean status;

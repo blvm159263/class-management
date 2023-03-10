@@ -41,7 +41,7 @@ class TowerServiceTest {
 
 
     /**
-     * Method under test: {@link TowerService#listByTowerIdTrue(long)}
+     * Method under test: {@link TowerService#listByTowerIdTrue(Long)}
      */
     @Test
     void canListTowerWithStatusTrueByGivenLocationId() {

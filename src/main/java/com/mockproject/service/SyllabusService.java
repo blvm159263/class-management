@@ -25,15 +25,15 @@ public class SyllabusService implements ISyllabusService {
 
     private final TrainingProgramSyllabusRepository trainingProgramSyllabusRepository;
     @Override
-    public List<SyllabusDTO> listByTrainingProgramIdTrue(long trainingProgramId) {
+    public List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId) {
         TrainingProgram tp = new TrainingProgram();
         tp.setId(trainingProgramId);
         List<TrainingProgramSyllabus> listTPS = trainingProgramSyllabusRepository.findByTrainingProgramAndStatus(tp, true);
         List<Syllabus> listSyllabus = new ArrayList<>();
 //        listTPS.forEach(p -> listSyllabus.add(syllabusRepository.findById(p.getSyllabus())));
-        if(listTPS.isEmpty()){
-            throw new RuntimeException();
-        }
+//        if(listTPS.isEmpty()){
+//            return null;
+//        }
         listTPS.forEach(p -> listSyllabus.add(p.getSyllabus()));
         return listSyllabus.stream().map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }

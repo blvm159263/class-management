@@ -20,7 +20,7 @@ public class TowerService implements ITowerService {
     private final TowerRepository repository;
 
     @Override
-    public List<TowerDTO> listByTowerIdTrue(long id) {
+    public List<TowerDTO> listByTowerIdTrue(Long id) {
         Location location = new Location();
         location.setId(id);
         return repository.findByLocationAndStatus(location,true).stream().map(TowerMapper.INSTANCE::toDTO).toList();

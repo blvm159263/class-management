@@ -26,7 +26,7 @@ public class Unit implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Lob
     @Nationalized

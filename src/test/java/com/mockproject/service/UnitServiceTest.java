@@ -5,6 +5,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Unit;
 import com.mockproject.repository.UnitRepository;
@@ -39,7 +40,7 @@ class UnitServiceTest {
     Unit unit3 = new Unit(3L, "Unit title 345", 3, BigDecimal.TEN, true, s1, null, null);
 
     /**
-     * Method under test: {@link UnitService#listBySessionId(long)}
+     * Method under test: {@link UnitService#listBySessionId(Long)}
      */
     @Test
     void canListUnitByGivenSessionId() {
@@ -52,7 +53,7 @@ class UnitServiceTest {
         Session session = new Session();
         session.setId(sessionId);
         when(unitRepository.findBySession(session)).thenReturn(unitList.stream().filter(p -> p.getSession().getId() == s1.getId()).toList());
-        List<Unit> result = unitService.listBySessionId(1L);
+        List<UnitDTO> result = unitService.listBySessionId(1L);
         assertEquals(2, result.size());
         assertEquals("Unit title 123", result.get(0).getUnitTitle());
         verify(unitRepository).findBySession((Session) any());

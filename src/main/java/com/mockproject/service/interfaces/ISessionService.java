@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ISessionService {
 
-    List<SessionDTO> listBySyllabus(long sid);
+    List<SessionDTO> listBySyllabus(Long sid);
 }

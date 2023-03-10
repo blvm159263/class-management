@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService implements IUserService {
 
-    private static final long SUPER_ADMIN = 1;
-    private static final long CLASS_ADMIN = 2;
-    private static final long TRAINER = 3;
-    private static final long STUDENT = 4;
+    private static final Long SUPER_ADMIN = 1L;
+    private static final Long CLASS_ADMIN = 2L;
+    private static final Long TRAINER = 3L;
+    private static final Long STUDENT = 4L;
 
     private final UserRepository repository;
 
@@ -41,7 +41,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserDTO getUserById(long id) {
+    public UserDTO getUserById(Long id) {
         return repository.findById(id).map(UserMapper.INSTANCE::toDTO).orElse(null);
     }
 }

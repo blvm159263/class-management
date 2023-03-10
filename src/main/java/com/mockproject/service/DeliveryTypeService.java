@@ -17,7 +17,7 @@ public class DeliveryTypeService implements IDeliveryTypeService {
     private final DeliveryTypeRepository repository;
 
     @Override
-    public DeliveryTypeDTO getByIdTrue(long id) {
+    public DeliveryTypeDTO getByIdTrue(Long id) {
         UnitDetail unitDetail = new UnitDetail();
         unitDetail.setId(id);
         return DeliveryTypeMapper.INSTANCE.toDTO(repository.findByIdAndStatus(id,true));

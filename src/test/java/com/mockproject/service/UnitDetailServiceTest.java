@@ -49,7 +49,7 @@ class UnitDetailServiceTest {
             true, unit2, new DeliveryType(), new OutputStandard(), null);
 
     /**
-     * Method under test: {@link UnitDetailService#listByUnitIdTrue(long)}
+     * Method under test: {@link UnitDetailService#listByUnitIdTrue(Long)}
      */
     @Test
     void canListUnitDetailWithStatusTrueByUnitId() {

@@ -21,7 +21,7 @@ public class SessionService implements ISessionService {
     private final SessionRepository repository;
 
     @Override
-    public List<SessionDTO> listBySyllabus(long sid) {
+    public List<SessionDTO> listBySyllabus(Long sid) {
         Syllabus syllabus = new Syllabus();
         syllabus.setId(sid);
         return repository.findBySyllabus(syllabus).stream().map(SessionMapper.INSTANCE::toDTO).collect(Collectors.toList());

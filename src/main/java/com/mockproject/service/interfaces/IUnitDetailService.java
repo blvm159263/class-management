@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface IUnitDetailService {
 
-    List<UnitDetailDTO> listByUnitIdTrue(long id);
+    List<UnitDetailDTO> listByUnitIdTrue(Long id);
 }
