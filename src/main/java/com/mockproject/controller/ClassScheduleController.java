@@ -15,8 +15,8 @@ import java.util.List;
 public class ClassScheduleController {
     private final IClassScheduleService classScheduleService;
 
-    @GetMapping("classSchedule/{code}")
-    public List<ClassScheduleDTO> getScheduleByClassCode(@PathVariable("code") String code) {
+    @GetMapping("trainingclassSchedule/{classCode}")
+    public List<ClassScheduleDTO> getScheduleByClassCode(@PathVariable("classCode") String code) {
         return classScheduleService.getScheduleByClassCode(code);
     }
 }

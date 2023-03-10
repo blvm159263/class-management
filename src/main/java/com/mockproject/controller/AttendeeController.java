@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AttendeeController {
     private final IAttendeeService attendeeService;
 
-    @GetMapping("attendee/{code}")
-    public AttendeeDTO getAttendeeNameByClassCode(@PathVariable("code") String code) {
+    @GetMapping("ClassAttendee/{classCode}")
+    public AttendeeDTO getAttendeeNameByClassCode(@PathVariable("classCode") String code) {
         return attendeeService.getAttendeeByClassCode(code);
     }
 }

@@ -1,6 +1,5 @@
 package com.mockproject.controller;
 
-import com.mockproject.dto.TrainingClassAdminDTO;
 import com.mockproject.dto.UserDTO;
 import com.mockproject.service.interfaces.ITrainingClassAdminService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +16,8 @@ import java.util.List;
 public class TrainingClassAdminController {
 
     private final ITrainingClassAdminService trainingClassAdminService;
-    @GetMapping("admin/{code}")
-    public List<UserDTO> getAdminByClassCode(@PathVariable("code") String code) {
+    @GetMapping("adminTrainingClass/{classCode}")
+    public List<UserDTO> getAdminByClassCode(@PathVariable("classCode") String code) {
         return trainingClassAdminService.getAdminByClassCode(code);
     }
 }

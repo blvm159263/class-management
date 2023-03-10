@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FsuController {
     private final IFsuService fsuService;
 
-    @GetMapping("{classCode}")
+    @GetMapping("trainingClass/{classCode}")
     public FsuDTO getFsuByClassCode(@PathVariable("classCode") String code) {
         return fsuService.getFsuByClassCode(code);
     }

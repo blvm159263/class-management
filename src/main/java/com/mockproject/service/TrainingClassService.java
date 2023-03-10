@@ -1,12 +1,8 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.AttendeeDTO;
-import com.mockproject.dto.ClassScheduleDTO;
-import com.mockproject.dto.TrainingClassAdminDTO;
+import com.mockproject.dto.*;
 import com.mockproject.entity.TrainingClass;
-import com.mockproject.mapper.AttendeeMapper;
-import com.mockproject.mapper.ClassScheduleMapper;
-import com.mockproject.mapper.TrainingClassAdminMapper;
+import com.mockproject.mapper.*;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import jakarta.transaction.Transactional;
@@ -23,7 +19,9 @@ public class TrainingClassService implements ITrainingClassService{
     private final TrainingClassRepository repository;
 
 
-
-
-
+    @Override
+    public TrainingClassDTO getTrainingClassByClassCode(String code) {
+        TrainingClass trainingClass = repository.findByClassCode(code).get(0);
+        return TrainingClassMapper.INSTANCE.toDTO(trainingClass);
+    }
 }
