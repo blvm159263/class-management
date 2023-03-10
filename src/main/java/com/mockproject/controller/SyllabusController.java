@@ -1,6 +1,7 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.SyllabusDTO;
+import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.User;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,7 +46,8 @@ public class SyllabusController {
 
     @PostMapping(value = "/create")
     public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus){
-        long syllabusID = syllabusService.create(syllabus);
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        long syllabusID = syllabusService.create(syllabus, user.getUser().getId());
         return ResponseEntity.ok(syllabusID);
     }
 

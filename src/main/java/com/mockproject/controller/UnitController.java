@@ -2,11 +2,13 @@ package com.mockproject.controller;
 
 import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
+import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Unit;
 import com.mockproject.service.UnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +28,8 @@ public class UnitController {
 
     @PostMapping("/create/{id}")
     public ResponseEntity<Boolean> createUnit(@PathVariable("id") long sessionId,@RequestBody List<UnitDTO> listUnit){
-        return ResponseEntity.ok(unitService.createUnit(sessionId, listUnit));
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(unitService.createUnit(sessionId, listUnit, user.getUser().getId()));
     }
 
     @PutMapping("/edit/{sessionId}/{id}")

@@ -44,13 +44,15 @@ public class UnitService implements IUnitService {
         return listUnit.get();
     }
 
-    public boolean createUnit(long sessionId, List<UnitDTO> listUnit){
+    public boolean createUnit(long sessionId, List<UnitDTO> listUnit, long userId){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         listUnit.forEach((i) ->
         {
             i.setSessionId(sessionId);
-            unitRepository.save(UnitMapper.INSTANCE.toEntity(i));
+            Unit unit = unitRepository.save(UnitMapper.INSTANCE.toEntity(i));
+            System.out.println("Unit :"+ unit.getId());
+            unitDetailService.createUnitDetail(unit.getId(), i.getUnitDetailDTOList(), userId);
         });
         return true;
     }

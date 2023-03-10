@@ -1,12 +1,14 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.SessionDTO;
+import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.service.SessionService;
 import org.apache.el.parser.BooleanNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +26,8 @@ public class SessionController {
 
     @PostMapping("/create/{id}")
     public ResponseEntity<Boolean> createSessions(@PathVariable("id") long syllabusId, @RequestBody List<SessionDTO> listSession){
-        return ResponseEntity.ok(sessionService.createSession(syllabusId, listSession));
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(sessionService.createSession(syllabusId, listSession, user.getUser().getId()));
     }
 
     @PutMapping("/edit/{id}")

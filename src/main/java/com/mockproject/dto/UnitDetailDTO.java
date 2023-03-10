@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Builder
@@ -21,4 +22,5 @@ public class UnitDetailDTO implements Serializable {
     private long unitId;
     private long deliveryTypeId;
     private long outputStandardId;
+    private List<TrainingMaterialDTO> trainingMaterialDTOList;
 }

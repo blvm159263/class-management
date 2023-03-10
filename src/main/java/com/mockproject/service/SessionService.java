@@ -43,13 +43,15 @@ public class SessionService implements ISessionService {
         return listSession.get();
     }
 
-    public boolean createSession(long syllabusId, List<SessionDTO> listSession){
+    public boolean createSession(long syllabusId, List<SessionDTO> listSession, long userId){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true,true);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         listSession.forEach((i) ->
         {
             i.setSyllabusId(syllabusId);
-            sessionRepository.save(SessionMapper.INSTANCE.toEntity(i));
+            Session session = sessionRepository.save(SessionMapper.INSTANCE.toEntity(i));
+            System.out.println("Session :"+session.getId());
+            unitService.createUnit(session.getId(), i.getUnitDTOList(), userId);
         });
         return true;
     }

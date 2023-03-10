@@ -5,7 +5,6 @@ import com.mockproject.entity.TrainingMaterial;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.entity.User;
 import com.mockproject.mapper.TrainingMaterialMapper;
-import com.mockproject.mapper.TrainingMaterialMapperImpl;
 import com.mockproject.repository.TrainingMaterialRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
 import com.mockproject.service.interfaces.IUnitDetailService;
@@ -124,7 +123,7 @@ public class TrainingMaterialService{
             Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(trainingMaterialId, status);
             trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Training "+ trainingMaterialId));
             trainingMaterial.get().setStatus(false);
-            System.out.println("Training: "+ trainingMaterialId);
+
             trainingMaterialRepository.save(trainingMaterial.get());
         } catch (Exception e){
             e.printStackTrace();

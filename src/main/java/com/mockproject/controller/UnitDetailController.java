@@ -2,11 +2,13 @@ package com.mockproject.controller;
 
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
+import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Unit;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.service.UnitDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +28,8 @@ public class UnitDetailController {
 
     @PostMapping("/create/{id}")
     public ResponseEntity<Boolean> createUnitDetail(@PathVariable("id") long unitId, @RequestBody List<UnitDetailDTO> listUnitDetail){
-        return ResponseEntity.ok(unitDetailService.createUnitDetail(unitId,listUnitDetail));
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(unitDetailService.createUnitDetail(unitId,listUnitDetail, user.getUser().getId()));
     }
 
     @PutMapping("/edit/{id}")

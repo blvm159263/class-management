@@ -43,5 +43,5 @@ public class SyllabusDTO implements Serializable {
     private boolean status;
     private long creatorId;
     private long lastModifierId;
-    private List<SessionDTO> sessionDTOS;
+    private List<SessionDTO> sessionDTOList;
 }

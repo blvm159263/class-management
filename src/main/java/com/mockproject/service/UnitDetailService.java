@@ -40,13 +40,15 @@ public class UnitDetailService implements IUnitDetailService {
         return unitDetails.get();
     }
 
-    public boolean createUnitDetail(long unitId, List<UnitDetailDTO> listUnitDetail){
+    public boolean createUnitDetail(long unitId, List<UnitDetailDTO> listUnitDetail, long userId){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, true);
         unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         listUnitDetail.forEach((i) ->
         {
             i.setUnitId(unitId);
-            unitDetailRepository.save(UnitDetailMapper.INSTANCE.toEntity(i));
+            UnitDetail unitDetail = unitDetailRepository.save(UnitDetailMapper.INSTANCE.toEntity(i));
+            System.out.println("Unit detail :"+ unitDetail.getId());
+//            trainingMaterialService.uploadFile(unitDetail.getListMaterials(),unitDetail.getId(), userId);
         });
         return true;
     }
