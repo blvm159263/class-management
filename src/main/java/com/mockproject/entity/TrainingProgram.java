@@ -29,11 +29,6 @@ public class TrainingProgram implements Serializable {
     )
     private long id;
 
-    @Column(
-            name = "program_id"
-    )
-    private int programId;
-
     @Lob
     @Nationalized
     @Column(

@@ -6,4 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PermissionScopeRepository extends JpaRepository<PermissionScope, Long> {
+
+    PermissionScope getPermissionScopeByScopeName(String name);
+
+    PermissionScope getPermissionScopeById(long id);
+
 }
