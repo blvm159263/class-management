@@ -22,7 +22,7 @@ public class ClassScheduleController {
         return classScheduleService.getTrainingClassByDay(date);
     }
 
-    @PostMapping("/week")
+    @GetMapping("/week")
     public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO){
         log.info(filterRequestDTO.toString());
         return classScheduleService.getTrainingClassByWeek(filterRequestDTO);
