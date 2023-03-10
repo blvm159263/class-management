@@ -56,7 +56,7 @@ public class TrainingMaterialController {
             @RequestParam(name = "file") MultipartFile file,
             @RequestParam(name = "unit_detail_id") long unitDetailId,
             @RequestParam(name = "user_id") long userId) throws IOException {
-        return ResponseEntity.ok(trainingMaterialService.updateFile(id, file, unitDetailId, userId));
+        return ResponseEntity.ok(trainingMaterialService.updateFile(id, file, unitDetailId, userId, true));
     }
 
     @PutMapping("/delete/{id}")
@@ -64,7 +64,7 @@ public class TrainingMaterialController {
         return ResponseEntity.ok(trainingMaterialService.deleteTrainingMaterial(trainingMaterialId, true));
     }
 
-    @PutMapping("/delete-files/{id}")
+    @PutMapping("/multi-delete/{id}")
     public ResponseEntity<Boolean> deleteFiles(@PathVariable("id") long unitDetailId){
         return ResponseEntity.ok(trainingMaterialService.deleteTrainingMaterials(unitDetailId, true));
     }

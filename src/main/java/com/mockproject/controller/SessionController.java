@@ -27,9 +27,19 @@ public class SessionController {
         return ResponseEntity.ok(sessionService.createSession(syllabusId, listSession));
     }
 
-    @PutMapping("/edit/{syllabusId}/{id}")
-    public ResponseEntity<Session> editSession(@PathVariable("id") long id, @PathVariable("syllabusId") long syllabusId,@RequestBody SessionDTO sessionDTO){
-        Session updateSession = sessionService.editSession(id, syllabusId, sessionDTO);
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<Session> editSession(@PathVariable("id") long id,@RequestBody SessionDTO sessionDTO){
+        Session updateSession = sessionService.editSession(id, sessionDTO, true);
         return ResponseEntity.ok(updateSession);
+    }
+
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<Boolean> deleteSession(@PathVariable("id") long sessionId){
+        return ResponseEntity.ok(sessionService.deleteSession(sessionId, true));
+    }
+
+    @PutMapping("/multi-delete/{id}")
+    public ResponseEntity<Boolean> deleteSessions(@PathVariable("id") long syllabusId){
+        return ResponseEntity.ok(sessionService.deleteSessions(syllabusId, true));
     }
 }

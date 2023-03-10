@@ -23,16 +23,23 @@ public class SyllabusController {
     @Autowired
     public SyllabusService syllabusService;
 
-    @GetMapping
+    // list syllabus for user
+    @GetMapping()
     public ResponseEntity<List<Syllabus>> getAll(){
-        List<Syllabus> listSyllabus = syllabusService.getAll();
+        List<Syllabus> listSyllabus = syllabusService.getAll(true, true);
         return ResponseEntity.ok(listSyllabus);
     }
 
+    // list syllabus for admin
     @GetMapping("/{id}")
-    public ResponseEntity<Syllabus> getSyllabus(@PathVariable("id") long id){
-        Syllabus syllabus = syllabusService.getSyllabus(id);
+    public ResponseEntity<Syllabus> getSyllabus(@PathVariable("id") long syllabusId){
+        Syllabus syllabus = syllabusService.getSyllabusById(syllabusId, true, true);
         return ResponseEntity.ok(syllabus);
+    }
+
+    @GetMapping("get-all")
+    public ResponseEntity<List<Syllabus>> getAllSyllabus(){
+        return ResponseEntity.ok(syllabusService.getSyllabusList(true));
     }
 
     @PostMapping(value = "/create")
@@ -43,7 +50,12 @@ public class SyllabusController {
 
     @PutMapping("edit/{id}")
     public ResponseEntity<Syllabus> editSyllabus(@PathVariable("id") long id, @RequestBody SyllabusDTO syllabusDTO){
-        Syllabus editsyllabus = syllabusService.editSyllabus(id, syllabusDTO);
+        Syllabus editsyllabus = syllabusService.editSyllabus(id, syllabusDTO, true);
         return ResponseEntity.ok(editsyllabus);
+    }
+
+    @PutMapping("delete/{id}")
+    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id") long syllabusId){
+        return ResponseEntity.ok(syllabusService.deleteSyllabus(syllabusId, true));
     }
 }

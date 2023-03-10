@@ -7,6 +7,7 @@ import com.mockproject.entity.Syllabus;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.service.interfaces.ISyllabusService;
+import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,24 +21,29 @@ import java.util.Optional;
 @Service
 @Transactional
 @AllArgsConstructor
-public class SyllabusService implements ISyllabusService {
+public class SyllabusService {
 
     private final SyllabusRepository syllabusRepository;
     private final SessionService sessionService;
 
-    @Override
-    public List<Syllabus> getAll(){
-        return syllabusRepository.findByStateAndStatus(true, true);
+    // List syllabus for user
+    public List<Syllabus> getAll(boolean state, boolean status){
+        Optional<List<Syllabus>> syllabusList = syllabusRepository.findByStateAndStatus(state, status);
+        ListUtils.checkList(syllabusList);
+        return syllabusList.get();
     }
 
-    @Override
-    public Syllabus getSyllabus(long id){
-        Syllabus syllabus = syllabusRepository.findByIdAndStateAndStatus(id, true, true);
-        if (syllabus != null){
-            List<Session> listSession = sessionService.getAllSessionBySyllabusId(id,true);
-            syllabus.setListSessions(listSession);
-            return syllabus;
-        } else throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+    // List syllabus for admin
+    public List<Syllabus> getSyllabusList(boolean status){
+        Optional<List<Syllabus>> syllabusList = syllabusRepository.findAllByStatus(status);
+        ListUtils.checkList(syllabusList);
+        return syllabusList.get();
+    }
+
+    public Syllabus getSyllabusById(long syllabusId,boolean state, boolean status){
+        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, state, status);
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        return syllabus.get();
     }
 
     public long create(SyllabusDTO syllabus){
@@ -45,11 +51,21 @@ public class SyllabusService implements ISyllabusService {
         return newSyllabus.getId();
     }
 
-    public Syllabus editSyllabus(long id, SyllabusDTO syllabusDTO){
-        Optional<Syllabus> syllabus = Optional.ofNullable(syllabusRepository.findByIdAndStatus(id, true));
-        syllabus.orElseThrow(() -> new RuntimeException("Syllabus doesn't exist or has been deleted."));
+    public Syllabus editSyllabus(long id, SyllabusDTO syllabusDTO, boolean status){
+        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(id, status);
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         syllabusDTO.setId(id);
         Syllabus updateSyllabus = syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabusDTO));
         return updateSyllabus;
+    }
+
+    public boolean deleteSyllabus(long syllabusId, boolean status){
+        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusId, status);
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.get().setStatus(false);
+        System.out.println("Syllabus: "+syllabusId);
+        sessionService.deleteSessions(syllabusId, status);
+        syllabusRepository.save(syllabus.get());
+        return true;
     }
 }

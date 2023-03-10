@@ -6,6 +6,5 @@ import com.mockproject.entity.Syllabus;
 import java.util.List;
 
 public interface ISyllabusService {
-    List<Syllabus> getAll();
-    Syllabus getSyllabus(long id);
+
 }

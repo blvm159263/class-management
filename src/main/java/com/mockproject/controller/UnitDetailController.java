@@ -29,9 +29,24 @@ public class UnitDetailController {
         return ResponseEntity.ok(unitDetailService.createUnitDetail(unitId,listUnitDetail));
     }
 
-    @PutMapping("/edit/{unitId}/{id}")
-    public ResponseEntity<UnitDetail> editUnitDetail(@PathVariable("id") long id, @PathVariable("unitId") long unitId, @RequestBody UnitDetailDTO unitDetailDTO){
-        UnitDetail updateUnitDetail = unitDetailService.editUnitDetail(id, unitId, unitDetailDTO);
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<UnitDetail> editUnitDetail(@PathVariable("id") long id, @RequestBody UnitDetailDTO unitDetailDTO){
+        UnitDetail updateUnitDetail = unitDetailService.editUnitDetail(id, unitDetailDTO, true);
         return ResponseEntity.ok(updateUnitDetail);
+    }
+
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<Boolean> deleteUnitDetail(@PathVariable("id") long unitDetailId){
+        return ResponseEntity.ok(unitDetailService.deleteUnitDetail(unitDetailId, true));
+    }
+
+    @PutMapping("/multi-delete/{id}")
+    public ResponseEntity<Boolean> deleteUnitDetails(@PathVariable("id") long unitId){
+        return ResponseEntity.ok(unitDetailService.deleteUnitDetails(unitId, true));
+    }
+
+    @PutMapping("/toggle/{id}")
+    public ResponseEntity<Boolean> toggleUnitDetailType(@PathVariable("id") long unitDetailId){
+        return ResponseEntity.ok(unitDetailService.toggleUnitDetailType(unitDetailId, true));
     }
 }

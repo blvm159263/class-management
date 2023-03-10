@@ -31,7 +31,17 @@ public class UnitController {
 
     @PutMapping("/edit/{sessionId}/{id}")
     public ResponseEntity<Unit> editUnit(@PathVariable("id") long id, @PathVariable("sessionId") long sessionId, @RequestBody UnitDTO unitDTO){
-        Unit updateUnit = unitService.editUnit(id, sessionId, unitDTO);
+        Unit updateUnit = unitService.editUnit(id, unitDTO, true);
         return ResponseEntity.ok(updateUnit);
+    }
+
+    @PutMapping("delete/{id}")
+    public ResponseEntity<Boolean> deleteUnit(@PathVariable("id") long unitId){
+        return ResponseEntity.ok(unitService.deleteUnit(unitId, true));
+    }
+
+    @PutMapping("multi-delete/{id}")
+    public ResponseEntity<Boolean> deleteUnits(@PathVariable("id") long sessionId){
+        return ResponseEntity.ok(unitService.deleteUnits(sessionId, true));
     }
 }
