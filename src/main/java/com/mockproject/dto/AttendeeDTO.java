@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AttendeeDTO implements Serializable {
-    private long id;
+    private Long id;
     private String attendeeName;
     private String description;
     private boolean status;

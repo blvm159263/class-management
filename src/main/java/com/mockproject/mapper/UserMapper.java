@@ -24,21 +24,21 @@ public interface UserMapper {
     User toEntity(UserDTO dto);
 
     @Named("mapRole")
-    default Role mapRole(long id) {
+    default Role mapRole(Long id) {
         Role role = new Role();
         role.setId(id);
         return role;
     }
 
     @Named("mapLevel")
-    default Level mapLevel(long id) {
+    default Level mapLevel(Long id) {
         Level level = new Level();
         level.setId(id);
         return level;
     }
 
     @Named("mapAttendee")
-    default Attendee mapAttendee(long id) {
+    default Attendee mapAttendee(Long id) {
         Attendee attendee = new Attendee();
         attendee.setId(id);
         return attendee;
