@@ -20,10 +20,11 @@ public class TrainingClassTest {
 
 	@Test
 	public void findProgramDetail() {
-		System.out.println("Detail: "+ classService.findClassDetail(tmp));
-		System.out.println("Program Detail: "+ classService.findProgramDetail(tmp));
-		System.out.println("Attendee Detail: "+ classService.findAttendee(tmp));
-		System.out.println("User Detail: "+ classService.findUser(tmp));
-		System.out.println("Class Schedule Detail: "+ classService.findClassShedule(tmp));
+//		System.out.println("Detail: "+ classService.findClassDetail(tmp));
+//		System.out.println("Program Detail: "+ classService.findProgramDetail(tmp));
+//		System.out.println("Attendee Detail: "+ classService.findAttendee(tmp));
+//		System.out.println("User Detail: "+ classService.findUser(tmp));
+//		System.out.println("Class Schedule Detail: "+ classService.findClassShedule(tmp));
+		System.out.println("Trainer Detail: "+ classService.findTrainer(tmp));
 	}
 }

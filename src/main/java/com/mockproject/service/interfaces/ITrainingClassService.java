@@ -16,4 +16,5 @@ public interface ITrainingClassService {
 	public List<AttendeeDTO> findAttendee(Long id);
 	public List<UserDTO> findUser(Long id);
 	public List<ClassScheduleDTO> findClassShedule(Long id);
+	public List<UserDTO> findTrainer(Long id);
 }

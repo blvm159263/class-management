@@ -10,6 +10,7 @@ import com.mockproject.dto.AttendeeDTO;
 import com.mockproject.dto.ClassScheduleDTO;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TrainingClassDTO;
+import com.mockproject.dto.TrainingClassUnitInformationDTO;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.dto.UserDTO;
@@ -17,6 +18,7 @@ import com.mockproject.mapper.AttendeeMapper;
 import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.mapper.TrainingClassMapper;
+import com.mockproject.mapper.TrainingClassUnitInformationMapper;
 import com.mockproject.mapper.TrainingProgramMapper;
 import com.mockproject.mapper.TrainingProgramSyllabusMapper;
 import com.mockproject.mapper.UserMapper;
@@ -24,6 +26,7 @@ import com.mockproject.repository.AttendeeRepository;
 import com.mockproject.repository.ClassScheduleRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.TrainingClassRepository;
+import com.mockproject.repository.TrainingClassUnitInformationRepository;
 import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.repository.UserRepository;
@@ -44,6 +47,7 @@ public class TrainingClassService implements ITrainingClassService{
     private final AttendeeRepository attendeeRepository;
     private final UserRepository userRepository;
     private final ClassScheduleRepository classScheduleRepository;
+    private final TrainingClassUnitInformationRepository classUnitRepository;
 
 	@Override
 	public List<TrainingClassDTO> findClassDetail(Long id) {
@@ -155,5 +159,38 @@ public class TrainingClassService implements ITrainingClassService{
 			System.out.println("Empty");
 		}
 		return classSchedule;
+	}
+	
+	@Override
+	public List<UserDTO> findTrainer(Long id) {
+		List<UserDTO> trainer = new ArrayList<>();
+		List<TrainingClassUnitInformationDTO> getClassUnit = classUnitRepository.findAll().stream().map(TrainingClassUnitInformationMapper.INSTANCE::toDTO).collect(Collectors.toList());
+		getClassUnit.forEach((trainClass) -> {
+			if (trainClass.getTrainingClassId() == id) {
+				if (trainClass.isStatus()) {
+					long trainerID = trainClass.getTrainerId();
+					List<UserDTO> userDetail = userRepository.findById(trainerID).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
+					if (userDetail.get(0).getId() == trainerID) {
+						if (userDetail.get(0).isStatus()) {
+							if (trainer.isEmpty()) {
+								trainer.add(userDetail.get(0));
+							}
+							else {
+								List<UserDTO> tmpList = new ArrayList<>(trainer);
+								tmpList.forEach((userId) -> {
+									if (userId.getId() != trainerID) {
+										trainer.add(userDetail.get(0));
+									}
+								});
+							}
+						}
+					}
+				}
+			}
+        });
+		if (trainer.isEmpty()) {
+			System.out.println("Empty");
+		}
+		return trainer;
 	}
 }
