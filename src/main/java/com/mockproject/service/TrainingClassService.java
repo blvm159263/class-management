@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,15 +42,19 @@ public class TrainingClassService implements ITrainingClassService{
         }else{
             order.add(new Sort.Order(getSortDirection(sort[1]),sort[0]));
         }
+        List<Long> classId = new ArrayList<>();
+        if(trainerId!=0){
+            classId = classUnitRepo
+                    .findByStatusAndTrainerId( true, trainerId)
+                    .stream().map(t -> t.getTrainingClass().getId())
+                    .collect(Collectors.toList());
+            classId.add(-1L);
+        }else{
+            classId = new ArrayList<>();
+        }
         Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
         Page<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
-                isOnline, state, attendeeId, fsu, trainerId !=0 ?
-                        classUnitRepo
-                                .findByStatusAndTrainerId( true, trainerId)
-                                .stream().map(t -> t.getTrainingClass().getId())
-                                .collect(Collectors.toList()) :
-                        classRepo.findAllByStatus(true).stream().map(t -> t.getId())
-                                .collect(Collectors.toList()), search, pageable);
+                isOnline, state, attendeeId, fsu, classId, search, pageable);
         return new PageImpl<>(
                 pages.stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
                 pages.getPageable(),

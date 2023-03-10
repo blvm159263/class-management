@@ -22,7 +22,7 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "AND c.state LIKE '%' + ?7 + '%' " +
             "AND (:#{#attendeeId.size()} = 0 OR c.attendee.id IN ?8) " +
             "AND (?9 = 0 OR c.fsu.id = ?9) " +
-            "AND c.id IN ?10 " +
+            "AND (:#{#classId.size()} = 0 OR c.id IN ?10) " +
             "AND (c.className LIKE '%' + ?11 + '%' OR c.classCode LIKE '%' + ?11 + '%' " +
             "OR c.creator.fullName LIKE '%' + ?11 + '%')")
     Page<TrainingClass> getListClass(boolean status, List<Long> locationId, LocalDate fromDate, LocalDate toDate,
