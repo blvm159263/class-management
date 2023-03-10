@@ -15,20 +15,19 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
 
     @Query("SELECT c FROM TrainingClass c " +
             "WHERE c.status = ?1 " +
-            "AND c.location.id IN ?2 " +
-            "AND c.startDate BETWEEN ?3 AND ?4 " +
-            "AND c.period IN ?5 " +
+            "AND (:#{#locationId.size()} = 0 OR c.location.id IN ?2) " +
+            "AND (?3 IS NULL OR ?4 IS NULL OR c.startDate BETWEEN ?3 AND ?4) " +
+            "AND (:#{#period.size()} = 0 OR c.period IN ?5) " +
             "AND c.attendee.attendeeName LIKE '%' + ?6 + '%' " +
             "AND c.state LIKE '%' + ?7 + '%' " +
-            "AND c.attendee.id IN ?8 " +
-            "AND c.fsu.fsuName LIKE '%' + ?9 + '%' " +
+            "AND (:#{#attendeeId.size()} = 0 OR c.attendee.id IN ?8) " +
+            "AND (?9 = 0 OR c.fsu.id = ?9) " +
             "AND c.id IN ?10 " +
             "AND (c.className LIKE '%' + ?11 + '%' OR c.classCode LIKE '%' + ?11 + '%' " +
             "OR c.creator.fullName LIKE '%' + ?11 + '%')")
-    Page<TrainingClass> getListClass(boolean status,
-                                     List<Long> locationId, LocalDate fromDate, LocalDate toDate,
+    Page<TrainingClass> getListClass(boolean status, List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                      List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                     String fsu, List<Long> classId, String search, Pageable page);
+                                     long fsu, List<Long> classId, String search, Pageable page);
 
     List<TrainingClass> findAllByStatus(boolean status);
 }

@@ -30,7 +30,7 @@ public class TrainingClassService implements ITrainingClassService{
     public Page<TrainingClassDTO> getListClass(boolean status,
                                                List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                                List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                               String fsu, long trainerId, String search, String[] sort, Optional<Integer> page)
+                                               long fsu, long trainerId, String search, String[] sort, Optional<Integer> page)
     {
         List<Sort.Order> order = new ArrayList<>();
         if(sort[0].contains(",")){
@@ -43,11 +43,13 @@ public class TrainingClassService implements ITrainingClassService{
         }
         Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
         Page<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
-                isOnline, state, attendeeId, fsu, trainerId!=0 ? classUnitRepo
-                        .findByStatusAndAndTrainerId( true, trainerId)
-                        .stream().map(t -> t.getTrainingClass().getId())
-                        .collect(Collectors.toList()) :
-                        classRepo.findAllByStatus(true).stream().map(c -> c.getId()).collect(Collectors.toList()), search, pageable);
+                isOnline, state, attendeeId, fsu, trainerId !=0 ?
+                        classUnitRepo
+                                .findByStatusAndTrainerId( true, trainerId)
+                                .stream().map(t -> t.getTrainingClass().getId())
+                                .collect(Collectors.toList()) :
+                        classRepo.findAllByStatus(true).stream().map(t -> t.getId())
+                                .collect(Collectors.toList()), search, pageable);
         return new PageImpl<>(
                 pages.stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
                 pages.getPageable(),
