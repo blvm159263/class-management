@@ -5,5 +5,5 @@ import com.mockproject.dto.TowerDTO;
 import java.util.List;
 
 public interface ITowerService {
-    List<TowerDTO> getTowerByClassCode(String code, boolean status);
+    List<TowerDTO> getTowerByClassCode(String code);
 }

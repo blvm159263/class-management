@@ -17,7 +17,7 @@ public class DeliveryTypeController {
     private final IDeliveryTypeService deliveryTypeService;
 
     @GetMapping("trainingProgram/{classCode}")
-    public List<DeliveryTypeDTO> getDeliveryTypeByClassCode(@PathVariable("classCode") String code, boolean status) {
-        return deliveryTypeService.getListDeliveryTpeByCLassCode(code, status);
+    public List<DeliveryTypeDTO> getDeliveryTypeByClassCode(@PathVariable("classCode") String code) {
+        return deliveryTypeService.getListDeliveryTpeByCLassCode(code);
     }
 }

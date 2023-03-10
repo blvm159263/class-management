@@ -5,5 +5,5 @@ import com.mockproject.dto.UserDTO;
 import java.util.List;
 
 public interface IUserService {
-    List<UserDTO> getTrainerByClassCode(String code, boolean status);
+    List<UserDTO> getTrainerByClassCode(String code);
 }

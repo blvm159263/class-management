@@ -15,7 +15,7 @@ public class TraningProgramController {
     private final ITrainingProgramService trainingProgramService;
 
     @GetMapping("trainingClass/{classCode}")
-    public TrainingProgramDTO getTraningProgramByClassCode(@PathVariable("classCode") String code, boolean status) {
-        return trainingProgramService.getTraningProgramByClassCode(code, status);
+    public TrainingProgramDTO getTraningProgramByClassCode(@PathVariable("classCode") String code) {
+        return trainingProgramService.getTraningProgramByClassCode(code);
     }
 }

@@ -23,12 +23,24 @@ public class DeliveryTypeService implements IDeliveryTypeService {
     private final TrainingClassRepository trainingClassRepository;
 
     @Override
-    public List<DeliveryTypeDTO> getListDeliveryTpeByCLassCode(String code, boolean status) {
-        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, status).get(0);
-        List<TrainingClassUnitInformation> trainingClassUnitInformations = trainingClass.getListTrainingClassUnitInformations();
+    public List<DeliveryTypeDTO> getListDeliveryTpeByCLassCode(String code) {
+        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
+        List<TrainingClassUnitInformation> trainingClassUnitInformations = trainingClass
+                .getListTrainingClassUnitInformations()
+                .stream()
+                .filter(TrainingClassUnitInformation::isStatus)
+                .toList();
         Unit unit = trainingClassUnitInformations.get(0).getUnit();
-        List<UnitDetail> unitDetails = unit.getListUnitDetail();
-        List<DeliveryType> deliveryType = unitDetails.stream().map(UnitDetail::getDeliveryType).distinct().toList();
+        List<UnitDetail> unitDetails = unit.getListUnitDetail()
+                .stream()
+                .filter(UnitDetail::isStatus)
+                .toList();
+        List<DeliveryType> deliveryType = unitDetails
+                .stream()
+                .map(UnitDetail::getDeliveryType)
+                .filter(DeliveryType::isStatus)
+                .distinct()
+                .toList();
         return deliveryType.stream().map(DeliveryTypeMapper.INSTANCE::toDTO).toList();
     }
 }

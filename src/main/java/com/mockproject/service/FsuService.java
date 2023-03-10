@@ -21,8 +21,11 @@ public class FsuService implements IFsuService {
     private final TrainingClassRepository trainingClassRepository;
 
     @Override
-    public FsuDTO getFsuByClassCode(String code, boolean status) {
-        TrainingClass tc =trainingClassRepository.findByClassCodeAndStatus(code, status).get(0);
-        return FsuMapper.INSTANCE.toDTO(tc.getFsu());
+    public FsuDTO getFsuByClassCode(String code) {
+        TrainingClass tc =trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
+        if(tc.getFsu().isStatus()) {
+            return FsuMapper.INSTANCE.toDTO(tc.getFsu());
+        }
+        return null;
     }
 }

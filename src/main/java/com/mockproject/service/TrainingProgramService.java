@@ -20,9 +20,12 @@ public class TrainingProgramService implements ITrainingProgramService{
     private final TrainingClassRepository trainingClassRepository;
 
     @Override
-    public TrainingProgramDTO getTraningProgramByClassCode(String code, boolean status) {
-        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, status).get(0);
-        return TrainingProgramMapper.INSTANCE.toDTO(trainingClass.getTrainingProgram());
+    public TrainingProgramDTO getTraningProgramByClassCode(String code) {
+        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
+        if(trainingClass.getTrainingProgram().isStatus()) {
+            return TrainingProgramMapper.INSTANCE.toDTO(trainingClass.getTrainingProgram());
+        }
+        return null;
     }
 
 }
