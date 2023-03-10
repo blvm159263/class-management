@@ -12,9 +12,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TowerDTO implements Serializable {
-    private long id;
+    private Long id;
     private String towerName;
     private String address;
     private boolean status;
-    private long locationId;
+    private Long locationId;
 }

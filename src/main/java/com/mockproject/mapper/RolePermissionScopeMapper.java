@@ -28,19 +28,19 @@ public interface RolePermissionScopeMapper {
     RolePermissionScope toEntity(RolePermissionScopeDTO permissionScope);
 
     @Named("mapPermission")
-    default Permission mapPermission(long id){
+    default Permission mapPermission(Long id){
         Permission permission = new Permission();
         permission.setId(id);
         return permission;
     }
     @Named("mapPermissionScope")
-    default PermissionScope mapPermissionScope(long id){
+    default PermissionScope mapPermissionScope(Long id){
         PermissionScope permissionScope = new PermissionScope();
         permissionScope.setId(id);
         return permissionScope;
     }
     @Named("mapRole")
-    default Role mapRole(long id){
+    default Role mapRole(Long id){
         Role role = new Role();
         role.setId(id);
         return role;

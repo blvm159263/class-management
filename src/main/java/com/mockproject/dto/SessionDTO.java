@@ -12,8 +12,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SessionDTO implements Serializable {
-    private long id;
+    private Long id;
     private int sessionNumber;
     private boolean status;
-    private long syllabusId;
+    private Long syllabusId;
 }
