@@ -18,21 +18,21 @@ public class ClassScheduleController {
     @Autowired
     IClassScheduleService classScheduleService;
 
-    @GetMapping("/day")
+    @PostMapping("/day")
     public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO){
         return classScheduleService.getTrainingClassByDay(filterRequestDTO);
     }
 
-    @GetMapping("/week")
+    @PostMapping("/week")
     public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO){
         log.info(filterRequestDTO.toString());
         return classScheduleService.getTrainingClassByWeek(filterRequestDTO);
     }
-    @GetMapping("/search/day")
+    @PostMapping("/search/day")
     public List<TrainingClassFilterResponseDTO> searchTrainingClassInDay(@RequestBody SearchByDTO searchByDTO){
         return classScheduleService.searchTrainingClassInDate(searchByDTO.getSearchText(),searchByDTO.getNowDate());
     }
-    @GetMapping("/search/week")
+    @PostMapping("/search/week")
     public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(@RequestBody SearchByDTO searchByDTO){
         return classScheduleService.searchTrainingClassInWeek(searchByDTO.getSearchText(),searchByDTO.getStartDate(),searchByDTO.getEndDate());
     }
