@@ -13,6 +13,7 @@ public class TrainingClassFilterRequestDTO {
     List<String> locations;
     LocalDate startDate;
     LocalDate endDate;
+    LocalDate nowDate;
     List<TimeRangeDTO> TimeRanges;
     List<String> statuses;
     List<String> attendees;

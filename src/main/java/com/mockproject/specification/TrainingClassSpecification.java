@@ -16,12 +16,23 @@ public class TrainingClassSpecification {
 
     public static Specification<TrainingClass> hasLocationIn(List<String> locations) {
         return (root, query, builder) -> root.get("location").get("locationName").in(locations);
+
+
     }
 
     public static Specification<TrainingClass> hasClassScheduleBetween(LocalDate startDate, LocalDate endDate) {
         return (root, query, builder) -> {
+
             Join<TrainingClass, ClassSchedule> classSchedule = root.join("listClassSchedules");
             return builder.between(classSchedule.get("date"), startDate, endDate);
+        };
+    }
+
+    public static Specification<TrainingClass> hasClassSchedule(LocalDate date) {
+        return (root, query, builder) -> {
+
+            Join<TrainingClass, ClassSchedule> classSchedule = root.join("listClassSchedules");
+            return builder.equal(classSchedule.get("date"), date);
         };
     }
 
@@ -31,7 +42,9 @@ public class TrainingClassSpecification {
         for (TimeRangeDTO timeRange : timeRangeList) {
             if (trainingClassSpecification == null) {
                 trainingClassSpecification = (root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("startTime"), timeRange.getFrom(), timeRange.getTo());
+
             } else {
+
                 trainingClassSpecification = trainingClassSpecification.or(trainingClassSpecification = (root, query, criteriaBuilder) ->
                         criteriaBuilder.between(root.get("startTime"), timeRange.getFrom(), timeRange.getTo()));
             }
@@ -57,10 +70,21 @@ public class TrainingClassSpecification {
                 .get("fullName"), trainer);
     }
 
-    public static Specification<TrainingClass> findByFilter(TrainingClassFilterRequestDTO filter) {
+    public static Specification<TrainingClass> findByFilterWeek(TrainingClassFilterRequestDTO filter) {
 
 
         Specification<TrainingClass> spec = Specification.where(hasClassScheduleBetween(filter.getStartDate(), filter.getEndDate()));
+        return getTrainingClassSpecification(filter, spec);
+    }
+
+    public static Specification<TrainingClass> findByFilterDate(TrainingClassFilterRequestDTO filter) {
+
+
+        Specification<TrainingClass> spec = Specification.where(hasClassSchedule(filter.getNowDate()));
+        return getTrainingClassSpecification(filter, spec);
+    }
+
+    private static Specification<TrainingClass> getTrainingClassSpecification(TrainingClassFilterRequestDTO filter, Specification<TrainingClass> spec) {
         if (filter.getLocations() != null && !filter.getLocations().isEmpty()) {
             spec = spec.and(hasLocationIn(filter.getLocations()));
         }
@@ -81,10 +105,5 @@ public class TrainingClassSpecification {
             spec = spec.and(hasTrainer(filter.getTrainer()));
         }
         return spec;
-    }
-
-    public static Specification<TrainingClass> searchByAll(String search) {
-        return ((root, query, criteriaBuilder) ->
-                criteriaBuilder.like(root.get("classCode"),"%" + search + "%"));
     }
 }

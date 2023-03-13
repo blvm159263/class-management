@@ -1,21 +1,21 @@
 package com.mockproject.service;
 
-import com.mockproject.specification.TrainingClassSpecification;
-import com.mockproject.dto.*;
+import com.mockproject.dto.ClassScheduleDTO;
+import com.mockproject.dto.TrainingClassFilterRequestDTO;
+import com.mockproject.dto.TrainingClassFilterResponseDTO;
+import com.mockproject.dto.UnitResponseDTO;
 import com.mockproject.entity.ClassSchedule;
+import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.mapper.TrainingClassFilterMap;
 import com.mockproject.repository.ClassScheduleRepository;
-import com.mockproject.repository.TrainingClassAdminRepository;
-import com.mockproject.repository.TrainingClassRepository;
-import com.mockproject.repository.TrainingClassUnitInformationRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
+import com.mockproject.specification.TrainingClassSpecification;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,10 +30,10 @@ import java.util.stream.Collectors;
 public class ClassScheduleService implements IClassScheduleService {
 
     private final ClassScheduleRepository repository;
-    private final TrainingClassRepository trainingClassRepository;
-    private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
+    private final TrainingClassService trainingClassService;
+
+    private final TrainingClassUnitInformationService trainingClassUnitInformationService;
     private TrainingClassFilterMap trainingClassFilterMap;
-    private TrainingClassAdminRepository trainingClassAdminRepository;
 
     @Override
     public List<ClassScheduleDTO> listAll() {
@@ -57,14 +57,15 @@ public class ClassScheduleService implements IClassScheduleService {
 
 
     @Override
-    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(LocalDate date) {
-        return trainingClassRepository.findAllByListClassSchedulesDate(date)
-                .stream().map(trainingClass -> getTrainingClassDetail(trainingClass, date)).collect(Collectors.toList());
+    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(TrainingClassFilterRequestDTO filterRequestDTO) {
+        return trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterDate(filterRequestDTO))
+                .stream().distinct().map(trainingClass -> getTrainingClassDetail(trainingClass, filterRequestDTO.getNowDate())).collect(Collectors.toList());
     }
 
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(TrainingClassFilterRequestDTO filterRequestDTO) {
-        var trainingClassFiltered = trainingClassRepository.findAll(TrainingClassSpecification.findByFilter(filterRequestDTO));
+
+        var trainingClassFiltered = trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterWeek(filterRequestDTO));
         List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
         trainingClassFiltered.stream().distinct().forEach(trainingClass -> {
             trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
@@ -76,46 +77,61 @@ public class ClassScheduleService implements IClassScheduleService {
     }
 
     @Override
-    public TrainingClassFilterResponseDTO getTrainingClassDetail(TrainingClass trainingClass, LocalDate date) {
-        var learnedDay = repository.countAllByDateBeforeAndTrainingClassId(date, trainingClass.getId()) + 1;
-
-        var durationDay = String.valueOf(learnedDay).concat("/" + trainingClass.getDay());
-        var syllabusesList = trainingClass.getTrainingProgram().getListTrainingProgramSyllabuses()
-                .stream().map(TrainingProgramSyllabus::getSyllabus).collect(Collectors.toList());
-        var trainingClassAdmin = trainingClassAdminRepository.findAllByTrainingClassId(trainingClass.getId());
-        List<UnitResponseDTO> unit = new ArrayList<>();
-        //check syllabus to get unit
-        for (int i = 0; i < syllabusesList.size(); i++) {
-            if (learnedDay > syllabusesList.get(i).getDay()) {
-                learnedDay -= syllabusesList.get(i).getDay();
-            } else {
-                Long finalLearnedDay = learnedDay;
-                log.info(syllabusesList.get(i).getCode());
-                unit = syllabusesList.get(i).getListSessions()
-                        .stream().filter(session -> session.getSessionNumber() == finalLearnedDay)
-                        .flatMap(session -> session.getListUnit().stream())
-                        .map(Unit -> {
-                            UnitResponseDTO unitDTO = new UnitResponseDTO();
-                            unitDTO.setUnitTitle(Unit.getUnitTitle());
-                            unitDTO.setUnitNumber(Unit.getUnitNumber());
-                            return unitDTO;
-                        }).collect(Collectors.toList());
-            }
-        }
-
-        var trainerName = trainingClassUnitInformationRepository.findAllByTrainingClassId(trainingClass.getId())
-                .stream().map(trainingClassUnitInformation -> trainingClassUnitInformation.getTrainer().getFullName()).collect(Collectors.toList());
-        return trainingClassFilterMap.toTrainingClassFilterResponseDTO(trainingClass,
-                trainerName,
-                durationDay,
-                date, unit);
+    public List<TrainingClassFilterResponseDTO> searchTrainingClassInDate(List<String> textSearch, LocalDate date) {
+        return trainingClassService.findAllBySearchTextAndDate(textSearch, date)
+                .stream().map(trainingClass -> getTrainingClassDetail(trainingClass, date))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<TrainingClass> searchTrainingClassByWeek(String search) {
-        Specification<TrainingClass> specification = TrainingClassSpecification.searchByAll(search);
-        List<TrainingClass> result = trainingClassRepository.findAll(specification);
+    public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(List<String> textSearch, LocalDate startDate, LocalDate endDate) {
+        var trainingClassWeek = trainingClassService.findAllBySearchTextAndWeek(textSearch, startDate, endDate);
+        log.info(String.valueOf(trainingClassWeek.size()) + textSearch);
+        List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
+        trainingClassWeek.stream().distinct().forEach(trainingClass -> {
+            trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
+                if (classSchedule.getDate().isAfter(startDate.minusDays(2)) && classSchedule.getDate().isBefore(endDate.plusDays(1)))
+                    result.add(getTrainingClassDetail(trainingClass, classSchedule.getDate()));
+            });
+        });
         return result;
     }
 
+    @Override
+    public TrainingClassFilterResponseDTO getTrainingClassDetail(TrainingClass trainingClass, LocalDate date) {
+        var learnedDay = repository.countAllByDateBeforeAndTrainingClassId(date, trainingClass.getId()) + 1;
+        var durationDay = learnedDay + "/" + trainingClass.getDay();
+        var syllabusesList = trainingClass.getTrainingProgram().getListTrainingProgramSyllabuses()
+                .stream()
+                .map(TrainingProgramSyllabus::getSyllabus)
+                .collect(Collectors.toList());
+        List<UnitResponseDTO> unit = new ArrayList<>();
+        //check syllabus to get unit
+        for (Syllabus syllabus : syllabusesList) {
+            if (learnedDay > syllabus.getDay()) {
+                learnedDay -= syllabus.getDay();
+            } else {
+                Long finalLearnedDay = learnedDay;
+                unit = syllabus.getListSessions()
+                        .stream().filter(session -> session.getSessionNumber() == finalLearnedDay)
+                        .flatMap(session -> session.getListUnit().stream())
+                        .map(Unit -> new UnitResponseDTO(Unit.getUnitTitle(), Unit.getUnitNumber())
+                        ).collect(Collectors.toList());
+                break;
+            }
+        }
+
+        var trainerName = trainingClassUnitInformationService
+                .findAllByTrainingClassId(trainingClass.getId())
+                .stream()
+                .map(trainingClassUnitInformation -> trainingClassUnitInformation.getTrainer().getFullName())
+                .collect(Collectors.toList());
+        return trainingClassFilterMap.toTrainingClassFilterResponseDTO(
+                trainingClass,
+                trainerName,
+                durationDay,
+                date,
+                unit);
+
+    }
 }
