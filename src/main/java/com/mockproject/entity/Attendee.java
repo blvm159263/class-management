@@ -24,7 +24,7 @@ public class Attendee implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
     @Column(
             name = "attendee_name",
             length = 50,

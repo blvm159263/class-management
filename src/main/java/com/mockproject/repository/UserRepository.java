@@ -25,7 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "OFFSET ((?1-1)*?2) ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
      List<User> getAllByPageAndRowPerPage(long page, long rowPerPage);
 
-Long countAllBy();
     @Query(value = "select u from User u "+
         "where (:id is null or u.id = :id) " +
             "and (:dob is null or u.dob = :dob)" +

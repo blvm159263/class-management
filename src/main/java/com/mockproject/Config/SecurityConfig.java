@@ -65,7 +65,7 @@ public class SecurityConfig {
         http.cors().and().csrf().disable();
 
         http.authorizeHttpRequests().requestMatchers("/User/Login", "/swagger-ui/**", "/v3/api-docs/**","/v2/api-docs/**").permitAll()
-                .anyRequest().permitAll();
+                .anyRequest().authenticated();
 
         http.addFilterBefore( jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
             @Override

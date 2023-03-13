@@ -5,14 +5,24 @@ import com.mockproject.Jwt.JwtTokenProvider;
 import com.mockproject.dto.*;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.RoleMapper;
+import com.mockproject.dto.JwtResponseDTO;
+import com.mockproject.dto.LoginFormDTO;
+import com.mockproject.dto.UserDTO;
+import com.mockproject.entity.CustomUserDetails;
+import com.mockproject.entity.User;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.service.*;
+import com.mockproject.repository.UserRepository;
+import com.mockproject.service.LevelService;
+import com.mockproject.service.RoleService;
+import com.mockproject.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import org.hibernate.query.SemanticException;
 import org.hibernate.query.sqm.InterpretationException;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
@@ -30,12 +40,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/User")
-@Api(tags = "Users Rest Controller")
 @SecurityRequirement(name = "Authorization")
 public class UserController {
 
@@ -57,9 +69,6 @@ public class UserController {
     RoleService roleService;
 
     @Autowired
-    LevelService levelService;
-
-    @Autowired
     RolePermissionScopeService rolePermissionScopeService;
 
     @Autowired
@@ -67,6 +76,9 @@ public class UserController {
 
     @Autowired
     PermissionScopeService permissionScopeService;
+
+    @Autowired
+    LevelService levelService;
 
     @PostMapping("/Login")
     public ResponseEntity login(@RequestBody LoginFormDTO loginFormDTO) {
@@ -170,6 +182,15 @@ public class UserController {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping("/GetRoleById")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    public ResponseEntity getRoleById (@RequestParam(value = "id")long id){
+        RoleDTO role = roleService.getRoleById(id);
+        if (role != null){
+            return ResponseEntity.ok(role);
+        }
+        return ResponseEntity.badRequest().body("Role ot found!");
+    }
 
     @PutMapping("/updateRole")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
@@ -179,7 +200,6 @@ public class UserController {
             if (roleService.checkDuplicatedByRoleName(fdto.getRoleName()))
                 return ResponseEntity.badRequest().body("Role " + fdto.getRoleName() + " is duplicated!");
             if (fdto.getId() != 0) {
-                //listRoleDTOS.add(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
                 roleService.save(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getClassPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Class"));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getSyllabusPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Syllabus"));
@@ -203,6 +223,7 @@ public class UserController {
     }
 
     @PostMapping("/searchByFillet")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity searchByFillter(@RequestParam(value = "Id", required = false) Long id,
                                           @RequestParam(value = "Dob", required = false) LocalDate dob,
                                           @RequestParam(value = "Email", required = false) String email,
@@ -239,6 +260,117 @@ public class UserController {
         return ResponseEntity.ok("Oke nha hihi");
     }
 
+    @GetMapping("/GetRoleByName")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    public ResponseEntity getRoleByName(@RequestParam(value = "roleName")String rolename){
+        long roleId = roleService.getRoleByRoleName(rolename);
+        return ResponseEntity.ok(roleId);
+    }
+
+    @GetMapping("/GetLevel")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    public ResponseEntity getLevelById (@RequestParam(value = "id")long id){
+        LevelDTO level = levelService.getLevelById(id);
+        if (level != null){
+            return ResponseEntity.ok(level);
+        } else return ResponseEntity.badRequest().body("Not found level!");
+
+    }
+
+    @PutMapping("/De-activateUser")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity deactivateUser (@RequestParam(value = "id")long id){
+        int state = userService.updateStateToFalse(id);
+        if (state == 0) return ResponseEntity.ok("De-activate user successfully");
+        return ResponseEntity.badRequest().body("User not found");
+    }
+
+    @PutMapping("/ActivateUser")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity activateUser (@RequestParam(value = "id")long id){
+        int state = userService.updateStateToTrue(id);
+        if (state == 1) return ResponseEntity.ok("Activate user successfully");
+        return ResponseEntity.badRequest().body("User not found");
+    }
+
+    @DeleteMapping("/DeleteUser")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity deleteUser (@RequestParam(value = "id")long id){
+        boolean delete = userService.updateStatus(id);
+        if (!delete) return ResponseEntity.badRequest().body("Delete failed");
+        return ResponseEntity.ok("Delete successfully");
+    }
+
+    @PutMapping("/ChangeRole")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity changeRole (@RequestParam(value = "id")long id,@RequestParam(value = "roleName")String roleName){
+        if (roleService.getRoleByRoleName(roleName) == null){
+            return ResponseEntity.badRequest().body("Role not found!");
+        }
+        boolean change = userService.changeRole(id,roleService.getRoleByRoleName(roleName));
+        if (!change) return ResponseEntity.badRequest().body("Change failed");
+        return ResponseEntity.ok(roleName);
+    }
+
+    @PutMapping("/EditName")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity editFullName (@RequestParam(value = "id")long id, @RequestParam(value = "fullname")String fullname){
+        boolean editName = userService.editName(id,fullname);
+        if (editName)
+            return ResponseEntity.ok("Successfully");
+        else return ResponseEntity.badRequest().body("Cound not change!");
+    }
+
+    @PutMapping("/EditDoB")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity editDoB (@RequestParam(value = "id")long id, @RequestParam(value = "dob")LocalDate date){
+            boolean editDoB = userService.editDoB(id, date);
+            if (editDoB)
+                return ResponseEntity.ok("Successfully");
+            else return ResponseEntity.badRequest().body("Cound not change!");
+    }
+
+    @PutMapping("/EditGender")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity editGender (@RequestParam(value = "id")long id, @RequestParam(value = "gender")boolean gender){
+        boolean editGender = userService.editGender(id,gender);
+        return ResponseEntity.ok(editGender);
+    }
+
+    @PutMapping("/EditLevel")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity editLevel (@RequestParam(value = "id")long id, @RequestParam(value = "levelCode")String levelCode){
+        boolean editLevel = userService.editLevel(id,levelCode);
+        return ResponseEntity.ok(editLevel);
+    }
+
+    @PutMapping("/EditEmail")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity editEmail (@RequestParam(value = "id")long id, @RequestParam(value = "email")String email){
+        boolean editEmail = userService.editEmail(id, email);
+        if (editEmail)
+            return ResponseEntity.ok("Successfully");
+        else return ResponseEntity.badRequest().body("Cound not change!");
+    }
+
+    @PutMapping("/EditImage")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity editImage (@RequestParam(value = "id")long id, @RequestParam(value = "image")String image){
+        boolean editImage = userService.editImage(id, image);
+        if (editImage)
+            return ResponseEntity.ok("Successfully");
+        else return ResponseEntity.badRequest().body("Cound not change!");
+    }
+
+    @PutMapping("/EditPhone")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity editPhone (@RequestParam(value = "id")long id, @RequestParam(value = "phone")String phone){
+        boolean editPhone = userService.editPhone(id, phone);
+        if (editPhone)
+            return ResponseEntity.ok("Successfully");
+        else return ResponseEntity.badRequest().body("Cound not change!");
+    }
+
     @PutMapping("/saveUser")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity saveUser(@RequestParam(value = "id") long id, @RequestBody UserFormDTO userForm) {
@@ -266,10 +398,14 @@ public class UserController {
 
         if(user != null) {
             UserFormDTO userForm = new UserFormDTO(user);
-            EntityModel<?> em = EntityModel.of(userForm, linkTo(methodOn(UserController.class).getAllLevels()).withRel("levels"), linkTo(methodOn(UserController.class).getAllRole()).withRel("roles"), linkTo(methodOn(UserController.class).getListUser(page, rowsPerPage)).withRel("back"));
+            EntityModel<?> em = EntityModel.of(userForm,//
+                    linkTo(methodOn(UserController.class).getAllLevels()).withRel("levels"),//
+                    linkTo(methodOn(UserController.class).getAllRole()).withRel("roles"),//
+                    linkTo(methodOn(UserController.class).getListUser(page, rowsPerPage)).withRel("back")//
+            );
             return ResponseEntity.ok().body(em);
         }
         else return ResponseEntity.badRequest().body("User not found!");
     }
-
 }
+

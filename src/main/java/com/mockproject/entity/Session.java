@@ -25,7 +25,7 @@ public class Session implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Column(
             name = "session_number",
