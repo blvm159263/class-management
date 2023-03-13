@@ -84,7 +84,7 @@ public class TrainingMaterialService{
         return trainingMaterialDTOS;
     }
 
-    public TrainingMaterialDTO updateFile(long id, CreateTrainingMaterialDTO createDTO, long unitDetailsId, long userId, boolean status) throws IOException {
+    public TrainingMaterialDTO updateFile(long id, CreateTrainingMaterialDTO createDTO, User user, boolean status) throws IOException {
         Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(id, status);
         trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         return TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterialRepository.save(TrainingMaterial.builder()
@@ -94,8 +94,8 @@ public class TrainingMaterialService{
                 .type(createDTO.getType())
                 .size(createDTO.getSize())
                 .uploadDate(LocalDate.now())
-                .unitDetail(unitDetailService.getUnitDetailById(unitDetailsId, true))
-                .user(userService.getUserById(userId))
+                .unitDetail(unitDetailService.getUnitDetailById(createDTO.getUnitDetailID(), true))
+                .user(user)
                 .build()));
     }
 
