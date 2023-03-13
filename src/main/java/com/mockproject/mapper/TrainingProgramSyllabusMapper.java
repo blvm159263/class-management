@@ -24,14 +24,14 @@ public interface TrainingProgramSyllabusMapper {
     TrainingProgramSyllabus toEntity(TrainingProgramSyllabusDTO dto);
 
     @Named("mapTrainingProgram")
-    default TrainingProgram mapTrainingProgram(long id) {
+    default TrainingProgram mapTrainingProgram(Long id) {
         TrainingProgram trainingProgram = new TrainingProgram();
         trainingProgram.setId(id);
         return trainingProgram;
     }
 
     @Named("mapSyllabus")
-    default Syllabus mapSyllabus(long id) {
+    default Syllabus mapSyllabus(Long id) {
         Syllabus syllabus = new Syllabus();
         syllabus.setId(id);
         return syllabus;

@@ -22,7 +22,7 @@ public interface TowerMapper {
 
 
     @Named("mapLocation")
-    default Location mapLocation(long id) {
+    default Location mapLocation(Long id) {
         Location location = new Location();
         location.setId(id);
         return location;

@@ -1,23 +1,19 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.CreateTrainingMaterialDTO;
-import com.mockproject.dto.DeliveryTypeDTO;
 import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.zip.DataFormatException;
 
 
-import com.mockproject.entity.TrainingMaterial;
 import com.mockproject.service.TrainingMaterialService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,11 +43,11 @@ public class TrainingMaterialController {
 
     @PostMapping("/upload-file")
     public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@RequestBody List<CreateTrainingMaterialDTO> createTrainingMaterialDTO) throws IOException{
-//        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 
         return ResponseEntity.ok(trainingMaterialService.uploadFile(createTrainingMaterialDTO,
-                userRepository.findById(3).get(), 3));
+                user.getUser(), 3));
     }
 
     @GetMapping("/get-file/{id}")

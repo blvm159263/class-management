@@ -23,7 +23,7 @@ public class PermissionScope implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Column(
             name = "scope_name",

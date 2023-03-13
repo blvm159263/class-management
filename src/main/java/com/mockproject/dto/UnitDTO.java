@@ -1,6 +1,5 @@
 package com.mockproject.dto;
 
-import com.mockproject.entity.UnitDetail;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,11 +14,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UnitDTO implements Serializable {
-    private long id;
+    private Long id;
     private String unitTitle;
     private int unitNumber;
     private BigDecimal duration;
     private boolean status;
-    private long sessionId;
+    private Long sessionId;
     private List<UnitDetailDTO> unitDetailDTOList;
 }

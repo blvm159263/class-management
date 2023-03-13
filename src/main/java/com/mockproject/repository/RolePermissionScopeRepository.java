@@ -10,4 +10,6 @@ import java.util.List;
 public interface RolePermissionScopeRepository extends JpaRepository<RolePermissionScope, Long> {
 
     public List<RolePermissionScope> findAllByRole_Id(Long roleId);
+
+    public RolePermissionScope findByRoleIdAndAndPermissionScopeId(long roleId, long permissionScopeId);
 }
