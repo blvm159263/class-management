@@ -242,7 +242,31 @@ public class UserService implements IUserService {
 
     @Override
     public UserDTO saveUser(UserDTO userData) {
-        return UserMapper.INSTANCE.toDTO(repository.save(UserMapper.INSTANCE.toEntity(userData)));
+        Optional<User> o_user = repository.findById(userData.getId());
+        if(o_user.isPresent()){
+            User user = o_user.get();
+
+            user.setImage(userData.getImage());
+            user.setEmail(userData.getEmail());
+            user.setFullName(userData.getFullName());
+            user.setDob(userData.getDob());
+            user.setGender(userData.isGender());
+            user.setPhone(userData.getPhone());
+            try {
+                user.setRole(roleRepository.getRoleById(userData.getRoleId()).get());
+            }catch(Exception e){
+                System.out.println("Role does not exist!");
+            }
+            try {
+                user.setLevel(levelRepository.getLevelById(userData.getLevelId()).get());
+            }catch(Exception e){
+                System.out.println("Level does not exist!");
+            }
+            user.setState(userData.getState());
+            user.setStatus(userData.isStatus());
+            return UserMapper.INSTANCE.toDTO(repository.save(user));
+        }
+        return null;
     }
 
 }

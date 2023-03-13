@@ -388,7 +388,10 @@ public class UserController {
         user.setStatus(userForm.isStatus());
 
         UserDTO result = userService.saveUser(user);
-        return ResponseEntity.ok(result);
+        if(result != null) {
+            return ResponseEntity.ok(result);
+        }
+        return ResponseEntity.badRequest().body("Faulty information received! Check your input");
     }
 
     @GetMapping("/details")
