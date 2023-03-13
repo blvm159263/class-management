@@ -1,74 +1,74 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.SyllabusDTO;
-import com.mockproject.entity.OutputStandard;
+import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.UnitDetail;
+
+import com.mockproject.entity.User;
 import com.mockproject.mapper.SyllabusMapper;
-import com.mockproject.repository.OutputStandardRepository;
 import com.mockproject.repository.SyllabusRepository;
-import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.service.interfaces.ISyllabusService;
+import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
-public class SyllabusService implements ISyllabusService {
+@AllArgsConstructor
+public class SyllabusService {
 
-    private final SyllabusRepository syllabusRepo;
+    private final SyllabusRepository syllabusRepository;
+    private final SessionService sessionService;
 
-    private final OutputStandardRepository outputStandardRepo;
-
-    private final UnitDetailRepository unitDetailRepo;
-
-    @Override
-    public Page<SyllabusDTO> getListSyllabus(boolean status, LocalDate fromDate, LocalDate toDate,
-                                             String search, String[] sort, Optional<Integer> page) {
-        List<Sort.Order> order = new ArrayList<>();
-        if(sort[0].contains(",")){
-            for (String sortItem: sort) {
-                String[] subSort = sortItem.split(",");
-                order.add(new Sort.Order(getSortDirection(subSort[1]),subSort[0]));
-            }
-        }else{
-            order.add(new Sort.Order(getSortDirection(sort[1]),sort[0]));
-        }
-        Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
-        Page<Syllabus> pages = syllabusRepo.getListSyllabus(status, fromDate, toDate, search, getListSyllabusIdByOSD(search), pageable);
-        return new PageImpl<>(
-                pages.stream().map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                pages.getPageable(),
-                pages.getTotalElements());
+    // List syllabus for user
+    public List<Syllabus> getAll(boolean state, boolean status){
+        Optional<List<Syllabus>> syllabusList = syllabusRepository.findByStateAndStatus(state, status);
+        ListUtils.checkList(syllabusList);
+        return syllabusList.get();
     }
 
-    public Sort.Direction getSortDirection(String direction) {
-        if (direction.equals("asc")) {
-            return Sort.Direction.ASC;
-        } else if (direction.equals("desc")) {
-            return Sort.Direction.DESC;
-        }
-        return Sort.Direction.ASC;
+    // List syllabus for admin
+    public List<Syllabus> getSyllabusList(boolean status){
+        Optional<List<Syllabus>> syllabusList = syllabusRepository.findAllByStatus(status);
+        ListUtils.checkList(syllabusList);
+        return syllabusList.get();
     }
 
-    @Override
-    public List<Long> getListSyllabusIdByOSD(String osd) {
-        List<UnitDetail> detailList = unitDetailRepo.findByStatusAndOutputStandardIn(true, outputStandardRepo.findByStatusAndStandardCodeContainingIgnoreCase(true, osd));
-        return detailList.stream().map(ob
-                -> ob.getUnit().getSession().getSyllabus().getId()).collect(Collectors.toList());
+    public Syllabus getSyllabusById(long syllabusId,boolean state, boolean status){
+        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, state, status);
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        return syllabus.get();
+    }
+
+    public long create(SyllabusDTO syllabus, User user){
+        syllabus.setCreatorId(user.getId());
+        syllabus.setLastModifierId(user.getId());
+        Syllabus newSyllabus = syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabus));
+        sessionService.createSession(newSyllabus.getId(), syllabus.getSessionDTOList(), user);
+        return newSyllabus.getId();
+    }
+
+    public Syllabus editSyllabus(long id, SyllabusDTO syllabusDTO, boolean status){
+        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(id, status);
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabusDTO.setId(id);
+        Syllabus updateSyllabus = syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabusDTO));
+        return updateSyllabus;
+    }
+
+    public boolean deleteSyllabus(long syllabusId, boolean status){
+        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusId, status);
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.get().setStatus(false);
+        sessionService.deleteSessions(syllabusId, status);
+        syllabusRepository.save(syllabus.get());
+        return true;
     }
 }

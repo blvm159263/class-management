@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 
 import java.io.Serializable;
 import java.util.List;
@@ -36,12 +37,14 @@ public class Session implements Serializable {
     @Column(name = "status")
     private boolean status;
 
-    @ManyToOne
-    @JsonManagedReference
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonManagedReference(value = "syllabus_session")
     @JoinColumn(name = "syllabus_id")
     private Syllabus syllabus;
 
+
     @OneToMany(mappedBy = "session", fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonBackReference(value = "session_unit")
     private List<Unit> listUnit;
+
 }

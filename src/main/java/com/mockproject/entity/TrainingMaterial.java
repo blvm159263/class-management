@@ -1,5 +1,6 @@
 package com.mockproject.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -63,7 +64,7 @@ public class TrainingMaterial implements Serializable {
     private boolean status;
 
     @ManyToOne
-    @JsonManagedReference
+    @JsonBackReference
     @JoinColumn(name = "unit_detail_id")
     private UnitDetail unitDetail;
 

@@ -53,7 +53,6 @@ public class UserService implements IUserService {
         List<Sort.Order> order = new ArrayList<>();
         if (page.isPresent()) page1 = page.get() - 1;
         if (size.isPresent()) size1 = size.get();
-
         if (sort != null && !sort.isEmpty()) {
             for (String sortItem : sort) {
                 String[] subSort = sortItem.split("-");
