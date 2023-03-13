@@ -2,9 +2,7 @@ package com.mockproject.service;
 
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
-import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.Unit;
-import com.mockproject.entity.UnitDetail;
+import com.mockproject.entity.*;
 
 import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.mapper.UnitMapper;
@@ -18,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -48,7 +47,7 @@ public class UnitDetailService implements IUnitDetailService {
         return unitDetails.get();
     }
 
-    public boolean createUnitDetail(long unitId, List<UnitDetailDTO> listUnitDetail, long userId){
+    public boolean createUnitDetail(long unitId, List<UnitDetailDTO> listUnitDetail, User user){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, true);
         unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         BigDecimal duration = BigDecimal.valueOf(0);
@@ -56,8 +55,7 @@ public class UnitDetailService implements IUnitDetailService {
             i.setUnitId(unitId);
             duration = duration.add(i.getDuration());
             UnitDetail unitDetail = unitDetailRepository.save(UnitDetailMapper.INSTANCE.toEntity(i));
-            System.out.println("Unit detail :"+ unitDetail.getId());
-//            trainingMaterialService.uploadFile(unitDetail.getListMaterials(),unitDetail.getId(), userId);
+            trainingMaterialService.uploadFile(i.getCreateTrainingMaterialDTOList(), user, unitDetail.getId());
         }
 
         //Set duration unit

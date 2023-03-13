@@ -4,6 +4,7 @@ import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
 
+import com.mockproject.entity.User;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.service.interfaces.ISyllabusService;
@@ -46,11 +47,11 @@ public class SyllabusService {
         return syllabus.get();
     }
 
-    public long create(SyllabusDTO syllabus, long userId){
-        syllabus.setCreatorId(userId);
-        syllabus.setLastModifierId(userId);
+    public long create(SyllabusDTO syllabus, User user){
+        syllabus.setCreatorId(user.getId());
+        syllabus.setLastModifierId(user.getId());
         Syllabus newSyllabus = syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabus));
-        sessionService.createSession(newSyllabus.getId(), syllabus.getSessionDTOList(), syllabus.getCreatorId());
+        sessionService.createSession(newSyllabus.getId(), syllabus.getSessionDTOList(), user);
         return newSyllabus.getId();
     }
 

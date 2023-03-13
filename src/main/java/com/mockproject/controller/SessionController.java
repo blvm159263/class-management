@@ -27,7 +27,7 @@ public class SessionController {
     @PostMapping("/create/{id}")
     public ResponseEntity<Boolean> createSessions(@PathVariable("id") long syllabusId, @RequestBody List<SessionDTO> listSession){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(sessionService.createSession(syllabusId, listSession, user.getUser().getId()));
+        return ResponseEntity.ok(sessionService.createSession(syllabusId, listSession, user.getUser()));
     }
 
     @PutMapping("/edit/{id}")

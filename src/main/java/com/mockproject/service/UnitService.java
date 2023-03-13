@@ -5,6 +5,7 @@ import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.Unit;
+import com.mockproject.entity.User;
 import com.mockproject.mapper.SessionMapper;
 import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.SessionRepository;
@@ -49,14 +50,14 @@ public class UnitService implements IUnitService {
         return listUnit.get();
     }
 
-    public boolean createUnit(long sessionId, List<UnitDTO> listUnit, long userId){
+    public boolean createUnit(long sessionId, List<UnitDTO> listUnit, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         BigDecimal duration = BigDecimal.valueOf(0);
         for (UnitDTO i: listUnit) {
             i.setSessionId(sessionId);
             Unit unit = unitRepository.save(UnitMapper.INSTANCE.toEntity(i));
-            unitDetailService.createUnitDetail(unit.getId(), i.getUnitDetailDTOList(), userId);
+            unitDetailService.createUnitDetail(unit.getId(), i.getUnitDetailDTOList(), user);
             unit = unitRepository.findByIdAndStatus(unit.getId(), true).get();
             duration = duration.add(unit.getDuration());
         }

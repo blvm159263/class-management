@@ -4,6 +4,7 @@ import com.mockproject.dto.SessionDTO;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.Unit;
+import com.mockproject.entity.User;
 import com.mockproject.mapper.SessionMapper;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.SessionRepository;
@@ -44,7 +45,7 @@ public class SessionService implements ISessionService {
         return listSession.get();
     }
 
-    public boolean createSession(long syllabusId, List<SessionDTO> listSession, long userId){
+    public boolean createSession(long syllabusId, List<SessionDTO> listSession, User user){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true,true);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         syllabus.get().setDay(listSession.size());
@@ -54,7 +55,7 @@ public class SessionService implements ISessionService {
             i.setSyllabusId(syllabusId);
             Session session = sessionRepository.save(SessionMapper.INSTANCE.toEntity(i));
             System.out.println("Session :"+session.getId());
-            unitService.createUnit(session.getId(), i.getUnitDTOList(), userId);
+            unitService.createUnit(session.getId(), i.getUnitDTOList(), user);
         });
         return true;
     }

@@ -29,7 +29,7 @@ public class UnitController {
     @PostMapping("/create/{id}")
     public ResponseEntity<Boolean> createUnit(@PathVariable("id") long sessionId,@RequestBody List<UnitDTO> listUnit){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(unitService.createUnit(sessionId, listUnit, user.getUser().getId()));
+        return ResponseEntity.ok(unitService.createUnit(sessionId, listUnit, user.getUser()));
     }
 
     @PutMapping("/edit/{sessionId}/{id}")

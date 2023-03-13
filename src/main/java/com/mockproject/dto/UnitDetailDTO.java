@@ -22,5 +22,5 @@ public class UnitDetailDTO implements Serializable {
     private Long unitId;
     private Long deliveryTypeId;
     private Long outputStandardId;
-    private List<TrainingMaterialDTO> trainingMaterialDTOList;
+    private List<CreateTrainingMaterialDTO> createTrainingMaterialDTOList;
 }

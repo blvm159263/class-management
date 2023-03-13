@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public  class CreateTrainingMaterialDTO {
     public String data;
-    public long unitDetailID;
+    public Long unitDetailID;
 
     public String name;
 
