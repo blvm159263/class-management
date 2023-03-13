@@ -13,4 +13,8 @@ public interface IRoleService {
     Role save(RoleDTO roleDTO);
 
     Boolean checkDuplicatedByRoleName(String name);
+
+    RoleDTO getRoleById(long id);
+
+    Long getRoleByRoleName(String roleName);
 }

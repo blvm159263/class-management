@@ -12,8 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RolePermissionScopeDTO implements Serializable {
-
-    public RolePermissionScopeDTO(boolean status, Long roleId, Long permissionId, Long permissionScopeId) {
+    public RolePermissionScopeDTO(boolean status, long roleId, long permissionId, long permissionScopeId) {
         this.status = status;
         this.roleId = roleId;
         this.permissionId = permissionId;

@@ -17,7 +17,6 @@ public class RoleDTO implements Serializable {
         this.roleName = roleName;
         this.status = status;
     }
-
     private Long id;
     private String roleName;
     private boolean status;
