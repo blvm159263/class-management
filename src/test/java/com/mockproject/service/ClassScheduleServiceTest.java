@@ -9,11 +9,14 @@ import static org.mockito.Mockito.when;
 
 import com.mockproject.dto.ClassScheduleDTO;
 import com.mockproject.entity.ClassSchedule;
+import com.mockproject.entity.TrainingClass;
 import com.mockproject.repository.ClassScheduleRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,52 +60,50 @@ class ClassScheduleServiceTest {
     /**
      * Method under test: {@link ClassScheduleService#saveClassScheduleForTrainingClass(List, Long)}
      */
+
+    LocalDate date1 = LocalDate.now();
+    LocalDate date2 = LocalDate.now();
+    LocalDate date3 = LocalDate.now();
+    LocalDate date4 = LocalDate.now();
+
     @Test
-    void canSaveClassScheduleForTrainingClass() {
-        when(classScheduleRepository.saveAll((Iterable<ClassSchedule>) any())).thenReturn(new ArrayList<>());
-        assertFalse(classScheduleService.saveClassScheduleForTrainingClass(new ArrayList<>(), 1L));
-        verify(classScheduleRepository).saveAll((Iterable<ClassSchedule>) any());
+    void itShouldReturnTrueWhenListOfScheduleSavedSuccessful() {
+
+        Long tcId = 1L;
+        TrainingClass tc = new TrainingClass();
+        tc.setId(tcId);
+        List<LocalDate> list = new ArrayList<>();
+        list.add(date1);
+        list.add(date2);
+        list.add(date3);
+        list.add(date4);
+        List<ClassSchedule> listScheduleBefore = list.stream().map(p -> new ClassSchedule(null, p, true, tc)).toList();
+        AtomicReference<Long> index = new AtomicReference<>(0L);
+        List<ClassSchedule> listScheduleAfter = list.stream().map(p -> {
+            index.updateAndGet(v -> v + 1);
+            return new ClassSchedule(index.get() + 1, p, true, tc);
+        }).toList();
+
+        when(classScheduleRepository.saveAll(listScheduleBefore)).thenReturn(listScheduleAfter);
+        assertTrue(classScheduleService.saveClassScheduleForTrainingClass(list, 1L));
+        verify(classScheduleRepository).saveAll(listScheduleBefore);
     }
 
-    /**
-     * Method under test: {@link ClassScheduleService#saveClassScheduleForTrainingClass(List, Long)}
-     */
+
     @Test
-    void canSaveClassScheduleForTrainingClass2() {
-        ArrayList<ClassSchedule> classScheduleList = new ArrayList<>();
-        classScheduleList.add(new ClassSchedule());
-        when(classScheduleRepository.saveAll((Iterable<ClassSchedule>) any())).thenReturn(classScheduleList);
-        assertTrue(classScheduleService.saveClassScheduleForTrainingClass(new ArrayList<>(), 1L));
-        verify(classScheduleRepository).saveAll((Iterable<ClassSchedule>) any());
+    void itShouldReturnFalseWhenListOfScheduleSavedFail() {
+
+        List<LocalDate> list = new ArrayList<>();
+        list.add(date1);
+        list.add(date2);
+        list.add(date3);
+        list.add(date4);
+        List<ClassSchedule> listScheduleBefore = list.stream().map(p -> new ClassSchedule(null, p, true, new TrainingClass())).toList();
+
+
+        when(classScheduleRepository.saveAll(listScheduleBefore)).thenReturn(Collections.emptyList());
+        assertFalse(classScheduleService.saveClassScheduleForTrainingClass(list, null));
+        verify(classScheduleRepository).saveAll(listScheduleBefore);
     }
-
-    /**
-     * Method under test: {@link ClassScheduleService#saveClassScheduleForTrainingClass(List, Long)}
-     */
-    @Test
-    void canSaveClassScheduleForTrainingClass3() {
-        when(classScheduleRepository.saveAll((Iterable<ClassSchedule>) any())).thenReturn(new ArrayList<>());
-
-        ArrayList<LocalDate> localDateList = new ArrayList<>();
-        localDateList.add(LocalDate.ofEpochDay(1L));
-        assertFalse(classScheduleService.saveClassScheduleForTrainingClass(localDateList, 1L));
-        verify(classScheduleRepository).saveAll((Iterable<ClassSchedule>) any());
-    }
-
-    /**
-     * Method under test: {@link ClassScheduleService#saveClassScheduleForTrainingClass(List, Long)}
-     */
-    @Test
-    void canSaveClassScheduleForTrainingClass4() {
-        when(classScheduleRepository.saveAll((Iterable<ClassSchedule>) any())).thenReturn(new ArrayList<>());
-
-        ArrayList<LocalDate> localDateList = new ArrayList<>();
-        localDateList.add(LocalDate.ofEpochDay(1L));
-        localDateList.add(LocalDate.ofEpochDay(1L));
-        assertFalse(classScheduleService.saveClassScheduleForTrainingClass(localDateList, 1L));
-        verify(classScheduleRepository).saveAll((Iterable<ClassSchedule>) any());
-    }
-
 
 }
-
