@@ -52,6 +52,9 @@ public class UserController {
     RoleService roleService;
 
     @Autowired
+    LevelService levelService;
+
+    @Autowired
     RolePermissionScopeService rolePermissionScopeService;
 
     @Autowired
@@ -127,6 +130,12 @@ public class UserController {
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getAllRole(){
         return ResponseEntity.ok(roleService.getAll());
+    }
+
+    @GetMapping("/getAllLevels")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity getAllLevels(){
+        return ResponseEntity.ok(levelService.getAll());
     }
 
     @GetMapping("/getAllRoleDetail")
@@ -206,38 +215,38 @@ public class UserController {
             return ResponseEntity.badRequest().body("Not found user!");
     }
 
-    // Lưu các ô đã edit các ô còn lại lấy thông tin cũ
-    @PutMapping("/save")
+    @PutMapping("/saveUser")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity saveUser(@RequestParam(value = "id") long id, @RequestBody UserDTO user)
+    public ResponseEntity saveUser(@RequestParam(value = "id") long id, @RequestBody UserFormDTO userForm)
     {
-        user.setId(id);
-        UserDTO result = userService.save(user);
+        UserDTO user = userService.getByID(id);
+
+        user.setImage(userForm.getImage());
+        user.setEmail(userForm.getEmail());
+        user.setFullName(userForm.getFullName());
+        user.setDob(userForm.getDob());
+        user.setGender(userForm.isGender());
+        user.setPhone(userForm.getPhone());
+        user.setRoleId(userForm.getRoleId());
+        user.setLevelId(userForm.getLevelId());
+        user.setState(userForm.getState());
+        user.setStatus(userForm.isStatus());
+
+        UserDTO result = userService.saveUser(user);
         return ResponseEntity.ok(result);
     }
 
-    // Đến trang edit (user detail???) ???
-    @GetMapping("/edit")
+    @GetMapping("/details")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity edit(@RequestParam(value = "id") long id, @RequestParam(value = "page") int page, @RequestParam(value = "rowsPerPage", required = false, defaultValue = "10") int rowsPerPage)
+    public ResponseEntity getUserDetails(@RequestParam(value = "id") long id, @RequestParam(value = "page") int page, @RequestParam(value = "rowsPerPage", required = false, defaultValue = "10") int rowsPerPage)
     {
         UserDTO user = userService.getByID(id);
-        if(user != null)
-        {
-            EntityModel<?> em = EntityModel.of(user, linkTo(methodOn(UserController.class).getListUser(page, rowsPerPage)).withRel("back"));
-            return ResponseEntity.ok().body(em);
-        }
-        else return ResponseEntity.badRequest().body("User not found!");
-    }
 
-    @GetMapping("/get")
-    @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity getOne(@RequestParam(value = "id") long id)
-    {
-        UserDTO user = userService.getByID(id);
         if(user != null)
         {
-            return ResponseEntity.ok(user);
+            UserFormDTO userForm = new UserFormDTO(user);
+            EntityModel<?> em = EntityModel.of(userForm, linkTo(methodOn(UserController.class).getAllLevels()).withRel("levels"), linkTo(methodOn(UserController.class).getAllRole()).withRel("roles"), linkTo(methodOn(UserController.class).getListUser(page, rowsPerPage)).withRel("back"));
+            return ResponseEntity.ok().body(em);
         }
         else return ResponseEntity.badRequest().body("User not found!");
     }

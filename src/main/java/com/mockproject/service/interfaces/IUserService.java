@@ -7,6 +7,8 @@ import com.mockproject.entity.User;
 import java.util.List;
 
 public interface IUserService {
+    UserDTO saveUser(UserDTO userData);
+
     UserDTO getByID(long id);
 
     List<UserDTO> getAll();

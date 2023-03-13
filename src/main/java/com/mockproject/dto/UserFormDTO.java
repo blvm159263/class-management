@@ -12,6 +12,19 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserFormDTO {
+    public UserFormDTO(UserDTO user)
+    {
+        setImage(user.getImage());
+        setEmail(user.getEmail());
+        setFullName(user.getFullName());
+        setDob(user.getDob());
+        setGender(user.isGender());
+        setPhone(user.getPhone());
+        setRoleId(user.getRoleId());
+        setLevelId(user.getLevelId());
+        setState(user.getState());
+        setStatus(user.isStatus());
+    }
     private String email;
     private String fullName;
     private String image;

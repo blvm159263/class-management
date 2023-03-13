@@ -57,8 +57,8 @@ public class UserService implements IUserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDTO save(UserDTO user)
-    {
-        return UserMapper.INSTANCE.toDTO(repository.save(UserMapper.INSTANCE.toEntity(user)));
+    @Override
+    public UserDTO saveUser(UserDTO userData) {
+        return UserMapper.INSTANCE.toDTO(repository.save(UserMapper.INSTANCE.toEntity(userData)));
     }
 }
