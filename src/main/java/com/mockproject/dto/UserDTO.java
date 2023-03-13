@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO implements Serializable {
-    private long id;
+    private Long id;
     private String email;
     private String fullName;
     private String image;
@@ -22,7 +22,7 @@ public class UserDTO implements Serializable {
     private String phone;
     private boolean gender;
     private boolean status;
-    private long roleId;
-    private long levelId;
-    private long attendeeId;
+    private Long roleId;
+    private Long levelId;
+    private Long attendeeId;
 }

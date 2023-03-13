@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LocationDTO implements Serializable {
-    private long id;
+    private Long id;
     private String locationName;
     private String address;
     private boolean status;

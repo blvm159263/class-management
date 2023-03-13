@@ -21,7 +21,7 @@ public interface UnitMapper {
     Unit toEntity(UnitDTO dto);
 
     @Named("mapSession")
-    default Session mapSession(long id) {
+    default Session mapSession(Long id) {
         Session session = new Session();
         session.setId(id);
         return session;
