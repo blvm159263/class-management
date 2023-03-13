@@ -31,6 +31,7 @@ public class SyllabusController {
     public SyllabusService syllabusService;
 
     @GetMapping()
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<List<Syllabus>> getAll(){
         List<Syllabus> listSyllabus = syllabusService.getAll(true, true);
         return ResponseEntity.ok(listSyllabus);
