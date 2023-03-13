@@ -13,5 +13,4 @@ import org.springframework.stereotype.Service;
 @Transactional
 @AllArgsConstructor
 public class UserService implements IUserService {
-    private final UserRepository repository;
 }

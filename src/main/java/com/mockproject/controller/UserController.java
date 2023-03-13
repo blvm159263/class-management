@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/User")
-@Api(tags = "Users Rest Controller")
 @SecurityRequirement(name = "Authorization")
 public class UserController {
 
@@ -39,36 +38,6 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/Login")
-    public ResponseEntity login(@RequestBody LoginFormDTO loginFormDTO){
-        String email = loginFormDTO.getEmail();
-        String pass = loginFormDTO.getPassword();
-
-        if (email == null || email.isEmpty()){
-            return ResponseEntity.badRequest().body("Missing email");
-        }
-
-        if (pass == null || pass.isEmpty()){
-            return ResponseEntity.badRequest().body("Missing password");
-        }
-        try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginFormDTO.getEmail(), loginFormDTO.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-            String token= jwtTokenProvider.generateToken(user);
-            UserDTO userDTO = UserMapper.INSTANCE.toDTO(user.getUser());
-
-            return ResponseEntity.ok(new JwtResponseDTO(userDTO, token));
-        } catch (Exception e){
-            return ResponseEntity.badRequest().body("Invalid email or password");
-        }
-    }
-
-    @GetMapping("/Test")
-    @Secured(FULL_ACCESS)
-    public String register(){
-        return "test oke";
-    }
 
 
 }
