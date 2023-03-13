@@ -5,6 +5,7 @@ import com.mockproject.dto.TrainingClassFilterRequestDTO;
 import com.mockproject.dto.TrainingClassFilterResponseDTO;
 import com.mockproject.entity.ClassSchedule;
 import com.mockproject.entity.TrainingClass;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,11 +20,13 @@ public interface IClassScheduleService {
 
     Long countDayBefore(LocalDate date, Long id);
 
-    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(LocalDate date);
+    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(TrainingClassFilterRequestDTO filterRequestDTO);
 
     public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(TrainingClassFilterRequestDTO filterRequestDTO);
 
     public TrainingClassFilterResponseDTO getTrainingClassDetail(TrainingClass trainingClass,LocalDate date);
 
+    public List<TrainingClassFilterResponseDTO> searchTrainingClassInDate(List<String> textSearch, LocalDate date);
+    public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(List<String> textSearch, LocalDate startDate, LocalDate endDate);
 
 }

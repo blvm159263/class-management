@@ -1,5 +1,6 @@
 package com.mockproject.controller;
 
+import com.mockproject.dto.SearchByDTO;
 import com.mockproject.dto.TrainingClassFilterRequestDTO;
 import com.mockproject.dto.TrainingClassFilterResponseDTO;
 import com.mockproject.service.interfaces.IClassScheduleService;
@@ -11,15 +12,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/trainingclass")
+@RequestMapping("/v1/classschedule")
 @Slf4j
 public class ClassScheduleController {
     @Autowired
     IClassScheduleService classScheduleService;
 
-    @GetMapping("/day/{day}")
-    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(@PathVariable("day")LocalDate date){
-        return classScheduleService.getTrainingClassByDay(date);
+    @PostMapping("/day")
+    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO){
+        return classScheduleService.getTrainingClassByDay(filterRequestDTO);
     }
 
     @PostMapping("/week")
@@ -27,4 +28,13 @@ public class ClassScheduleController {
         log.info(filterRequestDTO.toString());
         return classScheduleService.getTrainingClassByWeek(filterRequestDTO);
     }
+    @PostMapping("/search/day")
+    public List<TrainingClassFilterResponseDTO> searchTrainingClassInDay(@RequestBody SearchByDTO searchByDTO){
+        return classScheduleService.searchTrainingClassInDate(searchByDTO.getSearchText(),searchByDTO.getNowDate());
+    }
+    @PostMapping("/search/week")
+    public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(@RequestBody SearchByDTO searchByDTO){
+        return classScheduleService.searchTrainingClassInWeek(searchByDTO.getSearchText(),searchByDTO.getStartDate(),searchByDTO.getEndDate());
+    }
+
 }
