@@ -14,13 +14,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UnitDetailDTO implements Serializable {
-    private long id;
+    private Long id;
     private String title;
     private BigDecimal duration;
     private boolean type;
     private boolean status;
-    private long unitId;
-    private long deliveryTypeId;
-    private long outputStandardId;
+    private Long unitId;
+    private Long deliveryTypeId;
+    private Long outputStandardId;
     private List<TrainingMaterialDTO> trainingMaterialDTOList;
 }

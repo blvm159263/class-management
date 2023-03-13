@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PermissionDTO implements Serializable {
-    private long id;
+    private Long id;
     private String permissionName;
     private boolean status;
 }

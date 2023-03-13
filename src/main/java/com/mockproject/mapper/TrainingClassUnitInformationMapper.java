@@ -26,28 +26,28 @@ public interface TrainingClassUnitInformationMapper {
     TrainingClassUnitInformation toEntity(TrainingClassUnitInformationDTO dto);
 
     @Named("mapTrainingClass")
-    default TrainingClass mapTrainingClass(long id) {
+    default TrainingClass mapTrainingClass(Long id) {
         TrainingClass trainingClass = new TrainingClass();
         trainingClass.setId(id);
         return trainingClass;
     }
 
     @Named("mapUnit")
-    default Unit mapUnit(long id) {
+    default Unit mapUnit(Long id) {
         Unit unit = new Unit();
         unit.setId(id);
         return unit;
     }
 
     @Named("mapTrainer")
-    default User mapTrainer(long id) {
+    default User mapTrainer(Long id) {
         User user = new User();
         user.setId(id);
         return user;
     }
 
     @Named("mapTower")
-    default Tower mapTower(long id) {
+    default Tower mapTower(Long id) {
         Tower tower = new Tower();
         tower.setId(id);
         return tower;
