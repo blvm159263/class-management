@@ -11,6 +11,7 @@ import com.mockproject.dto.ClassScheduleDTO;
 import com.mockproject.dto.FsuDTO;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TowerDTO;
+import com.mockproject.dto.TrainingClassAdminDTO;
 import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.dto.TrainingClassUnitInformationDTO;
 import com.mockproject.dto.TrainingProgramDTO;
@@ -21,6 +22,7 @@ import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.mapper.FsuMapper;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.mapper.TowerMapper;
+import com.mockproject.mapper.TrainingClassAdminMapper;
 import com.mockproject.mapper.TrainingClassMapper;
 import com.mockproject.mapper.TrainingClassUnitInformationMapper;
 import com.mockproject.mapper.TrainingProgramMapper;
@@ -31,6 +33,7 @@ import com.mockproject.repository.ClassScheduleRepository;
 import com.mockproject.repository.FsuRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.TowerRepository;
+import com.mockproject.repository.TrainingClassAdminRepository;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.repository.TrainingClassUnitInformationRepository;
 import com.mockproject.repository.TrainingProgramRepository;
@@ -54,6 +57,7 @@ public class TrainingClassService implements ITrainingClassService{
     private final UserRepository userRepository;
     private final ClassScheduleRepository classScheduleRepository;
     private final TrainingClassUnitInformationRepository classUnitRepository;
+    private final TrainingClassAdminRepository classAdminRepository;
     private final TowerRepository towerRepository;
     private final FsuRepository fsuRepository;
 
@@ -201,6 +205,39 @@ public class TrainingClassService implements ITrainingClassService{
 			System.out.println("Empty");
 		}
 		return trainer;
+	}
+	
+	@Override
+	public List<UserDTO> findAdmin(Long id) {
+		List<UserDTO> admin = new ArrayList<>();
+		List<TrainingClassAdminDTO> getClassAdmin = classAdminRepository.findAll().stream().map(TrainingClassAdminMapper.INSTANCE::toDTO).collect(Collectors.toList());
+		getClassAdmin.forEach((classAdmin) -> {
+			if (classAdmin.getTrainingClassId() == id) {
+				if (classAdmin.isStatus()) {
+					long adminID = classAdmin.getAdminId();
+					List<UserDTO> userDetail = userRepository.findById(adminID).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
+					if (userDetail.get(0).getId() == adminID) {
+						if (userDetail.get(0).isStatus()) {
+							if (admin.isEmpty()) {
+								admin.add(userDetail.get(0));
+							}
+							else {
+								List<UserDTO> tmpList = new ArrayList<>(admin);
+								tmpList.forEach((userId) -> {
+									if (userId.getId() != adminID) {
+										admin.add(userDetail.get(0));
+									}
+								});
+							}
+						}
+					}
+				}
+			}
+        });
+		if (admin.isEmpty()) {
+			System.out.println("Empty");
+		}
+		return admin;
 	}
 	
 	public List<TowerDTO> findTower(Long id){
