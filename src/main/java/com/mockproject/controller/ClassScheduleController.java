@@ -2,6 +2,7 @@ package com.mockproject.controller;
 
 import com.mockproject.dto.TrainingClassFilterRequestDTO;
 import com.mockproject.dto.TrainingClassFilterResponseDTO;
+import com.mockproject.entity.TrainingClass;
 import com.mockproject.service.interfaces.IClassScheduleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,19 @@ public class ClassScheduleController {
     IClassScheduleService classScheduleService;
 
     @GetMapping("/day/{day}")
-    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(@PathVariable("day")LocalDate date){
+    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(@PathVariable("day") LocalDate date) {
         return classScheduleService.getTrainingClassByDay(date);
     }
 
     @PostMapping("/week")
-    public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO){
+    public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO) {
         log.info(filterRequestDTO.toString());
         return classScheduleService.getTrainingClassByWeek(filterRequestDTO);
     }
+
+    @GetMapping("/search")
+    public List<TrainingClass> searchTrainingClassByWeek(@RequestBody String search) {
+        return classScheduleService.searchTrainingClassByWeek(search);
+    }
+
 }

@@ -15,6 +15,7 @@ import com.mockproject.service.interfaces.IClassScheduleService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,7 +31,6 @@ public class ClassScheduleService implements IClassScheduleService {
 
     private final ClassScheduleRepository repository;
     private final TrainingClassRepository trainingClassRepository;
-
     private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
     private TrainingClassFilterMap trainingClassFilterMap;
     private TrainingClassAdminRepository trainingClassAdminRepository;
@@ -42,8 +42,6 @@ public class ClassScheduleService implements IClassScheduleService {
 
     @Override
     public List<ClassSchedule> listEntity() {
-//        List<ClassScheduleDTO> list = repository.findAll().stream().map(ClassScheduleMapper.INSTANCE::toClassScheduleDTO).collect(Collectors.toList());
-//        return list.stream().map(ClassScheduleMapper.INSTANCE::toEntity).collect(Collectors.toList());
         return repository.findAll();
     }
 
@@ -61,18 +59,17 @@ public class ClassScheduleService implements IClassScheduleService {
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(LocalDate date) {
         return trainingClassRepository.findAllByListClassSchedulesDate(date)
-                .stream().map(trainingClass -> getTrainingClassDetail(trainingClass,date)).collect(Collectors.toList());
+                .stream().map(trainingClass -> getTrainingClassDetail(trainingClass, date)).collect(Collectors.toList());
     }
 
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(TrainingClassFilterRequestDTO filterRequestDTO) {
-
-        var trainingClassFiltered= trainingClassRepository.findAll(TrainingClassSpecification.findByFilter(filterRequestDTO));
+        var trainingClassFiltered = trainingClassRepository.findAll(TrainingClassSpecification.findByFilter(filterRequestDTO));
         List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
         trainingClassFiltered.stream().distinct().forEach(trainingClass -> {
             trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
-                if(classSchedule.getDate().isAfter(filterRequestDTO.getStartDate().minusDays(1))&&classSchedule.getDate().isBefore(filterRequestDTO.getEndDate().plusDays(1)))
-                result.add(getTrainingClassDetail(trainingClass,classSchedule.getDate()));
+                if (classSchedule.getDate().isAfter(filterRequestDTO.getStartDate().minusDays(1)) && classSchedule.getDate().isBefore(filterRequestDTO.getEndDate().plusDays(1)))
+                    result.add(getTrainingClassDetail(trainingClass, classSchedule.getDate()));
             });
         });
         return result;
@@ -85,7 +82,7 @@ public class ClassScheduleService implements IClassScheduleService {
         var durationDay = String.valueOf(learnedDay).concat("/" + trainingClass.getDay());
         var syllabusesList = trainingClass.getTrainingProgram().getListTrainingProgramSyllabuses()
                 .stream().map(TrainingProgramSyllabus::getSyllabus).collect(Collectors.toList());
-        var trainingClassAdmin= trainingClassAdminRepository.findAllByTrainingClassId(trainingClass.getId());
+        var trainingClassAdmin = trainingClassAdminRepository.findAllByTrainingClassId(trainingClass.getId());
         List<UnitResponseDTO> unit = new ArrayList<>();
         //check syllabus to get unit
         for (int i = 0; i < syllabusesList.size(); i++) {
@@ -112,6 +109,13 @@ public class ClassScheduleService implements IClassScheduleService {
                 trainerName,
                 durationDay,
                 date, unit);
+    }
+
+    @Override
+    public List<TrainingClass> searchTrainingClassByWeek(String search) {
+        Specification<TrainingClass> specification = TrainingClassSpecification.searchByAll(search);
+        List<TrainingClass> result = trainingClassRepository.findAll(specification);
+        return result;
     }
 
 }
