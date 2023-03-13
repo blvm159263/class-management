@@ -28,9 +28,9 @@ class LocationServiceTest {
     @Autowired
     private LocationService locationService;
 
-    Location location1 = new Location(1L, "Location 1", "123 Le Loi", true, null);
-    Location location2 = new Location(2L, "Location 2", "333 Le Hong Phong", false, null);
-    Location location3 = new Location(3L, "Location 3", "55 Nguyen Trai", true, null);
+    Location location1 = new Location(1L, "Location 1", "123 Le Loi", true, null, null);
+    Location location2 = new Location(2L, "Location 2", "333 Le Hong Phong", false, null, null);
+    Location location3 = new Location(3L, "Location 3", "55 Nguyen Trai", true, null, null);
 
     /**
      * Method under test: {@link LocationService#listAllTrue()}

@@ -12,4 +12,6 @@ public interface TrainingProgramRepository extends JpaRepository<TrainingProgram
     List<TrainingProgram> findByNameContainingAndStatus(String name, boolean status);
 
 
+
+
 }

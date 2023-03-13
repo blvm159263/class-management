@@ -30,8 +30,8 @@ class TowerServiceTest {
     @Autowired
     private TowerService towerService;
 
-    Location location1 = new Location(1L, "Location 1", "123 Le Loi", true, null);
-    Location location2 = new Location(2L, "Location 2", "333 Le Hong Phong", false, null);
+    Location location1 = new Location(1L, "Location 1", "123 Le Loi", true, null, null);
+    Location location2 = new Location(2L, "Location 2", "333 Le Hong Phong", false, null, null);
 
 
     Tower tower1 = new Tower(1L, "FTown 1", "123 Le Loi", true, location1,null);

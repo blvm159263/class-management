@@ -19,6 +19,7 @@ public class TrainingClassDTO implements Serializable {
     @Schema(hidden = true)
     private Long id;
     private String className;
+    @Schema(hidden = true)
     private String classCode;
     private LocalDate startDate;
     private Time startTime;
@@ -34,6 +35,7 @@ public class TrainingClassDTO implements Serializable {
     private LocalDate dateApproved;
     private LocalDate lastDateModified;
     private boolean status;
+    private Long locationId;
     private Long attendeeId;
     private Long trainingProgramId;
     private Long fsuId;
