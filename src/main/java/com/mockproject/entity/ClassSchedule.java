@@ -23,7 +23,7 @@ public class ClassSchedule implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Column(
             name = "date",

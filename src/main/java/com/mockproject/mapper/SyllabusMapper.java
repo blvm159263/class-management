@@ -23,14 +23,14 @@ public interface SyllabusMapper {
     Syllabus toEntity(SyllabusDTO dto);
 
     @Named("mapLastModifier")
-    default User mapLastModifier(long id) {
+    default User mapLastModifier(Long id) {
         User user = new User();
         user.setId(id);
         return user;
     }
 
     @Named("mapCreator")
-    default User mapCreator(long id) {
+    default User mapCreator(Long id) {
         User user = new User();
         user.setId(id);
         return user;
