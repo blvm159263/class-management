@@ -40,7 +40,7 @@ public class SyllabusService implements ISyllabusService {
                 String[] subSort = sortItem.split(",");
                 order.add(new Sort.Order(getSortDirection(subSort[1]),subSort[0]));
             }
-        }else{
+        }else {
             order.add(new Sort.Order(getSortDirection(sort[1]),sort[0]));
         }
         Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
