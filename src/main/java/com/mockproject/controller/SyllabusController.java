@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,26 +30,27 @@ public class SyllabusController {
     @Autowired
     public SyllabusService syllabusService;
 
-    // list syllabus for user
     @GetMapping()
     public ResponseEntity<List<Syllabus>> getAll(){
         List<Syllabus> listSyllabus = syllabusService.getAll(true, true);
         return ResponseEntity.ok(listSyllabus);
     }
 
-    // list syllabus for admin
     @GetMapping("/{id}")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<Syllabus> getSyllabus(@PathVariable("id") long syllabusId){
         Syllabus syllabus = syllabusService.getSyllabusById(syllabusId, true, true);
         return ResponseEntity.ok(syllabus);
     }
 
     @GetMapping("get-all")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<List<Syllabus>> getAllSyllabus(){
         return ResponseEntity.ok(syllabusService.getSyllabusList(true));
     }
 
     @PostMapping(value = "/create")
+    @Secured({CREATE,FULL_ACCESS})
     public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         long syllabusID = syllabusService.create(syllabus, user.getUser().getId());
@@ -56,12 +58,15 @@ public class SyllabusController {
     }
 
     @PutMapping("edit/{id}")
+    @Secured({MODIFY,CREATE, FULL_ACCESS})
     public ResponseEntity<Syllabus> editSyllabus(@PathVariable("id") long id, @RequestBody SyllabusDTO syllabusDTO){
         Syllabus editsyllabus = syllabusService.editSyllabus(id, syllabusDTO, true);
         return ResponseEntity.ok(editsyllabus);
     }
 
+
     @PutMapping("delete/{id}")
+    @Secured({MODIFY,CREATE, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id") long syllabusId){
         return ResponseEntity.ok(syllabusService.deleteSyllabus(syllabusId, true));
     }

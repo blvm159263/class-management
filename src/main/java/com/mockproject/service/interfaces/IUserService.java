@@ -13,6 +13,4 @@ public interface IUserService {
 
     List<UserDTO> getAllByPageAndRowPerPage(long page, long rowPerPage);
 
-    List<UserDTO> searchByFillter(SearchUserFillerDTO userFillerDTO);
-
 }

@@ -5,6 +5,7 @@ import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.Unit;
 import com.mockproject.mapper.SessionMapper;
+import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.service.interfaces.ISessionService;
@@ -46,6 +47,8 @@ public class SessionService implements ISessionService {
     public boolean createSession(long syllabusId, List<SessionDTO> listSession, long userId){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true,true);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.get().setDay(listSession.size());
+        syllabusRepository.save(syllabus.get());
         listSession.forEach((i) ->
         {
             i.setSyllabusId(syllabusId);

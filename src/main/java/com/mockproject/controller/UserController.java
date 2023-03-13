@@ -195,23 +195,6 @@ public class UserController {
         return ResponseEntity.ok("hihi");
     }
 
-    @PostMapping("/searchByFillet")
-    public ResponseEntity searchByFillter(@RequestBody SearchUserFillerDTO searchUserFillerDTO){
-        List<UserDTO> result = userService.searchByFillter(searchUserFillerDTO);
-        if (result != null && !result.isEmpty())
-            return ResponseEntity.ok(result);
-        else
-            return ResponseEntity.badRequest().body("Not found user!");
-    }
-
-    @GetMapping("/searchByRoleID")
-    public ResponseEntity searchByRoleId(@RequestParam( value = "roleId", required = false) List<Long> roleId,
-                                         @RequestParam(value = "page", required = false) Optional<Integer> page,
-                                         @RequestParam(value = "size", required = false) Optional<Integer> size){
-
-        return ResponseEntity.ok(userService.searchByRoleId(roleId!=null? roleId : new ArrayList<Long>(), page, size));
-    }
-
     @PostMapping("/encodePassword")
     public ResponseEntity encodePassword(){
         userService.encodePassword();

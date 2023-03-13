@@ -50,7 +50,6 @@ public class SyllabusService {
         syllabus.setCreatorId(userId);
         syllabus.setLastModifierId(userId);
         Syllabus newSyllabus = syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabus));
-        System.out.println("Syllabus: "+ newSyllabus.getId());
         sessionService.createSession(newSyllabus.getId(), syllabus.getSessionDTOList(), syllabus.getCreatorId());
         return newSyllabus.getId();
     }
