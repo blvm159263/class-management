@@ -6,7 +6,6 @@ import com.mockproject.mapper.FsuMapper;
 import com.mockproject.repository.FsuRepository;
 import com.mockproject.service.interfaces.IFsuService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
