@@ -44,7 +44,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/User")
-@Api(tags = "Users Rest Controller")
 @SecurityRequirement(name = "Authorization")
 public class UserController {
 
@@ -73,9 +72,6 @@ public class UserController {
 
     @Autowired
     PermissionScopeService permissionScopeService;
-
-    @Autowired
-    RoleService roleService;
 
     @Autowired
     LevelService levelService;
@@ -176,20 +172,14 @@ public class UserController {
         return ResponseEntity.ok(list);
     }
 
-    //@GetMapping("/GetAllUsers")
-
-    @GetMapping ("/GetUserByFullName")
-    //@Secured({VIEW,MODIFY,CREATE,FULL_ACCESS})
-    public ResponseEntity getUserByFullName (@RequestParam(value = "fullName")String fullName){
-        UserDTO user = userService.findByFullNameContains(fullName);
-        if (user == null) return ResponseEntity.badRequest().body("Not found");
-        return ResponseEntity.ok(user);
-    }
-
     @GetMapping("/GetRoleById")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getRoleById (@RequestParam(value = "id")long id){
-        String role = roleService.getRoleNameById(id);
-        return ResponseEntity.ok(role);
+        RoleDTO role = roleService.getRoleById(id);
+        if (role != null){
+            return ResponseEntity.ok(role);
+        }
+        return ResponseEntity.badRequest().body("Role ot found!");
     }
 
     @PutMapping("/updateRole")
@@ -200,7 +190,6 @@ public class UserController {
             if (roleService.checkDuplicatedByRoleName(fdto.getRoleName()))
                 return ResponseEntity.badRequest().body("Role " + fdto.getRoleName() + " is duplicated!");
             if (fdto.getId() != 0) {
-                //listRoleDTOS.add(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
                 roleService.save(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getClassPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Class"));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getSyllabusPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Syllabus"));
@@ -224,6 +213,7 @@ public class UserController {
     }
 
     @PostMapping("/searchByFillet")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity searchByFillter(@RequestParam(value = "Id", required = false) Long id,
                                           @RequestParam(value = "Dob", required = false) LocalDate dob,
                                           @RequestParam(value = "Email", required = false) String email,
@@ -259,20 +249,26 @@ public class UserController {
         userService.encodePassword();
         return ResponseEntity.ok("Oke nha hihi");
     }
-}
+
     @GetMapping("/GetRoleByName")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getRoleByName(@RequestParam(value = "roleName")String rolename){
         long roleId = roleService.getRoleByRoleName(rolename);
         return ResponseEntity.ok(roleId);
     }
 
     @GetMapping("/GetLevel")
-    public ResponseEntity getLevelCodeById (@RequestParam(value = "id")long id){
-        String levelcode = levelService.getLevelCodeById(id);
-        return ResponseEntity.ok(levelcode);
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    public ResponseEntity getLevelById (@RequestParam(value = "id")long id){
+        LevelDTO level = levelService.getLevelById(id);
+        if (level != null){
+            return ResponseEntity.ok(level);
+        } else return ResponseEntity.badRequest().body("Not found level!");
+
     }
 
     @PutMapping("/De-activateUser")
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity deactivateUser (@RequestParam(value = "id")long id){
         int state = userService.updateStateToFalse(id);
         if (state == 0) return ResponseEntity.ok("De-activate user successfully");
@@ -280,13 +276,15 @@ public class UserController {
     }
 
     @PutMapping("/ActivateUser")
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity activateUser (@RequestParam(value = "id")long id){
         int state = userService.updateStateToTrue(id);
         if (state == 1) return ResponseEntity.ok("Activate user successfully");
         return ResponseEntity.badRequest().body("User not found");
     }
 
-    @PutMapping("/DeleteUser")
+    @DeleteMapping("/DeleteUser")
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity deleteUser (@RequestParam(value = "id")long id){
         boolean delete = userService.updateStatus(id);
         if (!delete) return ResponseEntity.badRequest().body("Delete failed");
@@ -294,39 +292,43 @@ public class UserController {
     }
 
     @PutMapping("/ChangeRole")
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity changeRole (@RequestParam(value = "id")long id,@RequestParam(value = "roleName")String roleName){
+        if (roleService.getRoleByRoleName(roleName) == null){
+            return ResponseEntity.badRequest().body("Role not found!");
+        }
         boolean change = userService.changeRole(id,roleService.getRoleByRoleName(roleName));
         if (!change) return ResponseEntity.badRequest().body("Change failed");
         return ResponseEntity.ok(roleName);
     }
 
-//    @PutMapping("/EditUser")
-//    public ResponseEntity editUser (@RequestParam(value = "id")long id, @RequestParam(value = "fullname")String fullname,
-//                                    @RequestParam(value = "dob")LocalDate dob,@RequestParam(value = "gender")boolean gender,
-//                                    @RequestParam(value = "level")String level){
-//        boolean edit = false;
-//        return ResponseEntity.ok(edit);
-//    }
-
     @PutMapping("/EditName")
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity editFullName (@RequestParam(value = "id")long id, @RequestParam(value = "fullname")String fullname){
         boolean editName = userService.editName(id,fullname);
-        return ResponseEntity.ok(editName);
+        if (editName)
+            return ResponseEntity.ok("Successfully");
+        else return ResponseEntity.badRequest().body("Cound not change!");
     }
 
     @PutMapping("/EditDoB")
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity editDoB (@RequestParam(value = "id")long id, @RequestParam(value = "dob")LocalDate date){
-        boolean editDoB = userService.editDoB(id,date);
-        return ResponseEntity.ok(editDoB);
+            boolean editDoB = userService.editDoB(id, date);
+            if (editDoB)
+                return ResponseEntity.ok("Successfully");
+            else return ResponseEntity.badRequest().body("Cound not change!");
     }
 
     @PutMapping("/EditGender")
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity editGender (@RequestParam(value = "id")long id, @RequestParam(value = "gender")boolean gender){
         boolean editGender = userService.editGender(id,gender);
         return ResponseEntity.ok(editGender);
     }
 
     @PutMapping("/EditLevel")
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity editLevel (@RequestParam(value = "id")long id, @RequestParam(value = "levelCode")String levelCode){
         boolean editLevel = userService.editLevel(id,levelCode);
         return ResponseEntity.ok(editLevel);

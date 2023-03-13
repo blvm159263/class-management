@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface LevelRepository extends JpaRepository<Level, Long> {
-    public Optional<Level> getLevelById(long id);
-    public Optional<Level> getLevelByLevelCode(String levelCode);
+    Optional<Level> getLevelById(long id);
+    Optional<Level> getLevelByLevelCode(String levelCode);
 }

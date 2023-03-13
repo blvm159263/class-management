@@ -1,11 +1,9 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.UserDTO;
-import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.Level;
 import com.mockproject.entity.Role;
 import com.mockproject.entity.User;
-import com.mockproject.mapper.UserMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.LevelRepository;
 import com.mockproject.repository.RoleRepository;
@@ -24,14 +22,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
 @Service
 @Transactional
 @AllArgsConstructor
 public class UserService implements IUserService {
     private final UserRepository repository;
+    private final RoleRepository roleRepository;
+    private final LevelRepository levelRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -41,10 +38,6 @@ public class UserService implements IUserService {
         return repository.findAllBy().stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
-    @Override
-    public Long countAllBy() {
-        return repository.countAllBy();
-    }
 
     @Override
     public List<UserDTO> getAllByPageAndRowPerPage(long page, long rowPerPage) {
@@ -97,23 +90,14 @@ public class UserService implements IUserService {
         }
         return Sort.Direction.ASC;
     }
-    private final UserMapper userMapper;
-    private final RoleRepository roleRepository;
-    private final LevelRepository levelRepository;
 
-    @Override
-    public UserDTO findByFullNameContains(String fullName) {
-        UserDTO userDTO = new UserDTO();
-        userDTO = userMapper.toDTO(repository.findByFullNameContains(fullName).get());
-        if (userDTO != null) return userDTO;
-        else return null;
-    }
+
 
     @Override
     public boolean updateStatus(long id) {
         boolean status = false;
         Optional<User> user = repository.findById(id);
-        if (user.isPresent()){
+        if (user.isPresent()) {
             User u = user.get();
             u.setStatus(false);
             repository.save(u);
@@ -126,7 +110,7 @@ public class UserService implements IUserService {
     public Integer updateStateToFalse(long id) {
         Optional<User> user = repository.findById(id);
         int state = -1;
-        if (user.isPresent()){
+        if (user.isPresent()) {
             User u = user.get();
             u.setState(0);
             repository.save(u);
@@ -139,7 +123,7 @@ public class UserService implements IUserService {
     public Integer updateStateToTrue(long id) {
         Optional<User> user = repository.findById(id);
         int state = -1;
-        if (user.isPresent()){
+        if (user.isPresent()) {
             User u = user.get();
             u.setState(1);
             repository.save(u);
@@ -152,7 +136,7 @@ public class UserService implements IUserService {
     public boolean changeRole(long id, long roleId) {
         Optional<User> user = repository.findById(id);
         Optional<Role> role = roleRepository.getRoleById(roleId);
-        if (user.isPresent()  && role.isPresent()){
+        if (user.isPresent() && role.isPresent()) {
             User user1 = user.get();
             Role role1 = role.get();
             user1.setRole(role1);
@@ -165,7 +149,7 @@ public class UserService implements IUserService {
     @Override
     public boolean editName(long id, String name) {
         Optional<User> user = repository.findById(id);
-        if (user.isPresent()){
+        if (user.isPresent()) {
             User u = user.get();
             u.setFullName(name);
             repository.save(u);
@@ -177,7 +161,7 @@ public class UserService implements IUserService {
     @Override
     public boolean editDoB(long id, LocalDate date) {
         Optional<User> user = repository.findById(id);
-        if (user.isPresent()){
+        if (user.isPresent()) {
             User u = user.get();
             u.setDob(date);
             repository.save(u);
@@ -189,7 +173,7 @@ public class UserService implements IUserService {
     @Override
     public boolean editGender(long id, boolean gender) {
         Optional<User> user = repository.findById(id);
-        if (user.isPresent()){
+        if (user.isPresent()) {
             User u = user.get();
             u.setGender(gender);
             repository.save(u);
@@ -202,7 +186,7 @@ public class UserService implements IUserService {
     public boolean editLevel(long id, String levelCode) {
         Optional<User> user = repository.findById(id);
         Optional<Level> level = levelRepository.getLevelByLevelCode(levelCode);
-        if (user.isPresent()  && level.isPresent()){
+        if (user.isPresent() && level.isPresent()) {
             User user1 = user.get();
             Level level1 = level.get();
             user1.setLevel(level1);

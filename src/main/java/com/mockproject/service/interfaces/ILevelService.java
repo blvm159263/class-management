@@ -1,10 +1,11 @@
 package com.mockproject.service.interfaces;
 
+import com.mockproject.dto.LevelDTO;
 import com.mockproject.entity.Level;
 
 import java.util.Optional;
 
 public interface ILevelService {
-    public String getLevelCodeById(long id);
-    public long getLevelByLevelCode(String levelCode);
+    LevelDTO getLevelById(long id);
+    long getLevelByLevelCode(String levelCode);
 }

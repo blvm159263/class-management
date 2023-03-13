@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,15 +20,23 @@ public class RoleService implements IRoleService {
 
 
     private final RoleRepository repository;
-    public String getRoleNameById(long id){
-        String role = repository.getRoleById(id).get().getRoleName();
-        return role;
+
+    @Override
+    public RoleDTO getRoleById(long id){
+        Optional<Role> role = repository.getRoleById(id);
+        if (role.isPresent()){
+            return RoleMapper.INSTANCE.toDTO(role.get());
+        }
+        return null;
     }
 
     @Override
-    public long getRoleByRoleName(String roleName) {
-        long roleId = repository.getRoleByRoleName(roleName).get().getId();
-        return roleId;
+    public Long getRoleByRoleName(String roleName) {
+        Optional<Role> role = repository.getRoleByRoleName(roleName);
+        if (role.isPresent()){
+            return repository.getRoleByRoleName(roleName).get().getId();
+        }
+        else return null;
     }
 
     @Override

@@ -25,7 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "OFFSET ((?1-1)*?2) ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
      List<User> getAllByPageAndRowPerPage(long page, long rowPerPage);
 
-Long countAllBy();
     @Query(value = "select u from User u "+
         "where (:id is null or u.id = :id) " +
             "and (:dob is null or u.dob = :dob)" +
@@ -40,5 +39,4 @@ Long countAllBy();
             "and u.status = true"
     )
     Page<User> searchByFiller(Long id, LocalDate dob, String email, String fullname, Boolean gender, String phone, List<Integer> state, List<Long> attendee_id, List<Long> level_id, List<Long> role_id,Pageable pageable);
-    Optional<User> findByFullNameContains(String fullName);
 }

@@ -1,8 +1,10 @@
 package com.mockproject.service;
 
+import com.mockproject.dto.LevelDTO;
 import com.mockproject.entity.Level;
 import com.mockproject.entity.Role;
 import com.mockproject.entity.User;
+import com.mockproject.mapper.LevelMapper;
 import com.mockproject.repository.LevelRepository;
 import com.mockproject.service.interfaces.ILevelService;
 import jakarta.transaction.Transactional;
@@ -18,9 +20,15 @@ import java.util.Optional;
 public class LevelService implements ILevelService {
 
     private final LevelRepository repository;
-    public String getLevelCodeById(long id){
-        String levelcode = repository.getLevelById(id).get().getLevelCode();
-        return levelcode;
+
+    @Override
+    public LevelDTO getLevelById(long id){
+        Optional<Level> level = repository.getLevelById(id);
+        if (level.isPresent()){
+            return LevelMapper.INSTANCE.toDTO(level.get());
+        }
+
+        return null;
     }
 
     @Override
