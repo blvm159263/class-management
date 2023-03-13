@@ -41,13 +41,13 @@ public class TrainingMaterialController {
     }
 
 
-    @PostMapping("/upload-file")
-    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@RequestBody List<CreateTrainingMaterialDTO> createTrainingMaterialDTO) throws IOException{
+    @PostMapping("/upload-file/{unitDetailID}")
+    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@PathVariable("unitDetailID") long unitDetailID,@RequestBody List<CreateTrainingMaterialDTO> createTrainingMaterialDTO) throws IOException{
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 
         return ResponseEntity.ok(trainingMaterialService.uploadFile(createTrainingMaterialDTO,
-                user.getUser(), 3));
+                user.getUser(), unitDetailID));
     }
 
     @GetMapping("/get-file/{id}")
@@ -61,10 +61,10 @@ public class TrainingMaterialController {
     @PutMapping("/{id}")
     public ResponseEntity<TrainingMaterialDTO> updateFile(
             @PathVariable("id") long id,
-            @RequestParam(name = "file") CreateTrainingMaterialDTO dto,
-            @RequestParam(name = "unit_detail_id") long unitDetailId,
-            @RequestParam(name = "user_id") long userId) throws IOException {
-        return ResponseEntity.ok(trainingMaterialService.updateFile(id, dto, unitDetailId, userId, true));
+            @RequestParam(name = "file") CreateTrainingMaterialDTO dto
+            ) throws IOException {
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(trainingMaterialService.updateFile(id, dto, user.getUser(), true));
     }
 
     @PutMapping("/delete/{id}")
