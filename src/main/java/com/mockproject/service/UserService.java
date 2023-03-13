@@ -1,18 +1,19 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.SearchUserFillerDTO;
 import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.User;
-import com.mockproject.mapper.AttendeeMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.UserRepository;
 import com.mockproject.service.interfaces.IUserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,16 +24,11 @@ import java.util.stream.Collectors;
 public class UserService implements IUserService {
     private final UserRepository repository;
 
-    @Override
-    public UserDTO getByID(long id){
-        Optional<User> u = repository.findById(id);
-        if(!u.isPresent()) return null;
-        User user = u.get();
-        return UserMapper.INSTANCE.toDTO(user);
-    }
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
-    public List<UserDTO> getAll(){
+    public List<UserDTO> getAll() {
         return repository.findAllBy().stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
@@ -48,17 +44,61 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserDTO> searchByFillter(SearchUserFillerDTO userFillerDTO) {
+    public Page<UserDTO> searchByFillter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> role_id, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception {
+        int page1 = 0;
+        int size1 = 10;
+        Pageable pageable;
+        List<Sort.Order> order = new ArrayList<>();
+        if (page.isPresent()) page1 = page.get() - 1;
+        if (size.isPresent()) size1 = size.get();
 
+        if (sort != null && !sort.isEmpty()) {
+            for (String sortItem : sort) {
+                String[] subSort = sortItem.split("-");
+                order.add(new Sort.Order(getSortDirection(subSort[1]), subSort[0]));
+            }
+            pageable = PageRequest.of(page1, size1, Sort.by(order));
+        } else {
+            pageable = PageRequest.of(page1, size1);
+        }
+        Page<User> pages;
+        try {
+            pages = repository.searchByFiller(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, pageable);
+        } catch (Exception e) {
+            throw e;
+        }
+        return new PageImpl<>(
+                pages.stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                pages.getPageable(),
+                pages.getTotalElements());
+    }
 
-        return repository.searchByFiller(userFillerDTO.getId(), userFillerDTO.getDob(), userFillerDTO.getEmail() , userFillerDTO.getFullname(), userFillerDTO.getGender(), userFillerDTO.getPhone(), userFillerDTO.getState(), userFillerDTO.getAttendee_id(), userFillerDTO.getLevel_id(), userFillerDTO.getRole_id())
-                .stream()
-                .map(UserMapper.INSTANCE::toDTO)
-                .collect(Collectors.toList());
+    @Override
+    public UserDTO getByID(long id){
+        Optional<User> u = repository.findById(id);
+        if(!u.isPresent()) return null;
+        User user = u.get();
+        return UserMapper.INSTANCE.toDTO(user);
     }
 
     @Override
     public UserDTO saveUser(UserDTO userData) {
         return UserMapper.INSTANCE.toDTO(repository.save(UserMapper.INSTANCE.toEntity(userData)));
+    }
+
+    public void encodePassword() {
+        for (User user : repository.findAllBy()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            repository.save(user);
+        }
+    }
+
+    public Sort.Direction getSortDirection(String direction) {
+        if (direction.equals("asc")) {
+            return Sort.Direction.ASC;
+        } else if (direction.equals("desc")) {
+            return Sort.Direction.DESC;
+        }
+        return Sort.Direction.ASC;
     }
 }
