@@ -29,4 +29,14 @@ public class TrainingClassService implements ITrainingClassService {
         return repository.findAll(specification);
     }
 
+    @Override
+    public List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText, LocalDate date) {
+        return repository.findAllBySearchTextAndListClassSchedulesDate(searchText,date);
+    }
+
+    @Override
+    public List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate, LocalDate endDate) {
+        return repository.findAllBySearchTextAndListClassSchedulesWeek(searchText,startDate,endDate);
+    }
+
 }

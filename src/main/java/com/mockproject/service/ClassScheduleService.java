@@ -59,15 +59,15 @@ public class ClassScheduleService implements IClassScheduleService {
 
 
     @Override
-    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(LocalDate date) {
-        return trainingClassService.findAllByListClassSchedulesDate(date)
-                .stream().map(trainingClass ->getTrainingClassDetail(trainingClass,date)).collect(Collectors.toList());
+    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(TrainingClassFilterRequestDTO filterRequestDTO) {
+        return trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterDate(filterRequestDTO))
+                .stream().distinct().map(trainingClass ->getTrainingClassDetail(trainingClass,filterRequestDTO.getNowDate())).collect(Collectors.toList());
     }
 
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(TrainingClassFilterRequestDTO filterRequestDTO) {
 
-        var trainingClassFiltered= trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilter(filterRequestDTO));
+        var trainingClassFiltered= trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterWeek(filterRequestDTO));
         List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
         trainingClassFiltered.stream().distinct().forEach(trainingClass -> {
             trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
@@ -78,6 +78,26 @@ public class ClassScheduleService implements IClassScheduleService {
         return result;
     }
 
+    @Override
+    public List<TrainingClassFilterResponseDTO> searchTrainingClassInDate(List<String> textSearch, LocalDate date) {
+        return trainingClassService.findAllBySearchTextAndDate(textSearch,date)
+                .stream().map(trainingClass -> getTrainingClassDetail(trainingClass,date))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(List<String> textSearch, LocalDate startDate, LocalDate endDate) {
+        var trainingClassWeek= trainingClassService.findAllBySearchTextAndWeek(textSearch,startDate,endDate);
+        log.info(String.valueOf(trainingClassWeek.size())+textSearch);
+        List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
+            trainingClassWeek.stream().distinct().forEach(trainingClass -> {
+                trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
+                    if(classSchedule.getDate().isAfter(startDate.minusDays(2))&&classSchedule.getDate().isBefore(endDate.plusDays(1)))
+                        result.add(getTrainingClassDetail(trainingClass,classSchedule.getDate()));
+                });
+            });
+        return result;
+    }
     @Override
     public TrainingClassFilterResponseDTO getTrainingClassDetail(TrainingClass trainingClass, LocalDate date) {
         var learnedDay = repository.countAllByDateBeforeAndTrainingClassId(date, trainingClass.getId()) + 1;
@@ -115,5 +135,4 @@ public class ClassScheduleService implements IClassScheduleService {
                 unit);
 
     }
-
 }
