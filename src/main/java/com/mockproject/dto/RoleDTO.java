@@ -12,6 +12,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoleDTO implements Serializable {
+
+    public RoleDTO(String roleName, boolean status) {
+        this.roleName = roleName;
+        this.status = status;
+    }
     private Long id;
     private String roleName;
     private boolean status;
