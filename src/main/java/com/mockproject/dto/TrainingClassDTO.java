@@ -34,6 +34,8 @@ public class TrainingClassDTO implements Serializable {
     private LocalDate dateReviewed;
     private LocalDate dateApproved;
     private LocalDate lastDateModified;
+    @Schema(hidden = true)
+    private int period;
     private boolean status;
     private Long locationId;
     private Long attendeeId;

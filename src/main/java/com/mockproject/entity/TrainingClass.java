@@ -114,6 +114,11 @@ public class TrainingClass implements Serializable {
     )
     private LocalDate lastDateModified;
 
+    @Column(
+            name = "period"
+    )
+    private int period;
+
     @Column(name = "status")
     private boolean status;
 

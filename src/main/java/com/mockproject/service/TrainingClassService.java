@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.time.Year;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ public class TrainingClassService implements ITrainingClassService {
     @Override
     public Long create(TrainingClassDTO trainingClassDTO) {
         trainingClassDTO.setClassCode(generateClassCode(trainingClassDTO));
+        trainingClassDTO.setPeriod(getPeriod(trainingClassDTO.getStartTime(),trainingClassDTO.getEndTime()));
         TrainingClass entity = TrainingClassMapper.INSTANCE.toEntity(trainingClassDTO);
         TrainingClass trainingClass = trainingClassRepository.save(entity);
         if (trainingClass != null) {
@@ -38,7 +40,7 @@ public class TrainingClassService implements ITrainingClassService {
         return null;
     }
 
-    private String generateClassCode(TrainingClassDTO trainingClassDTO) {
+    public String generateClassCode(TrainingClassDTO trainingClassDTO) {
 
         final Map<Long, String> attendeeCode = new HashMap<>();
         attendeeCode.put(1L,"FR");
@@ -68,5 +70,15 @@ public class TrainingClassService implements ITrainingClassService {
                 .append(versionCode);
 
         return builder.toString();
+    }
+
+    public int getPeriod(Time startTime, Time endTime){
+        if(startTime.before(Time.valueOf("12:00:00"))){
+            return 0;
+        }
+        if(startTime.after(Time.valueOf("17:00:00"))){
+            return 2;
+        }
+        return 1;
     }
 }
