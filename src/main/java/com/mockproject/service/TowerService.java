@@ -33,6 +33,7 @@ public class TowerService implements ITowerService {
         List<Tower> towers = classUnitInformations.stream()
                 .map(TrainingClassUnitInformation :: getTower)
                 .filter(Tower::isStatus)
+                .distinct()
                 .toList();
         return towers.stream().map(TowerMapper.INSTANCE::toDTO).toList();
     }
