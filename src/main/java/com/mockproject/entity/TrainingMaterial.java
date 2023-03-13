@@ -38,7 +38,7 @@ public class TrainingMaterial implements Serializable {
             name = "data",
             nullable = false
     )
-    private byte[] data;
+    private String data;
 
     @Lob
     @Nationalized

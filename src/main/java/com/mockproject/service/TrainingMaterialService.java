@@ -1,5 +1,6 @@
 package com.mockproject.service;
 
+import com.mockproject.dto.CreateTrainingMaterialDTO;
 import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.entity.TrainingMaterial;
 import com.mockproject.entity.UnitDetail;
@@ -46,13 +47,13 @@ public class TrainingMaterialService{
     }
     private final UserService userService;
 
-    private TrainingMaterialDTO uploadAFile(MultipartFile file, UnitDetail unitDetail, User user) throws IOException {
+    private TrainingMaterialDTO uploadAFile(CreateTrainingMaterialDTO createDTO,UnitDetail unitDetail, User user) throws IOException {
         TrainingMaterial trainingMaterial = trainingMaterialRepository.save(TrainingMaterial.builder()
                 .uploadDate(LocalDate.now())
-                .data(FileUtils.compressFile(file.getBytes()))
-                .name(file.getOriginalFilename())
-                .type(file.getContentType())
-                .size(new BigDecimal(file.getSize()))
+                .data(createDTO.getData())
+                .name(createDTO.getName())
+                .type(createDTO.getType())
+                .size(createDTO.getSize())
                 .status(true)
                 .unitDetail(unitDetail)
                 .user(user)
@@ -64,19 +65,17 @@ public class TrainingMaterialService{
         Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(id, status);
         trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         TrainingMaterialDTO trainingMaterialDTO = TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterial.get());
-        trainingMaterialDTO.setData(FileUtils.decompressFile(trainingMaterialDTO.getData()));
         return trainingMaterialDTO;
     }
 
 
-    public List<TrainingMaterialDTO> uploadFile(MultipartFile[] files, long unitDetailsId, long userId) {
-        User user = userService.getUserById(userId);
-        UnitDetail unitDetail = unitDetailService.getUnitDetailById(unitDetailsId, true);
+    public List<TrainingMaterialDTO> uploadFile(List<CreateTrainingMaterialDTO> createTrainingMaterialDTOList, User user, long unitDetailID) {
+        UnitDetail unitDetail = unitDetailService.getUnitDetailById(unitDetailID, true);
         List<TrainingMaterialDTO> trainingMaterialDTOS = new ArrayList<>();
-        Arrays.asList(files).forEach(
-                (file) -> {
+        createTrainingMaterialDTOList.forEach(
+                (dto) -> {
                     try {
-                        trainingMaterialDTOS.add(uploadAFile(file, unitDetail, user));
+                        trainingMaterialDTOS.add(uploadAFile(dto, unitDetail, user));
                     } catch (IOException e) {
                         throw new ResponseStatusException(HttpStatus.NO_CONTENT);
                     }
@@ -85,15 +84,15 @@ public class TrainingMaterialService{
         return trainingMaterialDTOS;
     }
 
-    public TrainingMaterialDTO updateFile(long id, MultipartFile file, long unitDetailsId, long userId, boolean status) throws IOException {
+    public TrainingMaterialDTO updateFile(long id, CreateTrainingMaterialDTO createDTO, long unitDetailsId, long userId, boolean status) throws IOException {
         Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(id, status);
         trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         return TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterialRepository.save(TrainingMaterial.builder()
                 .id(id)
-                .data(FileUtils.compressFile(file.getBytes()))
-                .name(file.getOriginalFilename())
-                .type(file.getContentType())
-                .size(new BigDecimal(file.getSize()))
+                .data(createDTO.getData())
+                .name(createDTO.getName())
+                .type(createDTO.getType())
+                .size(createDTO.getSize())
                 .uploadDate(LocalDate.now())
                 .unitDetail(unitDetailService.getUnitDetailById(unitDetailsId, true))
                 .user(userService.getUserById(userId))
@@ -107,8 +106,6 @@ public class TrainingMaterialService{
         trainingMaterials.get().forEach(trainingMaterial -> {
             try {
                 TrainingMaterialDTO trainingMaterialDTO = TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterial);
-
-                trainingMaterialDTO.setData(FileUtils.decompressFile(trainingMaterialDTO.getData()));
                 trainingMaterialDTOS.add(trainingMaterialDTO);
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.NO_CONTENT);

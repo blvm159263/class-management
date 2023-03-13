@@ -1,9 +1,15 @@
 package com.mockproject.controller;
 
+import com.mockproject.dto.CreateTrainingMaterialDTO;
+import com.mockproject.dto.DeliveryTypeDTO;
 import com.mockproject.dto.TrainingMaterialDTO;
+import com.mockproject.entity.CustomUserDetails;
+import com.mockproject.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,10 +28,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/training-material")
+@AllArgsConstructor
 public class TrainingMaterialController {
 
     @Autowired
     TrainingMaterialService trainingMaterialService;
+
+    @Autowired
+    UserRepository userRepository;
+
+
 
     @GetMapping("get-all/{id}")
     public ResponseEntity<List<TrainingMaterialDTO>> getFiles(@PathVariable("id") long unitDetailId){
@@ -34,12 +46,12 @@ public class TrainingMaterialController {
 
 
     @PostMapping("/upload-file")
-    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(
-            @RequestParam(name = "file") MultipartFile[] files,
-            @RequestParam(name = "unit_detail_id") long unitDetailId,
-            @RequestParam(name = "user_id") long userId
-    ) throws IOException{
-        return ResponseEntity.ok(trainingMaterialService.uploadFile(files, unitDetailId, userId));
+    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@RequestBody List<CreateTrainingMaterialDTO> createTrainingMaterialDTO) throws IOException{
+//        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+
+        return ResponseEntity.ok(trainingMaterialService.uploadFile(createTrainingMaterialDTO,
+                userRepository.findById(3).get(), 3));
     }
 
     @GetMapping("/get-file/{id}")
@@ -53,10 +65,10 @@ public class TrainingMaterialController {
     @PutMapping("/{id}")
     public ResponseEntity<TrainingMaterialDTO> updateFile(
             @PathVariable("id") long id,
-            @RequestParam(name = "file") MultipartFile file,
+            @RequestParam(name = "file") CreateTrainingMaterialDTO dto,
             @RequestParam(name = "unit_detail_id") long unitDetailId,
             @RequestParam(name = "user_id") long userId) throws IOException {
-        return ResponseEntity.ok(trainingMaterialService.updateFile(id, file, unitDetailId, userId, true));
+        return ResponseEntity.ok(trainingMaterialService.updateFile(id, dto, unitDetailId, userId, true));
     }
 
     @PutMapping("/delete/{id}")
