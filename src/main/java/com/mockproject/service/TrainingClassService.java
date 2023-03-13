@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.mockproject.dto.AttendeeDTO;
 import com.mockproject.dto.ClassScheduleDTO;
+import com.mockproject.dto.FsuDTO;
 import com.mockproject.dto.SyllabusDTO;
+import com.mockproject.dto.TowerDTO;
 import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.dto.TrainingClassUnitInformationDTO;
 import com.mockproject.dto.TrainingProgramDTO;
@@ -16,7 +18,9 @@ import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.dto.UserDTO;
 import com.mockproject.mapper.AttendeeMapper;
 import com.mockproject.mapper.ClassScheduleMapper;
+import com.mockproject.mapper.FsuMapper;
 import com.mockproject.mapper.SyllabusMapper;
+import com.mockproject.mapper.TowerMapper;
 import com.mockproject.mapper.TrainingClassMapper;
 import com.mockproject.mapper.TrainingClassUnitInformationMapper;
 import com.mockproject.mapper.TrainingProgramMapper;
@@ -24,7 +28,9 @@ import com.mockproject.mapper.TrainingProgramSyllabusMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.AttendeeRepository;
 import com.mockproject.repository.ClassScheduleRepository;
+import com.mockproject.repository.FsuRepository;
 import com.mockproject.repository.SyllabusRepository;
+import com.mockproject.repository.TowerRepository;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.repository.TrainingClassUnitInformationRepository;
 import com.mockproject.repository.TrainingProgramRepository;
@@ -48,6 +54,8 @@ public class TrainingClassService implements ITrainingClassService{
     private final UserRepository userRepository;
     private final ClassScheduleRepository classScheduleRepository;
     private final TrainingClassUnitInformationRepository classUnitRepository;
+    private final TowerRepository towerRepository;
+    private final FsuRepository fsuRepository;
 
 	@Override
 	public List<TrainingClassDTO> findClassDetail(Long id) {
@@ -56,6 +64,7 @@ public class TrainingClassService implements ITrainingClassService{
 		if (!getClass.isEmpty()) {
 			getClass.forEach((ele) -> {
 				if (ele.isStatus()) {
+					System.out.println("Location ID: "+ele.getLocationId());
 					classDetail.add(ele);
 				}
 	        });
@@ -192,5 +201,37 @@ public class TrainingClassService implements ITrainingClassService{
 			System.out.println("Empty");
 		}
 		return trainer;
+	}
+	
+	public List<TowerDTO> findTower(Long id){
+		List<TowerDTO> location = new ArrayList<>();
+		long towerID = findClassDetail(id).get(0).getLocationId();
+		List<TowerDTO> getTower = towerRepository.findAll().stream().map(TowerMapper.INSTANCE::toDTO).collect(Collectors.toList());
+		getTower.forEach((tower) -> {
+			if (tower.getLocationId() == towerID) {
+				if (tower.isStatus()) {
+					location.add(tower);
+				}
+			}
+        });
+		if (location.isEmpty()) {
+			System.out.println("Empty");
+		}
+		return location;
+	}
+	
+	public List<FsuDTO> findFSU(Long id){
+		List<FsuDTO> fsu = new ArrayList<>();
+		long fsuID = findClassDetail(id).get(0).getFsuId();
+		List<FsuDTO> getFsu = fsuRepository.findById(fsuID).stream().map(FsuMapper.INSTANCE::toDTO).collect(Collectors.toList());
+		getFsu.forEach((temp) -> {
+			if (temp.isStatus()) {
+				fsu.add(temp);
+			}
+        });
+		if (fsu.isEmpty()) {
+			System.out.println("Empty");
+		}
+		return fsu;
 	}
 }

@@ -20,6 +20,7 @@ public interface TrainingClassMapper {
     @Mapping(target = "contactId", source = "contact.id")
     @Mapping(target = "attendeeId", source = "attendee.id")
     @Mapping(target = "approverId", source = "approver.id")
+    @Mapping(target = "locationId", source = "location.id")
     TrainingClassDTO toDTO(TrainingClass trainingClass);
 
     @Mapping(target = "trainingProgram", source = "trainingProgramId", qualifiedByName = "mapTrainingProgram")
@@ -30,6 +31,7 @@ public interface TrainingClassMapper {
     @Mapping(target = "contact", source = "contactId", qualifiedByName = "mapContact")
     @Mapping(target = "attendee", source = "attendeeId", qualifiedByName = "mapAttendee")
     @Mapping(target = "approver", source = "approverId", qualifiedByName = "mapApprover")
+    @Mapping(target = "location", source = "locationId", qualifiedByName = "mapLocation")
     TrainingClass toEntity(TrainingClassDTO dto);
 
     @Named("mapTrainingProgram")
@@ -86,6 +88,13 @@ public interface TrainingClassMapper {
         Attendee attendee = new Attendee();
         attendee.setId(id);
         return attendee;
+    }
+    
+    @Named("mapLocation")
+    default Location mapLocation(long id) {
+        Location location = new Location();
+        location.setId(id);
+        return location;
     }
 
 
