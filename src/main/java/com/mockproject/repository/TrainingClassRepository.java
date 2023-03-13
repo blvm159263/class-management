@@ -24,13 +24,11 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "tc.classCode IN (:listSearchText)  OR " +
             "tc.fsu.fsuName IN (:listSearchText) OR " +
             "ta.admin.fullName IN (:listSearchText) OR " +
-            "at.attendeeName IN (:listSearchText) OR "+
+            "at.attendeeName IN (:listSearchText) OR " +
             "lo.locationName IN (:listSearchText)) AND " +
             "cs.date = :date")
-    public List<TrainingClass> findAllBySearchTextAndListClassSchedulesDate(List<String> listSearchText,LocalDate date);
-    //    public List<TrainingClass> findAllByClassNameInOrClassCodeInOrFsuFsuNameInOrListTrainingClassAdminsAdminFullNameInOrLocationLocationNameInAndListClassSchedulesDate(List<String> listSearchText1,List<String> listSearchText2,List<String> listSearchText3,List<String> listSearchText4,List<String> listSearchText5,LocalDate date);
-//    public List<TrainingClass> findAllByLocationLocationNameInOrClassNameInAndListClassSchedulesDate(List<String> listSearchText1,List<String> listSearchText2,LocalDate date);
-////OrClassNameInOrClassCodeInOrFsuFsuNameInOrListTrainingClassAdminsAdminFullNameInOrListTrainingClassUnitInformationsTrainerFullNameIn
+    public List<TrainingClass> findAllBySearchTextAndListClassSchedulesDate(List<String> listSearchText, LocalDate date);
+    
     @Query("SELECT tc FROM TrainingClass tc " +
             "LEFT JOIN tc.listClassSchedules cs " +
             "LEFT JOIN tc.listTrainingClassAdmins ta " +
@@ -41,10 +39,10 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "tc.classCode IN (:listSearchText)  OR " +
             "tc.fsu.fsuName IN (:listSearchText) OR " +
             "ta.admin.fullName IN (:listSearchText) OR " +
-            "at.attendeeName IN (:listSearchText) OR "+
+            "at.attendeeName IN (:listSearchText) OR " +
             "lo.locationName IN (:listSearchText)) AND " +
             "cs.date BETWEEN :startDate AND :endDate")
-    public List<TrainingClass> findAllBySearchTextAndListClassSchedulesWeek(List<String> listSearchText,LocalDate startDate,LocalDate endDate);
+    public List<TrainingClass> findAllBySearchTextAndListClassSchedulesWeek(List<String> listSearchText, LocalDate startDate, LocalDate endDate);
 
 
 }

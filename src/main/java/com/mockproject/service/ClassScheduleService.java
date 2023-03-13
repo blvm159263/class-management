@@ -42,8 +42,6 @@ public class ClassScheduleService implements IClassScheduleService {
 
     @Override
     public List<ClassSchedule> listEntity() {
-//        List<ClassScheduleDTO> list = repository.findAll().stream().map(ClassScheduleMapper.INSTANCE::toClassScheduleDTO).collect(Collectors.toList());
-//        return list.stream().map(ClassScheduleMapper.INSTANCE::toEntity).collect(Collectors.toList());
         return repository.findAll();
     }
 
@@ -61,18 +59,18 @@ public class ClassScheduleService implements IClassScheduleService {
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(TrainingClassFilterRequestDTO filterRequestDTO) {
         return trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterDate(filterRequestDTO))
-                .stream().distinct().map(trainingClass ->getTrainingClassDetail(trainingClass,filterRequestDTO.getNowDate())).collect(Collectors.toList());
+                .stream().distinct().map(trainingClass -> getTrainingClassDetail(trainingClass, filterRequestDTO.getNowDate())).collect(Collectors.toList());
     }
 
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(TrainingClassFilterRequestDTO filterRequestDTO) {
 
-        var trainingClassFiltered= trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterWeek(filterRequestDTO));
+        var trainingClassFiltered = trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterWeek(filterRequestDTO));
         List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
         trainingClassFiltered.stream().distinct().forEach(trainingClass -> {
             trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
-                if(classSchedule.getDate().isAfter(filterRequestDTO.getStartDate().minusDays(1))&&classSchedule.getDate().isBefore(filterRequestDTO.getEndDate().plusDays(1)))
-                    result.add(getTrainingClassDetail(trainingClass,classSchedule.getDate()));
+                if (classSchedule.getDate().isAfter(filterRequestDTO.getStartDate().minusDays(1)) && classSchedule.getDate().isBefore(filterRequestDTO.getEndDate().plusDays(1)))
+                    result.add(getTrainingClassDetail(trainingClass, classSchedule.getDate()));
             });
         });
         return result;
@@ -80,35 +78,36 @@ public class ClassScheduleService implements IClassScheduleService {
 
     @Override
     public List<TrainingClassFilterResponseDTO> searchTrainingClassInDate(List<String> textSearch, LocalDate date) {
-        return trainingClassService.findAllBySearchTextAndDate(textSearch,date)
-                .stream().map(trainingClass -> getTrainingClassDetail(trainingClass,date))
+        return trainingClassService.findAllBySearchTextAndDate(textSearch, date)
+                .stream().map(trainingClass -> getTrainingClassDetail(trainingClass, date))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(List<String> textSearch, LocalDate startDate, LocalDate endDate) {
-        var trainingClassWeek= trainingClassService.findAllBySearchTextAndWeek(textSearch,startDate,endDate);
-        log.info(String.valueOf(trainingClassWeek.size())+textSearch);
+        var trainingClassWeek = trainingClassService.findAllBySearchTextAndWeek(textSearch, startDate, endDate);
+        log.info(String.valueOf(trainingClassWeek.size()) + textSearch);
         List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
         trainingClassWeek.stream().distinct().forEach(trainingClass -> {
             trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
-                if(classSchedule.getDate().isAfter(startDate.minusDays(2))&&classSchedule.getDate().isBefore(endDate.plusDays(1)))
-                    result.add(getTrainingClassDetail(trainingClass,classSchedule.getDate()));
+                if (classSchedule.getDate().isAfter(startDate.minusDays(2)) && classSchedule.getDate().isBefore(endDate.plusDays(1)))
+                    result.add(getTrainingClassDetail(trainingClass, classSchedule.getDate()));
             });
         });
         return result;
     }
+
     @Override
     public TrainingClassFilterResponseDTO getTrainingClassDetail(TrainingClass trainingClass, LocalDate date) {
         var learnedDay = repository.countAllByDateBeforeAndTrainingClassId(date, trainingClass.getId()) + 1;
-        var durationDay = learnedDay+"/" + trainingClass.getDay();
+        var durationDay = learnedDay + "/" + trainingClass.getDay();
         var syllabusesList = trainingClass.getTrainingProgram().getListTrainingProgramSyllabuses()
                 .stream()
                 .map(TrainingProgramSyllabus::getSyllabus)
                 .collect(Collectors.toList());
         List<UnitResponseDTO> unit = new ArrayList<>();
         //check syllabus to get unit
-        for (Syllabus syllabus: syllabusesList) {
+        for (Syllabus syllabus : syllabusesList) {
             if (learnedDay > syllabus.getDay()) {
                 learnedDay -= syllabus.getDay();
             } else {
@@ -116,7 +115,7 @@ public class ClassScheduleService implements IClassScheduleService {
                 unit = syllabus.getListSessions()
                         .stream().filter(session -> session.getSessionNumber() == finalLearnedDay)
                         .flatMap(session -> session.getListUnit().stream())
-                        .map(Unit -> new  UnitResponseDTO(Unit.getUnitTitle(),Unit.getUnitNumber())
+                        .map(Unit -> new UnitResponseDTO(Unit.getUnitTitle(), Unit.getUnitNumber())
                         ).collect(Collectors.toList());
                 break;
             }
