@@ -60,13 +60,9 @@ public class UnitDetailService implements IUnitDetailService {
 //            trainingMaterialService.uploadFile(unitDetail.getListMaterials(),unitDetail.getId(), userId);
         }
 
-        //Set duration
-        long sessionId = unitRepository.findByIdAndStatus(unitId, true).get().getSession().getId();
-        long syllabusId = sessionRepository.findByIdAndStatus(sessionId, true).get().getSyllabus().getId();
-        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusId,true);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
-        syllabus.get().setHour(duration);
-        syllabusRepository.save(syllabus.get());
+        //Set duration unit
+        unit.get().setDuration(duration);
+        unitRepository.save(unit.get());
         return true;
     }
 

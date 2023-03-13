@@ -66,7 +66,6 @@ public class SyllabusService {
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusId, status);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         syllabus.get().setStatus(false);
-        System.out.println("Syllabus: "+syllabusId);
         sessionService.deleteSessions(syllabusId, status);
         syllabusRepository.save(syllabus.get());
         return true;
