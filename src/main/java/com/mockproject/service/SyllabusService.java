@@ -1,7 +1,6 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.SyllabusDTO;
-import com.mockproject.entity.OutputStandard;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.mapper.SyllabusMapper;
@@ -10,19 +9,15 @@ import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.service.interfaces.ISyllabusService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,10 +45,14 @@ public class SyllabusService implements ISyllabusService {
         }
         Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
         Page<Syllabus> pages = syllabusRepo.getListSyllabus(status, fromDate, toDate, search, getListSyllabusIdByOSD(search), pageable);
-        return new PageImpl<>(
-                pages.stream().map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                pages.getPageable(),
-                pages.getTotalElements());
+        if(pages.getContent().size() > 0){
+            return new PageImpl<>(
+                    pages.stream().map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    pages.getPageable(),
+                    pages.getTotalElements());
+        } else {
+            throw new NotFoundException("Syllabus not found!");
+        }
     }
 
     public Sort.Direction getSortDirection(String direction) {

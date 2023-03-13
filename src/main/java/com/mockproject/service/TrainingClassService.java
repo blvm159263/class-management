@@ -10,10 +10,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,10 +53,14 @@ public class TrainingClassService implements ITrainingClassService{
         Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
         Page<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
                 isOnline, state, attendeeId, fsu, classId, search, pageable);
-        return new PageImpl<>(
-                pages.stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                pages.getPageable(),
-                pages.getTotalElements());
+        if(pages.getContent().size() > 0){
+            return new PageImpl<>(
+                    pages.stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    pages.getPageable(),
+                    pages.getTotalElements());
+        }else {
+            throw new NotFoundException("Training Class not found!");
+        }
     }
 
     public Sort.Direction getSortDirection(String direction) {
