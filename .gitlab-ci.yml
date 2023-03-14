@@ -16,3 +16,7 @@ test:
   script:
     - mvn test
 
+deploy:
+  image: adoptopenjdk/openjdk17:jre
+  script:
+    - java -jar target/*.jar
