@@ -28,8 +28,8 @@ public class TrainingProgramController {
     public List<TrainingProgram> getAllTrainingProgram(@RequestParam(defaultValue = "0") Integer pageNo,
                                                        @RequestParam(defaultValue = "10") Integer pageSize,
                                                        Model model) {
-        long rows = trainingProgramService.countAll();
-        long totalPage = rows / pageSize;
+        Long rows = trainingProgramService.countAll();
+        Long totalPage = rows / pageSize;
         if (totalPage == 0 || rows % pageSize != 0) {
             totalPage += 1;
         }
