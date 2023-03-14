@@ -28,7 +28,8 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "at.attendeeName IN (:listSearchText) OR " +
             "ti.trainer.fullName in (:listSearchText) OR "+
             "lo.locationName IN (:listSearchText)) AND " +
-            "cs.date = :date")
+            "cs.date = :date AND " +
+            "tc.status = true ")
     public List<TrainingClass> findAllBySearchTextAndListClassSchedulesDate(List<String> listSearchText,LocalDate date);
 
     @Query("SELECT tc FROM TrainingClass tc " +
@@ -45,7 +46,8 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "at.attendeeName IN (:listSearchText) OR "+
             "ti.trainer.fullName in (:listSearchText) OR "+
             "lo.locationName IN (:listSearchText)) AND " +
-            "cs.date BETWEEN :startDate AND :endDate")
+            "cs.date BETWEEN :startDate AND :endDate AND " +
+            "tc.status = true ")
     public List<TrainingClass> findAllBySearchTextAndListClassSchedulesWeek(List<String> listSearchText,LocalDate startDate,LocalDate endDate);
 
 

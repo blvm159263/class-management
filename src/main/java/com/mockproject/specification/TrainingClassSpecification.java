@@ -69,20 +69,26 @@ public class TrainingClassSpecification {
                 .get("trainer")
                 .get("fullName"), trainer);
     }
+    public static Specification<TrainingClass> hasStatus(){
+        return (root, query, builder) -> builder.equal(root.get("status"),true);
+    }
 
     public static Specification<TrainingClass> findByFilterWeek(TrainingClassFilterRequestDTO filter) {
 
 
-        Specification<TrainingClass> spec = Specification.where(hasClassScheduleBetween(filter.getStartDate(), filter.getEndDate()));
+        Specification<TrainingClass> spec = Specification.where(hasClassScheduleBetween(filter.getStartDate(), filter.getEndDate()))
+                .and(hasStatus());
         return getTrainingClassSpecification(filter, spec);
     }
 
     public static Specification<TrainingClass> findByFilterDate(TrainingClassFilterRequestDTO filter) {
 
 
-        Specification<TrainingClass> spec = Specification.where(hasClassSchedule(filter.getNowDate()));
+        Specification<TrainingClass> spec = Specification.where(hasClassSchedule(filter.getNowDate()))
+                .and(hasStatus());
         return getTrainingClassSpecification(filter, spec);
     }
+
 
     private static Specification<TrainingClass> getTrainingClassSpecification(TrainingClassFilterRequestDTO filter, Specification<TrainingClass> spec) {
         if (filter.getLocations() != null && !filter.getLocations().isEmpty()) {
