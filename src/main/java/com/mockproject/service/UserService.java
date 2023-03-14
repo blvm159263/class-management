@@ -23,18 +23,20 @@ import java.util.List;
 @Transactional
 @AllArgsConstructor
 public class UserService implements IUserService {
+    @Autowired
     private final UserRepository repository;
 
     @Autowired
     RoleRepository roleRepository;
 
 
+
     @Override
     public String readCSVFile(File file) {
         try {
-            if(!file.exists()){
+            if (!file.exists()) {
                 return "File not Found!";
-            }else{
+            } else {
                 List<User> userList = new ArrayList<>();
 
                 // create a reader for the CSV file
@@ -60,10 +62,13 @@ public class UserService implements IUserService {
                     user.setStatus(true);
                     user.setRole(roleRepository.findById(1L).get());
                     userList.add(user);
+                    repository.save(user);
+
                 }
                 reader.close();
             }
-        }catch (Exception e){
+
+        } catch (Exception e) {
             return String.valueOf(e);
         }
 

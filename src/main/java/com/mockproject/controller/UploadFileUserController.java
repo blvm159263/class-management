@@ -24,20 +24,25 @@ public class UploadFileUserController {
     UserService userService;
 
     @PostMapping("/user")
-    public ResponseEntity readFileCSV(@RequestParam("file") MultipartFile mFile)  {
+    public ResponseEntity readFileCSV(@RequestParam("file") MultipartFile mFile) {
         LocalDateTime current = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH;mm;ss.SSS");
-        String path = "src/main/resources/CSVFile/" + String.valueOf(current.format(formatter))+"-"+mFile.getOriginalFilename();
+        String path = "src/main/resources/CSVFile/" + String.valueOf(current.format(formatter)) + "-" + mFile.getOriginalFilename();
         File file = new File(String.valueOf(path));
+        String status=null;
+
         try {
-            if(!file.exists()){
-                file.createNewFile();
+
+            if (!file.getName().toLowerCase().endsWith("csv")) {
+                return ResponseEntity.badRequest().body("Not CSV file");}
+            else{
+                if (!file.exists()) {file.createNewFile();}
+                mFile.transferTo(file);
+                status = userService.readCSVFile(file);
             }
-            mFile.transferTo(file);
         } catch (IOException e) {
 
         }
-        String status = userService.readCSVFile(file);
 
         return ResponseEntity.ok(status);
     }
