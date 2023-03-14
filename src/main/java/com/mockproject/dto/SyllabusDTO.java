@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SyllabusDTO implements Serializable {
-    private long id;
+    private Long id;
     private String name;
     private String code;
     private String version;
