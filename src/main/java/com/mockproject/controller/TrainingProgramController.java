@@ -7,16 +7,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("v1/trainingprogram")
 public class TrainingProgramController {
     private final ITrainingProgramService trainingProgramService;
 
@@ -24,7 +22,7 @@ public class TrainingProgramController {
         this.trainingProgramService = trainingProgramService;
     }
 
-    @GetMapping("/trainingprogram")
+    @GetMapping("/")
     public List<TrainingProgram> getAllTrainingProgram(@RequestParam(defaultValue = "0") Integer pageNo,
                                                        @RequestParam(defaultValue = "10") Integer pageSize,
                                                        Model model) {
@@ -37,7 +35,7 @@ public class TrainingProgramController {
         return trainingProgramService.getAll(pageNo, pageSize);
     }
 
-    @PostMapping("/searchtrainingprogram")
+    @PostMapping("/search")
     public List<TrainingProgram> getByKeyword(@RequestParam(name = "keyword", required = false) String keyword,
                                               HttpServletResponse response,
                                               Model model,
