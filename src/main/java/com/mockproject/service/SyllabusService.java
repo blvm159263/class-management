@@ -6,6 +6,7 @@ import com.mockproject.service.interfaces.ISyllabusService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,13 +14,10 @@ import java.util.Optional;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SyllabusService implements ISyllabusService {
     @Autowired
     private final SyllabusRepository repository;
-    public List<Syllabus> getSyllabusName(String name){
-        return repository.getSyllabusByNameContains(name);
-    }
     public Syllabus getSyllabusById(Long id){
          Optional<Syllabus> syllabusOptional = repository.findById(id);
          if(syllabusOptional.isPresent()){

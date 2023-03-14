@@ -24,7 +24,7 @@ public class Contact implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Column(
             name = "contact_email",

@@ -24,7 +24,7 @@ public class Level implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Column(
             name = "level_code",

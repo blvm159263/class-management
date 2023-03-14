@@ -5,15 +5,17 @@ import com.mockproject.entity.TrainingProgram;
 import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import jakarta.transaction.Transactional;
+<<<<<<< HEAD
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TrainingProgramService implements ITrainingProgramService{
     @Autowired
     private final TrainingProgramRepository repository;

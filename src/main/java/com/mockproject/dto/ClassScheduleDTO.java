@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClassScheduleDTO implements Serializable {
-    private long id;
+    private Long id;
     private LocalDate date;
     private boolean status;
-    private long trainingClassId;
+    private Long trainingClassId;
 }

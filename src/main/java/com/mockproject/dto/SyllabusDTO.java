@@ -39,6 +39,6 @@ public class SyllabusDTO implements Serializable {
     private String otherDes;
     private boolean state;
     private boolean status;
-    private long creatorId;
-    private long lastModifierId;
+    private Long creatorId;
+    private Long lastModifierId;
 }
