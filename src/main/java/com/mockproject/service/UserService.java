@@ -22,33 +22,33 @@ public class UserService implements IUserService {
 
     private final TrainingClassRepository trainingClassRepository;
 
-//    @Override
-//    public List<UserDTO> getTrainerByClassCode(String code) {
-//        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
-//        List<TrainingClassUnitInformation> classUnitInformations = trainingClass.getListTrainingClassUnitInformations()
-//                .stream()
-//                .filter(TrainingClassUnitInformation::isStatus)
-//                .toList();
-//        List<User> trainer = classUnitInformations.stream()
-//                .map(TrainingClassUnitInformation :: getTrainer)
-//                .filter(User::isStatus)
-//                .distinct().toList();
-//        return trainer.stream().map(UserMapper.INSTANCE :: toDTO).toList();
-//    }
-
     @Override
-    public List<UserDTO> getTrainerById(long id) {
-        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).get(0);
-        List<TrainingClassUnitInformation> trainingClassUnitInfor = trainingClass.getListTrainingClassUnitInformations()
+    public List<UserDTO> getTrainerByClassCode(String code) {
+        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
+        List<TrainingClassUnitInformation> classUnitInformations = trainingClass.getListTrainingClassUnitInformations()
                 .stream()
                 .filter(TrainingClassUnitInformation::isStatus)
                 .toList();
-        List<User> trainer = trainingClassUnitInfor.stream()
-                .map(TrainingClassUnitInformation::getTrainer)
+        List<User> trainer = classUnitInformations.stream()
+                .map(TrainingClassUnitInformation :: getTrainer)
                 .filter(User::isStatus)
                 .distinct().toList();
-        return trainer.stream().map(UserMapper.INSTANCE::toDTO).toList();
+        return trainer.stream().map(UserMapper.INSTANCE :: toDTO).toList();
     }
+
+//    @Override
+//    public List<UserDTO> getTrainerById(long id) {
+//        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).get(0);
+//        List<TrainingClassUnitInformation> trainingClassUnitInfor = trainingClass.getListTrainingClassUnitInformations()
+//                .stream()
+//                .filter(TrainingClassUnitInformation::isStatus)
+//                .toList();
+//        List<User> trainer = trainingClassUnitInfor.stream()
+//                .map(TrainingClassUnitInformation::getTrainer)
+//                .filter(User::isStatus)
+//                .distinct().toList();
+//        return trainer.stream().map(UserMapper.INSTANCE::toDTO).toList();
+//    }
 
     @Override
     public UserDTO getCreatorByClassCode(String code) {
