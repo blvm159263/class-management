@@ -2,7 +2,6 @@ package com.mockproject.mapper;
 
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.Session;
-import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.Unit;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

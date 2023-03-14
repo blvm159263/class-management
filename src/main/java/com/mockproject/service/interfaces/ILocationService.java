@@ -1,6 +1,5 @@
 package com.mockproject.service.interfaces;
 
-import com.mockproject.dto.AttendeeDTO;
 import com.mockproject.dto.LocationDTO;
 
 import java.util.List;
