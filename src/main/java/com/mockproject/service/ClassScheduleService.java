@@ -13,6 +13,7 @@ import com.mockproject.mapper.TrainingClassFilterMap;
 import com.mockproject.repository.ClassScheduleRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
 import com.mockproject.specification.TrainingClassSpecification;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
