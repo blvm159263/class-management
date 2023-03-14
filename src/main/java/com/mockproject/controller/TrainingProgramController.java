@@ -48,6 +48,9 @@ public class TrainingProgramController {
         trainingProgram.setName(name);
         trainingProgram.setDateCreated(LocalDate.now());
         trainingProgram.setLastDateModified(LocalDate.now());
+        trainingProgram.setDay(syllabus.getDay());
+        trainingProgram.setHour(syllabus.getHour());
+        trainingProgram.setStatus(true);
         TrainingProgramSyllabus programSyllabus = new TrainingProgramSyllabus();
         programSyllabus.setTrainingProgram(trainingProgram);
         programSyllabus.setStatus(true);

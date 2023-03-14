@@ -5,7 +5,6 @@ import com.mockproject.entity.TrainingProgram;
 import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import jakarta.transaction.Transactional;
-<<<<<<< HEAD
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.RequiredArgsConstructor;
