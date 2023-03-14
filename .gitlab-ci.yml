@@ -5,7 +5,6 @@ stages:
 
 test-all:
   stage: test
-  tags: [windows]
   except:
     - main
   script:
@@ -13,7 +12,6 @@ test-all:
 
 test-unit:
   stage: test
-  tags: [ windows ]
   only:
     - main
   script:
