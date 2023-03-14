@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class ClassScheduleController {
     @PostMapping("list/traing-class/{tcId}")
     public ResponseEntity<?> createListSchedule(@io.swagger.v3.oas.annotations.parameters.RequestBody(
                                                 content = @Content(examples = @ExampleObject(value = "[\"2023-03-14\",\"2023-03-15\"]")))
-                                                @RequestBody List<LocalDate> listDate,
+                                                @Valid @RequestBody List<LocalDate> listDate,
                                                 @Parameter(description = "Training Class ID when call create Training Class API return")
                                                 @PathVariable("tcId") Long tcId){
         if(service.saveClassScheduleForTrainingClass(listDate, tcId)){
