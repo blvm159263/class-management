@@ -59,6 +59,7 @@ public class UnitDetailService implements IUnitDetailService {
         }
 
         //Set duration unit
+        duration = duration.divide(BigDecimal.valueOf(60));
         unit.get().setDuration(duration);
         unitRepository.save(unit.get());
         return true;
