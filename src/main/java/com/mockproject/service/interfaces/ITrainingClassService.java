@@ -2,10 +2,7 @@ package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.*;
 
-import java.time.LocalDate;
-
 import java.util.List;
-import java.util.Map;
 
 
 public interface ITrainingClassService {
@@ -27,14 +24,12 @@ public interface ITrainingClassService {
 
     UserDTO getCreator(long id);
 
-    Map<String, Integer> getDaysCount(long id, LocalDate targetDate);
-
-    List<UnitDTO> getAllUnitsForADate(long id, LocalDate date);
-
-    List<UserDTO> getAllTrainersForADate(long id, LocalDate date);
-
     List<DeliveryTypeDTO> getAllDeliveryTypes(long id);
 
-    List<TowerDTO> getAllTowersForADate(long id, LocalDate date);
+    List<UnitDTO> getAllUnitsForADate(long id, int dayNth);
+
+    List<UserDTO> getAllTrainersForADate(long id, int dayNth);
+
+    List<TowerDTO> getAllTowersForADate(long id, int dayNth);
 
 }

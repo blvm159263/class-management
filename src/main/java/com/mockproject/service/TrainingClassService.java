@@ -9,7 +9,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -102,15 +101,15 @@ public class TrainingClassService implements ITrainingClassService {
 
 
     @Override
-    public List<UnitDTO> getAllUnitsForADate(long id, LocalDate date) {
-        List<Unit> units = getListUnitsInASession(id, date);
+    public List<UnitDTO> getAllUnitsForADate(long id, int dayNth) {
+        List<Unit> units = getListUnitsInASession(id, dayNth);
         return units.stream().map(UnitMapper.INSTANCE::toDTO).toList();
     }
 
     @Override
-    public List<UserDTO> getAllTrainersForADate(long id, LocalDate date) {
+    public List<UserDTO> getAllTrainersForADate(long id, int dayNth) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        List<Unit> units = getListUnitsInASession(id, date);
+        List<Unit> units = getListUnitsInASession(id, dayNth);
         List<TrainingClassUnitInformation> list = units.stream().map(p-> trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(p, tc, true).orElseThrow()).toList();
         List<User> trainers = list.stream().map(p-> userRepository.findByIdAndStatus(p.getTrainer().getId(), true).orElseThrow()).toList();
         return trainers.stream().map(UserMapper.INSTANCE::toDTO).toList();
@@ -125,41 +124,16 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public List<TowerDTO> getAllTowersForADate(long id, LocalDate date) {
+    public List<TowerDTO> getAllTowersForADate(long id, int dayNth) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        List<Unit> units = getListUnitsInASession(id, date);
+        List<Unit> units = getListUnitsInASession(id, dayNth);
         List<TrainingClassUnitInformation> list = units.stream().map(p-> trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(p, tc, true).orElseThrow()).toList();
         List<Tower> towers = list.stream().map(p-> towerRepository.findByIdAndStatus(p.getTower().getId(), true).orElseThrow()).distinct().toList();
         return towers.stream().map(TowerMapper.INSTANCE::toDTO).toList();
     }
 
-    @Override
-    public Map<String, Integer> getDaysCount(long id, LocalDate targetDate) {
-        // Get class
-        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
 
-        // Get list of days from schedule
-        List<ClassSchedule> schedules = classScheduleRepository.findByTrainingClassAndStatusOrderByDateAsc(tc, true).orElseThrow();
-        List<LocalDate> listOfDates = schedules.stream().map(ClassSchedule::getDate).toList();
-
-        // Count day(s) before the chosen day
-        int daysBefore = 0;
-        for (LocalDate date : listOfDates){
-            if(date.isBefore(targetDate)){
-                daysBefore++;
-            }
-        }
-
-        Map<String, Integer> daysCount = new HashMap<>();
-        daysCount.put("daysCount", daysBefore + 1);
-
-        return daysCount;
-
-    }
-
-
-
-    // get all sessions from a class
+    // get all units from a class
     private List<Unit> getListUnits(long id){
         // Get Class
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
@@ -171,28 +145,16 @@ public class TrainingClassService implements ITrainingClassService {
 
 
     // Get a session from a date
-    private Session getSession(long id, LocalDate date){
+    private Session getSession(long id, int dayNth){
         // Get all sessions
         List<Session> sessions = getListUnits(id).stream().map(p-> sessionRepository.findByIdAndStatus(p.getSession().getId(), true).orElseThrow()).toList();
-
-        // Get days count
-        int daysCount = getDaysCount(id, date).get("daysCount");
-
-        // Find session number == daysCount
-        for (Session session : sessions){
-            if (session.getSessionNumber() == daysCount){
-                return session;
-            }
-        }
-//        return sessions.stream().filter(p -> p.getSessionNumber() == daysCount).toList();
-        return null;
+        return sessions.get(dayNth);
     }
 
 
-
     // Get list units from a session
-    private List<Unit> getListUnitsInASession(long id, LocalDate date){
-        Session session = getSession(id, date);
+    private List<Unit> getListUnitsInASession(long id, int dayNth){
+        Session session = getSession(id, dayNth);
         return unitRepository.findBySessionAndStatusOrderByUnitNumber(session, true).orElseThrow();
     }
 }

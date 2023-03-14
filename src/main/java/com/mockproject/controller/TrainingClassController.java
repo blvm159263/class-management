@@ -7,11 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 
 @RestController
 @Tag(name = "Class Details API")
@@ -84,44 +82,6 @@ public class TrainingClassController {
         return ResponseEntity.ok(trainingClassService.getContact(id));
     }
 
-    @Operation(
-            summary = "Get Days count from the date chosen in the class schedule",
-            description = "Get Days count to get the day-nth of the date clicked in the class schedule table by the user"
-    )
-    @ApiResponse(responseCode = "500", description = "No Such Value")
-    @GetMapping("/days-count")
-    public ResponseEntity<?> getDaysCount(
-            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
-            @Parameter(description = "Date Chosen", example = "2023-03-01") @Param("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return ResponseEntity.ok(trainingClassService.getDaysCount(id, date));
-    }
-
-    @Operation(
-            summary = "Get all Units for a date chosen",
-            description = "Get list of Units in a date clicked in the class schedule table"
-    )
-    @ApiResponse(responseCode = "500", description = "No Such Value")
-    @GetMapping("/units-for-a-date")
-    public ResponseEntity<?> getAllUnitsForADate(
-            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
-            @Parameter(description = "Date Chosen", example = "2023-03-01") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Param("date") LocalDate date
-    ) {
-        return ResponseEntity.ok(trainingClassService.getAllUnitsForADate(id, date));
-    }
-
-    @Operation(
-            summary = "Get all Trainers of a date chosen",
-            description = "Get list of Trainers in a date clicked in the class schedule table"
-    )
-    @ApiResponse(responseCode = "500", description = "No Such Value")
-    @GetMapping("/trainers-for-a-date")
-    public ResponseEntity<?> getAllTrainersForADate(
-            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
-            @Parameter(description = "Date Chosen", example = "2023-03-01") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Param("date") LocalDate date
-    ) {
-        return ResponseEntity.ok(trainingClassService.getAllTrainersForADate(id, date));
-    }
-
     @Operation(summary = "Get all class's DeliveryTypes ")
     @ApiResponse(responseCode = "500", description = "No Such Value")
     @GetMapping("/deliveryTypes")
@@ -129,16 +89,47 @@ public class TrainingClassController {
         return ResponseEntity.ok(trainingClassService.getAllDeliveryTypes(id));
     }
 
+
     @Operation(
-            summary = "Get all Units for a date chosen",
-            description = "Get list of Units in a date clicked in the class schedule table"
+            summary = "Get all Units for day-nth of total days of the class schedule",
+            description = "Get list of Units in a date clicked in the class schedule table by the user"
+    )
+    @ApiResponse(responseCode = "500", description = "No Such Value")
+    @GetMapping("/units-for-a-date")
+    public ResponseEntity<?> getAllUnitsForADate(
+            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
+            @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth
+    ) {
+        return ResponseEntity.ok(trainingClassService.getAllUnitsForADate(id, dayNth));
+    }
+
+
+
+    @Operation(
+            summary = "Get all Trainers for day-nth of total days of the class schedule",
+            description = "Get list of Trainers in a date clicked in the class schedule table by the user"
+    )
+    @ApiResponse(responseCode = "500", description = "No Such Value")
+    @GetMapping("/trainers-for-a-date")
+    public ResponseEntity<?> getAllTrainersForADate(
+            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
+            @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth
+    ) {
+        return ResponseEntity.ok(trainingClassService.getAllTrainersForADate(id, dayNth));
+    }
+
+
+
+    @Operation(
+            summary = "Get all Units for day-nth of total days of the class schedule",
+            description = "Get list of Units in a date clicked in the class schedule table by the user"
     )
     @ApiResponse(responseCode = "500", description = "No Such Value")
     @GetMapping("/towers-for-a-date")
     public ResponseEntity<?> getAllTowersForADate(
             @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
-            @Parameter(description = "Date Chosen", example = "2023-03-01") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Param("date") LocalDate date
+            @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth
     ) {
-        return ResponseEntity.ok(trainingClassService.getAllTowersForADate(id, date));
+        return ResponseEntity.ok(trainingClassService.getAllTowersForADate(id, dayNth));
     }
 }
