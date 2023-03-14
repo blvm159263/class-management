@@ -5,6 +5,7 @@ import com.mockproject.dto.*;
 import java.time.LocalDate;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface ITrainingClassService {
@@ -26,7 +27,7 @@ public interface ITrainingClassService {
 
     UserDTO getCreator(long id);
 
-    Integer getDaysCount(long id, LocalDate targetDate); // Get daysCount by TrainingClass id and Date chosen
+    Map<String, Integer> getDaysCount(long id, LocalDate targetDate); // Get daysCount by TrainingClass id and Date chosen
 
     List<UnitDTO> getAllUnitsForADate(long id, LocalDate date); // Get all Units in the class for the Date chosen
 

@@ -139,8 +139,9 @@ public class TrainingClassService implements ITrainingClassService {
         return towers.stream().map(TowerMapper.INSTANCE::toDTO).toList();
     }
 
+
     @Override
-    public Integer getDaysCount(long id, LocalDate targetDate) {
+    public Map<String, Integer> getDaysCount(long id, LocalDate targetDate) {
         // Get class
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
 
@@ -156,7 +157,10 @@ public class TrainingClassService implements ITrainingClassService {
             }
         }
 
-        return daysBefore + 1;
+        Map<String, Integer> daysCount = new HashMap<>();
+        daysCount.put("daysCount", daysBefore + 1);
+
+        return daysCount;
 
     }
 
@@ -180,7 +184,7 @@ public class TrainingClassService implements ITrainingClassService {
         List<Session> sessions = units.stream().map(p-> sessionRepository.findByIdAndStatus(p.getSession().getId(), true).orElseThrow()).toList();
 
         // Get days count
-        int daysCount = getDaysCount(id, date);
+        int daysCount = getDaysCount(id, date).get("daysCount");
 
         // Find session number == daysCount
         for (Session session : sessions){
