@@ -1,6 +1,7 @@
 package com.mockproject.dto;
 
 import com.mockproject.entity.Session;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,31 +18,67 @@ import java.util.List;
 @AllArgsConstructor
 public class SyllabusDTO implements Serializable {
     private long id;
+    @NotEmpty
     private String name;
+    @NotEmpty
     private String code;
+    @NotNull
     private String version;
+    @NotNull
     private String level;
+    @NotNull
+    @Min(1)
     private int attendee;
+    @NotNull
+    @Min(0)
     private BigDecimal hour;
+    @NotNull
+    @Min(1)
     private int day;
+    @NotNull
     private String technicalRequirements;
+    @NotNull
     private String courseObjectives;
+    @NotNull
     private LocalDate dateCreated;
+    @NotNull
     private LocalDate lastDateModified;
+    @NotNull
+    @Min(0)
     private BigDecimal quiz;
+    @NotNull
+    @Min(0)
     private BigDecimal assignment;
+    @NotNull
+    @Min(0)
     private BigDecimal finalExam;
+    @NotNull
+    @Min(0)
     private BigDecimal finalTheory;
+    @NotNull
+    @Min(0)
     private BigDecimal finalPractice;
+    @NotNull
+    @Min(0)
     private BigDecimal gpa;
+    @NotNull
     private String trainingDes;
+    @NotNull
     private String reTestDes;
+    @NotNull
     private String markingDes;
+    @NotNull
     private String waiverCriteriaDes;
+    @NotNull
     private String otherDes;
+    @NotNull
     private boolean state;
+    @NotNull
     private boolean status;
+    @NotEmpty
     private long creatorId;
+    @NotNull
     private long lastModifierId;
+    @NotNull
     private List<SessionDTO> sessionDTOS;
 }
