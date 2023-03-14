@@ -54,16 +54,18 @@ public class TrainingClassController {
 
             @RequestParam(defaultValue = "")
             @Parameter(
-                    description = "<b>Class time:"
+                    description = "<b>Class time:<b>"
                             + "<ul><li>0: Morning</li>"
                             + "<li>1: Noon</li>"
-                            + "<li>2: Night</li></ul><b>",
+                            + "<li>2: Night</li></ul>",
                     example = "0"
             ) List<Integer> period,
 
             @RequestParam(defaultValue = "false")
             @Parameter(
-                    description = "<b>Class time - true: Online, false: No filter<b>",
+                    description = "<b>Class time<b>"
+                            + "<ul><li>true : Online</li>"
+                            + "<li>false : No filter</li>",
                     example = "false"
             ) boolean isOnline,
 
