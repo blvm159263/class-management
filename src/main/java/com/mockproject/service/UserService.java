@@ -30,16 +30,15 @@ public class UserService implements IUserService {
 
 
     @Override
-    public String readCSVFile(String path) {
+    public String readCSVFile(File file) {
         try {
-            File file = new File(path);
             if(!file.exists()){
                 return "File not Found!";
             }else{
                 List<User> userList = new ArrayList<>();
 
                 // create a reader for the CSV file
-                CSVReader reader = new CSVReader(new FileReader(path));
+                CSVReader reader = new CSVReader(new FileReader(file));
 
                 // read the header row
                 String[] headerRow = reader.readNext();

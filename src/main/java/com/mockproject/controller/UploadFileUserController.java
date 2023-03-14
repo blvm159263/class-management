@@ -37,7 +37,7 @@ public class UploadFileUserController {
         } catch (IOException e) {
 
         }
-        String status = userService.readCSVFile(path);
+        String status = userService.readCSVFile(file);
 
         return ResponseEntity.ok(status);
     }
