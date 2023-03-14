@@ -7,6 +7,7 @@ import com.mockproject.repository.ClassScheduleRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ClassScheduleService implements IClassScheduleService{
 
     private final ClassScheduleRepository repository;

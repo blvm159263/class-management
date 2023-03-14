@@ -3,10 +3,13 @@ package com.mockproject.service;
 import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.Session;
+import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.Unit;
+import com.mockproject.entity.User;
 import com.mockproject.mapper.SessionMapper;
 import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.SessionRepository;
+import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.IUnitService;
 import com.mockproject.utils.ListUtils;
@@ -19,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Struct;
 import java.util.ArrayList;
@@ -31,11 +35,13 @@ public class UnitService implements IUnitService {
     private final UnitRepository unitRepository;
     private final UnitDetailService unitDetailService;
     private final SessionRepository sessionRepository;
+    private final SyllabusRepository syllabusRepository;
 
-    public UnitService(UnitRepository unitRepository, UnitDetailService unitDetailService, SessionRepository sessionRepository) {
+    public UnitService(UnitRepository unitRepository, UnitDetailService unitDetailService, SessionRepository sessionRepository, SyllabusRepository syllabusRepository) {
         this.unitRepository = unitRepository;
         this.unitDetailService = unitDetailService;
         this.sessionRepository = sessionRepository;
+        this.syllabusRepository = syllabusRepository;
     }
 
     public List<Unit> getAllUnitBySessionId(long sessionId, boolean status){
@@ -44,14 +50,23 @@ public class UnitService implements IUnitService {
         return listUnit.get();
     }
 
-    public boolean createUnit(long sessionId, List<UnitDTO> listUnit){
+    public boolean createUnit(long sessionId, List<UnitDTO> listUnit, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
-        listUnit.forEach((i) ->
-        {
+        BigDecimal duration = BigDecimal.valueOf(0);
+        for (UnitDTO i: listUnit) {
             i.setSessionId(sessionId);
-            unitRepository.save(UnitMapper.INSTANCE.toEntity(i));
-        });
+            Unit unit = unitRepository.save(UnitMapper.INSTANCE.toEntity(i));
+            unitDetailService.createUnitDetail(unit.getId(), i.getUnitDetailDTOList(), user);
+            unit = unitRepository.findByIdAndStatus(unit.getId(), true).get();
+            duration = duration.add(unit.getDuration());
+        }
+
+        // Set duration syllabus
+        long syllabusId = sessionRepository.findByIdAndStatus(sessionId, true).get().getSyllabus().getId();
+        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusId, true);
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.get().setHour(duration);
         return true;
     }
 

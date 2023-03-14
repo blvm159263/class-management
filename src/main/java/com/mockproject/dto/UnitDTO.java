@@ -9,14 +9,19 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UnitDTO implements Serializable {
-    private long id;
+
+
     @NotNull
+
+    private Long id;
+
     private String unitTitle;
     @Min(0)
     private int unitNumber;
@@ -24,5 +29,6 @@ public class UnitDTO implements Serializable {
     private BigDecimal duration;
     @NotNull
     private boolean status;
-    private long sessionId;
+    private Long sessionId;
+    private List<UnitDetailDTO> unitDetailDTOList;
 }

@@ -12,7 +12,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeliveryTypeDTO implements Serializable {
-    private long id;
+    private Long id;
     private String typeName;
     private boolean status;
+
+
 }

@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OutputStandardDTO implements Serializable {
-    private long id;
+    private Long id;
     private String standardCode;
     private String standardName;
     private String description;

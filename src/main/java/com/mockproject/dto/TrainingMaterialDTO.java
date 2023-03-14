@@ -16,10 +16,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainingMaterialDTO implements Serializable {
-    private long id;
+    private Long id;
     private LocalDate uploadDate;
-    private byte[] data;
+
+
     @NotNull
+
+    private String data;
+
     private String name;
     @NotNull
     private String type;
@@ -27,6 +31,6 @@ public class TrainingMaterialDTO implements Serializable {
     private BigDecimal size;
     @NotNull
     private boolean status;
-    private long unitDetailId;
-    private long userId;
+    private Long unitDetailId;
+    private Long userId;
 }

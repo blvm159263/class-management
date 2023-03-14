@@ -28,7 +28,7 @@ public class TrainingClass implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Nationalized
     @Column(

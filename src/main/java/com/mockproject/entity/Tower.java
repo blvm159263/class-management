@@ -25,7 +25,7 @@ public class Tower implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Nationalized
     @Column(

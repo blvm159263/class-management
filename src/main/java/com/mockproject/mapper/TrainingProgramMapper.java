@@ -22,14 +22,14 @@ public interface TrainingProgramMapper {
     TrainingProgram toEntity(TrainingProgramDTO dto);
 
     @Named("mapCreator")
-    default User mapCreator(long id) {
+    default User mapCreator(Long id) {
         User user = new User();
         user.setId(id);
         return user;
     }
 
     @Named("mapModifier")
-    default User mapModifier(long id) {
+    default User mapModifier(Long id) {
         User user = new User();
         user.setId(id);
         return user;

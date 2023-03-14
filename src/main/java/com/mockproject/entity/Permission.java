@@ -23,7 +23,7 @@ public class Permission implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Column(
             name = "permission_name",
