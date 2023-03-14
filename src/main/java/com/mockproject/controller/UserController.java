@@ -4,7 +4,10 @@ import com.mockproject.dto.UserDTO;
 import com.mockproject.service.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +22,11 @@ public class UserController {
 
     private final IUserService service;
 
-    @ApiResponse(responseCode = "404", description = "When don't find any User")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "404", description = "When don't find any User"),
+        @ApiResponse(responseCode = "200", description = "When get list admin successfully!",
+        content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
     @Operation(summary = "Get all User have role CLASS_ADMIN")
     @GetMapping("/class-admin")
     public ResponseEntity<?> listClassAdmin() {
@@ -31,7 +38,11 @@ public class UserController {
         }
     }
 
-    @ApiResponse(responseCode = "404", description = "When don't find any User")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any User"),
+            @ApiResponse(responseCode = "200", description = "When get list trainer successfully!",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
     @Operation(summary = "Get all User have role TRAINER")
     @GetMapping("/trainer")
     public ResponseEntity<?> listTrainer() {
@@ -43,7 +54,11 @@ public class UserController {
         }
     }
 
-    @ApiResponse(responseCode = "404", description = "When don't find any User")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any User"),
+            @ApiResponse(responseCode = "200", description = "When get user successfully!",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
     @Operation(summary = "Get User by given {ID}")
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@Parameter(description = "User's ID") @PathVariable("id") Long id) {

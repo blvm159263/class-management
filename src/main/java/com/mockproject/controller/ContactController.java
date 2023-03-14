@@ -3,6 +3,10 @@ package com.mockproject.controller;
 import com.mockproject.dto.ContactDTO;
 import com.mockproject.service.interfaces.IContactService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,11 @@ public class ContactController {
 
     private final IContactService service;
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "When get list Contact successfully",
+                        content = @Content(schema = @Schema(implementation = ContactDTO.class))),
+            @ApiResponse(responseCode = "404", description = "When don't find any contact!")
+    })
     @Operation(summary = "Get all Contact have status = True")
     @GetMapping("")
     public ResponseEntity<?> listAll(){

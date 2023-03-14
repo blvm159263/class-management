@@ -4,7 +4,10 @@ import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,15 +24,20 @@ import java.util.List;
 public class TrainingProgramController {
 
     private final ITrainingProgramService service;
-    @ApiResponse(responseCode = "404", description = "When don't find any Training Program")
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any Training Program"),
+            @ApiResponse(responseCode = "200", description = "When find training program and return list program",
+                    content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
+    })
     @Operation(summary = "Get Training Program by searching name")
     @GetMapping("search-name")
-    public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search") @RequestParam(defaultValue = "") String name){
+    public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search") @RequestParam(defaultValue = "") String name) {
         List<TrainingProgramDTO> list = service.searchByName(name);
-        if(!list.isEmpty()){
+        if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
-        }else{
-            return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
         }
     }
 }

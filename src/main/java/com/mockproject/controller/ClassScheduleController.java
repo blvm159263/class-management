@@ -3,6 +3,8 @@ package com.mockproject.controller;
 import com.mockproject.service.interfaces.IClassScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +28,11 @@ public class ClassScheduleController {
     })
     @Operation(summary = "Save list of ClassSchedule by given Training Class")
     @PostMapping("list/traing-class/{tcId}")
-    public ResponseEntity<?> createListSchedule(@Parameter(description = "List of Date") @RequestBody List<LocalDate> listDate,
-                                                @Parameter(description = "Training Class ID when call create Training Class API return") @PathVariable("tcId") Long tcId){
+    public ResponseEntity<?> createListSchedule(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+                                                content = @Content(examples = @ExampleObject(value = "[\"2023-03-14\",\"2023-03-15\"]")))
+                                                @RequestBody List<LocalDate> listDate,
+                                                @Parameter(description = "Training Class ID when call create Training Class API return")
+                                                @PathVariable("tcId") Long tcId){
         if(service.saveClassScheduleForTrainingClass(listDate, tcId)){
             return new ResponseEntity<>("List of Date have been saved!", HttpStatus.CREATED);
         }else{

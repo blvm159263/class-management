@@ -5,6 +5,7 @@ import com.mockproject.service.interfaces.ITrainingClassService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class TrainingClassController {
     })
     @Operation(summary = "Create new Training Class")
     @PostMapping("")
-    public ResponseEntity<?> create(@RequestBody TrainingClassDTO dto){
+    public ResponseEntity<?> create(@Valid @RequestBody TrainingClassDTO dto){
         Long id = service.create(dto);
         if(id!=null){
             return new ResponseEntity<>(id, HttpStatus.CREATED);

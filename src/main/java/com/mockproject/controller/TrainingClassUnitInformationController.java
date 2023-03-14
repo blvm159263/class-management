@@ -3,14 +3,10 @@ package com.mockproject.controller;
 import com.mockproject.dto.TrainingClassUnitInformationDTO;
 import com.mockproject.service.interfaces.ITrainingClassUnitInformationService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.PatternProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
+
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +31,7 @@ public class TrainingClassUnitInformationController {
     @Operation(summary = "Save list of Unit Information when creating Class")
 
     @PostMapping("list")
-    public ResponseEntity<?> createListOfInformation( @RequestBody List<TrainingClassUnitInformationDTO> listDto){
+    public ResponseEntity<?> createListOfInformation(@Valid @RequestBody List<TrainingClassUnitInformationDTO> listDto){
         if(service.saveList(listDto)){
             return new ResponseEntity<>("List of Unit Information have been save!", HttpStatus.CREATED);
         }else{

@@ -61,7 +61,7 @@ public class TrainingClassService implements ITrainingClassService {
         String versionCode = String.valueOf(listExisting.size() + 1);
 
         builder.append(locationCode)
-                .append(yearCode.toString())
+                .append(yearCode)
                 .append("_")
                 .append(attendeeCode.get(trainingClassDTO.getAttendeeId()))
                 .append("_")

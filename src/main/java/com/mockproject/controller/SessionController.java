@@ -4,7 +4,10 @@ import com.mockproject.dto.SessionDTO;
 import com.mockproject.service.interfaces.ISessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +25,11 @@ public class SessionController {
 
     private final ISessionService service;
 
-    @ApiResponse(responseCode = "404", description = "When don't find any Session")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any Session"),
+            @ApiResponse(responseCode = "200", description = "When found Session",
+            content = @Content(schema = @Schema(implementation = SessionDTO.class)))
+    })
     @Operation(summary = "Get all Session by given syllabus ID")
     @GetMapping("list-by-syllus/{sid}")
     public ResponseEntity<?> listBySyllabusId(@Parameter(description = "Syllabus's ID") @PathVariable("sid") Long sid) {
