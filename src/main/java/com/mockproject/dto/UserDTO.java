@@ -22,7 +22,7 @@ public class UserDTO implements Serializable {
     private String phone;
     private boolean gender;
     private boolean status;
-    private long roleId;
-    private long levelId;
-    private long attendeeId;
+    private Long roleId;
+    private Long levelId;
+    private Long attendeeId;
 }

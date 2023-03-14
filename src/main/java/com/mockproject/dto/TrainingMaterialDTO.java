@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class TrainingMaterialDTO implements Serializable {
     private Long id;
     private LocalDate uploadDate;
-    private byte[] data;
+    private String data;
     private String name;
     private String type;
     private BigDecimal size;
