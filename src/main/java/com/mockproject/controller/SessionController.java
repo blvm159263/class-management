@@ -5,6 +5,7 @@ import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.service.SessionService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.apache.el.parser.BooleanNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,12 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/session")
+@SecurityRequirement(name = "Authorization")
 public class SessionController {
 
     public static final String VIEW = "ROLE_View_Syllabus";
@@ -26,9 +29,9 @@ public class SessionController {
     @Autowired
     public SessionService sessionService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{syllabusId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<Session>> getAll(@PathVariable ("id") long syllabusId){
+    public ResponseEntity<List<SessionDTO>> getAll(@PathVariable ("syllabusId") long syllabusId){
         return ResponseEntity.ok(sessionService.getAllSessionBySyllabusId(syllabusId, true));
     }
 
@@ -39,10 +42,10 @@ public class SessionController {
         return ResponseEntity.ok(sessionService.createSession(syllabusId, listSession, user.getUser()));
     }
 
-    @PutMapping("/edit/{id}")
+    @PutMapping("/edit")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Session> editSession(@PathVariable("id") long id,@RequestBody SessionDTO sessionDTO){
-        Session updateSession = sessionService.editSession(id, sessionDTO, true);
+    public ResponseEntity<Session> editSession(@RequestBody SessionDTO sessionDTO)throws IOException {
+        Session updateSession = sessionService.editSession(sessionDTO, true);
         return ResponseEntity.ok(updateSession);
     }
 

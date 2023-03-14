@@ -1,11 +1,11 @@
 package com.mockproject.service;
 
+import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.*;
 
 import com.mockproject.mapper.UnitDetailMapper;
-import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitDetailRepository;
@@ -13,14 +13,14 @@ import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.IUnitDetailService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,31 +41,46 @@ public class UnitDetailService implements IUnitDetailService {
         this.sessionRepository = sessionRepository;
     }
 
-    public List<UnitDetail> getAllUnitDetailByUnitId(long unitId, boolean status) {
+    public List<UnitDetailDTO> getAllUnitDetailByUnitId(long unitId, boolean status) {
         Optional<List<UnitDetail>> unitDetails = unitDetailRepository.findByUnitIdAndStatus(unitId, status);
         unitDetails.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
-        return unitDetails.get();
+        List<UnitDetailDTO> unitDetailDTOList = new ArrayList<>();
+
+        for (UnitDetail u: unitDetails.get()){
+            unitDetailDTOList.add(UnitDetailMapper.INSTANCE.toDTO(u));
+        }
+
+        for (UnitDetailDTO u: unitDetailDTOList){
+            List<TrainingMaterialDTO> trainingMaterialDTOList = trainingMaterialService.getFiles(u.getId(), true);
+            u.setTrainingMaterialDTOList(trainingMaterialDTOList);
+        }
+        return unitDetailDTOList;
     }
 
     public boolean createUnitDetail(long unitId, List<UnitDetailDTO> listUnitDetail, User user){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, true);
         unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
-        BigDecimal duration = BigDecimal.valueOf(0);
         for (UnitDetailDTO i: listUnitDetail) {
-            i.setUnitId(unitId);
-            duration = duration.add(i.getDuration());
-            UnitDetail unitDetail = unitDetailRepository.save(UnitDetailMapper.INSTANCE.toEntity(i));
-            trainingMaterialService.uploadFile(i.getCreateTrainingMaterialDTOList(), user, unitDetail.getId());
+            createUnitDetail(unitId, i, user);
         }
+        return true;
+    }
+
+    public boolean createUnitDetail(long unitId, UnitDetailDTO unitDetailDTO, User user){
+        Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, true);
+        unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        BigDecimal duration = unit.get().getDuration();
+
+        unitDetailDTO.setUnitId(unitId);
+        duration = duration.add(unitDetailDTO.getDuration().divide(BigDecimal.valueOf(60)));
+        UnitDetail unitDetail = unitDetailRepository.save(UnitDetailMapper.INSTANCE.toEntity(unitDetailDTO));
+        trainingMaterialService.uploadFile(unitDetailDTO.getTrainingMaterialDTOList(), user, unitDetail.getId());
 
         //Set duration unit
-        duration = duration.divide(BigDecimal.valueOf(60));
         unit.get().setDuration(duration);
         unitRepository.save(unit.get());
         return true;
     }
-
-
 
     public UnitDetail getUnitDetailById(long id, boolean status){
         Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(id, status);
@@ -73,12 +88,33 @@ public class UnitDetailService implements IUnitDetailService {
         return unitDetail.get();
     }
 
-    public UnitDetail editUnitDetail(long id, UnitDetailDTO unitDetailDTO, boolean status){
-        Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(id, status);
+    public UnitDetail editUnitDetail(UnitDetailDTO unitDetailDTO, boolean status) throws IOException {
+        Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(unitDetailDTO.getId(), status);
         unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
-        unitDetailDTO.setId(id);
         unitDetailDTO.setUnitId(unitDetail.get().getUnit().getId());
+
+        Optional<Unit> unit = unitRepository.findByIdAndStatus(unitDetailDTO.getUnitId(), true);
+        BigDecimal duration = unit.get().getDuration();
+
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        duration = duration.add(unitDetailDTO.getDuration().divide(BigDecimal.valueOf(60)));
+        if(unitDetailDTO.isStatus() == true){
+            for (TrainingMaterialDTO t: unitDetailDTO.getTrainingMaterialDTOList()){
+                if(t.getId() == null)
+                    trainingMaterialService.uploadAFile(t, unitDetail.get(), user.getUser());
+                else {
+                    trainingMaterialService.updateFile(t.getId(),t, user.getUser(),true);
+                }
+            }
+        }else {
+            trainingMaterialService.deleteTrainingMaterials(unitDetailDTO.getId(),true);
+        }
+
         UnitDetail updateUnitDetail = unitDetailRepository.save(UnitDetailMapper.INSTANCE.toEntity(unitDetailDTO));
+
+        unit.get().setDuration(duration);
+        unitRepository.save(unit.get());
         return updateUnitDetail;
     }
 
