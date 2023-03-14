@@ -8,23 +8,23 @@ import java.util.List;
 
 
 public interface ITrainingClassService {
-    TrainingClassDTO getAllDetails(long id); // Get all fields from TrainingClass entity by id
+    TrainingClassDTO getAllDetails(long id);
 
-    List<UserDTO> getAllTrainers(long id); // Get all Trainers by TrainingClass id
+    List<UserDTO> getAllTrainers(long id);
 
-    List<TowerDTO> getAllTowers(long id);  // Get all Towers by TrainingClass id
+    List<TowerDTO> getAllTowers(long id);
 
-    AttendeeDTO getAttendee(long id); // Get an Attendee by TrainingClass id
+    AttendeeDTO getAttendee(long id);
 
-    List<ClassScheduleDTO> getClassSchedule(long id); // Get ClassSchedule by TrainingClass id
+    List<ClassScheduleDTO> getClassSchedule(long id);
 
-    List<UserDTO> getAllAdmins(long id); // Get all Admins by TrainingClass id
+    List<UserDTO> getAllAdmins(long id);
 
-    FsuDTO getFsu(long id); // Get Fsu by TrainingClass id
+    FsuDTO getFsu(long id);
 
-    ContactDTO getContact(long id); // Get Contact by TrainingClass id
+    ContactDTO getContact(long id);
 
-    UserDTO getCreator(long id); // Get Creator by TrainingClass id
+    UserDTO getCreator(long id);
 
     Integer getDaysCount(long id, LocalDate targetDate); // Get daysCount by TrainingClass id and Date chosen
 
