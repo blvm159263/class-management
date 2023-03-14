@@ -16,9 +16,14 @@ import java.util.List;
 public class UserController {
     private final IUserService userService;
 
-    @GetMapping("trainingClass/trainer/{classCode}")
-    public List<UserDTO> getTrainerByClassCode(@PathVariable("classCode") String code) {
-        return userService.getTrainerByClassCode(code);
+//    @GetMapping("trainingClass/trainer/{classCode}")
+//    public List<UserDTO> getTrainerByClassCode(@PathVariable("classCode") String code) {
+//        return userService.getTrainerByClassCode(code);
+//    }
+
+    @GetMapping("trainingClass/trainer/{trainerId}")
+    public List<UserDTO> getTrainerById(@PathVariable("trainerId") long id) {
+        return userService.getTrainerById(id);
     }
 
     @GetMapping("trainingClass/creator/{classCode}")
