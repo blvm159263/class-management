@@ -5,7 +5,7 @@ stages:
 
 test-all:
   stage: test
-  tags: [maven]
+  tags: [windows]
   except:
     - main
   script:
@@ -13,7 +13,7 @@ test-all:
 
 test-unit:
   stage: test
-  tags: [ maven ]
+  tags: [ windows ]
   only:
     - main
   script:
