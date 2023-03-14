@@ -20,7 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Tag(name = "Training Class API")
 @RequestMapping("/api/class")
-public class TrainingClassController {
+public class TrainingClassController {  
 
     private final ITrainingClassService classService;
 

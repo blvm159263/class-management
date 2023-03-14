@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IUserService {
 
-    public UserDTO getUserById(boolean status, long id);
+    UserDTO getUserById(boolean status, long id);
 
-    public List<UserDTO> getAllUser(boolean status);
+    List<UserDTO> getAllUser(boolean status);
 }
