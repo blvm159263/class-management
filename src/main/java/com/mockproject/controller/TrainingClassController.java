@@ -132,4 +132,5 @@ public class TrainingClassController {
     ) {
         return ResponseEntity.ok(trainingClassService.getAllTowersForADate(id, dayNth));
     }
+
 }

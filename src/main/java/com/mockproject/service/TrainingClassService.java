@@ -148,7 +148,12 @@ public class TrainingClassService implements ITrainingClassService {
     private Session getSession(long id, int dayNth){
         // Get all sessions
         List<Session> sessions = getListUnits(id).stream().map(p-> sessionRepository.findByIdAndStatus(p.getSession().getId(), true).orElseThrow()).toList();
-        return sessions.get(dayNth);
+        int sessionNth = dayNth - 1;
+        if(sessionNth == 0) {return sessions.get(0);}
+        if(sessions.get(sessionNth).getId() == sessions.get(sessionNth - 1).getId()){
+            return null;
+        }
+        else return sessions.get(sessionNth);
     }
 
 

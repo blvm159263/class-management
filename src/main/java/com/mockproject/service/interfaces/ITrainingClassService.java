@@ -32,4 +32,5 @@ public interface ITrainingClassService {
 
     List<TowerDTO> getAllTowersForADate(long id, int dayNth);
 
+
 }
