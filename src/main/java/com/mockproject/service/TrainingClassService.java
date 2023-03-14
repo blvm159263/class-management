@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.mockproject.dto.AttendeeDTO;
 import com.mockproject.dto.ClassScheduleDTO;
+import com.mockproject.dto.ContactDTO;
 import com.mockproject.dto.FsuDTO;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TowerDTO;
@@ -17,8 +18,13 @@ import com.mockproject.dto.TrainingClassUnitInformationDTO;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.dto.UserDTO;
+import com.mockproject.entity.Tower;
+import com.mockproject.entity.TrainingClass;
+import com.mockproject.entity.TrainingClassUnitInformation;
+import com.mockproject.entity.User;
 import com.mockproject.mapper.AttendeeMapper;
 import com.mockproject.mapper.ClassScheduleMapper;
+import com.mockproject.mapper.ContactMapper;
 import com.mockproject.mapper.FsuMapper;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.mapper.TowerMapper;
@@ -241,34 +247,54 @@ public class TrainingClassService implements ITrainingClassService{
 	}
 	
 	public List<TowerDTO> findTower(Long id){
-		List<TowerDTO> location = new ArrayList<>();
-		long towerID = findClassDetail(id).get(0).getLocationId();
-		List<TowerDTO> getTower = towerRepository.findAll().stream().map(TowerMapper.INSTANCE::toDTO).collect(Collectors.toList());
-		getTower.forEach((tower) -> {
-			if (tower.getLocationId() == towerID) {
-				if (tower.isStatus()) {
-					location.add(tower);
-				}
-			}
-        });
-		if (location.isEmpty()) {
-			System.out.println("Empty");
-		}
-		return location;
+		TrainingClass tc = classRepository.findByIdAndStatus(id, true);
+
+        List<TrainingClassUnitInformation> list = tc.getListTrainingClassUnitInformations()
+                .stream()
+                .filter(TrainingClassUnitInformation::isStatus)
+                .toList();
+        
+        List<Tower> listTowers = tc.getLocation().getListTowers()
+                .stream()
+                .filter(Tower::isStatus)
+                .toList();
+
+        List<Tower> listTower = list.stream()
+                .map(p -> towerRepository.findById(p.getTower().getId())
+                        .filter(Tower::isStatus)
+                        .orElseThrow())
+                .toList();
+
+        return listTowers.stream().map(TowerMapper.INSTANCE::toDTO).toList();
+
 	}
 	
-	public List<FsuDTO> findFSU(Long id){
-		List<FsuDTO> fsu = new ArrayList<>();
-		long fsuID = findClassDetail(id).get(0).getFsuId();
-		List<FsuDTO> getFsu = fsuRepository.findById(fsuID).stream().map(FsuMapper.INSTANCE::toDTO).collect(Collectors.toList());
-		getFsu.forEach((temp) -> {
-			if (temp.isStatus()) {
-				fsu.add(temp);
-			}
-        });
-		if (fsu.isEmpty()) {
-			System.out.println("Empty");
-		}
-		return fsu;
-	}
+	@Override
+    public FsuDTO getFsu(long id) {
+        TrainingClass tc = classRepository.findByIdAndStatus(id, true);
+        if(tc.getFsu().isStatus()){
+            return FsuMapper.INSTANCE.toDTO(tc.getFsu());
+        }
+        return null;
+    }
+
+
+	@Override
+    public ContactDTO getContact(long id) {
+        TrainingClass tc = classRepository.findByIdAndStatus(id, true);
+
+        if(tc.getContact().isStatus()){
+            return ContactMapper.INSTANCE.toDTO(tc.getContact());
+        }
+        return null;
+    }
+
+	@Override
+    public UserDTO getCreator(long id) {
+        TrainingClass tc = classRepository.findByIdAndStatus(id, true);
+        User user = userRepository.findById(tc.getCreator().getId()).filter(User::isStatus).orElseThrow();
+        return UserMapper.INSTANCE.toDTO(user);
+    }
+
+
 }

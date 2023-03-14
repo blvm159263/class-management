@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.mockproject.dto.AttendeeDTO;
 import com.mockproject.dto.ClassScheduleDTO;
+import com.mockproject.dto.ContactDTO;
 import com.mockproject.dto.FsuDTO;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TowerDTO;
@@ -21,5 +22,8 @@ public interface ITrainingClassService {
 	public List<UserDTO> findTrainer(Long id);
 	public List<UserDTO> findAdmin(Long id);
 	public List<TowerDTO> findTower(Long id);
-	public List<FsuDTO> findFSU(Long id);
+	FsuDTO getFsu(long id);
+	
+	ContactDTO getContact(long id);
+	UserDTO getCreator(long id);
 }

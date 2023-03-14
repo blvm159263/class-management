@@ -26,8 +26,8 @@ public class TrainingClassTest {
 //		System.out.println("User Detail: "+ classService.findUser(tmp));
 //		System.out.println("Class Schedule Detail: "+ classService.findClassShedule(tmp));
 //		System.out.println("Trainer Detail: "+ classService.findTrainer(tmp));
-		System.out.println("Trainer Detail: "+ classService.findAdmin(tmp));
-//		System.out.println("Location Detail: "+ classService.findTower(tmp));
+//		System.out.println("Admin Detail: "+ classService.findAdmin(tmp));
+		System.out.println("Location Detail: "+ classService.findTower(tmp));
 //		System.out.println("FSU Detail: "+ classService.findFSU(tmp));
 	}
 }
