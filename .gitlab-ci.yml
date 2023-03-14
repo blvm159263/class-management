@@ -1,32 +1,18 @@
 
 stages:
+  - build
   - test
-  - deploy
 
-test-all:
-  stage: test
-  except:
-    - main
-  script:
-    - mvn clean install
-
-test-unit:
-  stage: test
-  only:
-    - main
+build:
+  image: maven:3.8.4-openjdk-17
   script:
     - mvn clean package
-    - cp target/MockProject-0.0.1-SNAPSHOT.jar MockProject-0.0.1-SNAPSHOT.jar
   artifacts:
-    name: backend-social-network
-    expire_in: 1 week
     paths:
-      - MockProject-0.0.1-SNAPSHOT.jar
+      - target/MockProject-0.0.1-SNAPSHOT.jar
 
-deploy:
-  stage: deploy
-  needs: [test-unit]
-  only:
-    - main
+test:
+  image: maven:3.8.4-openjdk-17
   script:
-    - ls MockProject-0.0.1-SNAPSHOT.jar
+    - mvn test
+
