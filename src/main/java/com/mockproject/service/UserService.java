@@ -233,6 +233,30 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public boolean toggleStatus(Long id){
+        Optional<User> user = repository.findById(id);
+        if (user.isPresent()) {
+            User u = user.get();
+            u.setStatus(!u.isStatus());
+            repository.save(u);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean toggleGender(Long id){
+        Optional<User> user = repository.findById(id);
+        if (user.isPresent()) {
+            User u = user.get();
+            u.setGender(!u.isGender());
+            repository.save(u);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public UserDTO getByID(long id){
         Optional<User> u = repository.findById(id);
         if(!u.isPresent()) return null;
@@ -247,10 +271,8 @@ public class UserService implements IUserService {
             User user = o_user.get();
 
             user.setImage(userData.getImage());
-            user.setEmail(userData.getEmail());
             user.setFullName(userData.getFullName());
             user.setDob(userData.getDob());
-            user.setGender(userData.isGender());
             user.setPhone(userData.getPhone());
             try {
                 user.setRole(roleRepository.getRoleById(userData.getRoleId()).get());
@@ -263,7 +285,7 @@ public class UserService implements IUserService {
                 System.out.println("Level does not exist!");
             }
             user.setState(userData.getState());
-            user.setStatus(userData.isStatus());
+
             return UserMapper.INSTANCE.toDTO(repository.save(user));
         }
         return null;

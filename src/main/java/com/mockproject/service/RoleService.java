@@ -31,10 +31,10 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    public Long getRoleByRoleName(String roleName) {
+    public Long getRoleIdByRoleName(String roleName) {
         Optional<Role> role = repository.getRoleByRoleName(roleName);
         if (role.isPresent()){
-            return repository.getRoleByRoleName(roleName).get().getId();
+            return role.get().getId();
         }
         else return null;
     }

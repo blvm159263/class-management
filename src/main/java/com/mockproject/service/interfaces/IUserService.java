@@ -33,6 +33,8 @@ public interface IUserService {
     public boolean editEmail(long id, String email);
     public boolean editImage(long id, String email);
     public boolean editPhone(long id, String email);
+    public boolean toggleStatus(Long id);
+    public boolean toggleGender(Long id);
 
     public UserDTO saveUser(UserDTO userData);
     public UserDTO getByID(long id);

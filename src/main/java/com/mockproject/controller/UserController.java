@@ -260,10 +260,10 @@ public class UserController {
         return ResponseEntity.ok("Oke nha hihi");
     }
 
-    @GetMapping("/GetRoleByName")
+    @GetMapping("/GetRoleIdByName")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getRoleByName(@RequestParam(value = "roleName")String rolename){
-        long roleId = roleService.getRoleByRoleName(rolename);
+    public ResponseEntity getRoleIdByName(@RequestParam(value = "roleName")String rolename){
+        long roleId = roleService.getRoleIdByRoleName(rolename);
         return ResponseEntity.ok(roleId);
     }
 
@@ -304,10 +304,10 @@ public class UserController {
     @PutMapping("/ChangeRole")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity changeRole (@RequestParam(value = "id")long id,@RequestParam(value = "roleName")String roleName){
-        if (roleService.getRoleByRoleName(roleName) == null){
+        if (roleService.getRoleIdByRoleName(roleName) == null){
             return ResponseEntity.badRequest().body("Role not found!");
         }
-        boolean change = userService.changeRole(id,roleService.getRoleByRoleName(roleName));
+        boolean change = userService.changeRole(id,roleService.getRoleIdByRoleName(roleName));
         if (!change) return ResponseEntity.badRequest().body("Change failed");
         return ResponseEntity.ok(roleName);
     }
@@ -371,21 +371,34 @@ public class UserController {
         else return ResponseEntity.badRequest().body("Cound not change!");
     }
 
+    @PutMapping("/ToggleGender")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity toggleGender(@RequestParam(value = "id") long id){
+        boolean toggleGender = userService.toggleGender(id);
+        if(toggleGender) return ResponseEntity.ok("Successfully");
+        else return ResponseEntity.badRequest().body("Could not change!");
+    }
+
+    @PutMapping("/ToggleStatus")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity toggleStatus(@RequestParam(value = "id") long id){
+        boolean toggleStatus = userService.toggleStatus(id);
+        if(toggleStatus) return ResponseEntity.ok("Successfully");
+        else return ResponseEntity.badRequest().body("Could not change!");
+    }
+
     @PutMapping("/saveUser")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity saveUser(@RequestParam(value = "id") long id, @RequestBody UserFormDTO userForm) {
         UserDTO user = userService.getByID(id);
 
         user.setImage(userForm.getImage());
-        user.setEmail(userForm.getEmail());
         user.setFullName(userForm.getFullName());
         user.setDob(userForm.getDob());
-        user.setGender(userForm.isGender());
         user.setPhone(userForm.getPhone());
         user.setRoleId(userForm.getRoleId());
         user.setLevelId(userForm.getLevelId());
         user.setState(userForm.getState());
-        user.setStatus(userForm.isStatus());
 
         UserDTO result = userService.saveUser(user);
         if(result != null) {
@@ -400,10 +413,11 @@ public class UserController {
         UserDTO user = userService.getByID(id);
 
         if(user != null) {
-            UserFormDTO userForm = new UserFormDTO(user);
-            EntityModel<?> em = EntityModel.of(userForm,//
-                    linkTo(methodOn(UserController.class).getAllLevels()).withRel("levels"),//
-                    linkTo(methodOn(UserController.class).getAllRole()).withRel("roles"),//
+            EntityModel<?> em = EntityModel.of(user,//
+                    linkTo(methodOn(UserController.class).getAllLevels()).withRel("all levels"),//
+                    linkTo(methodOn(UserController.class).getAllRole()).withRel("all roles"),//
+                    linkTo(methodOn(UserController.class).toggleStatus(id)).withRel("toggle status"),//
+                    linkTo(methodOn(UserController.class).toggleGender(id)).withRel("toggle gender"),//
                     linkTo(methodOn(UserController.class).getListUser(page, rowsPerPage)).withRel("back")//
             );
             return ResponseEntity.ok().body(em);

@@ -34,9 +34,13 @@ public class LevelService implements ILevelService {
     }
 
     @Override
-    public long getLevelByLevelCode(String levelCode) {
-        long levelId = repository.getLevelByLevelCode(levelCode).get().getId();
-        return levelId;
+    public Long getLevelIdByLevelCode(String levelCode) {
+        Optional<Level> level = repository.getLevelByLevelCode(levelCode);
+        if(level.isPresent()) {
+            Long levelId = level.get().getId();
+            return levelId;
+        }
+        return null;
     }
 
     @Override

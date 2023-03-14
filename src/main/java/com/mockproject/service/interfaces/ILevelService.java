@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface ILevelService {
     public List<LevelDTO> getAll();
     LevelDTO getLevelById(long id);
-    long getLevelByLevelCode(String levelCode);
+    Long getLevelIdByLevelCode(String levelCode);
 }

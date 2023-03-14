@@ -1,9 +1,12 @@
 package com.mockproject.dto;
 
+import com.mockproject.service.LevelService;
+import com.mockproject.service.RoleService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
@@ -12,27 +15,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserFormDTO {
-    public UserFormDTO(UserDTO user)
-    {
-        setImage(user.getImage());
-        setEmail(user.getEmail());
-        setFullName(user.getFullName());
-        setDob(user.getDob());
-        setGender(user.isGender());
-        setPhone(user.getPhone());
-        setRoleId(user.getRoleId());
-        setLevelId(user.getLevelId());
-        setState(user.getState());
-        setStatus(user.isStatus());
-    }
-    private String email;
     private String fullName;
     private String image;
     private int state;
     private LocalDate dob;
     private String phone;
-    private boolean gender;
-    private boolean status;
-    private long roleId;
-    private long levelId;
+    private Long roleId;
+    private Long levelId;
 }
