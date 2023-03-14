@@ -107,12 +107,6 @@ public class TrainingClassService implements ITrainingClassService {
         return units.stream().map(UnitMapper.INSTANCE::toDTO).toList();
     }
 
-
-
-    /*
-        Hỏi thêm về lay out (bố trí theo từng (Unit + detail) hay là show all Unit rồi tới all detail)
-        => 2 thì gửi list trainers, towers  distinct()
-     */
     @Override
     public List<UserDTO> getAllTrainersForADate(long id, LocalDate date) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
@@ -123,8 +117,8 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public List<DeliveryTypeDTO> getAllDeliveryTypesForADate(long id, LocalDate date) {
-        List<Unit> units = getListUnitsInASession(id, date);
+    public List<DeliveryTypeDTO> getAllDeliveryTypes(long id) {
+        List<Unit> units = getListUnits(id);
         List<UnitDetail> list = unitDetailRepository.findByUnitInAndStatus(units, true).orElseThrow();
         List<DeliveryType> deliveryTypes = list.stream().map(p-> deliveryTypeRepository.findByIdAndStatus(p.getDeliveryType().getId(), true).orElseThrow()).distinct().toList();
         return deliveryTypes.stream().map(DeliveryTypeMapper.INSTANCE::toDTO).toList();
@@ -138,7 +132,6 @@ public class TrainingClassService implements ITrainingClassService {
         List<Tower> towers = list.stream().map(p-> towerRepository.findByIdAndStatus(p.getTower().getId(), true).orElseThrow()).distinct().toList();
         return towers.stream().map(TowerMapper.INSTANCE::toDTO).toList();
     }
-
 
     @Override
     public Map<String, Integer> getDaysCount(long id, LocalDate targetDate) {
@@ -166,22 +159,21 @@ public class TrainingClassService implements ITrainingClassService {
 
 
 
-   /*
-         Hỏi thêm về layout (nên gửi về daysCount luôn hay là gửi date ?)
-         => 1 thì không cần hàm đếm ngày
-    */
+    // get all sessions from a class
+    private List<Unit> getListUnits(long id){
+        // Get Class
+        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
 
+        // Get all units
+        List<TrainingClassUnitInformation> list = trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc, true).orElseThrow();
+        return list.stream().map(p-> unitRepository.findByIdAndStatus(p.getUnit().getId(), true).orElseThrow()).toList();
+    }
 
 
     // Get a session from a date
     private Session getSession(long id, LocalDate date){
-        // Get Class
-        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-
-        // Get all units => Sessions in a class
-        List<TrainingClassUnitInformation> list = trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc, true).orElseThrow();
-        List<Unit> units = list.stream().map(p-> unitRepository.findByIdAndStatus(p.getUnit().getId(), true).orElseThrow()).toList();
-        List<Session> sessions = units.stream().map(p-> sessionRepository.findByIdAndStatus(p.getSession().getId(), true).orElseThrow()).toList();
+        // Get all sessions
+        List<Session> sessions = getListUnits(id).stream().map(p-> sessionRepository.findByIdAndStatus(p.getSession().getId(), true).orElseThrow()).toList();
 
         // Get days count
         int daysCount = getDaysCount(id, date).get("daysCount");

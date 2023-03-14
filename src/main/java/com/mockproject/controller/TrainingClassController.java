@@ -122,17 +122,11 @@ public class TrainingClassController {
         return ResponseEntity.ok(trainingClassService.getAllTrainersForADate(id, date));
     }
 
-    @Operation(
-            summary = "Get all DeliveryTypes for a date chosen",
-            description = "Get list of DeliveryTypes in a date clicked in the class schedule table"
-    )
+    @Operation(summary = "Get all class's DeliveryTypes ")
     @ApiResponse(responseCode = "500", description = "No Such Value")
-    @GetMapping("/deliveryTypes-for-a-date")
-    public ResponseEntity<?> getAllDeliveryTypesForADate(
-            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
-            @Parameter(description = "Date Chosen", example = "2023-03-01") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Param("date") LocalDate date
-    ) {
-        return ResponseEntity.ok(trainingClassService.getAllDeliveryTypesForADate(id, date));
+    @GetMapping("/deliveryTypes")
+    public ResponseEntity<?> getAllDeliveryTypes(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+        return ResponseEntity.ok(trainingClassService.getAllDeliveryTypes(id));
     }
 
     @Operation(

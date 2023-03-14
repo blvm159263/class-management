@@ -27,14 +27,14 @@ public interface ITrainingClassService {
 
     UserDTO getCreator(long id);
 
-    Map<String, Integer> getDaysCount(long id, LocalDate targetDate); // Get daysCount by TrainingClass id and Date chosen
+    Map<String, Integer> getDaysCount(long id, LocalDate targetDate);
 
-    List<UnitDTO> getAllUnitsForADate(long id, LocalDate date); // Get all Units in the class for the Date chosen
+    List<UnitDTO> getAllUnitsForADate(long id, LocalDate date);
 
-    List<UserDTO> getAllTrainersForADate(long id, LocalDate date); // Get all Trainers in the class for the Date chosen
+    List<UserDTO> getAllTrainersForADate(long id, LocalDate date);
 
-    List<DeliveryTypeDTO> getAllDeliveryTypesForADate(long id, LocalDate date); // Get all DeliveryTypes in the class for the Date chosen
+    List<DeliveryTypeDTO> getAllDeliveryTypes(long id);
 
-    List<TowerDTO> getAllTowersForADate(long id, LocalDate date); // Get all Towers in the class for the Date chosen
+    List<TowerDTO> getAllTowersForADate(long id, LocalDate date);
 
 }
