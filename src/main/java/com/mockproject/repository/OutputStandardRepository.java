@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface OutputStandardRepository extends JpaRepository<OutputStandard, Long> {
 
-    List<OutputStandard> findByStandardCodeContainingIgnoreCase(String name);
+    List<OutputStandard> findByStatusAndStandardCodeContainingIgnoreCase(boolean status, String name);
 }
