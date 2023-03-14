@@ -61,8 +61,28 @@ public class TrainingClassController {
     }
 
     // Test get days before
-    @GetMapping("/day-in")
-    public ResponseEntity<?> getDayIn(@Param("id") long id, @Param("date") LocalDate date) {
-        return ResponseEntity.ok(trainingClassService.getShortDetails(id, date));
+    @GetMapping("/days-count")
+    public ResponseEntity<?> getDaysCount(@Param("id") long id, @Param("date") LocalDate date) {
+        return ResponseEntity.ok(trainingClassService.getDaysCount(id, date));
+    }
+
+    @GetMapping("/units-for-a-date")
+    public ResponseEntity<?> getAllUnitsForADate(@Param("id") long id, @Param("date") LocalDate date) {
+        return ResponseEntity.ok(trainingClassService.getAllUnitsForADate(id, date));
+    }
+
+    @GetMapping("/trainers-for-a-date")
+    public ResponseEntity<?> getAllTrainersForADate(@Param("id") long id, @Param("date") LocalDate date) {
+        return ResponseEntity.ok(trainingClassService.getAllTrainersForADate(id, date));
+    }
+
+    @GetMapping("/deliveryTypes-for-a-date")
+    public ResponseEntity<?> getAllDeliveryTypesForADate(@Param("id") long id, @Param("date") LocalDate date) {
+        return ResponseEntity.ok(trainingClassService.getAllDeliveryTypesForADate(id, date));
+    }
+
+    @GetMapping("/towers-for-a-date")
+    public ResponseEntity<?> getAllTowersForADate(@Param("id") long id, @Param("date") LocalDate date) {
+        return ResponseEntity.ok(trainingClassService.getAllTowersForADate(id, date));
     }
 }
