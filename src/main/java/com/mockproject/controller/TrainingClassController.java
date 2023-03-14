@@ -1,28 +1,38 @@
 package com.mockproject.controller;
 
+import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
-@RestController
 @RequiredArgsConstructor
+@RestController
 @Tag(name = "Training Class API")
-@RequestMapping("/api/class")
+@RequestMapping("api/training-class")
 public class TrainingClassController {
 
-    private final ITrainingClassService classService;
+    private final ITrainingClassService service;
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "When Training Class created successfully!"),
+            @ApiResponse(responseCode = "400", description = "When Training Class can't be created - Object is not valid!")
+    })
+    @Operation(summary = "Create new Training Class")
+    @PostMapping("")
+    public ResponseEntity<?> create(@Valid @RequestBody TrainingClassDTO dto){
+        Long id = service.create(dto);
+        if(id!=null){
+            return new ResponseEntity<>(id, HttpStatus.CREATED);
+        }else{
+            return new ResponseEntity<>("Can't not create Training Class", HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping("/list")
     @Operation(
@@ -118,4 +128,5 @@ public class TrainingClassController {
                 .ok(classService.getListClass(true, location, fromDate, toDate, period,
                         isOnline? "Online" : "", state, attendee, fsu, trainerId, search, sort, page));
     }
+
 }

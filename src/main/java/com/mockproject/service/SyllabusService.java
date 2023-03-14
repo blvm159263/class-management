@@ -5,12 +5,19 @@ import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.OutputStandardRepository;
+import com.mockproject.dto.SyllabusDTO;
+import com.mockproject.entity.Syllabus;
+import com.mockproject.entity.TrainingProgram;
+import com.mockproject.entity.TrainingProgramSyllabus;
+import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitDetailRepository;
+import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.service.interfaces.ISyllabusService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -18,6 +25,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,6 +65,24 @@ public class SyllabusService implements ISyllabusService {
             throw new NotFoundException("Syllabus not found!");
         }
     }
+    private final SyllabusRepository syllabusRepository;
+
+    private final TrainingProgramSyllabusRepository trainingProgramSyllabusRepository;
+    @Override
+    public List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId) {
+        TrainingProgram tp = new TrainingProgram();
+        tp.setId(trainingProgramId);
+        List<TrainingProgramSyllabus> listTPS = trainingProgramSyllabusRepository.findByTrainingProgramAndStatus(tp, true);
+        List<Syllabus> listSyllabus = new ArrayList<>();
+//        listTPS.forEach(p -> listSyllabus.add(syllabusRepository.findById(p.getSyllabus())));
+//        if(listTPS.isEmpty()){
+//            return null;
+//        }
+        listTPS.forEach(p -> listSyllabus.add(p.getSyllabus()));
+        return listSyllabus.stream().map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+
 
     public Sort.Direction getSortDirection(String direction) {
         if (direction.equals("asc")) {

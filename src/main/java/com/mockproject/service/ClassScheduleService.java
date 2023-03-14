@@ -2,6 +2,7 @@ package com.mockproject.service;
 
 import com.mockproject.dto.ClassScheduleDTO;
 import com.mockproject.entity.ClassSchedule;
+import com.mockproject.entity.TrainingClass;
 import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.repository.ClassScheduleRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
@@ -9,7 +10,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,15 +28,13 @@ public class ClassScheduleService implements IClassScheduleService{
     }
 
     @Override
-    public List<ClassSchedule> listEntity() {
-//        List<ClassScheduleDTO> list = repository.findAll().stream().map(ClassScheduleMapper.INSTANCE::toClassScheduleDTO).collect(Collectors.toList());
-//        return list.stream().map(ClassScheduleMapper.INSTANCE::toEntity).collect(Collectors.toList());
-        return repository.findAll();
-    }
-
-    @Override
-    public ClassSchedule save(ClassScheduleDTO dto) {
-        return repository.save(ClassScheduleMapper.INSTANCE.toEntity(dto));
+    public boolean saveClassScheduleForTrainingClass(List<LocalDate> listDate, Long tcId) {
+//        Long count = listDto.stream().map(p -> repository.save(ClassScheduleMapper.INSTANCE.toEntity(p))).filter(Objects::nonNull).count();
+        TrainingClass tc = new TrainingClass();
+        tc.setId(tcId);
+        List<ClassSchedule> list = listDate.stream().map(p-> new ClassSchedule(null, p, true,tc)).toList();
+        List<ClassSchedule> result = repository.saveAll(list);
+        return !result.isEmpty();
     }
 
 

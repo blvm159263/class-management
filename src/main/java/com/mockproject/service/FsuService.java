@@ -1,14 +1,12 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.FsuDTO;
-import com.mockproject.entity.Fsu;
 import com.mockproject.mapper.FsuMapper;
 import com.mockproject.repository.FsuRepository;
 import com.mockproject.service.interfaces.IFsuService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,8 +16,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FsuService implements IFsuService {
 
-    private final FsuRepository fsuRepo;
+    private final FsuRepository repository;
 
+    @Override
+    public List<FsuDTO> listAllTrue() {
+        return repository.findByStatus(true).stream().map(FsuMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
     @Override
     public FsuDTO getFsuById(boolean status, long id) {
         Fsu fsu = fsuRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Fsu not found with id: "+ id));

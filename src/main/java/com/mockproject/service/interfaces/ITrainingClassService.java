@@ -15,4 +15,7 @@ public interface ITrainingClassService {
                                         long fsu, long trainerId, String search, String[] sort, Optional<Integer> page);
 
     List<TrainingClassDTO> getAllClass();
+
+    Long create(TrainingClassDTO trainingClassDTO);
+
 }

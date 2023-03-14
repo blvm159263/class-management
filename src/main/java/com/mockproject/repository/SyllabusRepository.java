@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
 
+    List<Syllabus> findByStatus(boolean status);
+
     @Query("SELECT s FROM Syllabus s " +
             "WHERE s.status = ?1 " +
             "AND (?2 IS NULL OR ?3 IS NULL OR s.dateCreated BETWEEN ?2 AND ?3) " +

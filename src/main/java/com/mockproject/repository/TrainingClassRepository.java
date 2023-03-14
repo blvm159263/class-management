@@ -10,8 +10,11 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
+
 @Repository
 public interface TrainingClassRepository extends JpaRepository<TrainingClass, Long> {
+
+    List<TrainingClass> findByClassNameContaining(String name);
 
     @Query("SELECT c FROM TrainingClass c " +
             "WHERE c.status = ?1 " +

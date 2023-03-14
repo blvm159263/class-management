@@ -9,6 +9,10 @@ import java.util.Optional;
 
 public interface ISyllabusService {
 
+    List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId);
+
+
+
     Page<SyllabusDTO> getListSyllabus(boolean status,
                                       LocalDate fromDate, LocalDate toDate,
                                       String search, String[] sort, Optional<Integer> page);
