@@ -2,10 +2,8 @@ package com.mockproject.service;
 
 import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
-import com.mockproject.entity.Session;
-import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.Unit;
-import com.mockproject.entity.User;
+import com.mockproject.dto.UnitDetailDTO;
+import com.mockproject.entity.*;
 import com.mockproject.mapper.SessionMapper;
 import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.SessionRepository;
@@ -19,9 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Struct;
@@ -44,38 +44,80 @@ public class UnitService implements IUnitService {
         this.syllabusRepository = syllabusRepository;
     }
 
-    public List<Unit> getAllUnitBySessionId(long sessionId, boolean status){
+    public List<UnitDTO> getAllUnitBySessionId(long sessionId, boolean status){
         Optional<List<Unit>> listUnit = unitRepository.findUnitBySessionIdAndStatus(sessionId, status);
         ListUtils.checkList(listUnit);
-        return listUnit.get();
+        List<UnitDTO> unitDTOList = new ArrayList<>();
+
+        for (Unit u : listUnit.get()) {
+            unitDTOList.add(UnitMapper.INSTANCE.toDTO(u));
+        }
+
+        for (UnitDTO u: unitDTOList){
+            List<UnitDetailDTO> unitDetailDTOList = unitDetailService.getAllUnitDetailByUnitId(u.getId(), true);
+            u.setUnitDetailDTOList(unitDetailDTOList);
+        }
+        return unitDTOList;
     }
 
     public boolean createUnit(long sessionId, List<UnitDTO> listUnit, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
-        BigDecimal duration = BigDecimal.valueOf(0);
+
         for (UnitDTO i: listUnit) {
-            i.setSessionId(sessionId);
-            Unit unit = unitRepository.save(UnitMapper.INSTANCE.toEntity(i));
-            unitDetailService.createUnitDetail(unit.getId(), i.getUnitDetailDTOList(), user);
-            unit = unitRepository.findByIdAndStatus(unit.getId(), true).get();
-            duration = duration.add(unit.getDuration());
+            createUnit(sessionId, i, user);
         }
+        return true;
+    }
+
+    public boolean createUnit(long sessionId, UnitDTO unitDTO, User user){
+        Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
+        session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(session.get().getSyllabus().getId(),true);
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        BigDecimal duration = syllabus.get().getHour();
+
+        unitDTO.setSessionId(sessionId);
+        Unit unit = UnitMapper.INSTANCE.toEntity(unitDTO);
+        unit.setDuration(BigDecimal.valueOf(0));
+        unitRepository.save(unit);
+        unitDetailService.createUnitDetail(unit.getId(), unitDTO.getUnitDetailDTOList(), user);
+        unit = unitRepository.findByIdAndStatus(unit.getId(), true).get();
+        duration = duration.add(unit.getDuration());
+
 
         // Set duration syllabus
-        long syllabusId = sessionRepository.findByIdAndStatus(sessionId, true).get().getSyllabus().getId();
-        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusId, true);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         syllabus.get().setHour(duration);
         return true;
     }
 
-    public Unit editUnit(long id, UnitDTO unitDTO, boolean status){
-        Optional<Unit> unit = unitRepository.findByIdAndStatus(id, status);
+    public Unit editUnit(UnitDTO unitDTO, boolean status) throws IOException {
+        Optional<Unit> unit = unitRepository.findByIdAndStatus(unitDTO.getId(), status);
         unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
-        unitDTO.setId(id);
+
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(unitDTO.isStatus() == true){
+            unit.get().setDuration(BigDecimal.valueOf(0));
+            unitRepository.save(unit.get());
+            for (UnitDetailDTO u: unitDTO.getUnitDetailDTOList()){
+                if (u.getId() == null){
+                    unitDetailService.createUnitDetail(unitDTO.getId(),u,user.getUser());
+                }else {
+                    unitDetailService.editUnitDetail(u, true);
+                }
+            }
+        }else{
+            unitDetailService.deleteUnitDetails(unitDTO.getId(), true);
+        }
+
+        unit = unitRepository.findByIdAndStatus(unitDTO.getId(), status);
+        unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+
         unitDTO.setSessionId(unit.get().getSession().getId());
+        unitDTO.setDuration(unit.get().getDuration());
         Unit updateUnit = unitRepository.save(UnitMapper.INSTANCE.toEntity(unitDTO));
+
         return updateUnit;
     }
 

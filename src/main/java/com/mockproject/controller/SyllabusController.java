@@ -17,6 +17,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -32,21 +33,21 @@ public class SyllabusController {
 
     @GetMapping()
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<Syllabus>> getAll(){
-        List<Syllabus> listSyllabus = syllabusService.getAll(true, true);
+    public ResponseEntity<List<SyllabusDTO>> getAll(){
+        List<SyllabusDTO> listSyllabus = syllabusService.getAll(true, true);
         return ResponseEntity.ok(listSyllabus);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{syllabusId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Syllabus> getSyllabus(@PathVariable("id") long syllabusId){
-        Syllabus syllabus = syllabusService.getSyllabusById(syllabusId, true, true);
+    public ResponseEntity<SyllabusDTO> getSyllabus(@PathVariable("syllabusId") long syllabusId){
+        SyllabusDTO syllabus = syllabusService.getSyllabusById(syllabusId, true, true);
         return ResponseEntity.ok(syllabus);
     }
 
     @GetMapping("get-all")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<Syllabus>> getAllSyllabus(){
+    public ResponseEntity<List<SyllabusDTO>> getAllSyllabus(){
         return ResponseEntity.ok(syllabusService.getSyllabusList(true));
     }
 
@@ -58,12 +59,10 @@ public class SyllabusController {
         return ResponseEntity.ok(syllabusID);
     }
 
-    @PutMapping("edit/{id}")
+    @PutMapping("edit")
     @Secured({MODIFY,CREATE, FULL_ACCESS})
-    public ResponseEntity<Syllabus> editSyllabus(@PathVariable("id") long id, @RequestBody SyllabusDTO syllabusDTO){
-
-
-        Syllabus editsyllabus = syllabusService.editSyllabus(id, syllabusDTO, true);
+    public ResponseEntity<Syllabus> editSyllabus(@RequestBody SyllabusDTO syllabusDTO)throws IOException {
+        Syllabus editsyllabus = syllabusService.editSyllabus(syllabusDTO, true);
         return ResponseEntity.ok(editsyllabus);
     }
 

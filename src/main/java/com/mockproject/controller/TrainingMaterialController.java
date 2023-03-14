@@ -1,6 +1,5 @@
 package com.mockproject.controller;
 
-import com.mockproject.dto.CreateTrainingMaterialDTO;
 import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.repository.UserRepository;
@@ -41,20 +40,19 @@ public class TrainingMaterialController {
 
 
 
-    @GetMapping("get-all/{id}")
+    @GetMapping("get-all/{unitDetailId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<TrainingMaterialDTO>> getFiles(@PathVariable("id") long unitDetailId){
+    public ResponseEntity<List<TrainingMaterialDTO>> getFiles(@PathVariable("unitDetailId") long unitDetailId){
         return ResponseEntity.ok(trainingMaterialService.getFiles(unitDetailId, true));
     }
 
 
     @PostMapping("/upload-file/{unitDetailID}")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@PathVariable("unitDetailID") long unitDetailID,@RequestBody List<CreateTrainingMaterialDTO> createTrainingMaterialDTO) throws IOException{
+    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@PathVariable("unitDetailID") long unitDetailID,@RequestBody List<TrainingMaterialDTO> trainingMaterialDTOList) throws IOException{
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-
-        return ResponseEntity.ok(trainingMaterialService.uploadFile(createTrainingMaterialDTO,
+        return ResponseEntity.ok(trainingMaterialService.uploadFile(trainingMaterialDTOList,
                 user.getUser(), unitDetailID));
     }
 
@@ -71,7 +69,7 @@ public class TrainingMaterialController {
     @Secured({MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<TrainingMaterialDTO> updateFile(
             @PathVariable("id") long id,
-            @RequestParam(name = "file") CreateTrainingMaterialDTO dto
+            @RequestBody TrainingMaterialDTO dto
             ) throws IOException {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(trainingMaterialService.updateFile(id, dto, user.getUser(), true));

@@ -12,6 +12,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -26,24 +27,24 @@ public class UnitDetailController {
     @Autowired
     public UnitDetailService unitDetailService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{unitId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<UnitDetail>> getAllUnitDetailByUnitId(@PathVariable("id") long unitId){
-        List<UnitDetail> listUnitDetail = unitDetailService.getAllUnitDetailByUnitId(unitId, true);
+    public ResponseEntity<List<UnitDetailDTO>> getAllUnitDetailByUnitId(@PathVariable("unitId") long unitId){
+        List<UnitDetailDTO> listUnitDetail = unitDetailService.getAllUnitDetailByUnitId(unitId, true);
         return ResponseEntity.ok(listUnitDetail);
     }
 
     @PostMapping("/create/{id}")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> createUnitDetail(@PathVariable("id") long unitId, @RequestBody List<UnitDetailDTO> listUnitDetail){
+    public ResponseEntity<Boolean> createUnitDetails(@PathVariable("id") long unitId, @RequestBody List<UnitDetailDTO> listUnitDetail){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(unitDetailService.createUnitDetail(unitId,listUnitDetail, user.getUser()));
     }
 
-    @PutMapping("/edit/{id}")
+    @PutMapping("/edit")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<UnitDetail> editUnitDetail(@PathVariable("id") long id, @RequestBody UnitDetailDTO unitDetailDTO){
-        UnitDetail updateUnitDetail = unitDetailService.editUnitDetail(id, unitDetailDTO, true);
+    public ResponseEntity<UnitDetail> editUnitDetail(@RequestBody UnitDetailDTO unitDetailDTO) throws IOException {
+        UnitDetail updateUnitDetail = unitDetailService.editUnitDetail(unitDetailDTO, true);
         return ResponseEntity.ok(updateUnitDetail);
     }
 

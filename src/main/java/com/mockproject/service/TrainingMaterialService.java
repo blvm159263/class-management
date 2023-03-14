@@ -1,32 +1,23 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.CreateTrainingMaterialDTO;
 import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.entity.TrainingMaterial;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.entity.User;
 import com.mockproject.mapper.TrainingMaterialMapper;
 import com.mockproject.repository.TrainingMaterialRepository;
-import com.mockproject.service.interfaces.ITrainingMaterialService;
-import com.mockproject.service.interfaces.IUnitDetailService;
-import com.mockproject.service.interfaces.IUserService;
-import com.mockproject.utils.FileUtils;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
@@ -47,7 +38,7 @@ public class TrainingMaterialService{
     }
     private final UserService userService;
 
-    private TrainingMaterialDTO uploadAFile(CreateTrainingMaterialDTO createDTO,UnitDetail unitDetail, User user) throws IOException {
+    public TrainingMaterialDTO uploadAFile(TrainingMaterialDTO createDTO,UnitDetail unitDetail, User user) throws IOException {
         TrainingMaterial trainingMaterial = trainingMaterialRepository.save(TrainingMaterial.builder()
                 .uploadDate(LocalDate.now())
                 .data(createDTO.getData())
@@ -69,7 +60,7 @@ public class TrainingMaterialService{
     }
 
 
-    public List<TrainingMaterialDTO> uploadFile(List<CreateTrainingMaterialDTO> createTrainingMaterialDTOList, User user, long unitDetailID) {
+    public List<TrainingMaterialDTO> uploadFile(List<TrainingMaterialDTO> createTrainingMaterialDTOList, User user, long unitDetailID) {
         UnitDetail unitDetail = unitDetailService.getUnitDetailById(unitDetailID, true);
         List<TrainingMaterialDTO> trainingMaterialDTOS = new ArrayList<>();
         createTrainingMaterialDTOList.forEach(
@@ -84,7 +75,7 @@ public class TrainingMaterialService{
         return trainingMaterialDTOS;
     }
 
-    public TrainingMaterialDTO updateFile(long id, CreateTrainingMaterialDTO createDTO, User user, boolean status) throws IOException {
+    public TrainingMaterialDTO updateFile(long id, TrainingMaterialDTO createDTO, User user, boolean status) throws IOException {
         Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(id, status);
         trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         return TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterialRepository.save(TrainingMaterial.builder()
@@ -94,8 +85,9 @@ public class TrainingMaterialService{
                 .type(createDTO.getType())
                 .size(createDTO.getSize())
                 .uploadDate(LocalDate.now())
-                .unitDetail(unitDetailService.getUnitDetailById(createDTO.getUnitDetailID(), true))
+                .unitDetail(unitDetailService.getUnitDetailById(trainingMaterial.get().getUnitDetail().getId(), true))
                 .user(user)
+                .status(createDTO.isStatus())
                 .build()));
     }
 

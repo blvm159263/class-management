@@ -6,16 +6,19 @@ import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Unit;
 import com.mockproject.service.UnitService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/unit")
+@SecurityRequirement(name = "Authorization")
 public class UnitController {
 
     public static final String VIEW = "ROLE_View_Syllabus";
@@ -26,10 +29,10 @@ public class UnitController {
     @Autowired
     public UnitService unitService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{sessionId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<Unit>> getAllUnitBySessionId(@PathVariable("id") long sessionId){
-        List<Unit> listUnit = unitService.getAllUnitBySessionId(sessionId, true);
+    public ResponseEntity<List<UnitDTO>> getAllUnitBySessionId(@PathVariable("sessionId") long sessionId){
+        List<UnitDTO> listUnit = unitService.getAllUnitBySessionId(sessionId, true);
         return ResponseEntity.ok(listUnit);
     }
 
@@ -40,10 +43,10 @@ public class UnitController {
         return ResponseEntity.ok(unitService.createUnit(sessionId, listUnit, user.getUser()));
     }
 
-    @PutMapping("/edit/{id}")
+    @PutMapping("/edit")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Unit> editUnit(@PathVariable("id") long id, @RequestBody UnitDTO unitDTO){
-        Unit updateUnit = unitService.editUnit(id, unitDTO, true);
+    public ResponseEntity<Unit> editUnit(@RequestBody UnitDTO unitDTO)throws IOException {
+        Unit updateUnit = unitService.editUnit(unitDTO, true);
         return ResponseEntity.ok(updateUnit);
     }
 

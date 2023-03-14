@@ -20,7 +20,7 @@ public interface IUserService {
 
     List<UserDTO> getAllByPageAndRowPerPage(long page, long rowPerPage);
 
-    Page<UserDTO> searchByFillter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> role_id, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception;
+    Page<UserDTO> searchByFilter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> role_id, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception;
 
     public boolean updateStatus(long id);
     public Integer updateStateToFalse(long id);
