@@ -12,7 +12,5 @@ public interface IUserService {
 
     UserDTO getUserById(Long id);
 
-    public UserDTO getUserById(boolean status, long id);
-
-    public List<UserDTO> getAllUser(boolean status);
+    List<UserDTO> getAllUser(boolean status);
 }

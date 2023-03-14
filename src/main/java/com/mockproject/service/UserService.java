@@ -1,25 +1,18 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.UserDTO;
-import com.mockproject.entity.User;
 import com.mockproject.mapper.UserMapper;
-import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.Role;
-import com.mockproject.entity.User;
-import com.mockproject.mapper.UserMapper;
+
 import com.mockproject.repository.UserRepository;
 import com.mockproject.service.interfaces.IUserService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -49,16 +42,11 @@ public class UserService implements IUserService {
 
     @Override
     public UserDTO getUserById(Long id) {
-        return repository.findById(id).map(UserMapper.INSTANCE::toDTO).orElse(null);
-    }
-    @Override
-    public UserDTO getUserById(boolean status, long id) {
-        User user = userRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Users not found with id: "+ id));
-        return UserMapper.INSTANCE.toDTO(user);
+        return UserMapper.INSTANCE.toDTO(repository.findById(id).orElse(null));
     }
 
     @Override
     public List<UserDTO> getAllUser(boolean status) {
-        return userRepo.findAllByStatus(status).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
+        return repository.findAllByStatus(status).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 }

@@ -1,7 +1,6 @@
 package com.mockproject.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.verify;
@@ -32,9 +31,9 @@ class TrainingProgramServiceTest {
     @Autowired
     private TrainingProgramService trainingProgramService;
 
-    TrainingProgram tp1 = new TrainingProgram(1L, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, null, null, null, null);
-    TrainingProgram tp2 = new TrainingProgram(2L, "Java for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, null, null, null, null);
-    TrainingProgram tp3 = new TrainingProgram(3L, "Java for junior", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, false, null, null, null, null);
+    TrainingProgram tp1 = new TrainingProgram(1L,1, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, null, null, null, null);
+    TrainingProgram tp2 = new TrainingProgram(2L,2, "Java for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, null, null, null, null);
+    TrainingProgram tp3 = new TrainingProgram(3L,3, "Java for junior", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, false, null, null, null, null);
 
     /**
      * Method under test: {@link TrainingProgramService#searchByName(String)}

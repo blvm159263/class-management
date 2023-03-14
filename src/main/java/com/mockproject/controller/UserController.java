@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,24 +72,12 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{id}")
-    @Operation(
-            summary = "Get user by ID"
-    )
-    public ResponseEntity<?> getUserById(
-            @PathVariable("id")
-            @Parameter(
-                    description = "<b>Insert ID to get user<b>",
-                    example = "1"
-            ) long id){
-        return ResponseEntity.ok(userService.getUserById(true, id));
-    }
 
     @GetMapping("/list")
     @Operation(
             summary = "Get user list"
     )
     public ResponseEntity<?> getAllUser() {
-        return ResponseEntity.ok(userService.getAllUser(true));
+        return ResponseEntity.ok(service.getAllUser(true));
     }
 }

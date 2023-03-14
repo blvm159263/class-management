@@ -3,10 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.mapper.TrainingClassMapper;
-import com.mockproject.dto.TrainingClassDTO;
-import com.mockproject.entity.TrainingClass;
-import com.mockproject.entity.TrainingProgram;
-import com.mockproject.mapper.TrainingClassMapper;
+
 import com.mockproject.repository.LocationRepository;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.repository.TrainingClassUnitInformationRepository;
@@ -27,9 +24,7 @@ import java.util.stream.Collectors;
 import java.sql.Time;
 import java.time.Year;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -118,7 +113,7 @@ public class TrainingClassService implements ITrainingClassService {
             classId.add(-1L);
         }
         Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
-        Page<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
+        Page<TrainingClass> pages = trainingClassRepository.getListClass(status, locationId, fromDate, toDate, period,
                 isOnline, state, attendeeId, fsu, classId, search, pageable);
         if(pages.getContent().size() > 0){
             return new PageImpl<>(
@@ -141,6 +136,6 @@ public class TrainingClassService implements ITrainingClassService {
 
     @Override
     public List<TrainingClassDTO> getAllClass() {
-        return classRepo.findAllByStatus(true).stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList());
+        return trainingClassRepository.findAllByStatus(true).stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 }

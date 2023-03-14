@@ -38,6 +38,6 @@ public class AttendeeService implements IAttendeeService {
 
     @Override
     public List<AttendeeDTO> listAllTrue() {
-        return repository.findByStatus(true).stream().map(AttendeeMapper.INSTANCE::toDTO).collect(Collectors.toList());
+        return attendeeRepo.findByStatus(true).stream().map(AttendeeMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 }
