@@ -16,8 +16,6 @@ public class TrainingClassSpecification {
 
     public static Specification<TrainingClass> hasLocationIn(List<String> locations) {
         return (root, query, builder) -> root.get("location").get("locationName").in(locations);
-
-
     }
 
     public static Specification<TrainingClass> hasClassScheduleBetween(LocalDate startDate, LocalDate endDate) {

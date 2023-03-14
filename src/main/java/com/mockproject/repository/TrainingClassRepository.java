@@ -43,6 +43,4 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "lo.locationName IN (:listSearchText)) AND " +
             "cs.date BETWEEN :startDate AND :endDate")
     public List<TrainingClass> findAllBySearchTextAndListClassSchedulesWeek(List<String> listSearchText, LocalDate startDate, LocalDate endDate);
-
-
 }
