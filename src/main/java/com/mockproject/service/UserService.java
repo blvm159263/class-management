@@ -227,9 +227,6 @@ public class UserService implements IUserService {
     }
 
 
-    @Autowired
-    RoleRepository roleRepository;
-
 
 
     @Override
@@ -259,7 +256,7 @@ public class UserService implements IUserService {
 
                     User user = new User();
                     user.setEmail(rowData[0]);
-                    user.setPassword("123");
+                    user.setPassword(passwordEncoder.encode("123456"));
                     user.setFullName(rowData[1]);
                     if (rowData[2].equals("Nam")) {
                         user.setGender(true);
