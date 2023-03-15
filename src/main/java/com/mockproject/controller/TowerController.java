@@ -20,10 +20,10 @@ public class TowerController {
     private final ITowerService towerService;
 
     @Operation(
-            summary = "Get the tower that the training class studies by class code",
+            summary = "Get all the tower that the training class studies by class code",
             description = "<b>List all the tower that the training class will study<b>"
     )
-    @GetMapping("traningClass/{classCode}")
+    @GetMapping("trainingClass/{classCode}")
     public ResponseEntity<?> getTowerByClassCode(
             @PathVariable ("classCode")
             @Parameter(
@@ -32,5 +32,25 @@ public class TowerController {
             )
             String code) {
         return ResponseEntity.ok(towerService.getTowerByClassCode(code));
+    }
+
+    @Operation(
+            summary = "Get the tower that the training class studies on that day",
+            description = "<b>List the information of the tower that the training class will study<b>"
+    )
+    @GetMapping("trainingClass/tower-on-date")
+    public ResponseEntity<?> getTowerOnTheDay(
+            @Parameter(
+                    description = "<b>Insert Training Class Id</b>",
+                    example = "1"
+            )
+            long id,
+            @Parameter(
+                    description = "<b>Insert id of the day</b>",
+                    example = "1"
+            )
+            int day
+            ) {
+        return ResponseEntity.ok(towerService.getTowerForTheDay(id, day));
     }
 }

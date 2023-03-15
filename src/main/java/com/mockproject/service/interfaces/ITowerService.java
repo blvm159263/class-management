@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ITowerService {
     List<TowerDTO> getTowerByClassCode(String code);
+
+    List<TowerDTO> getTowerForTheDay(long id, int day);
 }
