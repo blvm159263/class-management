@@ -32,7 +32,7 @@ public class UnitService implements IUnitService {
     }
 
     //Get list units that training class studies
-    private List<Unit> getListUnitsById(long id) {
+    public List<Unit> getListUnitsById(long id) {
         //Get the training class
         TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true);
         //Get list units
@@ -45,7 +45,7 @@ public class UnitService implements IUnitService {
     }
 
     //Get a sessions from the date
-    private Session getSession(long id, int day) {
+    public Session getSession(long id, int day) {
         //Get all session
         List<Session> sessionList = getListUnitsById(id).stream()
                 .map(Unit::getSession)
@@ -64,7 +64,7 @@ public class UnitService implements IUnitService {
     }
 
     //Get list units from a session
-    private List<Unit> getListUnitsFromSession(long id, int day) {
+    public List<Unit> getListUnitsFromSession(long id, int day) {
         Session session = getSession(id, day);
         return unitRepository.findBySessionAndStatusOrderByUnitNumberAsc(session, true);
     }

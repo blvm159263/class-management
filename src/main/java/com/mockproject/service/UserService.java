@@ -22,6 +22,8 @@ public class UserService implements IUserService {
 
     private final TrainingClassRepository trainingClassRepository;
 
+    private final UnitService unitService;
+
     @Override
     public List<UserDTO> getTrainerByClassCode(String code) {
         TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
@@ -36,7 +38,14 @@ public class UserService implements IUserService {
         return trainer.stream().map(UserMapper.INSTANCE :: toDTO).toList();
     }
 
-//    @Override
+    @Override
+    public UserDTO getTrainerOntheDayById(long id, int day) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true);
+//        List<TrainingClassUnitInformation> unitList = unitServic
+        return null;
+    }
+
+    //    @Override
 //    public List<UserDTO> getTrainerById(long id) {
 //        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).get(0);
 //        List<TrainingClassUnitInformation> trainingClassUnitInfor = trainingClass.getListTrainingClassUnitInformations()
