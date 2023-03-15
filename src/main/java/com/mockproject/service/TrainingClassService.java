@@ -8,7 +8,9 @@ import com.mockproject.repository.TrainingClassUnitInformationRepository;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -21,11 +23,32 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class TrainingClassService implements ITrainingClassService{
+@Slf4j
+public class TrainingClassService implements ITrainingClassService {
 
     private final TrainingClassRepository classRepo;
 
     private final TrainingClassUnitInformationRepository classUnitRepo;
+
+    @Override
+    public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date) {
+        return classRepo.findAllByListClassSchedulesDate(date);
+    }
+
+    @Override
+    public List<TrainingClass> findAllBySpecification(Specification specification) {
+        return classRepo.findAll((Sort) specification);
+    }
+
+    @Override
+    public List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText, LocalDate date) {
+        return classRepo.findAllBySearchTextAndListClassSchedulesDate(searchText,date);
+    }
+
+    @Override
+    public List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate, LocalDate endDate) {
+        return classRepo.findAllBySearchTextAndListClassSchedulesWeek(searchText,startDate,endDate);
+    }
 
     @Override
     public Page<TrainingClassDTO> getListClass(boolean status,

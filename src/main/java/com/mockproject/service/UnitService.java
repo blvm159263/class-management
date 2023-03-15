@@ -7,6 +7,7 @@ import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitRepository;
+import com.mockproject.service.interfaces.IUnitDetailService;
 import com.mockproject.service.interfaces.IUnitService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
@@ -25,11 +26,11 @@ import java.util.Optional;
 @Transactional
 public class UnitService implements IUnitService {
     private final UnitRepository unitRepository;
-    private final UnitDetailService unitDetailService;
+    private final IUnitDetailService unitDetailService;
     private final SessionRepository sessionRepository;
     private final SyllabusRepository syllabusRepository;
 
-    public UnitService(UnitRepository unitRepository, UnitDetailService unitDetailService, SessionRepository sessionRepository, SyllabusRepository syllabusRepository) {
+    public UnitService(UnitRepository unitRepository, IUnitDetailService unitDetailService, SessionRepository sessionRepository, SyllabusRepository syllabusRepository) {
         this.unitRepository = unitRepository;
         this.unitDetailService = unitDetailService;
         this.sessionRepository = sessionRepository;
@@ -134,5 +135,9 @@ public class UnitService implements IUnitService {
         ListUtils.checkList(units);
         units.get().forEach((i) -> deleteUnit(i.getId(), status));
         return true;
+    }
+
+    public List<Unit> getUnitBySessionId(long idSession){
+        return unitRepository.getListUnitBySessionId(idSession);
     }
 }

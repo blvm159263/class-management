@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface UnitRepository extends JpaRepository<Unit, Long> {
+    List<Unit> getListUnitBySessionId(long idSession);
 
     Optional<List<Unit>> findUnitBySessionIdAndStatus(long sessionId, boolean status);
 

@@ -16,9 +16,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
    Optional<User> findByEmail(String email);
 
-  Optional<User> findById(Long id);
+   Optional<User> findById(Long id);
 
- List<User> findAllBy();
+   List<User> findAllBy();
 
     @Query(value = "SELECT * FROM tblUser\n" +
             "ORDER BY ID\n" +

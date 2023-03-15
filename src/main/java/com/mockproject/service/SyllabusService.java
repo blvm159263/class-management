@@ -7,10 +7,11 @@ import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.User;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.SyllabusRepository;
+import com.mockproject.service.interfaces.ISessionService;
 import com.mockproject.service.interfaces.ISyllabusService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,12 @@ import java.util.Optional;
 
 @Service
 @Transactional
-@AllArgsConstructor
-public class SyllabusService implements ISyllabusService{
+@RequiredArgsConstructor
+public class SyllabusService implements ISyllabusService {
 
     private final SyllabusRepository syllabusRepository;
-    private final SessionService sessionService;
+
+    private final ISessionService sessionService;
 
     // List syllabus for user
     @Override
@@ -119,4 +121,8 @@ public class SyllabusService implements ISyllabusService{
         syllabusRepository.save(syllabus.get());
         return true;
     }
+    public Syllabus getSyllabusById(long id){
+        return syllabusRepository.getSyllabusById(id);
+    }
+
 }

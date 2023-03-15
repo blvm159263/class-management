@@ -7,8 +7,10 @@ import com.mockproject.entity.User;
 import com.mockproject.mapper.TrainingMaterialMapper;
 import com.mockproject.repository.TrainingMaterialRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
+import com.mockproject.service.interfaces.IUnitDetailService;
+import com.mockproject.service.interfaces.IUnitService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -24,14 +26,14 @@ import java.util.zip.DataFormatException;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TrainingMaterialService implements ITrainingMaterialService {
 
     private final TrainingMaterialRepository trainingMaterialRepository;
 
-    private final UnitDetailService unitDetailService;
+    private final IUnitDetailService unitDetailService;
     @Autowired
-    public TrainingMaterialService(@Lazy  UnitDetailService unitDetailService, TrainingMaterialRepository trainingMaterialRepository, UserService userService){
+    public TrainingMaterialService(@Lazy  IUnitDetailService unitDetailService, TrainingMaterialRepository trainingMaterialRepository, UserService userService){
         this.unitDetailService = unitDetailService;
         this.trainingMaterialRepository = trainingMaterialRepository;
         this.userService = userService;
@@ -92,6 +94,10 @@ public class TrainingMaterialService implements ITrainingMaterialService {
                 .user(user)
                 .status(createDTO.isStatus())
                 .build()));
+    }
+
+    public List<TrainingMaterial> getListTrainingMaterialByUnitDetailId(long id){
+        return trainingMaterialRepository.getListTrainingMaterialByUnitDetailId(id);
     }
 
     @Override
