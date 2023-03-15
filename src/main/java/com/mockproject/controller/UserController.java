@@ -39,6 +39,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -346,16 +347,6 @@ public class UserController {
         if (editUser)
             return ResponseEntity.ok("Successfully");
         else return ResponseEntity.badRequest().body("Could not change!");
-    }
-
-    @GetMapping("/DownloadCSVUserFile")
-    public ResponseEntity downloadCSV(){
-        String filename = "Import_User_Template.csv";
-        InputStreamResource file = new InputStreamResource(CSVUtils.importUserExampleCSVFile());
-
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/csv"))
-                .body(file);
     }
 
 }
