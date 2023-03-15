@@ -249,7 +249,7 @@ public class UserController {
     }
 
     @PutMapping("/de-activateUser")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity deactivateUser (@RequestParam(value = "id")long id){
         int state = userService.updateStateToFalse(id);
         if (state == 0) return ResponseEntity.ok("De-activate user successfully");
@@ -257,7 +257,7 @@ public class UserController {
     }
 
     @PutMapping("/activateUser")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity activateUser (@RequestParam(value = "id")long id){
         int state = userService.updateStateToTrue(id);
         if (state == 1) return ResponseEntity.ok("Activate user successfully");
@@ -265,7 +265,7 @@ public class UserController {
     }
 
     @DeleteMapping("/deleteUser")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity deleteUser (@RequestParam(value = "id")long id){
         boolean delete = userService.updateStatus(id);
         if (!delete) return ResponseEntity.badRequest().body("Delete failed");
@@ -273,7 +273,7 @@ public class UserController {
     }
 
     @PutMapping("/changeRole")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity changeRole (@RequestParam(value = "id")long id,@RequestParam(value = "roleName")String roleName){
         if (roleService.getRoleByRoleName(roleName) == null){
             return ResponseEntity.badRequest().body("Role not found!");
@@ -284,7 +284,7 @@ public class UserController {
     }
 
     @PutMapping("/editName")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity editFullName (@RequestParam(value = "id")long id, @RequestParam(value = "fullname")String fullname){
         boolean editName = userService.editName(id,fullname);
         if (editName)
@@ -293,7 +293,7 @@ public class UserController {
     }
 
     @PutMapping("/editDoB")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity editDoB (@RequestParam(value = "id")long id, @RequestParam(value = "dob")LocalDate date){
             boolean editDoB = userService.editDoB(id, date);
             if (editDoB)
@@ -302,21 +302,21 @@ public class UserController {
     }
 
     @PutMapping("/editGender")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity editGender (@RequestParam(value = "id")long id, @RequestParam(value = "gender")boolean gender){
         boolean editGender = userService.editGender(id,gender);
         return ResponseEntity.ok(editGender);
     }
 
     @PutMapping("/editLevel")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity editLevel (@RequestParam(value = "id")long id, @RequestParam(value = "levelCode")String levelCode){
         boolean editLevel = userService.editLevel(id,levelCode);
         return ResponseEntity.ok(editLevel);
     }
 
     @PutMapping("/editUser")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity editUser (@RequestBody UserDTO user){
         boolean editUser = userService.editUser(user);
         if (editUser)
