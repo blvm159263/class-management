@@ -12,8 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Optional;
 
 @Service
@@ -34,18 +32,10 @@ public class LevelService implements ILevelService {
     }
 
     @Override
-    public Long getLevelIdByLevelCode(String levelCode) {
-        Optional<Level> level = repository.getLevelByLevelCode(levelCode);
-        if(level.isPresent()) {
-            Long levelId = level.get().getId();
-            return levelId;
-        }
-        return null;
+    public long getLevelByLevelCode(String levelCode) {
+        long levelId = repository.getLevelByLevelCode(levelCode).get().getId();
+        return levelId;
     }
 
-    @Override
-    public List<LevelDTO> getAll() {
-        return repository.findAll().stream().map(LevelMapper.INSTANCE::toDTO).collect(Collectors.toList());
-    }
 
 }

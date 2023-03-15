@@ -46,14 +46,13 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Page<UserDTO> searchByFillter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> role_id, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception {
+    public Page<UserDTO> searchByFilter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> role_id, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception {
         int page1 = 0;
         int size1 = 10;
         Pageable pageable;
         List<Sort.Order> order = new ArrayList<>();
         if (page.isPresent()) page1 = page.get() - 1;
         if (size.isPresent()) size1 = size.get();
-
         if (sort != null && !sort.isEmpty()) {
             for (String sortItem : sort) {
                 String[] subSort = sortItem.split("-");
@@ -197,98 +196,21 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean editEmail(long id, String email) {
-        Optional<User> user = repository.findById(id);
-        if (user.isPresent()) {
-            User u = user.get();
-            u.setEmail(email);
+    public boolean editUser(UserDTO user) {
+        Optional<User> user1 = repository.findById(user.getId());
+        Optional<Level> level = levelRepository.getLevelById(user.getLevelId());
+        if (user1.isPresent()){
+            User u = user1.get();
+            Level level1 = level.get();
+            u.setFullName(user.getFullName());
+            u.setDob(user.getDob());
+            u.setGender(user.isGender());
+            u.setLevel(level1);
             repository.save(u);
             return true;
         }
         return false;
     }
 
-    @Override
-    public boolean editImage(long id, String image) {
-        Optional<User> user = repository.findById(id);
-        if (user.isPresent()) {
-            User u = user.get();
-            u.setImage(image);
-            repository.save(u);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean editPhone(long id, String phone) {
-        Optional<User> user = repository.findById(id);
-        if (user.isPresent()) {
-            User u = user.get();
-            u.setPhone(phone);
-            repository.save(u);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean toggleStatus(Long id){
-        Optional<User> user = repository.findById(id);
-        if (user.isPresent()) {
-            User u = user.get();
-            u.setStatus(!u.isStatus());
-            repository.save(u);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean toggleGender(Long id){
-        Optional<User> user = repository.findById(id);
-        if (user.isPresent()) {
-            User u = user.get();
-            u.setGender(!u.isGender());
-            repository.save(u);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public UserDTO getByID(long id){
-        Optional<User> u = repository.findById(id);
-        if(!u.isPresent()) return null;
-        User user = u.get();
-        return UserMapper.INSTANCE.toDTO(user);
-    }
-
-    @Override
-    public UserDTO saveUser(UserDTO userData) {
-        Optional<User> o_user = repository.findById(userData.getId());
-        if(o_user.isPresent()){
-            User user = o_user.get();
-
-            user.setImage(userData.getImage());
-            user.setFullName(userData.getFullName());
-            user.setDob(userData.getDob());
-            user.setPhone(userData.getPhone());
-            try {
-                user.setRole(roleRepository.getRoleById(userData.getRoleId()).get());
-            }catch(Exception e){
-                System.out.println("Role does not exist!");
-            }
-            try {
-                user.setLevel(levelRepository.getLevelById(userData.getLevelId()).get());
-            }catch(Exception e){
-                System.out.println("Level does not exist!");
-            }
-            user.setState(userData.getState());
-
-            return UserMapper.INSTANCE.toDTO(repository.save(user));
-        }
-        return null;
-    }
 
 }

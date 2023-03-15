@@ -16,5 +16,5 @@ public interface IRoleService {
 
     RoleDTO getRoleById(long id);
 
-    Long getRoleIdByRoleName(String roleName);
+    Long getRoleByRoleName(String roleName);
 }

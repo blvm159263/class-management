@@ -33,7 +33,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.hateoas.EntityModel;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -42,9 +41,6 @@ import java.util.Optional;
 
 import java.time.LocalDate;
 import java.util.List;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/User")
@@ -138,12 +134,6 @@ public class UserController {
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getAllRole() {
         return ResponseEntity.ok(roleService.getAll());
-    }
-
-    @GetMapping("/getAllLevels")
-    @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity getAllLevels(){
-        return ResponseEntity.ok(levelService.getAll());
     }
 
     @GetMapping("/getAllRoleDetail")
@@ -241,7 +231,7 @@ public class UserController {
     ) {
         Page<UserDTO> result;
         try {
-            result = userService.searchByFillter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, page, size, order);
+            result = userService.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, page, size, order);
         } catch (InvalidDataAccessApiUsageException e) {
             return ResponseEntity.badRequest().body("==============================================\nCOULD NOT FOUND ATTRIBUTE ORDER" + "\nExample: " + "id-asc\n" + "email-asc\n" + "fullname-asc\n" + "state-asc\n" + "dob-asc\n" + "phone-asc\n" + "attendee-asc\n" + "level-asc\n" + "role-asc\n" + "NOTE:::::::: asc = ascending; desc = descending");
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -260,10 +250,10 @@ public class UserController {
         return ResponseEntity.ok("Oke nha hihi");
     }
 
-    @GetMapping("/GetRoleIdByName")
+    @GetMapping("/GetRoleByName")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getRoleIdByName(@RequestParam(value = "roleName")String rolename){
-        long roleId = roleService.getRoleIdByRoleName(rolename);
+    public ResponseEntity getRoleByName(@RequestParam(value = "roleName")String rolename){
+        long roleId = roleService.getRoleByRoleName(rolename);
         return ResponseEntity.ok(roleId);
     }
 
@@ -304,10 +294,10 @@ public class UserController {
     @PutMapping("/ChangeRole")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity changeRole (@RequestParam(value = "id")long id,@RequestParam(value = "roleName")String roleName){
-        if (roleService.getRoleIdByRoleName(roleName) == null){
+        if (roleService.getRoleByRoleName(roleName) == null){
             return ResponseEntity.badRequest().body("Role not found!");
         }
-        boolean change = userService.changeRole(id,roleService.getRoleIdByRoleName(roleName));
+        boolean change = userService.changeRole(id,roleService.getRoleByRoleName(roleName));
         if (!change) return ResponseEntity.badRequest().body("Change failed");
         return ResponseEntity.ok(roleName);
     }
@@ -318,7 +308,7 @@ public class UserController {
         boolean editName = userService.editName(id,fullname);
         if (editName)
             return ResponseEntity.ok("Successfully");
-        else return ResponseEntity.badRequest().body("Cound not change!");
+        else return ResponseEntity.badRequest().body("Could not change!");
     }
 
     @PutMapping("/EditDoB")
@@ -327,7 +317,7 @@ public class UserController {
             boolean editDoB = userService.editDoB(id, date);
             if (editDoB)
                 return ResponseEntity.ok("Successfully");
-            else return ResponseEntity.badRequest().body("Cound not change!");
+            else return ResponseEntity.badRequest().body("Could not change!");
     }
 
     @PutMapping("/EditGender")
@@ -344,85 +334,13 @@ public class UserController {
         return ResponseEntity.ok(editLevel);
     }
 
-    @PutMapping("/EditEmail")
+    @PutMapping("/EditUser")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity editEmail (@RequestParam(value = "id")long id, @RequestParam(value = "email")String email){
-        boolean editEmail = userService.editEmail(id, email);
-        if (editEmail)
+    public ResponseEntity editUser (@RequestBody UserDTO user){
+        boolean editUser = userService.editUser(user);
+        if (editUser)
             return ResponseEntity.ok("Successfully");
-        else return ResponseEntity.badRequest().body("Cound not change!");
-    }
-
-    @PutMapping("/EditImage")
-    @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity editImage (@RequestParam(value = "id")long id, @RequestParam(value = "image")String image){
-        boolean editImage = userService.editImage(id, image);
-        if (editImage)
-            return ResponseEntity.ok("Successfully");
-        else return ResponseEntity.badRequest().body("Cound not change!");
-    }
-
-    @PutMapping("/EditPhone")
-    @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity editPhone (@RequestParam(value = "id")long id, @RequestParam(value = "phone")String phone){
-        boolean editPhone = userService.editPhone(id, phone);
-        if (editPhone)
-            return ResponseEntity.ok("Successfully");
-        else return ResponseEntity.badRequest().body("Cound not change!");
-    }
-
-    @PutMapping("/ToggleGender")
-    @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity toggleGender(@RequestParam(value = "id") long id){
-        boolean toggleGender = userService.toggleGender(id);
-        if(toggleGender) return ResponseEntity.ok("Successfully");
         else return ResponseEntity.badRequest().body("Could not change!");
-    }
-
-    @PutMapping("/ToggleStatus")
-    @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity toggleStatus(@RequestParam(value = "id") long id){
-        boolean toggleStatus = userService.toggleStatus(id);
-        if(toggleStatus) return ResponseEntity.ok("Successfully");
-        else return ResponseEntity.badRequest().body("Could not change!");
-    }
-
-    @PutMapping("/saveUser")
-    @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity saveUser(@RequestParam(value = "id") long id, @RequestBody UserFormDTO userForm) {
-        UserDTO user = userService.getByID(id);
-
-        user.setImage(userForm.getImage());
-        user.setFullName(userForm.getFullName());
-        user.setDob(userForm.getDob());
-        user.setPhone(userForm.getPhone());
-        user.setRoleId(userForm.getRoleId());
-        user.setLevelId(userForm.getLevelId());
-        user.setState(userForm.getState());
-
-        UserDTO result = userService.saveUser(user);
-        if(result != null) {
-            return ResponseEntity.ok(result);
-        }
-        return ResponseEntity.badRequest().body("Faulty information received! Check your input");
-    }
-
-    @GetMapping("/details")
-    @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity getUserDetails(@RequestParam(value = "id") long id, @RequestParam(value = "page") int page, @RequestParam(value = "rowsPerPage", required = false, defaultValue = "10") int rowsPerPage) {
-        UserDTO user = userService.getByID(id);
-
-        if(user != null) {
-            EntityModel<?> em = EntityModel.of(user,//
-                    linkTo(methodOn(UserController.class).getAllLevels()).withRel("all levels"),//
-                    linkTo(methodOn(UserController.class).getAllRole()).withRel("all roles"),//
-                    linkTo(methodOn(UserController.class).toggleStatus(id)).withRel("toggle status"),//
-                    linkTo(methodOn(UserController.class).toggleGender(id)).withRel("toggle gender"),//
-                    linkTo(methodOn(UserController.class).getListUser(page, rowsPerPage)).withRel("back")//
-            );
-            return ResponseEntity.ok().body(em);
-        }
-        else return ResponseEntity.badRequest().body("User not found!");
     }
 }
 
