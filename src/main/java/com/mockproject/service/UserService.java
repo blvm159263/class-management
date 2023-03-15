@@ -3,9 +3,11 @@ package com.mockproject.service;
 import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingClassUnitInformation;
+import com.mockproject.entity.Unit;
 import com.mockproject.entity.User;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.TrainingClassRepository;
+import com.mockproject.repository.TrainingClassUnitInformationRepository;
 import com.mockproject.repository.UserRepository;
 import com.mockproject.service.interfaces.IUserService;
 import jakarta.transaction.Transactional;
@@ -21,6 +23,8 @@ public class UserService implements IUserService {
     private final UserRepository repository;
 
     private final TrainingClassRepository trainingClassRepository;
+
+    private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
 
     private final UnitService unitService;
 
@@ -39,10 +43,17 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserDTO getTrainerOntheDayById(long id, int day) {
+    public List<UserDTO> getTrainerOntheDayById(long id, int day) {
         TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true);
-//        List<TrainingClassUnitInformation> unitList = unitServic
-        return null;
+        List<Unit> unitListFromSession = unitService.getListUnitsFromSession(id, day);
+        List<TrainingClassUnitInformation> list = unitListFromSession.stream()
+                .map(p -> (TrainingClassUnitInformation) trainingClassUnitInformationRepository
+                        .findByUnitAndTrainingClassAndStatus(p, trainingClass, true)).toList();
+        List<User> trainers = list.stream()
+                .map(TrainingClassUnitInformation::getTrainer)
+                .filter(User::isStatus)
+                .toList();
+        return trainers.stream().map(UserMapper.INSTANCE::toDTO).toList();
     }
 
     //    @Override

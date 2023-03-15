@@ -7,7 +7,7 @@ import java.util.List;
 public interface IUserService {
     List<UserDTO> getTrainerByClassCode(String code);
 
-    UserDTO getTrainerOntheDayById(long id, int day);
+    List<UserDTO> getTrainerOntheDayById(long id, int day);
 
 //    List<UserDTO> getTrainerById(long id);
 

@@ -33,6 +33,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getTrainerByClassCode(code));
     }
 
+    @GetMapping("trainingClass/trainerOnDay")
+    public ResponseEntity<?> getTrainerOnTheDay(long id, int day) {
+        return ResponseEntity.ok(userService.getTrainerOntheDayById(id, day));
+    }
+
 //    @Operation(
 //            summary = "Get the information of the trainer that the training class studies by Id",
 //            description = "<b>List the information of the trainer that the training class studies</b>"
