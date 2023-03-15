@@ -2,8 +2,6 @@ package com.mockproject.service;
 
 import com.mockproject.dto.LevelDTO;
 import com.mockproject.entity.Level;
-import com.mockproject.entity.Role;
-import com.mockproject.entity.User;
 import com.mockproject.mapper.LevelMapper;
 import com.mockproject.repository.LevelRepository;
 import com.mockproject.service.interfaces.ILevelService;

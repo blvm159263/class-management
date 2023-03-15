@@ -1,6 +1,5 @@
 package com.mockproject.utils;
 
-import org.hibernate.type.AnyType;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 

@@ -5,7 +5,6 @@ import com.mockproject.entity.DeliveryType;
 import com.mockproject.mapper.DeliveryTypeMapper;
 import com.mockproject.repository.DeliveryTypeRepository;
 import com.mockproject.service.interfaces.IDeliveryTypeService;
-import com.mockproject.utils.FileUtils;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

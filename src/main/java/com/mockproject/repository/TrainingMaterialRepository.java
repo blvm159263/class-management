@@ -9,6 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface TrainingMaterialRepository extends JpaRepository<TrainingMaterial, Long> {
+    List<TrainingMaterial> getListTrainingMaterialByUnitDetailId(long id);
+
     Optional<TrainingMaterial> findByIdAndStatus(long trainingMaterialId, boolean status);
 
     Optional<List<TrainingMaterial>> findAllByUnitDetailIdAndStatus(long unitDetailId, boolean status);

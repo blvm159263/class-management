@@ -1,10 +1,11 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.TrainingMaterialDTO;
-import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
-import com.mockproject.entity.*;
-
+import com.mockproject.entity.CustomUserDetails;
+import com.mockproject.entity.Unit;
+import com.mockproject.entity.UnitDetail;
+import com.mockproject.entity.User;
 import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
@@ -13,6 +14,7 @@ import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.IUnitDetailService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -148,5 +150,8 @@ public class UnitDetailService implements IUnitDetailService {
         unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         unitDetail.get().setType(unitDetail.get().isType() == true ? false: true);
         return true;
+    }
+    public List<UnitDetail> getUnitDetailByUnitId(long idUnit){
+        return unitDetailRepository.getListUnitDetailByUnitId(idUnit);
     }
 }

@@ -1,6 +1,8 @@
 package com.mockproject.controller;
 
 import com.mockproject.service.UserService;
+import com.mockproject.service.interfaces.IUserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -14,10 +16,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/import")
 public class UploadFileUserController {
-    @Autowired
-    UserService userService;
+    private final IUserService userService;
 
     @GetMapping("/template-csv")
     public ResponseEntity downloadTemplate(){
