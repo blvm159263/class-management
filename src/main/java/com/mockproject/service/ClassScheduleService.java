@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,15 +29,12 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-public class ClassScheduleService implements IClassScheduleService{
+public class ClassScheduleService implements IClassScheduleService {
 
     private final ClassScheduleRepository repository;
-
     private final TrainingClassService trainingClassService;
-
     private final TrainingClassUnitInformationService trainingClassUnitInformationService;
-
-    private TrainingClassFilterMap trainingClassFilterMap;
+    private final TrainingClassFilterMap trainingClassFilterMap;
 
     @Override
     public List<ClassScheduleDTO> listAll() {
