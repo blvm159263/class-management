@@ -8,7 +8,6 @@ import com.mockproject.service.interfaces.IDeliveryTypeService;
 import com.mockproject.utils.FileUtils;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

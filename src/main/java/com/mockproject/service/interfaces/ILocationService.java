@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface ILocationService {
 
-    List<LocationDTO> getAllLocation();
+    List<LocationDTO> getAllLocation(boolean status);
+
+    LocationDTO getLocationById(boolean status, long id);
 }

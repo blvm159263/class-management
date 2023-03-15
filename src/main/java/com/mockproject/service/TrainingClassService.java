@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class TrainingClassService implements ITrainingClassService{
     public Page<TrainingClassDTO> getListClass(boolean status,
                                                List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                                List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                               String fsu, long trainerId, String search, String[] sort, Optional<Integer> page)
+                                               long fsu, long trainerId, String search, String[] sort, Optional<Integer> page)
     {
         List<Sort.Order> order = new ArrayList<>();
         if(sort[0].contains(",")){
@@ -41,17 +42,25 @@ public class TrainingClassService implements ITrainingClassService{
         }else{
             order.add(new Sort.Order(getSortDirection(sort[1]),sort[0]));
         }
+        List<Long> classId = new ArrayList<>();
+        if(trainerId!=0){
+            classId = classUnitRepo
+                    .findByStatusAndTrainerId( true, trainerId)
+                    .stream().map(t -> t.getTrainingClass().getId())
+                    .collect(Collectors.toList());
+            classId.add(-1L);
+        }
         Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
         Page<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
-                isOnline, state, attendeeId, fsu, classUnitRepo
-                        .findByStatusAndAndTrainerId( true, trainerId)
-                        .stream()
-                        .map(t -> t.getTrainingClass().getId())
-                        .collect(Collectors.toList()), search, pageable);
-        return new PageImpl<>(
-                pages.stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                pages.getPageable(),
-                pages.getTotalElements());
+                isOnline, state, attendeeId, fsu, classId, search, pageable);
+        if(pages.getContent().size() > 0){
+            return new PageImpl<>(
+                    pages.stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    pages.getPageable(),
+                    pages.getTotalElements());
+        }else {
+            throw new NotFoundException("Training Class not found!");
+        }
     }
 
     public Sort.Direction getSortDirection(String direction) {
@@ -61,5 +70,10 @@ public class TrainingClassService implements ITrainingClassService{
             return Sort.Direction.DESC;
         }
         return Sort.Direction.ASC;
+    }
+
+    @Override
+    public List<TrainingClassDTO> getAllClass() {
+        return classRepo.findAllByStatus(true).stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 }

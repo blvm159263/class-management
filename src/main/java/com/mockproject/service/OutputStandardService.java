@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,9 +25,12 @@ public class OutputStandardService implements IOutputStandardService {
     public OutputStandardDTO getOutputStandardById(long outputStandardId, boolean status){
         Optional<OutputStandard> outputStandard = outputStandardRepository.findByIdAndStatus(outputStandardId, status);
         outputStandard.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
-
         OutputStandardDTO outputStandardDTO = OutputStandardMapper.INSTANCE.toDTO(outputStandard.get());
         return outputStandardDTO;
     }
 
+    @Override
+    public List<OutputStandardDTO> getOsdBySyllabusId(boolean status, long id) {
+        return null;
+    }
 }

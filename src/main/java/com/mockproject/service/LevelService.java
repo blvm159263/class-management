@@ -8,7 +8,6 @@ import com.mockproject.mapper.LevelMapper;
 import com.mockproject.repository.LevelRepository;
 import com.mockproject.service.interfaces.ILevelService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -2,7 +2,6 @@ package com.mockproject.mapper;
 
 import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingProgram;
 import com.mockproject.entity.TrainingProgramSyllabus;
 import org.mapstruct.Mapper;
