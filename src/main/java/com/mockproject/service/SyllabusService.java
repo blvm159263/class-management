@@ -35,6 +35,7 @@ public class SyllabusService implements ISyllabusService{
     private final SessionService sessionService;
 
     // List syllabus for user
+    @Override
     public List<SyllabusDTO> getAll(boolean state, boolean status){
         Optional<List<Syllabus>> syllabusList = syllabusRepository.findByStateAndStatus(state, status);
         ListUtils.checkList(syllabusList);
@@ -47,6 +48,7 @@ public class SyllabusService implements ISyllabusService{
     }
 
     // List syllabus for admin
+    @Override
     public List<SyllabusDTO> getSyllabusList(boolean status){
         Optional<List<Syllabus>> syllabusList = syllabusRepository.findAllByStatus(status);
         ListUtils.checkList(syllabusList);
@@ -58,6 +60,7 @@ public class SyllabusService implements ISyllabusService{
         return syllabusDTOList;
     }
 
+    @Override
     public SyllabusDTO getSyllabusById(long syllabusId,boolean state, boolean status){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, state, status);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -67,6 +70,7 @@ public class SyllabusService implements ISyllabusService{
         return syllabusDTO;
     }
 
+    @Override
     public long create(SyllabusDTO syllabus, User user){
         syllabus.setCreatorId(user.getId());
         syllabus.setLastModifierId(user.getId());
@@ -78,6 +82,7 @@ public class SyllabusService implements ISyllabusService{
         return newSyllabus.getId();
     }
 
+    @Override
     public Syllabus editSyllabus(SyllabusDTO syllabusDTO, boolean status) throws IOException{
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusDTO.getId(), status);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));

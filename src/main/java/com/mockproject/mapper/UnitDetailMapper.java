@@ -1,7 +1,10 @@
 package com.mockproject.mapper;
 
 import com.mockproject.dto.UnitDetailDTO;
-import com.mockproject.entity.*;
+import com.mockproject.entity.DeliveryType;
+import com.mockproject.entity.OutputStandard;
+import com.mockproject.entity.Unit;
+import com.mockproject.entity.UnitDetail;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

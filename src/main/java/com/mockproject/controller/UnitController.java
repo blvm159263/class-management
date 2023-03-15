@@ -6,6 +6,7 @@ import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Unit;
 import com.mockproject.service.UnitService;
+import com.mockproject.service.interfaces.IUnitService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class UnitController {
     public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
 
     @Autowired
-    public UnitService unitService;
+    public IUnitService unitService;
 
     @GetMapping("/{sessionId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})

@@ -41,6 +41,7 @@ public class UnitDetailService implements IUnitDetailService {
         this.sessionRepository = sessionRepository;
     }
 
+    @Override
     public List<UnitDetailDTO> getAllUnitDetailByUnitId(long unitId, boolean status) {
         Optional<List<UnitDetail>> unitDetails = unitDetailRepository.findByUnitIdAndStatus(unitId, status);
         unitDetails.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -57,6 +58,7 @@ public class UnitDetailService implements IUnitDetailService {
         return unitDetailDTOList;
     }
 
+    @Override
     public boolean createUnitDetail(long unitId, List<UnitDetailDTO> listUnitDetail, User user){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, true);
         unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -66,6 +68,7 @@ public class UnitDetailService implements IUnitDetailService {
         return true;
     }
 
+    @Override
     public boolean createUnitDetail(long unitId, UnitDetailDTO unitDetailDTO, User user){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, true);
         unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -82,12 +85,14 @@ public class UnitDetailService implements IUnitDetailService {
         return true;
     }
 
+    @Override
     public UnitDetail getUnitDetailById(long id, boolean status){
         Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(id, status);
         unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         return unitDetail.get();
     }
 
+    @Override
     public UnitDetail editUnitDetail(UnitDetailDTO unitDetailDTO, boolean status) throws IOException {
         Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(unitDetailDTO.getId(), status);
         unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -118,6 +123,7 @@ public class UnitDetailService implements IUnitDetailService {
         return updateUnitDetail;
     }
 
+    @Override
     public boolean deleteUnitDetail(long unitDetailId, boolean status){
         Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(unitDetailId, status);
         unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "unitDetail "+ unitDetailId));
@@ -128,6 +134,7 @@ public class UnitDetailService implements IUnitDetailService {
         return true;
     }
 
+    @Override
     public boolean deleteUnitDetails(long unitId, boolean status){
         Optional<List<UnitDetail>> unitDetails = unitDetailRepository.findByUnitIdAndStatus(unitId, status);
         ListUtils.checkList(unitDetails);
@@ -135,6 +142,7 @@ public class UnitDetailService implements IUnitDetailService {
         return true;
     }
 
+    @Override
     public boolean toggleUnitDetailType(long unitDetailId, boolean status){
         Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(unitDetailId, status);
         unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));

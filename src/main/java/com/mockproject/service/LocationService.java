@@ -1,13 +1,14 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.LocationDTO;
+import com.mockproject.entity.Location;
 import com.mockproject.mapper.LocationMapper;
 import com.mockproject.repository.LocationRepository;
 import com.mockproject.service.interfaces.ILocationService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +21,14 @@ public class LocationService implements ILocationService {
     private final LocationRepository locationRepo;
 
     @Override
-    public List<LocationDTO> getAllLocation() {
-        return locationRepo.findAll().stream().map(LocationMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    public List<LocationDTO> getAllLocation(boolean status) {
+        return locationRepo.findAllByStatus(status).stream().map(LocationMapper.INSTANCE::toDTO).collect(Collectors.toList());
+
+    }
+
+    @Override
+    public LocationDTO getLocationById(boolean status, long id) {
+        Location location = locationRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Location not found with id: "+ id));
+        return LocationMapper.INSTANCE.toDTO(location);
     }
 }

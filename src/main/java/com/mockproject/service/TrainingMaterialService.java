@@ -39,6 +39,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
     }
     private final UserService userService;
 
+    @Override
     public TrainingMaterialDTO uploadAFile(TrainingMaterialDTO createDTO,UnitDetail unitDetail, User user) throws IOException {
         TrainingMaterial trainingMaterial = trainingMaterialRepository.save(TrainingMaterial.builder()
                 .uploadDate(LocalDate.now())
@@ -53,6 +54,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
         return TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterial);
     }
 
+    @Override
     public TrainingMaterialDTO getFile(long id, boolean status) throws DataFormatException, IOException {
         Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(id, status);
         trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -60,7 +62,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
         return trainingMaterialDTO;
     }
 
-
+    @Override
     public List<TrainingMaterialDTO> uploadFile(List<TrainingMaterialDTO> createTrainingMaterialDTOList, User user, long unitDetailID) {
         UnitDetail unitDetail = unitDetailService.getUnitDetailById(unitDetailID, true);
         List<TrainingMaterialDTO> trainingMaterialDTOS = new ArrayList<>();
@@ -76,6 +78,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
         return trainingMaterialDTOS;
     }
 
+    @Override
     public TrainingMaterialDTO updateFile(long id, TrainingMaterialDTO createDTO, User user, boolean status) throws IOException {
         Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(id, status);
         trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -92,6 +95,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
                 .build()));
     }
 
+    @Override
     public List<TrainingMaterialDTO> getFiles(long unitDetailId, boolean status){
         List<TrainingMaterialDTO> trainingMaterialDTOS = new ArrayList<>();
         Optional<List<TrainingMaterial>> trainingMaterials = trainingMaterialRepository.findAllByUnitDetailIdAndStatus(unitDetailId, status);
@@ -112,6 +116,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
     }
 
 
+    @Override
     public boolean deleteTrainingMaterial(long trainingMaterialId, boolean status){
         try {
             Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(trainingMaterialId, status);
@@ -126,6 +131,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
         return true;
     }
 
+    @Override
     public boolean deleteTrainingMaterials(long unitDetailId, boolean status){
         Optional<List<TrainingMaterial>> listTrainingMaterial = trainingMaterialRepository.findAllByUnitDetailIdAndStatus(unitDetailId, status);
         listTrainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));

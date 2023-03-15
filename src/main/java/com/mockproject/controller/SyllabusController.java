@@ -6,6 +6,7 @@ import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.User;
 import com.mockproject.service.SyllabusService;
+import com.mockproject.service.interfaces.ISyllabusService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -29,7 +30,7 @@ public class SyllabusController {
     public static final String CREATE = "ROLE_Create_Syllabus";
     public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
     @Autowired
-    public SyllabusService syllabusService;
+    public ISyllabusService syllabusService;
 
     @GetMapping()
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})

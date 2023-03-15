@@ -43,7 +43,7 @@ public class TrainingClassController {
             @RequestParam(defaultValue = "") List<Long> attendee,
             @RequestParam(defaultValue = "0") long fsu)
     {
-        if(location.isEmpty()) location = locationService.getAllLocation().stream().map(l -> l.getId()).collect(Collectors.toList());
+        if(location.isEmpty()) location = locationService.getAllLocation(true).stream().map(l -> l.getId()).collect(Collectors.toList());
 
         return null;
     }

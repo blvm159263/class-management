@@ -17,6 +17,7 @@ import com.mockproject.service.LevelService;
 import com.mockproject.service.RoleService;
 import com.mockproject.service.UserService;
 import com.mockproject.utils.CSVUtils;
+import com.mockproject.service.interfaces.IRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -38,7 +39,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,7 @@ public class UserController {
     UserService userService;
 
     @Autowired
-    RoleService roleService;
+    IRoleService roleService;
 
     @Autowired
     RolePermissionScopeService rolePermissionScopeService;

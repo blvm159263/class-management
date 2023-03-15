@@ -3,6 +3,7 @@ package com.mockproject.controller;
 import com.mockproject.dto.DeliveryTypeDTO;
 import com.mockproject.service.DeliveryTypeService;
 import com.mockproject.service.LevelService;
+import com.mockproject.service.interfaces.IDeliveryTypeService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ import java.util.List;
 public class DeliveryTypeController {
 
     @Autowired
-    DeliveryTypeService deliveryTypeService;
+    IDeliveryTypeService deliveryTypeService;
 
     @GetMapping("")
     public ResponseEntity<List<DeliveryTypeDTO>> getAll(){

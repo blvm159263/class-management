@@ -1,7 +1,6 @@
 package com.mockproject.mapper;
 
 import com.mockproject.dto.TrainingMaterialDTO;
-import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingMaterial;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.entity.User;
