@@ -2,7 +2,9 @@ package com.mockproject.controller;
 
 import com.mockproject.entity.*;
 import com.mockproject.service.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -11,7 +13,14 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/trainingprogramdetail")
+@SecurityRequirement(name = "Authorization")
 public class TrainingProgramDetailController {
+
+    public static final String VIEW = "ROLE_View_Training program";
+    public static final String MODIFY = "ROLE_Modify_Training program";
+    public static final String CREATE = "ROLE_Create_Training program";
+    public static final String FULL_ACCESS = "ROLE_Full access_Training program";
+
     private final TrainingProgramService trainingProgramService;
     private final TrainingProgramSyllabusService trainingProgramSyllabusService;
     private final SyllabusService syllabusService;
@@ -21,16 +30,19 @@ public class TrainingProgramDetailController {
     private final TrainingMaterialService trainingMaterialService;
 
     @GetMapping("/")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
     public TrainingProgram getTrainingProgramById(@RequestParam long id) {
         return trainingProgramService.getTrainingProgramById(id);
     }
 
     @GetMapping("/{id}")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
     public List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(@PathVariable("id") long id) {
         return trainingProgramSyllabusService.getTrainingProgramSyllabusListById(id);
     }
 
     @GetMapping("/syllabus/{id}")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
     public List<Syllabus> getSyllabusById(@PathVariable("id") long idTrainingProgram) {
         List<TrainingProgramSyllabus> listTrainingProgramSyllabus = getTrainingProgramSyllabusListById(idTrainingProgram);
         List<Syllabus> list = new ArrayList<>();
@@ -42,11 +54,13 @@ public class TrainingProgramDetailController {
     }
 
     @GetMapping("/syllabus/1/{idSyllabus}")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
     public List<Session> getSessionListBySyllabusId(@PathVariable("idSyllabus") long idSyllabus) {
         return sessionService.getSessionListBySyllabusId(idSyllabus);
     }
 
     @GetMapping("/syllabus/2/{idSyllabus}")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
     public List<Unit> getUnitListByIdSession(@PathVariable("idSyllabus") long idSyllabus) {
         List<Session> listSession = getSessionListBySyllabusId(idSyllabus);
         List<Unit> listUnit = new ArrayList<>();
@@ -57,6 +71,7 @@ public class TrainingProgramDetailController {
     }
 
     @GetMapping("/syllabus/3/{idSyllabus}")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
     public List<UnitDetail> getUnitDetailListByUnitId(@PathVariable("idSyllabus") long idSyllabus) {
         List<Unit> listUnit = getUnitListByIdSession(idSyllabus);
         List<UnitDetail> listUnitDetail = new ArrayList<>();
@@ -67,6 +82,7 @@ public class TrainingProgramDetailController {
     }
 
     @GetMapping("/syllabus/4/{idSyllabus}")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
     public List<TrainingMaterial> getListTrainingMaterialByUnitDetailId(@PathVariable("idSyllabus") long idSyllabus) {
         List<UnitDetail> listUnitDetail = getUnitDetailListByUnitId(idSyllabus);
         List<TrainingMaterial> listTrainingMaterial = new ArrayList<>();

@@ -8,9 +8,7 @@ import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.service.*;
-import com.mockproject.service.interfaces.IRoleService;
-import com.mockproject.service.interfaces.IUserService;
-import com.mockproject.utils.CSVUtils;
+import com.mockproject.service.interfaces.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,19 +43,19 @@ public class UserController {
 
     private final AuthenticationManager authenticationManager;
 
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private final IUserService userService;
 
-    IRoleService roleService;
+    private final IRoleService roleService;
 
-    RolePermissionScopeService rolePermissionScopeService;
+    private final IRolePermissionScopeService rolePermissionScopeService;
 
-    PermissionService permissionService;
+    private final IPermissionService permissionService;
 
-    PermissionScopeService permissionScopeService;
+    private final IPermissionScopeService permissionScopeService;
 
-    LevelService levelService;
+    private final ILevelService levelService;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginFormDTO loginFormDTO) {
@@ -197,7 +195,7 @@ public class UserController {
 
     @PostMapping("/searchByFilter")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity searchByFillter(@RequestParam(value = "Id", required = false) Long id,
+    public ResponseEntity searchByFilter(@RequestParam(value = "Id", required = false) Long id,
                                           @RequestParam(value = "Dob", required = false) LocalDate dob,
                                           @RequestParam(value = "Email", required = false) String email,
                                           @RequestParam(value = "FullName", required = false) String fullName,
@@ -251,7 +249,7 @@ public class UserController {
     }
 
     @PutMapping("/de-activateUser")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity deactivateUser (@RequestParam(value = "id")long id){
         int state = userService.updateStateToFalse(id);
         if (state == 0) return ResponseEntity.ok("De-activate user successfully");
@@ -259,7 +257,7 @@ public class UserController {
     }
 
     @PutMapping("/activateUser")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity activateUser (@RequestParam(value = "id")long id){
         int state = userService.updateStateToTrue(id);
         if (state == 1) return ResponseEntity.ok("Activate user successfully");
@@ -267,7 +265,7 @@ public class UserController {
     }
 
     @DeleteMapping("/deleteUser")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity deleteUser (@RequestParam(value = "id")long id){
         boolean delete = userService.updateStatus(id);
         if (!delete) return ResponseEntity.badRequest().body("Delete failed");
@@ -275,7 +273,7 @@ public class UserController {
     }
 
     @PutMapping("/changeRole")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity changeRole (@RequestParam(value = "id")long id,@RequestParam(value = "roleName")String roleName){
         if (roleService.getRoleByRoleName(roleName) == null){
             return ResponseEntity.badRequest().body("Role not found!");
@@ -286,7 +284,7 @@ public class UserController {
     }
 
     @PutMapping("/editName")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity editFullName (@RequestParam(value = "id")long id, @RequestParam(value = "fullname")String fullname){
         boolean editName = userService.editName(id,fullname);
         if (editName)
@@ -295,7 +293,7 @@ public class UserController {
     }
 
     @PutMapping("/editDoB")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity editDoB (@RequestParam(value = "id")long id, @RequestParam(value = "dob")LocalDate date){
             boolean editDoB = userService.editDoB(id, date);
             if (editDoB)
@@ -304,36 +302,26 @@ public class UserController {
     }
 
     @PutMapping("/editGender")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity editGender (@RequestParam(value = "id")long id, @RequestParam(value = "gender")boolean gender){
         boolean editGender = userService.editGender(id,gender);
         return ResponseEntity.ok(editGender);
     }
 
     @PutMapping("/editLevel")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity editLevel (@RequestParam(value = "id")long id, @RequestParam(value = "levelCode")String levelCode){
         boolean editLevel = userService.editLevel(id,levelCode);
         return ResponseEntity.ok(editLevel);
     }
 
     @PutMapping("/editUser")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity editUser (@RequestBody UserDTO user){
         boolean editUser = userService.editUser(user);
         if (editUser)
             return ResponseEntity.ok("Successfully");
         else return ResponseEntity.badRequest().body("Could not change!");
-    }
-
-    @GetMapping("/downloadCSVUserFile")
-    public ResponseEntity downloadCSV(){
-        String filename = "Import_User_Template.csv";
-        InputStreamResource file = new InputStreamResource(CSVUtils.importUserExampleCSVFile());
-
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/csv"))
-                .body(file);
     }
 
 }

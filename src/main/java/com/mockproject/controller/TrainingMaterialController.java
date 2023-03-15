@@ -3,7 +3,9 @@ package com.mockproject.controller;
 import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -16,16 +18,17 @@ import java.util.zip.DataFormatException;
 
 @RestController
 @RequestMapping(value = "/api/training-material")
-@AllArgsConstructor
+@RequiredArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class TrainingMaterialController {
 
-    public static final String VIEW = "ROLE_View_Syllabus";
-    public static final String MODIFY = "ROLE_Modify_Syllabus";
-    public static final String CREATE = "ROLE_Create_Syllabus";
-    public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
+    public static final String VIEW = "ROLE_View_Learning material";
+    public static final String MODIFY = "ROLE_Modify_Learning material";
+    public static final String CREATE = "ROLE_Create_Learning material";
+    public static final String FULL_ACCESS = "ROLE_Full access_Learning material";
 
-    @Autowired
-    ITrainingMaterialService trainingMaterialService;
+
+    private final ITrainingMaterialService trainingMaterialService;
 
     @GetMapping("get-all/{unitDetailId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})

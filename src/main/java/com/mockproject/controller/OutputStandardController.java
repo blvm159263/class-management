@@ -3,6 +3,7 @@ package com.mockproject.controller;
 import com.mockproject.dto.OutputStandardDTO;
 import com.mockproject.service.interfaces.IOutputStandardService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/outputStandard")
-@SecurityRequirement(name = "Authorization")
 public class OutputStandardController {
 
-    @Autowired
-    IOutputStandardService outputStandardService;
+
+    private final IOutputStandardService outputStandardService;
 
     @GetMapping("/{outputStandardId}")
     public ResponseEntity<OutputStandardDTO> getOutputStandardById(@PathVariable("outputStandardId") long id){

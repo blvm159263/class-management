@@ -3,6 +3,7 @@ package com.mockproject.controller;
 import com.mockproject.dto.DeliveryTypeDTO;
 import com.mockproject.service.interfaces.IDeliveryTypeService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,11 +15,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/delivery")
-@SecurityRequirement(name = "Authorization")
+
+@RequiredArgsConstructor
 public class DeliveryTypeController {
 
-    @Autowired
-    IDeliveryTypeService deliveryTypeService;
+
+
+
+    private final IDeliveryTypeService deliveryTypeService;
 
     @GetMapping("")
     public ResponseEntity<List<DeliveryTypeDTO>> getAll(){

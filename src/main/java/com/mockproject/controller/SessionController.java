@@ -5,6 +5,7 @@ import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Session;
 import com.mockproject.service.interfaces.ISessionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/session")
 @SecurityRequirement(name = "Authorization")
 public class SessionController {
@@ -24,8 +26,8 @@ public class SessionController {
     public static final String CREATE = "ROLE_Create_Syllabus";
     public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
 
-    @Autowired
-    public ISessionService sessionService;
+
+    private final ISessionService sessionService;
 
     @GetMapping("/{syllabusId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})

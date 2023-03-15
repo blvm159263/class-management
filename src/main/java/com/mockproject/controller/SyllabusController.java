@@ -5,6 +5,7 @@ import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.service.interfaces.ISyllabusService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/syllabus")
 @SecurityRequirement(name = "Authorization")
 public class SyllabusController {
@@ -22,8 +24,8 @@ public class SyllabusController {
     public static final String MODIFY = "ROLE_Modify_Syllabus";
     public static final String CREATE = "ROLE_Create_Syllabus";
     public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
-    @Autowired
-    public ISyllabusService syllabusService;
+
+    private final ISyllabusService syllabusService;
 
     @GetMapping()
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})

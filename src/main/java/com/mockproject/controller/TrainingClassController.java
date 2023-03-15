@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,10 +22,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/class")
 @SecurityRequirement(name = "Authorization")
 public class TrainingClassController {
-    public static final String VIEW = "ROLE_View_Training program";
-    public static final String MODIFY = "ROLE_Modify_Training program";
-    public static final String CREATE = "ROLE_Create_Training program";
-    public static final String FULL_ACCESS = "ROLE_Full access_Training program";
+    public static final String VIEW = "ROLE_View_Class";
+    public static final String MODIFY = "ROLE_Modify_Class";
+    public static final String CREATE = "ROLE_Create_Class";
+    public static final String FULL_ACCESS = "ROLE_Full access_Class";
 
     private final ITrainingClassService classService;
 
@@ -33,6 +34,7 @@ public class TrainingClassController {
     private final IFsuService fsuService;
 
     @GetMapping("/list")
+    @Secured({VIEW, CREATE, MODIFY, FULL_ACCESS})
     public ResponseEntity<?> getListClass(
             @RequestParam(defaultValue = "") List<Long> location,
             @RequestParam(defaultValue = "2000-01-01") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
