@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/classschedule")
+    @RequestMapping("/v1/classschedule")
 @Slf4j
 public class ClassScheduleController {
     @Autowired

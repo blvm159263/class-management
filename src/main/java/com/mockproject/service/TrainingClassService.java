@@ -30,7 +30,7 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText, LocalDate date) {
+    public List<TrainingClass> findAllBySearchTextAndDate(String searchText, LocalDate date) {
         return repository.findAllBySearchTextAndListClassSchedulesDate(searchText,date);
     }
 

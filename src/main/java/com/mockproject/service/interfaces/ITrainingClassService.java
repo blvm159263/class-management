@@ -12,7 +12,7 @@ public interface ITrainingClassService {
     public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date);
     public List<TrainingClass> findAllBySpecification(Specification specification);
 
-    public List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText,LocalDate date);
+    public List<TrainingClass> findAllBySearchTextAndDate(String searchText,LocalDate date);
 
     public List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate,LocalDate endDate);
 

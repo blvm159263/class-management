@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,9 +78,15 @@ public class ClassScheduleService implements IClassScheduleService {
 
     @Override
     public List<TrainingClassFilterResponseDTO> searchTrainingClassInDate(List<String> textSearch, LocalDate date) {
-        return trainingClassService.findAllBySearchTextAndDate(textSearch,date)
-                .stream().map(trainingClass -> getTrainingClassDetail(trainingClass,date))
-                .collect(Collectors.toList());
+        textSearch= textSearch.stream().map(text->"%"+text+"%").collect(Collectors.toList());
+        var trainingClassSet= new HashSet<TrainingClassFilterResponseDTO>();
+        textSearch.stream().forEach(text->{
+
+            trainingClassService.findAllBySearchTextAndDate(text,date)
+                    .stream().map(trainingClass -> getTrainingClassDetail(trainingClass,date))
+                    .forEach(trainingClassFilterResponseDTO -> trainingClassSet.add(trainingClassFilterResponseDTO));
+        });
+        return trainingClassSet.stream().collect(Collectors.toList());
     }
 
     @Override
