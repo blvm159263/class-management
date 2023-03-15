@@ -7,6 +7,7 @@ import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.User;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.SyllabusRepository;
+import com.mockproject.service.interfaces.ISessionService;
 import com.mockproject.service.interfaces.ISyllabusService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
@@ -29,7 +30,7 @@ public class SyllabusService implements ISyllabusService {
 
     private final SyllabusRepository syllabusRepository;
 
-    private final SessionService sessionService;
+    private final ISessionService sessionService;
 
     // List syllabus for user
     @Override

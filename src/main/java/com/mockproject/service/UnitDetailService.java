@@ -11,6 +11,7 @@ import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.repository.UnitRepository;
+import com.mockproject.service.interfaces.ITrainingMaterialService;
 import com.mockproject.service.interfaces.IUnitDetailService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
@@ -29,13 +30,13 @@ import java.util.Optional;
 @Service
 @Transactional
 public class UnitDetailService implements IUnitDetailService {
-    private final UnitDetailRepository unitDetailRepository;
-    private final TrainingMaterialService trainingMaterialService;
     private final UnitRepository unitRepository;
+    private final UnitDetailRepository unitDetailRepository;
+    private final ITrainingMaterialService trainingMaterialService;
     private final SyllabusRepository syllabusRepository;
     private final SessionRepository sessionRepository;
 
-    public UnitDetailService(UnitDetailRepository unitDetailRepository, TrainingMaterialService trainingMaterialService, UnitRepository unitRepository, SyllabusRepository syllabusRepository, SessionRepository sessionRepository) {
+    public UnitDetailService(UnitDetailRepository unitDetailRepository, ITrainingMaterialService trainingMaterialService, UnitRepository unitRepository, SyllabusRepository syllabusRepository, SessionRepository sessionRepository) {
         this.unitDetailRepository = unitDetailRepository;
         this.trainingMaterialService = trainingMaterialService;
         this.unitRepository = unitRepository;

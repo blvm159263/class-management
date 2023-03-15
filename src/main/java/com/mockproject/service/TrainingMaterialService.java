@@ -7,6 +7,8 @@ import com.mockproject.entity.User;
 import com.mockproject.mapper.TrainingMaterialMapper;
 import com.mockproject.repository.TrainingMaterialRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
+import com.mockproject.service.interfaces.IUnitDetailService;
+import com.mockproject.service.interfaces.IUnitService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +31,9 @@ public class TrainingMaterialService implements ITrainingMaterialService {
 
     private final TrainingMaterialRepository trainingMaterialRepository;
 
-    private final UnitDetailService unitDetailService;
+    private final IUnitDetailService unitDetailService;
     @Autowired
-    public TrainingMaterialService(@Lazy  UnitDetailService unitDetailService, TrainingMaterialRepository trainingMaterialRepository, UserService userService){
+    public TrainingMaterialService(@Lazy  IUnitDetailService unitDetailService, TrainingMaterialRepository trainingMaterialRepository, UserService userService){
         this.unitDetailService = unitDetailService;
         this.trainingMaterialRepository = trainingMaterialRepository;
         this.userService = userService;

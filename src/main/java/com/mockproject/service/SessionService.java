@@ -4,14 +4,18 @@ import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.SessionMapper;
+import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.ISessionService;
+import com.mockproject.service.interfaces.IUnitService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,7 +32,7 @@ import java.util.Optional;
 public class SessionService implements ISessionService {
 
     private final SessionRepository sessionRepository;
-    private final UnitService unitService;
+    private final IUnitService unitService;
     private final SyllabusRepository syllabusRepository;
     private final UnitRepository unitRepository;
 
@@ -133,6 +137,7 @@ public class SessionService implements ISessionService {
         sessions.get().forEach((i) -> deleteSession(i.getId(), status));
         return true;
     }
+
     public List<Session> getSessionListBySyllabusId(long idSyllabus){
         return sessionRepository.getSessionListBySyllabusId(idSyllabus);
     }
