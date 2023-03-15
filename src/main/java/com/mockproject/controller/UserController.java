@@ -17,6 +17,7 @@ import com.mockproject.service.LevelService;
 import com.mockproject.service.RoleService;
 import com.mockproject.service.UserService;
 import com.mockproject.service.interfaces.IRoleService;
+import com.mockproject.utils.CSVUtils;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -25,8 +26,11 @@ import org.hibernate.query.SemanticException;
 import org.hibernate.query.sqm.InterpretationException;
 import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +39,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -343,5 +348,16 @@ public class UserController {
             return ResponseEntity.ok("Successfully");
         else return ResponseEntity.badRequest().body("Could not change!");
     }
+
+    @GetMapping("/DownloadCSVUserFile")
+    public ResponseEntity downloadCSV(){
+        String filename = "Import_User_Template.csv";
+        InputStreamResource file = new InputStreamResource(CSVUtils.importUserExampleCSVFile());
+
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/csv"))
+                .body(file);
+    }
+
 }
 

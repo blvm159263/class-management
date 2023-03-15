@@ -1,5 +1,7 @@
 package com.mockproject.service.interfaces;
 
+import java.io.File;
+
 import com.mockproject.dto.SearchUserFillerDTO;
 import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.User;
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public interface IUserService {
+    public String readCSVFile(File file);
     List<UserDTO> getAll();
 
     List<UserDTO> getAllByPageAndRowPerPage(long page, long rowPerPage);
