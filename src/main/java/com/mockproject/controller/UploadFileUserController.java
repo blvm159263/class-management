@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -22,6 +19,12 @@ import java.time.format.DateTimeFormatter;
 public class UploadFileUserController {
     @Autowired
     UserService userService;
+
+    @GetMapping("/template-csv")
+    public ResponseEntity downloadTemplate(){
+        File file = new File("src/main/resources/CSVFile/Template .xlsx");
+        return ResponseEntity.ok(file);
+    }
 
     @PostMapping("/user")
     public ResponseEntity readFileCSV(@RequestParam("file") MultipartFile mFile) {
