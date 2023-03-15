@@ -29,7 +29,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @AllArgsConstructor
-public class SyllabusService {
+public class SyllabusService implements ISyllabusService{
 
     private final SyllabusRepository syllabusRepository;
     private final SessionService sessionService;

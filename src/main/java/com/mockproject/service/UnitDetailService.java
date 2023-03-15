@@ -141,7 +141,4 @@ public class UnitDetailService implements IUnitDetailService {
         unitDetail.get().setType(unitDetail.get().isType() == true ? false: true);
         return true;
     }
-
-    public void getSessionBySessionIdAndStatus(long sessionId, boolean status) {
-    }
 }
