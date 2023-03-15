@@ -5,6 +5,7 @@ import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.service.SessionService;
+import com.mockproject.service.interfaces.ISessionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.apache.el.parser.BooleanNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class SessionController {
     public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
 
     @Autowired
-    public SessionService sessionService;
+    public ISessionService sessionService;
 
     @GetMapping("/{syllabusId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})

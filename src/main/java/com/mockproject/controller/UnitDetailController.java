@@ -6,6 +6,7 @@ import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Unit;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.service.UnitDetailService;
+import com.mockproject.service.interfaces.IUnitDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -25,7 +26,7 @@ public class UnitDetailController {
     public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
 
     @Autowired
-    public UnitDetailService unitDetailService;
+    public IUnitDetailService unitDetailService;
 
     @GetMapping("/{unitId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})

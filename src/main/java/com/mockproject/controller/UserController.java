@@ -16,6 +16,7 @@ import com.mockproject.repository.UserRepository;
 import com.mockproject.service.LevelService;
 import com.mockproject.service.RoleService;
 import com.mockproject.service.UserService;
+import com.mockproject.service.interfaces.IRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -62,7 +63,7 @@ public class UserController {
     UserService userService;
 
     @Autowired
-    RoleService roleService;
+    IRoleService roleService;
 
     @Autowired
     RolePermissionScopeService rolePermissionScopeService;

@@ -3,6 +3,7 @@ package com.mockproject.controller;
 import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.repository.UserRepository;
+import com.mockproject.service.interfaces.ITrainingMaterialService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +34,7 @@ public class TrainingMaterialController {
     public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
 
     @Autowired
-    TrainingMaterialService trainingMaterialService;
-
-    @Autowired
-    UserRepository userRepository;
-
-
+    ITrainingMaterialService trainingMaterialService;
 
     @GetMapping("get-all/{unitDetailId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
