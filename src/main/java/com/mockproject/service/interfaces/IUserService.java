@@ -4,17 +4,10 @@ import java.io.File;
 
 import com.mockproject.dto.SearchUserFillerDTO;
 import com.mockproject.dto.UserDTO;
-import com.mockproject.entity.User;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-
-import com.mockproject.dto.UserDTO;
-import com.mockproject.entity.User;
-
-import java.time.LocalDate;
 import java.util.Optional;
 
 public interface IUserService {

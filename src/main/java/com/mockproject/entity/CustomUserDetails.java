@@ -1,6 +1,5 @@
 package com.mockproject.entity;
 
-import com.mockproject.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

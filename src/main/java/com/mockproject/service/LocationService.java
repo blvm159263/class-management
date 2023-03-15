@@ -23,7 +23,10 @@ public class LocationService implements ILocationService {
     @Override
     public List<LocationDTO> getAllLocation(boolean status) {
         return locationRepo.findAllByStatus(status).stream().map(LocationMapper.INSTANCE::toDTO).collect(Collectors.toList());
-
+    }
+    @Override
+    public List<Location> findLocationByTrainingClassID(Long id) {
+        return locationRepo.findDistinctAllByListTowersListTrainingClassUnitInformationsTrainingClassId(id);
     }
 
     @Override

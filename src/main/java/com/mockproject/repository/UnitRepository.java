@@ -1,6 +1,5 @@
 package com.mockproject.repository;
 
-import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.Unit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface UnitRepository extends JpaRepository<Unit, Long> {
+    List<Unit> getListUnitBySessionId(long idSession);
 
     Optional<List<Unit>> findUnitBySessionIdAndStatus(long sessionId, boolean status);
 

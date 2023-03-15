@@ -2,10 +2,7 @@ package com.mockproject.Config;
 
 
 import com.mockproject.Jwt.JwtAuthenticationFilter;
-import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.service.CustomUserDetailsService;
-import jakarta.servlet.Filter;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -63,8 +59,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
-
-        http.authorizeHttpRequests().requestMatchers("/User/Login", "/swagger-ui/**", "/v3/api-docs/**","/v2/api-docs/**").permitAll()
+        http.authorizeHttpRequests().requestMatchers("/user/login", "/swagger-ui/**", "/v3/api-docs/**","/user/encodePassword").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore( jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {

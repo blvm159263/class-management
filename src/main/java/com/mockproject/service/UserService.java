@@ -14,7 +14,7 @@ import com.mockproject.service.interfaces.IUserService;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService implements IUserService {
     @Autowired
     private final UserRepository repository;
