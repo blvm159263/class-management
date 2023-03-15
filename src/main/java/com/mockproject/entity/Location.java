@@ -24,7 +24,7 @@ public class Location implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Nationalized
     @Column(
@@ -47,4 +47,8 @@ public class Location implements Serializable {
     @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
     @JsonBackReference
     private List<Tower> listTowers;
+
+    @OneToMany(mappedBy = "location", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<TrainingClass> listClasses;
 }

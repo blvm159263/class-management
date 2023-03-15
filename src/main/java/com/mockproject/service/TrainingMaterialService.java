@@ -11,8 +11,12 @@ import com.mockproject.service.interfaces.IUnitDetailService;
 import com.mockproject.service.interfaces.IUserService;
 import com.mockproject.utils.FileUtils;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+//<<<<<<< HEAD
+//import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+//=======
+import lombok.RequiredArgsConstructor;
+//>>>>>>> dev
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +31,7 @@ import java.util.zip.DataFormatException;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TrainingMaterialService implements ITrainingMaterialService {
     private final TrainingMaterialRepository repository;
 

@@ -1,6 +1,6 @@
 package com.mockproject.dto;
 
-import com.mockproject.entity.Session;
+//import com.mockproject.entity.Session;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+//import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class SyllabusDTO implements Serializable {
-    private long id;
+    private Long id;
     private String name;
     private String code;
     private String version;
@@ -41,7 +41,12 @@ public class SyllabusDTO implements Serializable {
     private String otherDes;
     private boolean state;
     private boolean status;
-    private long creatorId;
-    private long lastModifierId;
-    private List<SessionDTO> sessionDTOS;
+//<<<<<<< HEAD
+//    private long creatorId;
+//    private long lastModifierId;
+//    private List<SessionDTO> sessionDTOS;
+//=======
+    private Long creatorId;
+    private Long lastModifierId;
+//>>>>>>> dev
 }

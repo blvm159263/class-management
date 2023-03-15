@@ -5,12 +5,12 @@ import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.UserRepository;
 import com.mockproject.service.interfaces.IUserService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService implements IUserService {
     private final UserRepository repository;
 
