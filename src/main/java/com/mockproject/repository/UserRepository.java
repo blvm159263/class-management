@@ -38,5 +38,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "and (:#{#role_id.size()} = 0 or u.role.id in :role_id)" +
             "and u.status = true"
     )
-    Page<User> searchByFiller(Long id, LocalDate dob, String email, String fullname, Boolean gender, String phone, List<Integer> state, List<Long> attendee_id, List<Long> level_id, List<Long> role_id,Pageable pageable);
+    Page<User> searchByFilter(Long id, LocalDate dob, String email, String fullname, Boolean gender, String phone, List<Integer> state, List<Long> attendee_id, List<Long> level_id, List<Long> role_id,Pageable pageable);
 }

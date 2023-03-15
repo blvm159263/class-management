@@ -78,7 +78,7 @@ public class UserService implements IUserService {
         }
         Page<User> pages;
         try {
-            pages = repository.searchByFiller(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, pageable);
+            pages = repository.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, pageable);
         } catch (Exception e) {
             throw e;
         }

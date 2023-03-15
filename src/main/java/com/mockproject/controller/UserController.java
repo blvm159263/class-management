@@ -204,9 +204,9 @@ public class UserController {
         return ResponseEntity.ok("Successfull");
     }
 
-    @PostMapping("/searchByFillet")
+    @PostMapping("/searchByFilter")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity searchByFillter(@RequestParam(value = "Id", required = false) Long id,
+    public ResponseEntity searchByFilter(@RequestParam(value = "Id", required = false) Long id,
                                           @RequestParam(value = "Dob", required = false) LocalDate dob,
                                           @RequestParam(value = "Email", required = false) String email,
                                           @RequestParam(value = "FullName", required = false) String fullName,
