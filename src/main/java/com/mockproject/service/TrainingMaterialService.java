@@ -7,7 +7,6 @@ import com.mockproject.entity.User;
 import com.mockproject.mapper.TrainingMaterialMapper;
 import com.mockproject.repository.TrainingMaterialRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
-import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

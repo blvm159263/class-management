@@ -1,11 +1,8 @@
 package com.mockproject.controller;
 
-import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.CustomUserDetails;
-import com.mockproject.entity.Session;
 import com.mockproject.entity.Unit;
-import com.mockproject.service.UnitService;
 import com.mockproject.service.interfaces.IUnitService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;

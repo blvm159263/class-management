@@ -1,10 +1,11 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.TrainingMaterialDTO;
-import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
-import com.mockproject.entity.*;
-
+import com.mockproject.entity.CustomUserDetails;
+import com.mockproject.entity.Unit;
+import com.mockproject.entity.UnitDetail;
+import com.mockproject.entity.User;
 import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;

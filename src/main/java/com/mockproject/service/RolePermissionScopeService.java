@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.PermissionDTO;
 import com.mockproject.dto.RolePermissionScopeDTO;
 import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.mapper.RolePermissionScopeMapper;

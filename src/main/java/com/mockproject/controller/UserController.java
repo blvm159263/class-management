@@ -3,28 +3,14 @@ package com.mockproject.controller;
 
 import com.mockproject.Jwt.JwtTokenProvider;
 import com.mockproject.dto.*;
-import com.mockproject.entity.*;
-import com.mockproject.mapper.RoleMapper;
-import com.mockproject.dto.JwtResponseDTO;
-import com.mockproject.dto.LoginFormDTO;
-import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.CustomUserDetails;
-import com.mockproject.entity.User;
+import com.mockproject.entity.RolePermissionScope;
+import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.service.*;
-import com.mockproject.repository.UserRepository;
-import com.mockproject.service.LevelService;
-import com.mockproject.service.RoleService;
-import com.mockproject.service.UserService;
-import com.mockproject.utils.CSVUtils;
 import com.mockproject.service.interfaces.IRoleService;
-import io.swagger.annotations.Api;
+import com.mockproject.utils.CSVUtils;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.servlet.http.HttpServletRequest;
-import org.hibernate.query.SemanticException;
-import org.hibernate.query.sqm.InterpretationException;
-import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -43,9 +29,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/User")

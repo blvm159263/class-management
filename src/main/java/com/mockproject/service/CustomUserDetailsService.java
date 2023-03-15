@@ -1,14 +1,12 @@
 package com.mockproject.service;
 
 
-import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.entity.User;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.ICustomUserDetailsService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

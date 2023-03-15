@@ -2,7 +2,6 @@ package com.mockproject.controller;
 
 import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.entity.CustomUserDetails;
-import com.mockproject.repository.UserRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.zip.DataFormatException;
-
-
-import com.mockproject.service.TrainingMaterialService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 @RestController
 @RequestMapping(value = "/api/training-material")

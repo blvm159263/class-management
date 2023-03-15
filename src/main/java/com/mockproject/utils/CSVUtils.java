@@ -1,6 +1,5 @@
 package com.mockproject.utils;
 
-import com.mockproject.dto.UserDTO;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;

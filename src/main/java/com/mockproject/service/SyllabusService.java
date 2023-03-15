@@ -3,11 +3,8 @@ package com.mockproject.service;
 import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.CustomUserDetails;
-import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
-
 import com.mockproject.entity.User;
-import com.mockproject.mapper.SessionMapper;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.service.interfaces.ISyllabusService;
@@ -22,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
