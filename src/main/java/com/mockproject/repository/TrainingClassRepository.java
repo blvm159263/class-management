@@ -1,5 +1,6 @@
 package com.mockproject.repository;
 
+
 import com.mockproject.entity.TrainingClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,9 @@ import java.util.List;
 
 @Repository
 public interface TrainingClassRepository extends JpaRepository<TrainingClass, Long> {
+
+    TrainingClass findByIdAndStatus(long id, Boolean status);
+
 
     List<TrainingClass> findByClassNameContaining(String name);
 

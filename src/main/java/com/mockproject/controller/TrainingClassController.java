@@ -11,6 +11,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import com.mockproject.service.interfaces.ITrainingClassService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,13 +21,64 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @Tag(name = "Training Class API")
-@RequestMapping("api/training-class")
+@RequestMapping("api/class")
 public class TrainingClassController {
 
-    private final ITrainingClassService service;
+    private final ITrainingClassService trainingClassService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getAll(@PathVariable("id") long id) {
+        return ResponseEntity.ok(trainingClassService.getAllDetails(id));
+    }
+
+    @GetMapping("/trainers")
+    public ResponseEntity<?> getAllTrainers(@Param("id") long id) {
+        return ResponseEntity.ok(trainingClassService.getAllTrainers(id));
+    }
+
+    @GetMapping("/admins")
+    public ResponseEntity<?> getAllAdmins(@Param("id") long id) {
+        return ResponseEntity.ok(trainingClassService.getAllAdmins(id));
+    }
+
+    @GetMapping("/creator")
+    public ResponseEntity<?> getCreator(@Param("id") long id) {
+        return ResponseEntity.ok(trainingClassService.getCreator(id));
+    }
+
+    @GetMapping("/towers")
+    public ResponseEntity<?> getAllTowers(@Param("id") long id) {
+        return ResponseEntity.ok(trainingClassService.getAllTowers(id));
+    }
+
+    @GetMapping("/attendee")
+    public ResponseEntity<?> getAttendeeName(@Param("id") long id) {
+        return ResponseEntity.ok(trainingClassService.getAttendee(id));
+    }
+
+    @GetMapping("/schedule")
+    public ResponseEntity<?> getClassSchedule(@Param("id") long id) {
+        return ResponseEntity.ok(trainingClassService.getClassSchedule(id));
+    }
+
+    @GetMapping("/fsu")
+    public ResponseEntity<?> getClassFsu(@Param("id") long id) {
+        return ResponseEntity.ok(trainingClassService.getFsu(id));
+    }
+
+    @GetMapping("/contact")
+    public ResponseEntity<?> getClassContact(@Param("id") long id) {
+        return ResponseEntity.ok(trainingClassService.getContact(id));
+    }
+
+    // Test get days before
+    @GetMapping("/day-in")
+    public ResponseEntity<?> getDayIn(@Param("id") long id, @Param("date") LocalDate date) {
+        return ResponseEntity.ok(trainingClassService.getShortDetails(id, date));
+    }
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "When Training Class created successfully!"),
@@ -33,7 +87,7 @@ public class TrainingClassController {
     @Operation(summary = "Create new Training Class")
     @PostMapping("")
     public ResponseEntity<?> create(@Valid @RequestBody TrainingClassDTO dto){
-        Long id = service.create(dto);
+        Long id = trainingClassService.create(dto);
         if(id!=null){
             return new ResponseEntity<>(id, HttpStatus.CREATED);
         }else{
@@ -132,7 +186,7 @@ public class TrainingClassController {
             ) Optional<Integer> page)
     {
         return ResponseEntity
-                .ok(service.getListClass(true, location, fromDate, toDate, period,
+                .ok(trainingClassService.getListClass(true, location, fromDate, toDate, period,
                         isOnline? "Online" : "", state, attendee, fsu, trainerId, search, sort, page));
     }
 
