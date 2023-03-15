@@ -94,16 +94,20 @@ public class TrainingMaterialService{
     public List<TrainingMaterialDTO> getFiles(long unitDetailId, boolean status){
         List<TrainingMaterialDTO> trainingMaterialDTOS = new ArrayList<>();
         Optional<List<TrainingMaterial>> trainingMaterials = trainingMaterialRepository.findAllByUnitDetailIdAndStatus(unitDetailId, status);
-        ListUtils.checkList(trainingMaterials);
-        trainingMaterials.get().forEach(trainingMaterial -> {
-            try {
-                TrainingMaterialDTO trainingMaterialDTO = TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterial);
-                trainingMaterialDTOS.add(trainingMaterialDTO);
-            } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.NO_CONTENT);
-            }
-        });
-        return trainingMaterialDTOS;
+        if(trainingMaterials.isEmpty()){
+            return new ArrayList<>();
+        }
+        else {
+            trainingMaterials.get().forEach(trainingMaterial -> {
+                try {
+                    TrainingMaterialDTO trainingMaterialDTO = TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterial);
+                    trainingMaterialDTOS.add(trainingMaterialDTO);
+                } catch (Exception e) {
+                    throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+                }
+            });
+            return trainingMaterialDTOS;
+        }
     }
 
 
