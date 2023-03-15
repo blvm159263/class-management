@@ -28,22 +28,20 @@ public class UploadFileUserController {
         LocalDateTime current = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH;mm;ss.SSS");
         String path = "src/main/resources/CSVFile/" + String.valueOf(current.format(formatter)) + "-" + mFile.getOriginalFilename();
-        File file = new File(String.valueOf(path));
+        File file = new File(path);
         String status=null;
 
         try {
-
             if (!file.getName().toLowerCase().endsWith("csv")) {
                 return ResponseEntity.badRequest().body("Not CSV file");}
             else{
-                if (!file.exists()) {file.createNewFile();}
-                mFile.transferTo(file);
-                status = userService.readCSVFile(file);
+                mFile.transferTo(Path.of(path));
+
             }
         } catch (IOException e) {
 
         }
-
+        status = userService.readCSVFile(file);
         return ResponseEntity.ok(status);
     }
 

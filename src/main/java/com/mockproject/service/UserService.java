@@ -33,12 +33,11 @@ public class UserService implements IUserService {
 
     @Override
     public String readCSVFile(File file) {
+        List<User> userList = new ArrayList<>();
         try {
             if (!file.exists()) {
                 return "File not Found!";
             } else {
-                List<User> userList = new ArrayList<>();
-
                 // create a reader for the CSV file
                 CSVReader reader = new CSVReader(new FileReader(file));
 
@@ -48,22 +47,30 @@ public class UserService implements IUserService {
                 // read the data rows and map them to Product objects
                 String[] rowData;
                 while ((rowData = reader.readNext()) != null) {
+                    System.out.println(rowData[0]);
+                    System.out.println(rowData[1]);
+                    System.out.println(rowData[2]);
+                    System.out.println(rowData[3]);
+                    System.out.println(rowData[4]);
+                    System.out.println(rowData[5]);
+
+
+
                     User user = new User();
                     user.setEmail(rowData[0]);
                     user.setPassword("123");
                     user.setFullName(rowData[1]);
-                    user.setDob(LocalDate.parse(rowData[2], DateTimeFormatter.BASIC_ISO_DATE));
-                    if (rowData[3].equals("Nam")) {
+                    if (rowData[2].equals("Nam")) {
                         user.setGender(true);
                     } else {
                         user.setGender(false);
                     }
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    user.setDob(LocalDate.parse(rowData[3],formatter));
                     user.setPhone(rowData[4]);
                     user.setStatus(true);
-                    user.setRole(roleRepository.findById(1L).get());
                     userList.add(user);
                     repository.save(user);
-
                 }
                 reader.close();
             }
@@ -71,7 +78,7 @@ public class UserService implements IUserService {
         } catch (Exception e) {
             return String.valueOf(e);
         }
+        return userList.toString();
 
-        return "Done";
     }
 }
