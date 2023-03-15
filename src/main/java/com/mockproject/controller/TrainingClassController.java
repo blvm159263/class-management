@@ -44,7 +44,6 @@ public class TrainingClassController {
             @RequestParam(defaultValue = "0") long fsu)
     {
         if(location.isEmpty()) location = locationService.getAllLocation(true).stream().map(l -> l.getId()).collect(Collectors.toList());
-
         return null;
     }
 }
