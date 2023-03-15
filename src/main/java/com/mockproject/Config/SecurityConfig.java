@@ -69,14 +69,14 @@ public class SecurityConfig {
 
         http.addFilterBefore( jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
             @Override
-            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setHeader("message","Unauthorized");
                 response.getWriter().write("Unauthorized");
             }
         }).accessDeniedHandler(new AccessDeniedHandler() {
             @Override
-            public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+            public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.setHeader("message","Access Denied!");
                 response.getWriter().write("Access Denied!");
