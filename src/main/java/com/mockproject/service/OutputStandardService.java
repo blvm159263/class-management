@@ -27,6 +27,7 @@ public class OutputStandardService implements IOutputStandardService {
 
     private final OutputStandardRepository outputStandardRepository;
 
+    @Override
     public OutputStandardDTO getOutputStandardById(long outputStandardId, boolean status){
         Optional<OutputStandard> outputStandard = outputStandardRepository.findByIdAndStatus(outputStandardId, status);
         outputStandard.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -35,6 +36,7 @@ public class OutputStandardService implements IOutputStandardService {
         return outputStandardDTO;
     }
 
+    @Override
     public List<OutputStandardDTO> getOutputStandard(boolean status) {
         Optional<List<OutputStandard>> outputStandardList = outputStandardRepository.findByStatus(status);
         ListUtils.checkList(outputStandardList);

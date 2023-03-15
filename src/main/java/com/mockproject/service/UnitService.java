@@ -12,10 +12,7 @@ import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.IUnitService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.annotation.Lazy;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,8 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Array;
-import java.sql.Struct;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +40,7 @@ public class UnitService implements IUnitService {
         this.syllabusRepository = syllabusRepository;
     }
 
+    @Override
     public List<UnitDTO> getAllUnitBySessionId(long sessionId, boolean status){
         Optional<List<Unit>> listUnit = unitRepository.findUnitBySessionIdAndStatus(sessionId, status);
         ListUtils.checkList(listUnit);
@@ -60,6 +57,7 @@ public class UnitService implements IUnitService {
         return unitDTOList;
     }
 
+    @Override
     public boolean createUnit(long sessionId, List<UnitDTO> listUnit, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -70,6 +68,7 @@ public class UnitService implements IUnitService {
         return true;
     }
 
+    @Override
     public boolean createUnit(long sessionId, UnitDTO unitDTO, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -91,6 +90,7 @@ public class UnitService implements IUnitService {
         return true;
     }
 
+    @Override
     public Unit editUnit(UnitDTO unitDTO, boolean status) throws IOException {
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitDTO.getId(), status);
         unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -121,6 +121,7 @@ public class UnitService implements IUnitService {
         return updateUnit;
     }
 
+    @Override
     public boolean deleteUnit(long unitId, boolean status){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, status);
         unit.orElseThrow(() -> new  ResponseStatusException(HttpStatus.NO_CONTENT,"Unit "+ unitId));
@@ -131,6 +132,7 @@ public class UnitService implements IUnitService {
         return true;
     }
 
+    @Override
     public boolean deleteUnits(long sessionId, boolean status){
         Optional<List<Unit>> units = unitRepository.findAllBySessionIdAndStatus(sessionId, status);
         ListUtils.checkList(units);

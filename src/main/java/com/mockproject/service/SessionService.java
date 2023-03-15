@@ -43,6 +43,7 @@ public class SessionService implements ISessionService {
         this.unitRepository = unitRepository;
     }
 
+    @Override
     public List<SessionDTO> getAllSessionBySyllabusId(long syllabusId, boolean status) {
         Optional<List<Session>> listSession = sessionRepository.findBySyllabusIdAndStatus(syllabusId, status);
         ListUtils.checkList(listSession);
@@ -57,6 +58,7 @@ public class SessionService implements ISessionService {
         return sessionDTOList;
     }
 
+    @Override
     public boolean createSession(long syllabusId, List<SessionDTO> listSession, User user){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true,true);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -69,6 +71,7 @@ public class SessionService implements ISessionService {
         return true;
     }
 
+    @Override
     public boolean createSession(long syllabusId, SessionDTO sessionDTO, User user){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true,true);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -79,7 +82,7 @@ public class SessionService implements ISessionService {
 
         return true;
     }
-
+    @Override
     public Session editSession(SessionDTO sessionDTO, boolean status) throws IOException{
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionDTO.getId(), status);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -115,6 +118,7 @@ public class SessionService implements ISessionService {
         return updateSession;
     }
 
+    @Override
     public boolean deleteSession(long sessionId, boolean status){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, status);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -125,6 +129,7 @@ public class SessionService implements ISessionService {
         return true;
     }
 
+    @Override
     public boolean deleteSessions(long syllabusId, boolean status){
         Optional<List<Session>> sessions = sessionRepository.findBySyllabusIdAndStatus(syllabusId, status);
         ListUtils.checkList(sessions);
