@@ -10,4 +10,6 @@ import java.util.List;
 public interface TrainingClassUnitInformationRepository extends JpaRepository<TrainingClassUnitInformation, Long> {
     public List<TrainingClassUnitInformation> findAllByTrainingClassId(Long Id);
 
+
+    List<TrainingClassUnitInformation> findByStatusAndTrainerId(boolean status, long trainerId);
 }
