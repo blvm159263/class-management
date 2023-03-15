@@ -17,9 +17,10 @@ public class CSVUtils {
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format);) {
-
-            List<String> data1 = Arrays.asList("example@gmail.com", "Nguyen Van A", "ImageLink", "1", "1999-12-01", "0123456789", "male", "enable", "Class Admin", "AA" ,"Fresher", "passwordexample1");
-            List<String> data2 = Arrays.asList("example2@gmail.com", "Nguyen Van B", "ImageLink2", "1", "1999-12-02", "0123456789", "female", "disable", "Trainer", "CA" ,"Intern", "passwordexample2");
+            List<String> header = Arrays.asList("Email", "FullName", "ImageLink", "State", "DateOfBirth", "Phone", "Gender", "Status", "Role", "Level", "Attendee", "Password");
+            List<String> data1 = Arrays.asList("example@gmail.com", "Nguyen Van A", "ImageLinkexample1", "1", "1999-12-01", "0123456789", "male", "enable", "Class Admin", "AA" ,"Fresher", "passwordexample1");
+            List<String> data2 = Arrays.asList("example2@gmail.com", "Nguyen Van B", "ImageLink2exapmle2", "1", "1999-12-02", "0123456789", "female", "disable", "Trainer", "CA" ,"Intern", "passwordexample2");
+            csvPrinter.printRecord(header);
             csvPrinter.printRecord(data1);
             csvPrinter.printRecord(data2);
             csvPrinter.flush();
