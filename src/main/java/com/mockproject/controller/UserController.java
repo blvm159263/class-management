@@ -9,8 +9,10 @@ import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.service.*;
 import com.mockproject.service.interfaces.IRoleService;
+import com.mockproject.service.interfaces.IUserService;
 import com.mockproject.utils.CSVUtils;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -31,7 +33,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/User")
+@RequiredArgsConstructor
+@RequestMapping("/api/user")
 @SecurityRequirement(name = "Authorization")
 public class UserController {
 
@@ -40,14 +43,13 @@ public class UserController {
     public static final String CREATE = "ROLE_Create_User";
     public static final String FULL_ACCESS = "ROLE_Full access_User";
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    UserService userService;
+    private final IUserService userService;
 
     @Autowired
     IRoleService roleService;
@@ -55,16 +57,14 @@ public class UserController {
     @Autowired
     RolePermissionScopeService rolePermissionScopeService;
 
-    @Autowired
     PermissionService permissionService;
 
-    @Autowired
     PermissionScopeService permissionScopeService;
 
     @Autowired
     LevelService levelService;
 
-    @PostMapping("/Login")
+    @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginFormDTO loginFormDTO) {
         String email = loginFormDTO.getEmail();
         String pass = loginFormDTO.getPassword();
@@ -89,7 +89,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/GetAll")
+    @GetMapping("/getAll")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getAll() {
         List<UserDTO> userDTOList = userService.getAll();
@@ -160,7 +160,7 @@ public class UserController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/GetRoleById")
+    @GetMapping("/getRoleById")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getRoleById (@RequestParam(value = "id")long id){
         RoleDTO role = roleService.getRoleById(id);
@@ -200,7 +200,7 @@ public class UserController {
         return ResponseEntity.ok("Successfull");
     }
 
-    @PostMapping("/searchByFillet")
+    @PostMapping("/searchByFilter")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity searchByFillter(@RequestParam(value = "Id", required = false) Long id,
                                           @RequestParam(value = "Dob", required = false) LocalDate dob,
@@ -238,14 +238,14 @@ public class UserController {
         return ResponseEntity.ok("Oke nha hihi");
     }
 
-    @GetMapping("/GetRoleByName")
+    @GetMapping("/getRoleByName")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getRoleByName(@RequestParam(value = "roleName")String rolename){
         long roleId = roleService.getRoleByRoleName(rolename);
         return ResponseEntity.ok(roleId);
     }
 
-    @GetMapping("/GetLevel")
+    @GetMapping("/getLevel")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getLevelById (@RequestParam(value = "id")long id){
         LevelDTO level = levelService.getLevelById(id);
@@ -255,7 +255,7 @@ public class UserController {
 
     }
 
-    @PutMapping("/De-activateUser")
+    @PutMapping("/de-activateUser")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity deactivateUser (@RequestParam(value = "id")long id){
         int state = userService.updateStateToFalse(id);
@@ -263,7 +263,7 @@ public class UserController {
         return ResponseEntity.badRequest().body("User not found");
     }
 
-    @PutMapping("/ActivateUser")
+    @PutMapping("/activateUser")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity activateUser (@RequestParam(value = "id")long id){
         int state = userService.updateStateToTrue(id);
@@ -271,7 +271,7 @@ public class UserController {
         return ResponseEntity.badRequest().body("User not found");
     }
 
-    @DeleteMapping("/DeleteUser")
+    @DeleteMapping("/deleteUser")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity deleteUser (@RequestParam(value = "id")long id){
         boolean delete = userService.updateStatus(id);
@@ -279,7 +279,7 @@ public class UserController {
         return ResponseEntity.ok("Delete successfully");
     }
 
-    @PutMapping("/ChangeRole")
+    @PutMapping("/changeRole")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity changeRole (@RequestParam(value = "id")long id,@RequestParam(value = "roleName")String roleName){
         if (roleService.getRoleByRoleName(roleName) == null){
@@ -290,7 +290,7 @@ public class UserController {
         return ResponseEntity.ok(roleName);
     }
 
-    @PutMapping("/EditName")
+    @PutMapping("/editName")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity editFullName (@RequestParam(value = "id")long id, @RequestParam(value = "fullname")String fullname){
         boolean editName = userService.editName(id,fullname);
@@ -299,7 +299,7 @@ public class UserController {
         else return ResponseEntity.badRequest().body("Could not change!");
     }
 
-    @PutMapping("/EditDoB")
+    @PutMapping("/editDoB")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity editDoB (@RequestParam(value = "id")long id, @RequestParam(value = "dob")LocalDate date){
             boolean editDoB = userService.editDoB(id, date);
@@ -308,21 +308,21 @@ public class UserController {
             else return ResponseEntity.badRequest().body("Could not change!");
     }
 
-    @PutMapping("/EditGender")
+    @PutMapping("/editGender")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity editGender (@RequestParam(value = "id")long id, @RequestParam(value = "gender")boolean gender){
         boolean editGender = userService.editGender(id,gender);
         return ResponseEntity.ok(editGender);
     }
 
-    @PutMapping("/EditLevel")
+    @PutMapping("/editLevel")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity editLevel (@RequestParam(value = "id")long id, @RequestParam(value = "levelCode")String levelCode){
         boolean editLevel = userService.editLevel(id,levelCode);
         return ResponseEntity.ok(editLevel);
     }
 
-    @PutMapping("/EditUser")
+    @PutMapping("/editUser")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity editUser (@RequestBody UserDTO user){
         boolean editUser = userService.editUser(user);
@@ -331,7 +331,7 @@ public class UserController {
         else return ResponseEntity.badRequest().body("Could not change!");
     }
 
-    @GetMapping("/DownloadCSVUserFile")
+    @GetMapping("/downloadCSVUserFile")
     public ResponseEntity downloadCSV(){
         String filename = "Import_User_Template.csv";
         InputStreamResource file = new InputStreamResource(CSVUtils.importUserExampleCSVFile());
