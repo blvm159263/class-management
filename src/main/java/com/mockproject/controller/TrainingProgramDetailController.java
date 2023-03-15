@@ -2,12 +2,14 @@ package com.mockproject.controller;
 
 import com.mockproject.entity.*;
 import com.mockproject.service.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
-@RequestMapping("v1/trainingprogramdetail")
+@RequiredArgsConstructor
+@RequestMapping("/api/trainingprogramdetail")
 public class TrainingProgramDetailController {
     private final TrainingProgramService trainingProgramService;
     private final TrainingProgramSyllabusService trainingProgramSyllabusService;
@@ -16,16 +18,6 @@ public class TrainingProgramDetailController {
     private final UnitService unitService;
     private final UnitDetailService unitDetailService;
     private final TrainingMaterialService trainingMaterialService;
-
-    public TrainingProgramDetailController(TrainingProgramService trainingProgramService, TrainingProgramSyllabusService trainingProgramSyllabusService, SyllabusService syllabusService, SessionService sessionService, UnitService unitService, UnitDetailService unitDetailService, TrainingMaterialService trainingMaterialService) {
-        this.trainingProgramService = trainingProgramService;
-        this.trainingProgramSyllabusService = trainingProgramSyllabusService;
-        this.syllabusService = syllabusService;
-        this.sessionService = sessionService;
-        this.unitService = unitService;
-        this.unitDetailService = unitDetailService;
-        this.trainingMaterialService = trainingMaterialService;
-    }
 
     @GetMapping("/")
     public TrainingProgram getTrainingProgramById(@RequestParam long id) {

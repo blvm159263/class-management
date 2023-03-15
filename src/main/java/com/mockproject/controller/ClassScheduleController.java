@@ -7,6 +7,7 @@ import com.mockproject.service.interfaces.IClassScheduleService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,10 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/classschedule")
+@RequiredArgsConstructor
+@RequestMapping("/api/classschedule")
 @Slf4j
 public class ClassScheduleController {
-    @Autowired
+
     IClassScheduleService classScheduleService;
 
     @PostMapping("/day")

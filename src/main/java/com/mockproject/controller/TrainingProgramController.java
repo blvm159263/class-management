@@ -6,6 +6,7 @@ import com.mockproject.service.interfaces.ITrainingProgramService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,13 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("v1/trainingprogram")
+@RequiredArgsConstructor
+@RequestMapping("/api/trainingprogram")
 public class TrainingProgramController {
     private final ITrainingProgramService trainingProgramService;
-
-    public TrainingProgramController(TrainingProgramService trainingProgramService) {
-        this.trainingProgramService = trainingProgramService;
-    }
 
     @GetMapping("/")
     public List<TrainingProgram> getAllTrainingProgram(@RequestParam(defaultValue = "0") Integer pageNo,
