@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
+
     String readCSVFile(File file);
 
     List<UserDTO> getAll();
@@ -21,7 +22,15 @@ public interface IUserService {
 
     boolean updateStatus(long id);
 
+    List<UserDTO> listClassAdminTrue();
+
+    List<UserDTO> listTrainerTrue();
+
     Integer updateStateToFalse(long id);
+
+    UserDTO getUserById(Long id);
+
+    List<UserDTO> getAllUser(boolean status);
 
     Integer updateStateToTrue(long id);
 
@@ -38,4 +47,5 @@ public interface IUserService {
     boolean editUser(UserDTO user);
 
     void encodePassword();
+
 }

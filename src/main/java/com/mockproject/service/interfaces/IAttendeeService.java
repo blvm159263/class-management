@@ -12,4 +12,6 @@ public interface IAttendeeService {
     Attendee save(AttendeeDTO dto);
 
     AttendeeDTO getAttendeeById(boolean status, long id);
+
+    List<AttendeeDTO> listAllTrue();
 }

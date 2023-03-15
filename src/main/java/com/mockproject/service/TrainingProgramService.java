@@ -2,9 +2,12 @@ package com.mockproject.service;
 
 
 import com.mockproject.entity.TrainingProgram;
+import com.mockproject.dto.TrainingProgramDTO;
+import com.mockproject.mapper.TrainingProgramMapper;
 import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -42,4 +48,8 @@ public class TrainingProgramService implements ITrainingProgramService {
 
     }
 
+    @Override
+    public List<TrainingProgramDTO> searchByName(String name) {
+        return trainingProgramRepository.findByNameContainingAndStatus(name, true).stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
 }

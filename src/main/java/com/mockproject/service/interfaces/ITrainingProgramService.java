@@ -1,10 +1,14 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.entity.TrainingProgram;
+import com.mockproject.dto.TrainingProgramDTO;
 
 import java.util.List;
 
 public interface ITrainingProgramService {
+
+    List<TrainingProgramDTO> searchByName(String name);
+
     TrainingProgram getTrainingProgramById(Long id);
 
     List<TrainingProgram> getAll(Integer pageNo, Integer pageSize);

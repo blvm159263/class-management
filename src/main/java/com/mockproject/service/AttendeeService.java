@@ -35,4 +35,9 @@ public class AttendeeService implements IAttendeeService {
         Attendee attendee = attendeeRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Attendee not found with id: " + id));
         return AttendeeMapper.INSTANCE.toDTO(attendee);
     }
+
+    @Override
+    public List<AttendeeDTO> listAllTrue() {
+        return attendeeRepo.findByStatus(true).stream().map(AttendeeMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
 }

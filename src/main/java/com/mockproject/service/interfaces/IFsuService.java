@@ -9,4 +9,6 @@ public interface IFsuService {
     FsuDTO getFsuById(boolean status, long id);
 
     List<FsuDTO> getAllFsu(boolean status);
+
+    List<FsuDTO> listAllTrue();
 }

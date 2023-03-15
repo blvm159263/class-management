@@ -1,6 +1,9 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.DeliveryTypeDTO;
+import com.mockproject.entity.UnitDetail;
+import com.mockproject.mapper.DeliveryTypeMapper;
+import com.mockproject.dto.DeliveryTypeDTO;
 import com.mockproject.entity.DeliveryType;
 import com.mockproject.mapper.DeliveryTypeMapper;
 import com.mockproject.repository.DeliveryTypeRepository;
@@ -42,4 +45,10 @@ public class DeliveryTypeService implements IDeliveryTypeService {
         return deliveryTypeDTO;
     }
 
+    @Override
+    public DeliveryTypeDTO getByIdTrue(Long id) {
+        UnitDetail unitDetail = new UnitDetail();
+        unitDetail.setId(id);
+        return DeliveryTypeMapper.INSTANCE.toDTO(deliveryTypeRepository.findByIdAndStatus(id,true));
+    }
 }

@@ -9,6 +9,9 @@ import com.mockproject.entity.User;
 import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
+import com.mockproject.dto.UnitDetailDTO;
+import com.mockproject.entity.Unit;
+import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
@@ -27,13 +30,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.List;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UnitDetailService implements IUnitDetailService {
+
     private final UnitRepository unitRepository;
+
     private final UnitDetailRepository unitDetailRepository;
+
     private final ITrainingMaterialService trainingMaterialService;
+
     private final SyllabusRepository syllabusRepository;
+
     private final SessionRepository sessionRepository;
 
     public UnitDetailService(UnitDetailRepository unitDetailRepository, ITrainingMaterialService trainingMaterialService, UnitRepository unitRepository, SyllabusRepository syllabusRepository, SessionRepository sessionRepository) {
@@ -154,5 +165,11 @@ public class UnitDetailService implements IUnitDetailService {
     }
     public List<UnitDetail> getUnitDetailByUnitId(long idUnit){
         return unitDetailRepository.getListUnitDetailByUnitId(idUnit);
+    }
+
+    public List<UnitDetailDTO> listByUnitIdTrue(Long id) {
+        Unit unit = new Unit();
+        unit.setId(id);
+        return unitDetailRepository.findByUnitAndStatus(unit,true).stream().map(UnitDetailMapper.INSTANCE::toDTO).toList();
     }
 }

@@ -6,6 +6,10 @@ import com.mockproject.entity.*;
 import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
+import com.mockproject.dto.UnitDTO;
+import com.mockproject.entity.Session;
+import com.mockproject.entity.Unit;
+import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.IUnitDetailService;
 import com.mockproject.service.interfaces.IUnitService;
@@ -13,6 +17,9 @@ import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
+import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,6 +28,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -139,5 +148,12 @@ public class UnitService implements IUnitService {
 
     public List<Unit> getUnitBySessionId(long idSession){
         return unitRepository.getListUnitBySessionId(idSession);
+    }
+
+    @Override
+    public List<UnitDTO> listBySessionId(Long sid) {
+        Session session = new Session();
+        session.setId(sid);
+        return unitRepository.findBySession(session).stream().map(UnitMapper.INSTANCE::toDTO).toList();
     }
 }

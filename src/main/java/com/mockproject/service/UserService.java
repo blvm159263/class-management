@@ -9,6 +9,8 @@ import com.mockproject.entity.User;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.LevelRepository;
 import com.mockproject.repository.RoleRepository;
+import com.mockproject.entity.Role;
+
 import com.mockproject.repository.UserRepository;
 import com.mockproject.service.interfaces.IUserService;
 import com.opencsv.CSVReader;
@@ -23,29 +25,62 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserService implements IUserService {
-    @Autowired
-    private final UserRepository repository;
-    private final RoleRepository roleRepository;
-    private final LevelRepository levelRepository;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    private static final Long SUPER_ADMIN = 1L;
+    private static final Long CLASS_ADMIN = 2L;
+    private static final Long TRAINER = 3L;
+    private static final Long STUDENT = 4L;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final UserRepository userRepo;
+
+    @Override
+    public UserDTO getUserById(boolean status, long id) {
+        User user = userRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Users not found with id: "+ id));
+        return UserMapper.INSTANCE.toDTO(user);
+    }
+
+    @Override
+    public List<UserDTO> getAllUser(boolean status) {
+        return userRepo.findAllByStatus(status).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDTO> listClassAdminTrue() {
+        Role role = new Role();
+        role.setId(CLASS_ADMIN);
+        return repository.findByRoleAndStatus(role,true).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDTO> listTrainerTrue() {
+        Role role = new Role();
+        role.setId(TRAINER);
+        return repository.findByRoleAndStatus(role,true).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDTO getUserById(Long id) {
+        return UserMapper.INSTANCE.toDTO(repository.findById(id).orElse(null));
+    }
+
+    @Override
+    public List<UserDTO> getAllUser(boolean status) {
+        return repository.findAllByStatus(status).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
 
     @Override
     public List<UserDTO> getAll() {
@@ -55,7 +90,6 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserDTO> getAllByPageAndRowPerPage(long page, long rowPerPage) {
-
         return repository.getAllByPageAndRowPerPage(page, rowPerPage).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
