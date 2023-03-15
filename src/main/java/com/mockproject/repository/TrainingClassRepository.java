@@ -5,8 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -32,8 +30,6 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
                                      long fsu, List<Long> classId, String search, Pageable page);
 
     List<TrainingClass> findAllByStatus(boolean status);
-public interface TrainingClassRepository extends JpaRepository<TrainingClass, Long>, JpaSpecificationExecutor<TrainingClass> {
-
     public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date);
 
     @Query("SELECT tc FROM TrainingClass tc " +
@@ -49,7 +45,7 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "at.attendeeName IN (:listSearchText) OR " +
             "lo.locationName IN (:listSearchText)) AND " +
             "cs.date = :date")
-    public List<TrainingClass> findAllBySearchTextAndListClassSchedulesDate(List<String> listSearchText, LocalDate date);
+    List<TrainingClass> findAllBySearchTextAndListClassSchedulesDate(List<String> listSearchText, LocalDate date);
 
     @Query("SELECT tc FROM TrainingClass tc " +
             "LEFT JOIN tc.listClassSchedules cs " +
@@ -64,5 +60,5 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "at.attendeeName IN (:listSearchText) OR " +
             "lo.locationName IN (:listSearchText)) AND " +
             "cs.date BETWEEN :startDate AND :endDate")
-    public List<TrainingClass> findAllBySearchTextAndListClassSchedulesWeek(List<String> listSearchText, LocalDate startDate, LocalDate endDate);
+    List<TrainingClass> findAllBySearchTextAndListClassSchedulesWeek(List<String> listSearchText, LocalDate startDate, LocalDate endDate);
 }

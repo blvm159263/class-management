@@ -1,7 +1,6 @@
 package com.mockproject.mapper;
 
 import com.mockproject.dto.TrainingClassFilterResponseDTO;
-import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitResponseDTO;
 import com.mockproject.entity.*;
 import org.mapstruct.Mapper;

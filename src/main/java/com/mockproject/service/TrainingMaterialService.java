@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-import com.mockproject.entity.TrainingMaterial;
 import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.entity.TrainingMaterial;
 import com.mockproject.entity.UnitDetail;
@@ -8,10 +7,8 @@ import com.mockproject.entity.User;
 import com.mockproject.mapper.TrainingMaterialMapper;
 import com.mockproject.repository.TrainingMaterialRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
-import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -24,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
-
-import java.util.List;
 
 @Service
 @Transactional

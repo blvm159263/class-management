@@ -3,15 +3,13 @@ package com.mockproject.service;
 import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.mapper.TrainingClassMapper;
-import com.mockproject.entity.TrainingClass;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.repository.TrainingClassUnitInformationRepository;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -21,9 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @Transactional
@@ -42,7 +37,7 @@ public class TrainingClassService implements ITrainingClassService {
 
     @Override
     public List<TrainingClass> findAllBySpecification(Specification specification) {
-        return classRepo.findAll(specification);
+        return classRepo.findAll((Sort) specification);
     }
 
     @Override

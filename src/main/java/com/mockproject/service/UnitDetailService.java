@@ -1,22 +1,22 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.TrainingMaterialDTO;
-import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
-import com.mockproject.entity.*;
-
+import com.mockproject.entity.CustomUserDetails;
+import com.mockproject.entity.Unit;
+import com.mockproject.entity.UnitDetail;
+import com.mockproject.entity.User;
 import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
-import com.mockproject.entity.UnitDetail;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.IUnitDetailService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,11 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import java.util.List;
-
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class UnitDetailService implements IUnitDetailService {
     private final UnitDetailRepository unitDetailRepository;
     private final TrainingMaterialService trainingMaterialService;

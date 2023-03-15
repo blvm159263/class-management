@@ -1,7 +1,6 @@
 package com.mockproject.service;
 
 
-import com.mockproject.entity.TrainingProgram;
 import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.service.interfaces.ITrainingProgramSyllabusService;

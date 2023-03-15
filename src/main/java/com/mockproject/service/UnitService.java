@@ -1,11 +1,8 @@
 package com.mockproject.service;
 
-import com.mockproject.entity.Unit;
-import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.*;
-import com.mockproject.mapper.SessionMapper;
 import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
@@ -13,7 +10,6 @@ import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.IUnitService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,11 +20,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.List;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class UnitService implements IUnitService {
     private final UnitRepository unitRepository;
     private final UnitDetailService unitDetailService;

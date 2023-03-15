@@ -1,10 +1,7 @@
 package com.mockproject.service.interfaces;
 
-import com.mockproject.entity.Location;
-
-import java.util.List;
-
 import com.mockproject.dto.LocationDTO;
+import com.mockproject.entity.Location;
 
 import java.util.List;
 
