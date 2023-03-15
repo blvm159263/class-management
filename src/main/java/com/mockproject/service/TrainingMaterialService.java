@@ -6,6 +6,7 @@ import com.mockproject.entity.UnitDetail;
 import com.mockproject.entity.User;
 import com.mockproject.mapper.TrainingMaterialMapper;
 import com.mockproject.repository.TrainingMaterialRepository;
+import com.mockproject.service.interfaces.ITrainingMaterialService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -25,7 +26,7 @@ import java.util.zip.DataFormatException;
 @Service
 @Transactional
 @AllArgsConstructor
-public class TrainingMaterialService{
+public class TrainingMaterialService implements ITrainingMaterialService {
 
     private final TrainingMaterialRepository trainingMaterialRepository;
 
