@@ -33,8 +33,18 @@ public class UserController {
         return ResponseEntity.ok(userService.getTrainerByClassCode(code));
     }
 
+    @Operation(
+            summary = "Get the information of the trainer that the training class will study on that day",
+            description = "<b>List the information of the trainer of the training class on that day</b>"
+    )
     @GetMapping("trainingClass/trainerOnDay")
-    public ResponseEntity<?> getTrainerOnTheDay(long id, int day) {
+    public ResponseEntity<?> getTrainerOnTheDay(
+            @Parameter(
+                    description = "<b>Insert the training class Id</b>"
+            ) long id,
+            @Parameter(
+                    description = "<b>Insert Id of the day</b>"
+            ) int day) {
         return ResponseEntity.ok(userService.getTrainerOntheDayById(id, day));
     }
 

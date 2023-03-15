@@ -41,18 +41,18 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserDTO> getTrainerOntheDayById(long id, int day) {
-//        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true);
-//        List<Unit> unitListFromSession = unitService.getListUnitsFromSession(id, day);
-//        List<TrainingClassUnitInformation> list = unitListFromSession.stream()
-//                .map(p -> trainingClassUnitInformationRepository
-//                        .findByUnitAndTrainingClassAndStatus(p, trainingClass, true).filter(TrainingClassUnitInformation::isStatus))
-//                .toList();
-//        List<User> trainers = list.stream()
-//                .map(TrainingClassUnitInformation::getTrainer)
-//                .filter(User::isStatus)
-//                .toList();
-//        return trainers.stream().map(UserMapper.INSTANCE::toDTO).toList();
-        return null;
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true);
+        List<Unit> unitListFromSession = unitService.getListUnitsFromSession(id, day);
+        List<TrainingClassUnitInformation> list = unitListFromSession.stream()
+                .map(p -> trainingClassUnitInformationRepository
+                        .findByUnitAndTrainingClassAndStatus(p, trainingClass, true).orElseThrow())
+                .toList();
+        List<User> trainers = list.stream()
+                .map(TrainingClassUnitInformation::getTrainer)
+                .filter(User::isStatus)
+                .toList();
+        return trainers.stream().map(UserMapper.INSTANCE::toDTO).toList();
+
     }
 
     //    @Override
