@@ -8,9 +8,7 @@ import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.service.*;
-import com.mockproject.service.interfaces.IRoleService;
-import com.mockproject.service.interfaces.IUserService;
-import com.mockproject.utils.CSVUtils;
+import com.mockproject.service.interfaces.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,26 +43,19 @@ public class UserController {
 
     private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
     private final IUserService userService;
 
-    @Autowired
-    IRoleService roleService;
+    private final IRoleService roleService;
 
-    @Autowired
-    RolePermissionScopeService rolePermissionScopeService;
+    private final IRolePermissionScopeService rolePermissionScopeService;
 
-    @Autowired
-    PermissionService permissionService;
+    private final IPermissionService permissionService;
 
-    @Autowired
-    PermissionScopeService permissionScopeService;
+    private final IPermissionScopeService permissionScopeService;
 
-    @Autowired
-    LevelService levelService;
+    private final ILevelService levelService;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginFormDTO loginFormDTO) {
@@ -332,16 +322,6 @@ public class UserController {
         if (editUser)
             return ResponseEntity.ok("Successfully");
         else return ResponseEntity.badRequest().body("Could not change!");
-    }
-
-    @GetMapping("/downloadCSVUserFile")
-    public ResponseEntity downloadCSV(){
-        String filename = "Import_User_Template.csv";
-        InputStreamResource file = new InputStreamResource(CSVUtils.importUserExampleCSVFile());
-
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/csv"))
-                .body(file);
     }
 
 }
