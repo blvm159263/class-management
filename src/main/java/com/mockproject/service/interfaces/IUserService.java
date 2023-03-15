@@ -30,4 +30,5 @@ public interface IUserService {
     public boolean editDoB(long id, LocalDate date);
     public boolean editGender(long id, boolean gender);
     public boolean editLevel(long id, String levelCode);
+    public boolean editUser(UserDTO user);
 }

@@ -308,7 +308,7 @@ public class UserController {
         boolean editName = userService.editName(id,fullname);
         if (editName)
             return ResponseEntity.ok("Successfully");
-        else return ResponseEntity.badRequest().body("Cound not change!");
+        else return ResponseEntity.badRequest().body("Could not change!");
     }
 
     @PutMapping("/EditDoB")
@@ -317,7 +317,7 @@ public class UserController {
             boolean editDoB = userService.editDoB(id, date);
             if (editDoB)
                 return ResponseEntity.ok("Successfully");
-            else return ResponseEntity.badRequest().body("Cound not change!");
+            else return ResponseEntity.badRequest().body("Could not change!");
     }
 
     @PutMapping("/EditGender")
@@ -332,6 +332,15 @@ public class UserController {
     public ResponseEntity editLevel (@RequestParam(value = "id")long id, @RequestParam(value = "levelCode")String levelCode){
         boolean editLevel = userService.editLevel(id,levelCode);
         return ResponseEntity.ok(editLevel);
+    }
+
+    @PutMapping("/EditUser")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity editUser (@RequestBody UserDTO user){
+        boolean editUser = userService.editUser(user);
+        if (editUser)
+            return ResponseEntity.ok("Successfully");
+        else return ResponseEntity.badRequest().body("Could not change!");
     }
 }
 

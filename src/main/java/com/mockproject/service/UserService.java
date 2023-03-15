@@ -195,4 +195,22 @@ public class UserService implements IUserService {
         return false;
     }
 
+    @Override
+    public boolean editUser(UserDTO user) {
+        Optional<User> user1 = repository.findById(user.getId());
+        Optional<Level> level = levelRepository.getLevelById(user.getLevelId());
+        if (user1.isPresent()){
+            User u = user1.get();
+            Level level1 = level.get();
+            u.setFullName(user.getFullName());
+            u.setDob(user.getDob());
+            u.setGender(user.isGender());
+            u.setLevel(level1);
+            repository.save(u);
+            return true;
+        }
+        return false;
+    }
+
+
 }
