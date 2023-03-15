@@ -149,17 +149,20 @@ public class TrainingClassService implements ITrainingClassService {
         // Get all sessions
         List<Session> sessions = getListUnits(id).stream().map(p -> sessionRepository.findByIdAndStatus(p.getSession().getId(), true).orElseThrow()).toList();
 
-        Map<Integer, Long> list = new HashMap<>();
-        list.put(1, sessions.get(0).getId());
+        List<Long> sessionIds = sessions.stream().map(Session::getId).distinct().toList();
+        return sessionRepository.findByIdAndStatus(sessionIds.get(dayNth - 1),true).orElseThrow();
 
-
-        for (int i = 1; i < sessions.size(); i++) {
-            if (sessions.get(i).getId() == sessions.get(i - 1).getId()) {
-                list.put(i + 1, null);
-            } else list.put(i + 1, sessions.get(i).getId());
-        }
-
-        return sessionRepository.findByIdAndStatus(list.get(dayNth), true).orElseThrow();
+//        Map<Integer, Long> list = new HashMap<>();
+//        list.put(1, sessions.get(0).getId());
+//
+//
+//        for (int i = 1; i < sessions.size(); i++) {
+//            if (sessions.get(i).getId() == sessions.get(i - 1).getId()) {
+//                list.put(i + 1, null);
+//            } else list.put(i + 1, sessions.get(i).getId());
+//        }
+//
+//        return sessionRepository.findByIdAndStatus(list.get(dayNth), true).orElseThrow();
     }
 
 
