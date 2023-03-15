@@ -45,23 +45,18 @@ public class UserController {
 
     private final AuthenticationManager authenticationManager;
 
-    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
     private final IUserService userService;
 
-    @Autowired
     IRoleService roleService;
 
-    @Autowired
     RolePermissionScopeService rolePermissionScopeService;
 
     PermissionService permissionService;
 
     PermissionScopeService permissionScopeService;
 
-    @Autowired
     LevelService levelService;
 
     @PostMapping("/login")
