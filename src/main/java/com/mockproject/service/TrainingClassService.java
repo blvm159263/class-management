@@ -145,15 +145,21 @@ public class TrainingClassService implements ITrainingClassService {
 
 
     // Get a session from a date
-    private Session getSession(long id, int dayNth){
+    private Session getSession(long id, int dayNth) {
         // Get all sessions
-        List<Session> sessions = getListUnits(id).stream().map(p-> sessionRepository.findByIdAndStatus(p.getSession().getId(), true).orElseThrow()).toList();
-        int sessionNth = dayNth - 1;
-        if(sessionNth == 0) {return sessions.get(0);}
-        if(sessions.get(sessionNth).getId() == sessions.get(sessionNth - 1).getId()){
-            return null;
+        List<Session> sessions = getListUnits(id).stream().map(p -> sessionRepository.findByIdAndStatus(p.getSession().getId(), true).orElseThrow()).toList();
+
+        Map<Integer, Long> list = new HashMap<>();
+        list.put(1, sessions.get(0).getId());
+
+
+        for (int i = 1; i < sessions.size(); i++) {
+            if (sessions.get(i).getId() == sessions.get(i - 1).getId()) {
+                list.put(i + 1, null);
+            } else list.put(i + 1, sessions.get(i).getId());
         }
-        else return sessions.get(sessionNth);
+
+        return sessionRepository.findByIdAndStatus(list.get(dayNth), true).orElseThrow();
     }
 
 

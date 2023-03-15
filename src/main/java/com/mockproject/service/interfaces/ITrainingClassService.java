@@ -1,8 +1,10 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.*;
+import com.mockproject.entity.Session;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface ITrainingClassService {
@@ -31,6 +33,5 @@ public interface ITrainingClassService {
     List<UserDTO> getAllTrainersForADate(long id, int dayNth);
 
     List<TowerDTO> getAllTowersForADate(long id, int dayNth);
-
 
 }
