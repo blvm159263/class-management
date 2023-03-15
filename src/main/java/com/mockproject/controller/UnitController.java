@@ -5,6 +5,7 @@ import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Unit;
 import com.mockproject.service.interfaces.IUnitService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -15,17 +16,17 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/unit")
 @SecurityRequirement(name = "Authorization")
 public class UnitController {
-
     public static final String VIEW = "ROLE_View_Syllabus";
     public static final String MODIFY = "ROLE_Modify_Syllabus";
     public static final String CREATE = "ROLE_Create_Syllabus";
     public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
 
-    @Autowired
-    public IUnitService unitService;
+
+    private final IUnitService unitService;
 
     @GetMapping("/{sessionId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
