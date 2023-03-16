@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,44 @@ public class TowerController {
             return ResponseEntity.ok(list);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Tower with Location ID = " + id);
+        }
+    }
+
+
+
+    @Operation(summary = "Get all class's Locations(Towers) by TrainingClass id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TowerDTO.class)))
+    })
+    @GetMapping("/class-towers")
+    public ResponseEntity<?> getAllTowers(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+        try{
+            return ResponseEntity.ok(service.getAllTowersByTrainingClassId(id));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
+        }
+    }
+
+
+
+    @Operation(
+            summary = "Get all class's Locations(Towers) for day-nth of total days of the class schedule",
+            description = "Get list of Locations(Towers) in a date clicked in the class schedule table by the user"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Day [-] of Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TowerDTO.class)))
+    })
+    @GetMapping("/class-towers-for-a-date")
+    public ResponseEntity<?> getAllTowersForADate(
+            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
+            @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth
+    ) {
+        try{
+            return ResponseEntity.ok(service.getAllTowersForADateByTrainingClassId(id, dayNth));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Day [" + dayNth + "] of Training class id[" + id + "] not found!!!");
         }
     }
 }

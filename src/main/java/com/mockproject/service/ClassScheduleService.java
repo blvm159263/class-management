@@ -5,6 +5,7 @@ import com.mockproject.entity.ClassSchedule;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.repository.ClassScheduleRepository;
+import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class ClassScheduleService implements IClassScheduleService{
 
     private final ClassScheduleRepository repository;
+    private final TrainingClassRepository trainingClassRepository;
 
     @Override
     public List<ClassScheduleDTO> listAll() {
@@ -35,6 +37,13 @@ public class ClassScheduleService implements IClassScheduleService{
         List<ClassSchedule> list = listDate.stream().map(p-> new ClassSchedule(null, p, true,tc)).toList();
         List<ClassSchedule> result = repository.saveAll(list);
         return !result.isEmpty();
+    }
+
+    @Override
+    public List<ClassScheduleDTO> getClassScheduleByTrainingClassId(long id) {
+        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        List<ClassSchedule> schedules = repository.findByTrainingClassAndStatusOrderByDateAsc(tc, true).orElseThrow();
+        return schedules.stream().map(ClassScheduleMapper.INSTANCE::toDTO).toList();
     }
 
 
