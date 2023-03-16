@@ -30,10 +30,28 @@ public class TrainingProgramController {
             @ApiResponse(responseCode = "200", description = "When find training program and return list program",
                     content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
     })
-    @Operation(summary = "Get Training Program by searching name")
+    @Operation(summary = "Get all Training Program")
+    @GetMapping("list")
+    public ResponseEntity<?> getAllTrainingProgram(){
+        List<TrainingProgramDTO> list =service.getAllTrainingProgram();
+        if (!list.isEmpty()) {
+            return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
+        }
+    }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any Training Program"),
+            @ApiResponse(responseCode = "200", description = "When find training program and return list program",
+                    content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
+    })
+    @Operation(summary = "Get Training Program by program name and creator name")
     @GetMapping("search-name")
     public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search") @RequestParam(defaultValue = "") String name) {
-        List<TrainingProgramDTO> list = service.searchByName(name);
+        List<TrainingProgramDTO> list = service.searchByProgramName(name);
+        for (TrainingProgramDTO dto:service.searchByCreatorName(name)){
+            list.add(dto);
+        }
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {

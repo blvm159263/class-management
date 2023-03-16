@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface ITrainingProgramService {
 
-    List<TrainingProgramDTO> searchByName(String name);
+    List<TrainingProgramDTO> searchByProgramName(String name);
 
-    
+    List<TrainingProgramDTO> searchByCreatorName(String name);
+
+    List<TrainingProgramDTO> getAllTrainingProgram();
 }
