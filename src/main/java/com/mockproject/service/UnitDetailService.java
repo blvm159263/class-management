@@ -33,15 +33,11 @@ public class UnitDetailService implements IUnitDetailService {
     private final UnitRepository unitRepository;
     private final UnitDetailRepository unitDetailRepository;
     private final ITrainingMaterialService trainingMaterialService;
-    private final SyllabusRepository syllabusRepository;
-    private final SessionRepository sessionRepository;
 
-    public UnitDetailService(UnitDetailRepository unitDetailRepository, ITrainingMaterialService trainingMaterialService, UnitRepository unitRepository, SyllabusRepository syllabusRepository, SessionRepository sessionRepository) {
+    public UnitDetailService(UnitDetailRepository unitDetailRepository, ITrainingMaterialService trainingMaterialService, UnitRepository unitRepository) {
         this.unitDetailRepository = unitDetailRepository;
         this.trainingMaterialService = trainingMaterialService;
         this.unitRepository = unitRepository;
-        this.syllabusRepository = syllabusRepository;
-        this.sessionRepository = sessionRepository;
     }
 
     @Override

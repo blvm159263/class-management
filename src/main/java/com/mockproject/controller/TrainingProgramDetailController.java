@@ -1,6 +1,8 @@
 package com.mockproject.controller;
 
+import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.entity.*;
+import com.mockproject.mapper.TrainingProgramSyllabusMapper;
 import com.mockproject.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +27,17 @@ public class TrainingProgramDetailController {
         return trainingProgramService.getTrainingProgramById(id);
     }
 
-    @GetMapping("/{id}")
-    public List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(@PathVariable("id") long id) {
-        return trainingProgramSyllabusService.getTrainingProgramSyllabusListById(id);
+    public List<TrainingProgramSyllabusDTO> getTrainingProgramSyllabusListById(@PathVariable("id") long id) {
+        return trainingProgramSyllabusService.getAllSyllabusByTrainingProgramId(id, true);
     }
 
     @GetMapping("/syllabus/{id}")
     public List<Syllabus> getSyllabusById(@PathVariable("id") long idTrainingProgram) {
-        List<TrainingProgramSyllabus> listTrainingProgramSyllabus = getTrainingProgramSyllabusListById(idTrainingProgram);
+        List<TrainingProgramSyllabus> listTrainingProgramSyllabus = new ArrayList<>();
+        List<TrainingProgramSyllabusDTO> trainingProgramSyllabusDTOList = getTrainingProgramSyllabusListById(idTrainingProgram);
+        for (TrainingProgramSyllabusDTO t: trainingProgramSyllabusDTOList){
+            listTrainingProgramSyllabus.add(TrainingProgramSyllabusMapper.INSTANCE.toEntity(t));
+        }
         List<Syllabus> list = new ArrayList<>();
         for (int i = 0; i < listTrainingProgramSyllabus.size(); i++) {
             Syllabus s = syllabusService.getSyllabusById(listTrainingProgramSyllabus.get(i).getSyllabus().getId());

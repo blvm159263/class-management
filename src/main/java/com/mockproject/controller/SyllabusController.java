@@ -1,9 +1,12 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.SyllabusDTO;
+import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Syllabus;
+import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.service.interfaces.ISyllabusService;
+import com.mockproject.service.interfaces.ITrainingProgramSyllabusService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +28,21 @@ public class SyllabusController {
     @Autowired
     public ISyllabusService syllabusService;
 
+    @Autowired
+    public ITrainingProgramSyllabusService trainingProgramSyllabusService;
+
     @GetMapping()
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<List<SyllabusDTO>> getAll(){
         List<SyllabusDTO> listSyllabus = syllabusService.getAll(true, true);
         return ResponseEntity.ok(listSyllabus);
+    }
+
+    @GetMapping("/getSyllabusByTrainingProgram/{trainingProgramId}")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+    public ResponseEntity<List<TrainingProgramSyllabusDTO>> getAllTrainingProgramSyllabus(@PathVariable("trainingProgramId") long id){
+        List<TrainingProgramSyllabusDTO> list = trainingProgramSyllabusService.getAllSyllabusByTrainingProgramId(id, true);
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{syllabusId}")
