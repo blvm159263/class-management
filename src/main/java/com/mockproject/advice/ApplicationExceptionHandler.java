@@ -20,7 +20,6 @@ public class ApplicationExceptionHandler {
         return errorMap;
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public Map<String, String> handleBadRequest(MethodArgumentTypeMismatchException ex){
         Map<String, String> errorMap = new HashMap<>();
@@ -29,4 +28,5 @@ public class ApplicationExceptionHandler {
         errorMap.put("Error Message", ex.getMessage());
         return errorMap;
     }
+
 }

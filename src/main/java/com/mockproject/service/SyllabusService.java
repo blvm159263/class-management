@@ -12,12 +12,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.handler.ExceptionHandlingWebHandler;
 import org.webjars.NotFoundException;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,6 +53,19 @@ public class SyllabusService implements ISyllabusService {
         } else {
             throw new NotFoundException("Syllabus not found!");
         }
+    }
+
+    private static Set<String> getAllFields(final Class<?> type) {
+        Set<String> fields = new HashSet<>();
+        //loop the fields using Java Reflections
+        for (Field field : type.getDeclaredFields()) {
+            fields.add(field.getName());
+        }
+        //recursive call to getAllFields
+        if (type.getSuperclass() != null) {
+            fields.addAll(getAllFields(type.getSuperclass()));
+        }
+        return fields;
     }
 
     public Sort.Direction getSortDirection(String direction) {
