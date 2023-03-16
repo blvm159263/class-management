@@ -35,7 +35,7 @@ public class ClassScheduleService implements IClassScheduleService{
 
     private final TrainingClassUnitInformationService trainingClassUnitInformationService;
 
-    private TrainingClassFilterMap trainingClassFilterMap;
+    private final TrainingClassFilterMap trainingClassFilterMap;
 
     @Override
     public List<ClassScheduleDTO> listAll() {
@@ -50,6 +50,16 @@ public class ClassScheduleService implements IClassScheduleService{
     @Override
     public ClassSchedule save(ClassScheduleDTO dto) {
         return repository.save(ClassScheduleMapper.INSTANCE.toEntity(dto));
+    }
+
+    @Override
+    public boolean saveClassScheduleForTrainingClass(List<LocalDate> listDate, Long tcId) {
+//        Long count = listDto.stream().map(p -> repository.save(ClassScheduleMapper.INSTANCE.toEntity(p))).filter(Objects::nonNull).count();
+        TrainingClass tc = new TrainingClass();
+        tc.setId(tcId);
+        List<ClassSchedule> list = listDate.stream().map(p-> new ClassSchedule(null, p, true,tc)).toList();
+        List<ClassSchedule> result = repository.saveAll(list);
+        return !result.isEmpty();
     }
 
     @Override
@@ -134,6 +144,5 @@ public class ClassScheduleService implements IClassScheduleService{
                 durationDay,
                 date,
                 unit);
-
     }
 }

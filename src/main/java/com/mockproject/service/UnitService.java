@@ -11,6 +11,7 @@ import com.mockproject.service.interfaces.IUnitDetailService;
 import com.mockproject.service.interfaces.IUnitService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,18 +25,12 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UnitService implements IUnitService {
     private final UnitRepository unitRepository;
     private final IUnitDetailService unitDetailService;
     private final SessionRepository sessionRepository;
     private final SyllabusRepository syllabusRepository;
-
-    public UnitService(UnitRepository unitRepository, IUnitDetailService unitDetailService, SessionRepository sessionRepository, SyllabusRepository syllabusRepository) {
-        this.unitRepository = unitRepository;
-        this.unitDetailService = unitDetailService;
-        this.sessionRepository = sessionRepository;
-        this.syllabusRepository = syllabusRepository;
-    }
 
     @Override
     public List<UnitDTO> getAllUnitBySessionId(long sessionId, boolean status){
@@ -137,7 +132,15 @@ public class UnitService implements IUnitService {
         return true;
     }
 
+    @Override
     public List<Unit> getUnitBySessionId(long idSession){
         return unitRepository.getListUnitBySessionId(idSession);
+    }
+
+    @Override
+    public List<UnitDTO> listBySessionId(Long sid) {
+        Session session = new Session();
+        session.setId(sid);
+        return unitRepository.findBySession(session).stream().map(UnitMapper.INSTANCE::toDTO).toList();
     }
 }
