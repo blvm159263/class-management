@@ -37,7 +37,7 @@ class DeliveryTypeServiceTest {
 
         Long id = 3L;
 
-        when(deliveryTypeRepository.findByIdAndStatus(id, true)).thenReturn(deliveryType3);
+        when(deliveryTypeRepository.findByIdAndStatus(id, true).orElseThrow()).thenReturn(deliveryType3);
         DeliveryTypeDTO result = deliveryTypeService.getByIdTrue(3L);
         assertEquals(3L, result.getId());
         assertTrue(result.isStatus());

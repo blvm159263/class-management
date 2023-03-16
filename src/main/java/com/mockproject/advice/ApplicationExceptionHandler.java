@@ -10,9 +10,11 @@ import org.webjars.NotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
 
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(NotFoundException.class)
     public Map<String, String> handleNotFound(NotFoundException ex){
         Map<String, String> errorMap = new HashMap<>();
@@ -20,7 +22,8 @@ public class ApplicationExceptionHandler {
         return errorMap;
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public Map<String, String> handleBadRequest(MethodArgumentTypeMismatchException ex){
         Map<String, String> errorMap = new HashMap<>();
