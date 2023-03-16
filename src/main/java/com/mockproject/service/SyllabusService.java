@@ -65,7 +65,6 @@ public class SyllabusService implements ISyllabusService {
             throw new NotFoundException("Syllabus not found!");
         }
     }
-    private final SyllabusRepository syllabusRepository;
 
     private final TrainingProgramSyllabusRepository trainingProgramSyllabusRepository;
     @Override

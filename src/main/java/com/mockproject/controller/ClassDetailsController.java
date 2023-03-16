@@ -27,9 +27,8 @@ public class ClassDetailsController {
 
     @Operation(summary = "Get all fields from TrainingClass entity by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = TrainingClassDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TrainingClassDTO.class)))
     })
     @GetMapping("/{id}")
     public ResponseEntity<?> getAll(@Parameter(description = "TrainingClass id", example = "1") @PathVariable("id") long id) {
@@ -43,9 +42,8 @@ public class ClassDetailsController {
 
     @Operation(summary = "Get all class's Trainers by TrainingClass id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UserDTO.class)))
     })
     @GetMapping("/trainers")
     public ResponseEntity<?> getAllTrainers(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
@@ -58,9 +56,8 @@ public class ClassDetailsController {
 
     @Operation(summary = "Get class's Admins by TrainingClass id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UserDTO.class)))
     })
     @GetMapping("/admins")
     public ResponseEntity<?> getAllAdmins(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
@@ -73,9 +70,8 @@ public class ClassDetailsController {
 
     @Operation(summary = "Get class's Creator by TrainingClass id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UserDTO.class)))
     })
     @GetMapping("/creator")
     public ResponseEntity<?> getCreator(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
@@ -88,9 +84,8 @@ public class ClassDetailsController {
 
     @Operation(summary = "Get all class's Locations(Towers) by TrainingClass id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = TowerDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TowerDTO.class)))
     })
     @GetMapping("/towers")
     public ResponseEntity<?> getAllTowers(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
@@ -103,9 +98,8 @@ public class ClassDetailsController {
 
     @Operation(summary = "Get class's Attendee type (Fresher,...) by TrainingClass id ")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = AttendeeDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = AttendeeDTO.class)))
     })
     @GetMapping("/attendee")
     public ResponseEntity<?> getAttendeeName(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
@@ -118,9 +112,8 @@ public class ClassDetailsController {
 
     @Operation(summary = "Get class schedule by TrainingClass id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = ClassScheduleDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = ClassScheduleDTO.class)))
     })
     @GetMapping("/schedule")
     public ResponseEntity<?> getClassSchedule(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
@@ -133,9 +126,8 @@ public class ClassDetailsController {
 
     @Operation(summary = "Get class's Fsu by TrainingClass id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = FsuDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = FsuDTO.class)))
     })
     @GetMapping("/fsu")
     public ResponseEntity<?> getClassFsu(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
@@ -148,9 +140,8 @@ public class ClassDetailsController {
 
     @Operation(summary = "Get class's Contact by TrainingClass id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = ContactDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = ContactDTO.class)))
     })
     @GetMapping("/contact")
     public ResponseEntity<?> getClassContact(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
@@ -163,9 +154,8 @@ public class ClassDetailsController {
 
     @Operation(summary = "Get all class's DeliveryTypes ")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = DeliveryTypeDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = DeliveryTypeDTO.class)))
     })
     @GetMapping("/deliveryTypes")
     public ResponseEntity<?> getAllDeliveryTypes(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
@@ -182,9 +172,8 @@ public class ClassDetailsController {
             description = "Get list of Units in a date clicked in the class schedule table by the user"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = UnitDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Day [-] of Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UnitDTO.class)))
     })
     @GetMapping("/units-for-a-date")
     public ResponseEntity<?> getAllUnitsForADate(
@@ -205,9 +194,8 @@ public class ClassDetailsController {
             description = "Get list of Trainers in a date clicked in the class schedule table by the user"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Day [-] of Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UserDTO.class)))
     })
     @GetMapping("/trainers-for-a-date")
     public ResponseEntity<?> getAllTrainersForADate(
@@ -228,9 +216,8 @@ public class ClassDetailsController {
             description = "Get list of Locations(Towers) in a date clicked in the class schedule table by the user"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value"),
-            @ApiResponse(responseCode = "200", description = "Return Sample",
-                    content = @Content(schema = @Schema(implementation = TowerDTO.class)))
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Day [-] of Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TowerDTO.class)))
     })
     @GetMapping("/towers-for-a-date")
     public ResponseEntity<?> getAllTowersForADate(
