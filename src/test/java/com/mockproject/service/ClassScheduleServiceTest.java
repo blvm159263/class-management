@@ -3,6 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.ClassScheduleDTO;
 import com.mockproject.entity.ClassSchedule;
 import com.mockproject.entity.TrainingClass;
+import com.mockproject.mapper.TrainingClassFilterMap;
 import com.mockproject.repository.ClassScheduleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,12 @@ import static org.mockito.Mockito.when;
 class ClassScheduleServiceTest {
     @MockBean
     private ClassScheduleRepository classScheduleRepository;
+    @MockBean
+    private TrainingClassService trainingClassService;
+    @MockBean
+    private TrainingClassUnitInformationService trainingClassUnitInformationService;
+    @MockBean
+    private TrainingClassFilterMap trainingClassFilterMap;
 
     @Autowired
     private ClassScheduleService classScheduleService;

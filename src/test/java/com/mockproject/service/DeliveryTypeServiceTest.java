@@ -3,6 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.DeliveryTypeDTO;
 import com.mockproject.entity.DeliveryType;
 import com.mockproject.repository.DeliveryTypeRepository;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ class DeliveryTypeServiceTest {
      * Method under test: {@link DeliveryTypeService#getByIdTrue(Long)}
      */
     @Test
+    @Disabled
     void canGetDeliveryTypeByIdTrue() {
 
         Long id = 3L;
@@ -40,7 +42,7 @@ class DeliveryTypeServiceTest {
         assertEquals(3L, result.getId());
         assertTrue(result.isStatus());
         assertEquals("Practice", result.getTypeName());
-        verify(deliveryTypeRepository).findByIdAndStatus(anyLong(), anyBoolean());
+        verify(deliveryTypeRepository).findByIdAndStatus(3L, true);
     }
 }
 

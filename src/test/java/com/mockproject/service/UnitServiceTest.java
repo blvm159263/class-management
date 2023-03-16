@@ -3,7 +3,10 @@ package com.mockproject.service;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Unit;
+import com.mockproject.repository.SessionRepository;
+import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitRepository;
+import com.mockproject.service.interfaces.IUnitDetailService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,15 @@ import static org.mockito.Mockito.*;
 class UnitServiceTest {
     @MockBean
     private UnitRepository unitRepository;
+    @MockBean
+    private IUnitDetailService unitDetailService;
+    @MockBean
+    private SessionRepository sessionRepository;
+    @MockBean
+    private SyllabusRepository syllabusRepository;
+
+
+
 
     @Autowired
     private UnitService unitService;
