@@ -29,14 +29,14 @@ public class UploadFileUserController {
     private final IUserService userService;
 
     @GetMapping("/template-csv")
-    @Secured({CREATE, MODIFY, FULL_ACCESS})
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity downloadTemplate(){
         File file = new File("src/main/resources/CSVFile/Template .xlsx");
         return ResponseEntity.ok(file);
     }
 
     @PostMapping("/user")
-    @Secured({CREATE, MODIFY, FULL_ACCESS})
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity readFileCSV(@RequestParam("file") MultipartFile mFile) {
         LocalDateTime current = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH;mm;ss.SSS");

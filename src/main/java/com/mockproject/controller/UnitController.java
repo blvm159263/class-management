@@ -43,20 +43,20 @@ public class UnitController {
     }
 
     @PutMapping("/edit")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Unit> editUnit(@RequestBody UnitDTO unitDTO)throws IOException {
         Unit updateUnit = unitService.editUnit(unitDTO, true);
         return ResponseEntity.ok(updateUnit);
     }
 
     @PutMapping("delete/{id}")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteUnit(@PathVariable("id") long unitId){
         return ResponseEntity.ok(unitService.deleteUnit(unitId, true));
     }
 
     @PutMapping("multi-delete/{id}")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteUnits(@PathVariable("id") long sessionId){
         return ResponseEntity.ok(unitService.deleteUnits(sessionId, true));
     }

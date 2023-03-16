@@ -8,7 +8,10 @@ import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.service.interfaces.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
@@ -26,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@Tag(name = "User API", description = "API related User")
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 @SecurityRequirement(name = "Authorization")
@@ -53,6 +57,7 @@ public class UserController {
     private final ILevelService levelService;
 
     @PostMapping("/login")
+    @Operation(summary = "Login into system")
     public ResponseEntity login(@RequestBody LoginFormDTO loginFormDTO) {
         String email = loginFormDTO.getEmail();
         String pass = loginFormDTO.getPassword();
@@ -78,6 +83,7 @@ public class UserController {
     }
 
     @GetMapping("/getAll")
+    @Operation(summary = "Get all user")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getAll() {
         List<UserDTO> userDTOList = userService.getAll();
@@ -89,8 +95,9 @@ public class UserController {
     }
 
     @GetMapping("/getListUser")
+    @Operation(summary = "Get user list by page and rows per page")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getListUser(@RequestParam(value = "page", required = false, defaultValue = "1") int page, @RequestParam(value = "rowsPerPage", required = false, defaultValue = "10") int rowsPerPage) {
+    public ResponseEntity getListUser(@RequestParam(value = "page", required = false, defaultValue = "1") @Parameter(description = "page number to display") int page, @RequestParam(value = "rowsPerPage", required = false, defaultValue = "10")@Parameter(description = "number of row per page to display") int rowsPerPage) {
         List<UserDTO> userDTOList = userService.getAllByPageAndRowPerPage(page, rowsPerPage);
         if (userDTOList.isEmpty()) {
             return ResponseEntity.badRequest().body("List is empty");
@@ -101,18 +108,21 @@ public class UserController {
 
 
     @GetMapping("/getAllPermissionName")
+    @Operation(summary = "Get all permission name of system")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getAllPermission() {
         return ResponseEntity.ok(permissionService.getAll());
     }
 
     @GetMapping("/getAllRole")
+    @Operation(summary = "Get all Role")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getAllRole() {
         return ResponseEntity.ok(roleService.getAll());
     }
 
     @GetMapping("/getAllRoleDetail")
+    @Operation(summary = "Get all role detail")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getAllRoleDetail() {
         List<FormRoleDTO> list = new ArrayList<>();
@@ -149,16 +159,18 @@ public class UserController {
     }
 
     @GetMapping("/getRoleById")
+    @Operation(summary = "Get a role by role id")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getRoleById (@RequestParam(value = "id")long id){
+    public ResponseEntity getRoleById(@RequestParam(value = "id") @Parameter(description = "Role id") long id) {
         RoleDTO role = roleService.getRoleById(id);
-        if (role != null){
+        if (role != null) {
             return ResponseEntity.ok(role);
         }
         return ResponseEntity.badRequest().body("Role ot found!");
     }
 
     @PutMapping("/updateRole")
+    @Operation(summary = "Update role by list FormRoleDTO", description = "If role exits -> Update else  Create new Role")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity updateAllRole(@RequestBody List<FormRoleDTO> formRoleDTOList) {
 
@@ -189,20 +201,21 @@ public class UserController {
     }
 
     @PostMapping("/searchByFilter")
+    @Operation(summary = "Search User by filter and order")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity searchByFilter(@RequestParam(value = "Id", required = false) Long id,
-                                          @RequestParam(value = "Dob", required = false) LocalDate dob,
-                                          @RequestParam(value = "Email", required = false) String email,
-                                          @RequestParam(value = "FullName", required = false) String fullName,
-                                          @RequestParam(value = "Gender", required = false) Boolean gender,
-                                          @RequestParam(value = "Phone", required = false) String phone,
-                                          @RequestParam(value = "StateId", required = false, defaultValue = "") List<Integer> stateId,
-                                          @RequestParam(value = "AtendeeId", required = false, defaultValue = "") List<Long> atendeeId,
-                                          @RequestParam(value = "LevelId", required = false, defaultValue = "") List<Long> levelId,
-                                          @RequestParam(value = "RoleId", required = false, defaultValue = "") List<Long> role_id,
-                                          @RequestParam(value = "Page", required = false) Optional<Integer> page,
-                                          @RequestParam(value = "Size", required = false) Optional<Integer> size,
-                                          @RequestParam(value = "Order", required = false) List<String> order
+    public ResponseEntity searchByFilter(@RequestParam(value = "Id", required = false) @Parameter(description = "User id") Long id,
+                                         @RequestParam(value = "Dob", required = false) @Parameter(description = "Date of birth(yyyy/mm/dd)") LocalDate dob,
+                                         @RequestParam(value = "Email", required = false) String email,
+                                         @RequestParam(value = "FullName", required = false) String fullName,
+                                         @RequestParam(value = "Gender", required = false) @Parameter(description = "true = Male, false = Female") Boolean gender,
+                                         @RequestParam(value = "Phone", required = false) String phone,
+                                         @RequestParam(value = "StateId", required = false, defaultValue = "") List<Integer> stateId,
+                                         @RequestParam(value = "AtendeeId", required = false, defaultValue = "") List<Long> atendeeId,
+                                         @RequestParam(value = "LevelId", required = false, defaultValue = "") List<Long> levelId,
+                                         @RequestParam(value = "RoleId", required = false, defaultValue = "") List<Long> role_id,
+                                         @RequestParam(value = "Page", required = false) Optional<Integer> page,
+                                         @RequestParam(value = "Size", required = false) Optional<Integer> size,
+                                         @RequestParam(value = "Order", required = false) @Parameter(description = "Order by attribute", example = "Example: " + "id-asc\n" + "email-asc\n" + "fullname-asc\n" + "state-asc\n" + "dob-asc\n" + "phone-asc\n" + "attendee-asc\n" + "level-asc\n" + "role-asc\n" + "NOTE:::::::: asc = ascending; desc = descending") List<String> order
 
     ) {
         Page<UserDTO> result;
@@ -221,67 +234,74 @@ public class UserController {
     }
 
     @PostMapping("/encodePassword")
+    @Operation(summary = "If the password in your Database is not encode,use this function is only 1 time!!!")
     public ResponseEntity encodePassword() {
         userService.encodePassword();
-        return ResponseEntity.ok("Oke nha hihi");
+        return ResponseEntity.ok("Encode sucessfully");
     }
 
     @GetMapping("/getRoleByName")
+    @Operation(summary = "Get roleDTO by role name")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getRoleByName(@RequestParam(value = "roleName")String rolename){
+    public ResponseEntity getRoleByName(@RequestParam(value = "roleName") String rolename) {
         long roleId = roleService.getRoleByRoleName(rolename);
         return ResponseEntity.ok(roleId);
     }
 
     @GetMapping("/getLevel")
+    @Operation(summary = "Get level by level_id")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getLevelById (@RequestParam(value = "id")long id){
+    public ResponseEntity getLevelById(@RequestParam(value = "id") @Parameter(description = "Level id") long id) {
         LevelDTO level = levelService.getLevelById(id);
-        if (level != null){
+        if (level != null) {
             return ResponseEntity.ok(level);
         } else return ResponseEntity.badRequest().body("Not found level!");
 
     }
 
     @PutMapping("/de-activateUser")
+    @Operation(summary = "De-activate user by user id", description = "set state as de-active")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity deactivateUser (@RequestParam(value = "id")long id){
+    public ResponseEntity deactivateUser(@RequestParam(value = "id") @Parameter(description = "User id") long id) {
         int state = userService.updateStateToFalse(id);
         if (state == 0) return ResponseEntity.ok("De-activate user successfully");
         return ResponseEntity.badRequest().body("User not found");
     }
 
     @PutMapping("/activateUser")
+    @Operation(summary = "Activate user by user id", description = "Set state as active")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity activateUser (@RequestParam(value = "id")long id){
+    public ResponseEntity activateUser(@RequestParam(value = "id") @Parameter(description = "User id") long id) {
         int state = userService.updateStateToTrue(id);
         if (state == 1) return ResponseEntity.ok("Activate user successfully");
         return ResponseEntity.badRequest().body("User not found");
     }
 
-    @DeleteMapping("/deleteUser")
+    @PutMapping("/deleteUser")
+    @Operation(summary = "Delete user")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity deleteUser (@RequestParam(value = "id")long id){
+    public ResponseEntity deleteUser(@RequestParam(value = "id") @Parameter(description = "User id") long id) {
         boolean delete = userService.updateStatus(id);
         if (!delete) return ResponseEntity.badRequest().body("Delete failed");
         return ResponseEntity.ok("Delete successfully");
     }
 
     @PutMapping("/changeRole")
+    @Operation(summary = "Edit user role by user id and role name")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity changeRole (@RequestParam(value = "id")long id,@RequestParam(value = "roleName")String roleName){
-        if (roleService.getRoleByRoleName(roleName) == null){
+    public ResponseEntity changeRole(@RequestParam(value = "id") @Parameter(description = "User id") long id, @RequestParam(value = "roleName") String roleName) {
+        if (roleService.getRoleByRoleName(roleName) == null) {
             return ResponseEntity.badRequest().body("Role not found!");
         }
-        boolean change = userService.changeRole(id,roleService.getRoleByRoleName(roleName));
+        boolean change = userService.changeRole(id, roleService.getRoleByRoleName(roleName));
         if (!change) return ResponseEntity.badRequest().body("Change failed");
         return ResponseEntity.ok(roleName);
     }
 
     @PutMapping("/editName")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editFullName (@RequestParam(value = "id")long id, @RequestParam(value = "fullname")String fullname){
-        boolean editName = userService.editName(id,fullname);
+    public ResponseEntity editFullName(@RequestParam(value = "id") long id, @RequestParam(value = "fullname") String fullname) {
+        boolean editName = userService.editName(id, fullname);
         if (editName)
             return ResponseEntity.ok("Successfully");
         else return ResponseEntity.badRequest().body("Could not change!");
@@ -289,30 +309,31 @@ public class UserController {
 
     @PutMapping("/editDoB")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editDoB (@RequestParam(value = "id")long id, @RequestParam(value = "dob")LocalDate date){
-            boolean editDoB = userService.editDoB(id, date);
-            if (editDoB)
-                return ResponseEntity.ok("Successfully");
-            else return ResponseEntity.badRequest().body("Could not change!");
+    public ResponseEntity editDoB(@RequestParam(value = "id") long id, @RequestParam(value = "dob") LocalDate date) {
+        boolean editDoB = userService.editDoB(id, date);
+        if (editDoB)
+            return ResponseEntity.ok("Successfully");
+        else return ResponseEntity.badRequest().body("Could not change!");
     }
 
     @PutMapping("/editGender")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editGender (@RequestParam(value = "id")long id, @RequestParam(value = "gender")boolean gender){
-        boolean editGender = userService.editGender(id,gender);
+    public ResponseEntity editGender(@RequestParam(value = "id") long id, @RequestParam(value = "gender") boolean gender) {
+        boolean editGender = userService.editGender(id, gender);
         return ResponseEntity.ok(editGender);
     }
 
     @PutMapping("/editLevel")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editLevel (@RequestParam(value = "id")long id, @RequestParam(value = "levelCode")String levelCode){
-        boolean editLevel = userService.editLevel(id,levelCode);
+    public ResponseEntity editLevel(@RequestParam(value = "id") long id, @RequestParam(value = "levelCode") String levelCode) {
+        boolean editLevel = userService.editLevel(id, levelCode);
         return ResponseEntity.ok(editLevel);
     }
 
     @PutMapping("/editUser")
+    @Operation(summary = "Edit user by UserDTO")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editUser (@RequestBody UserDTO user){
+    public ResponseEntity editUser(@RequestBody UserDTO user) {
         boolean editUser = userService.editUser(user);
         if (editUser)
             return ResponseEntity.ok("Successfully");

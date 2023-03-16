@@ -42,26 +42,26 @@ public class UnitDetailController {
     }
 
     @PutMapping("/edit")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<UnitDetail> editUnitDetail(@RequestBody UnitDetailDTO unitDetailDTO) throws IOException {
         UnitDetail updateUnitDetail = unitDetailService.editUnitDetail(unitDetailDTO, true);
         return ResponseEntity.ok(updateUnitDetail);
     }
 
     @PutMapping("/delete/{id}")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteUnitDetail(@PathVariable("id") long unitDetailId) {
         return ResponseEntity.ok(unitDetailService.deleteUnitDetail(unitDetailId, true));
     }
 
     @PutMapping("/multi-delete/{id}")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteUnitDetails(@PathVariable("id") long unitId) {
         return ResponseEntity.ok(unitDetailService.deleteUnitDetails(unitId, true));
     }
 
     @PutMapping("/toggle/{id}")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> toggleUnitDetailType(@PathVariable("id") long unitDetailId) {
         return ResponseEntity.ok(unitDetailService.toggleUnitDetailType(unitDetailId, true));
     }

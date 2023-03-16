@@ -56,7 +56,7 @@ public class SyllabusController {
     }
 
     @PutMapping("edit")
-    @Secured({MODIFY,CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Syllabus> editSyllabus(@RequestBody SyllabusDTO syllabusDTO)throws IOException {
         Syllabus editsyllabus = syllabusService.editSyllabus(syllabusDTO, true);
         return ResponseEntity.ok(editsyllabus);
@@ -64,7 +64,7 @@ public class SyllabusController {
 
 
     @PutMapping("delete/{id}")
-    @Secured({MODIFY,CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id") long syllabusId){
         return ResponseEntity.ok(syllabusService.deleteSyllabus(syllabusId, true));
     }
