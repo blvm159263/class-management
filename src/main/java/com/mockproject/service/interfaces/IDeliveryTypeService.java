@@ -4,8 +4,6 @@ import com.mockproject.dto.DeliveryTypeDTO;
 
 import java.util.List;
 
-import com.mockproject.dto.DeliveryTypeDTO;
-
 public interface IDeliveryTypeService {
 
     DeliveryTypeDTO getByIdTrue(Long id);

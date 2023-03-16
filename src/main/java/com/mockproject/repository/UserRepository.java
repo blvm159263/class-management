@@ -22,6 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findById(Long id);
 
     List<User> findAllByStatus(boolean status);
+
     List<User> findAllBy();
 
     @Query(value = "SELECT * FROM tblUser\n" +
@@ -48,7 +49,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailAndStatus(String email, boolean status);
 
-    Optional<User> findByStatusAndId(boolean status, long id);
-
-    List<User> findAllByStatus(boolean status);
 }

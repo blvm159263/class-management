@@ -4,35 +4,27 @@ import com.mockproject.dto.SessionDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Session;
 import com.mockproject.service.interfaces.ISessionService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-import com.mockproject.service.interfaces.ISessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Session API")
 @RequestMapping(value = "/api/session")
 @SecurityRequirement(name = "Authorization")
 public class SessionController {
@@ -41,7 +33,6 @@ public class SessionController {
     public static final String MODIFY = "ROLE_Modify_Syllabus";
     public static final String CREATE = "ROLE_Create_Syllabus";
     public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
-
 
     private final ISessionService sessionService;
 

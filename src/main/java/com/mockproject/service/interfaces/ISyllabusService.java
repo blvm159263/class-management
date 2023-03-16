@@ -1,12 +1,12 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.SyllabusDTO;
-import org.springframework.data.domain.Page;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.User;
+import org.springframework.data.domain.Page;
 
-import java.time.LocalDate;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +31,7 @@ public interface ISyllabusService {
 
     boolean deleteSyllabus(long syllabusId, boolean status);
 
+    List<Long> getListSyllabusIdByOSD(String osd);
+
+    Syllabus getSyllabusById(long id);
 }

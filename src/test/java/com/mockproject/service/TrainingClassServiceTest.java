@@ -3,22 +3,18 @@ package com.mockproject.service;
 
 import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.*;
-import com.mockproject.entity.Location;
-import com.mockproject.entity.TrainingProgram;
-import com.mockproject.entity.User;
 import com.mockproject.mapper.TrainingClassMapper;
 import com.mockproject.repository.LocationRepository;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.repository.TrainingProgramRepository;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @ContextConfiguration(classes = {TrainingClassService.class})
 @ExtendWith(SpringExtension.class)

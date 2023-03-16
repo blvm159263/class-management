@@ -9,9 +9,6 @@ import com.mockproject.entity.User;
 import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
-import com.mockproject.dto.UnitDetailDTO;
-import com.mockproject.entity.Unit;
-import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
@@ -19,6 +16,7 @@ import com.mockproject.service.interfaces.IUnitDetailService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,8 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import java.util.List;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -42,18 +38,6 @@ public class UnitDetailService implements IUnitDetailService {
     private final UnitDetailRepository unitDetailRepository;
 
     private final ITrainingMaterialService trainingMaterialService;
-
-    private final SyllabusRepository syllabusRepository;
-
-    private final SessionRepository sessionRepository;
-
-    public UnitDetailService(UnitDetailRepository unitDetailRepository, ITrainingMaterialService trainingMaterialService, UnitRepository unitRepository, SyllabusRepository syllabusRepository, SessionRepository sessionRepository) {
-        this.unitDetailRepository = unitDetailRepository;
-        this.trainingMaterialService = trainingMaterialService;
-        this.unitRepository = unitRepository;
-        this.syllabusRepository = syllabusRepository;
-        this.sessionRepository = sessionRepository;
-    }
 
     @Override
     public List<UnitDetailDTO> getAllUnitDetailByUnitId(long unitId, boolean status) {
@@ -163,10 +147,13 @@ public class UnitDetailService implements IUnitDetailService {
         unitDetail.get().setType(unitDetail.get().isType() == true ? false: true);
         return true;
     }
-    public List<UnitDetail> getUnitDetailByUnitId(long idUnit){
+
+    @Override
+    public List<UnitDetail> getUnitDetailByUnitId(long idUnit) {
         return unitDetailRepository.getListUnitDetailByUnitId(idUnit);
     }
 
+    @Override
     public List<UnitDetailDTO> listByUnitIdTrue(Long id) {
         Unit unit = new Unit();
         unit.setId(id);

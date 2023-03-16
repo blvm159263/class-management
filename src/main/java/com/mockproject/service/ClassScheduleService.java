@@ -8,7 +8,6 @@ import com.mockproject.entity.ClassSchedule;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingProgramSyllabus;
-import com.mockproject.entity.TrainingClass;
 import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.mapper.TrainingClassFilterMap;
 import com.mockproject.repository.ClassScheduleRepository;
@@ -20,10 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,6 +50,9 @@ public class ClassScheduleService implements IClassScheduleService{
     @Override
     public ClassSchedule save(ClassScheduleDTO dto) {
         return repository.save(ClassScheduleMapper.INSTANCE.toEntity(dto));
+    }
+
+    @Override
     public boolean saveClassScheduleForTrainingClass(List<LocalDate> listDate, Long tcId) {
 //        Long count = listDto.stream().map(p -> repository.save(ClassScheduleMapper.INSTANCE.toEntity(p))).filter(Objects::nonNull).count();
         TrainingClass tc = new TrainingClass();

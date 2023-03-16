@@ -4,10 +4,6 @@ import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.SessionMapper;
-import com.mockproject.mapper.SyllabusMapper;
-import com.mockproject.dto.SessionDTO;
-import com.mockproject.entity.Syllabus;
-import com.mockproject.mapper.SessionMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitRepository;
@@ -15,11 +11,8 @@ import com.mockproject.service.interfaces.ISessionService;
 import com.mockproject.service.interfaces.IUnitService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,8 +23,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -91,6 +82,7 @@ public class SessionService implements ISessionService {
 
         return true;
     }
+
     @Override
     public Session editSession(SessionDTO sessionDTO, boolean status) throws IOException{
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionDTO.getId(), status);
@@ -146,6 +138,7 @@ public class SessionService implements ISessionService {
         return true;
     }
 
+    @Override
     public List<Session> getSessionListBySyllabusId(long idSyllabus){
         return sessionRepository.getSessionListBySyllabusId(idSyllabus);
     }

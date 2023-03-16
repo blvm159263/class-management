@@ -7,28 +7,20 @@ import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
-import com.mockproject.service.*;
 import com.mockproject.service.interfaces.*;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import com.mockproject.dto.UserDTO;
-import com.mockproject.service.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,8 +32,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -137,7 +127,7 @@ public class UserController {
         List<FormRoleDTO> list = new ArrayList<>();
         for (RoleDTO role : roleService.getAll()) {
             FormRoleDTO roleDTO = new FormRoleDTO();
-            List<RolePermissionScope> listRolePermissionScope = rolePermissionScopeService.findAllByRole_Id(role.getId());
+            List<RolePermissionScope> listRolePermissionScope = rolePermissionScopeService.findAllByRoleId(role.getId());
             roleDTO.setId(role.getId());
             roleDTO.setRoleName(role.getRoleName());
 
@@ -167,61 +157,6 @@ public class UserController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/getRoleById")
-    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getRoleById (@RequestParam(value = "id")long id){
-        RoleDTO role = roleService.getRoleById(id);
-        if (role != null){
-            return ResponseEntity.ok(role);
-        }
-        return ResponseEntity.badRequest().body("Role ot found!");
-    }
-
-    @GetMapping("/{id}")
-    @Operation(
-            summary = "Get user by ID"
-    )
-    public ResponseEntity<?> getUserById(
-            @PathVariable("id")
-            @Parameter(
-                    description = "<b>Insert ID to get user<b>",
-                    example = "1"
-            ) long id){
-        return ResponseEntity.ok(userService.getUserById(true, id));
-    }
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "When don't find any User"),
-            @ApiResponse(responseCode = "200", description = "When get list trainer successfully!",
-                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
-    })
-    @Operation(summary = "Get all User have role TRAINER")
-    @GetMapping("/trainer")
-    public ResponseEntity<?> listTrainer() {
-        List<UserDTO> list = service.listTrainerTrue();
-        if (!list.isEmpty()) {
-            return ResponseEntity.ok(list);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any User (Trainer)!");
-        }
-    }
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "When don't find any User"),
-            @ApiResponse(responseCode = "200", description = "When get user successfully!",
-                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
-    })
-    @Operation(summary = "Get User by given {ID}")
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@Parameter(description = "User's ID") @PathVariable("id") Long id) {
-        UserDTO user = service.getUserById(id);
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any User have ID = " + id);
-        }
-    }
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any User"),
             @ApiResponse(responseCode = "200", description = "When get list admin successfully!",
@@ -230,7 +165,7 @@ public class UserController {
     @Operation(summary = "Get all User have role CLASS_ADMIN")
     @GetMapping("/class-admin")
     public ResponseEntity<?> listClassAdmin() {
-        List<UserDTO> list = service.listClassAdminTrue();
+        List<UserDTO> list = userService.listClassAdminTrue();
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
@@ -246,7 +181,7 @@ public class UserController {
     @Operation(summary = "Get all User have role TRAINER")
     @GetMapping("/trainer")
     public ResponseEntity<?> listTrainer() {
-        List<UserDTO> list = service.listTrainerTrue();
+        List<UserDTO> list = userService.listTrainerTrue();
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
@@ -262,7 +197,7 @@ public class UserController {
     @Operation(summary = "Get User by given {ID}")
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@Parameter(description = "User's ID") @PathVariable("id") Long id) {
-        UserDTO user = service.getUserById(id);
+        UserDTO user = userService.getUserById(id);
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
@@ -449,12 +384,5 @@ public class UserController {
         else return ResponseEntity.badRequest().body("Could not change!");
     }
 
-    @GetMapping("/list")
-    @Operation(
-            summary = "Get user list"
-    )
-    public ResponseEntity<?> getAllUser() {
-        return ResponseEntity.ok(userService.getAllUser(true));
-    }
 }
 

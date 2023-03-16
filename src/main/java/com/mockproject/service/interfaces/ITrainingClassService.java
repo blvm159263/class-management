@@ -1,6 +1,6 @@
 package com.mockproject.service.interfaces;
 
-import com.mockproject.dto.TrainingClassDTO;
+import com.mockproject.dto.*;
 import com.mockproject.entity.TrainingClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -8,12 +8,6 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
-import com.mockproject.dto.*;
-
-import java.time.LocalDate;
-
-import java.util.List;
 
 
 public interface ITrainingClassService {
@@ -57,6 +51,5 @@ public interface ITrainingClassService {
     Integer getShortDetails(long id, LocalDate targetDate);
 
     DeliveryTypeDTO getDeliveryType(long id);
-
 
 }

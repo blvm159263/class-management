@@ -1,8 +1,9 @@
 package com.mockproject.controller;
 
 import com.mockproject.entity.*;
-import com.mockproject.service.*;
+import com.mockproject.service.interfaces.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Training Program Detail API")
 @RequestMapping("/api/trainingprogramdetail")
 @SecurityRequirement(name = "Authorization")
 public class TrainingProgramDetailController {
@@ -21,13 +23,13 @@ public class TrainingProgramDetailController {
     public static final String CREATE = "ROLE_Create_Training program";
     public static final String FULL_ACCESS = "ROLE_Full access_Training program";
 
-    private final TrainingProgramService trainingProgramService;
-    private final TrainingProgramSyllabusService trainingProgramSyllabusService;
-    private final SyllabusService syllabusService;
-    private final SessionService sessionService;
-    private final UnitService unitService;
-    private final UnitDetailService unitDetailService;
-    private final TrainingMaterialService trainingMaterialService;
+    private final ITrainingProgramService trainingProgramService;
+    private final ITrainingProgramSyllabusService trainingProgramSyllabusService;
+    private final ISyllabusService syllabusService;
+    private final ISessionService sessionService;
+    private final IUnitService unitService;
+    private final IUnitDetailService unitDetailService;
+    private final ITrainingMaterialService trainingMaterialService;
 
     @GetMapping("/")
     @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})

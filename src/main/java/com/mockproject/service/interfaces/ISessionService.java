@@ -7,10 +7,6 @@ import com.mockproject.entity.User;
 import java.io.IOException;
 import java.util.List;
 
-import com.mockproject.dto.SessionDTO;
-
-import java.util.List;
-
 public interface ISessionService {
 
     List<SessionDTO> listBySyllabus(Long sid);
@@ -27,4 +23,5 @@ public interface ISessionService {
 
     boolean deleteSessions(long syllabusId, boolean status);
 
+    List<Session> getSessionListBySyllabusId(long idSyllabus);
 }

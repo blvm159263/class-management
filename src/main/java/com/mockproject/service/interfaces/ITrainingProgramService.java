@@ -1,7 +1,7 @@
 package com.mockproject.service.interfaces;
 
-import com.mockproject.entity.TrainingProgram;
 import com.mockproject.dto.TrainingProgramDTO;
+import com.mockproject.entity.TrainingProgram;
 
 import java.util.List;
 

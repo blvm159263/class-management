@@ -7,13 +7,11 @@ import com.mockproject.entity.User;
 import java.io.IOException;
 import java.util.List;
 
-import com.mockproject.dto.UnitDetailDTO;
-
-import java.util.List;
-
 public interface IUnitDetailService {
 
     List<UnitDetailDTO> listByUnitIdTrue(Long id);
+
+    List<UnitDetail> getUnitDetailByUnitId(long idUnit);
 
     List<UnitDetailDTO> getAllUnitDetailByUnitId(long unitId, boolean status);
 

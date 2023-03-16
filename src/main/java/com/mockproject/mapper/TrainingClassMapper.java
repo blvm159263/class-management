@@ -2,11 +2,10 @@ package com.mockproject.mapper;
 
 import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.*;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-
-import java.sql.Time;
-import java.time.format.DateTimeFormatter;
 
 @Mapper(componentModel = "spring")
 public interface TrainingClassMapper {

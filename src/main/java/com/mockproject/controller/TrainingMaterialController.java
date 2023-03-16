@@ -4,9 +4,8 @@ import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +18,7 @@ import java.util.zip.DataFormatException;
 @RestController
 @RequestMapping(value = "/api/training-material")
 @RequiredArgsConstructor
+@Tag(name = "Training Material API")
 @SecurityRequirement(name = "Authorization")
 public class TrainingMaterialController {
 
@@ -26,7 +26,6 @@ public class TrainingMaterialController {
     public static final String MODIFY = "ROLE_Modify_Learning material";
     public static final String CREATE = "ROLE_Create_Learning material";
     public static final String FULL_ACCESS = "ROLE_Full access_Learning material";
-
 
     private final ITrainingMaterialService trainingMaterialService;
 

@@ -1,11 +1,9 @@
 package com.mockproject.service.interfaces;
 
-import java.io.File;
-
-import com.mockproject.dto.SearchUserFillerDTO;
 import com.mockproject.dto.UserDTO;
 import org.springframework.data.domain.Page;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -48,4 +46,5 @@ public interface IUserService {
 
     void encodePassword();
 
+    UserDTO getUserById(boolean status, long id);
 }

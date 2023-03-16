@@ -9,7 +9,7 @@ public interface ILocationService {
 
     List<LocationDTO> listAllTrue();
 
-    public List<Location> findLocationByTrainingClassID(Long id);
+    List<Location> findLocationByTrainingClassID(Long id);
 
     List<LocationDTO> getAllLocation(boolean status);
 

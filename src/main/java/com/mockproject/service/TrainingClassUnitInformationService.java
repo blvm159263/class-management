@@ -1,13 +1,11 @@
 package com.mockproject.service;
 
-import com.mockproject.entity.TrainingClassUnitInformation;
 import com.mockproject.dto.TrainingClassUnitInformationDTO;
 import com.mockproject.entity.TrainingClassUnitInformation;
 import com.mockproject.mapper.TrainingClassUnitInformationMapper;
 import com.mockproject.repository.TrainingClassUnitInformationRepository;
 import com.mockproject.service.interfaces.ITrainingClassUnitInformationService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

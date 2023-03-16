@@ -1,34 +1,27 @@
 package com.mockproject.controller;
 
+import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.service.interfaces.IFsuService;
 import com.mockproject.service.interfaces.ILocationService;
-import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.service.interfaces.ITrainingClassService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import com.mockproject.service.interfaces.ITrainingClassService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,16 +29,13 @@ import java.util.stream.Collectors;
 @RequestMapping("api/class")
 @SecurityRequirement(name = "Authorization")
 public class TrainingClassController {
+
     public static final String VIEW = "ROLE_View_Class";
     public static final String MODIFY = "ROLE_Modify_Class";
     public static final String CREATE = "ROLE_Create_Class";
     public static final String FULL_ACCESS = "ROLE_Full access_Class";
 
     private final ITrainingClassService trainingClassService;
-
-    private final ILocationService locationService;
-
-    private final IFsuService fsuService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAll(@PathVariable("id") long id) {
@@ -203,8 +193,7 @@ public class TrainingClassController {
             @Parameter(
                     description = "<b>Insert page number (0 => first page)<b>",
                     example = "0"
-            ) Optional<Integer> page)
-    {
+            ) Optional<Integer> page) {
         return ResponseEntity
                 .ok(trainingClassService.getListClass(true, location, fromDate, toDate, period,
                         isOnline? "Online" : "", state, attendee, fsu, trainerId, search, sort, page));

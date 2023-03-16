@@ -1,10 +1,8 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.DeliveryTypeDTO;
-import com.mockproject.entity.UnitDetail;
-import com.mockproject.mapper.DeliveryTypeMapper;
-import com.mockproject.dto.DeliveryTypeDTO;
 import com.mockproject.entity.DeliveryType;
+import com.mockproject.entity.UnitDetail;
 import com.mockproject.mapper.DeliveryTypeMapper;
 import com.mockproject.repository.DeliveryTypeRepository;
 import com.mockproject.service.interfaces.IDeliveryTypeService;

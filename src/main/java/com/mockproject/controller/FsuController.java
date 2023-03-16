@@ -4,11 +4,11 @@ import com.mockproject.dto.FsuDTO;
 import com.mockproject.service.interfaces.IFsuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,6 @@ import java.util.List;
 @RequestMapping("/api/fsu")
 @SecurityRequirement(name = "Authorization")
 public class FsuController {
-
 
     public static final String VIEW = "ROLE_View_Class";
     public static final String MODIFY = "ROLE_Modify_Class";

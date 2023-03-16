@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import java.util.List;
-
 @Repository
 public interface UnitRepository extends JpaRepository<Unit, Long> {
 
