@@ -2,19 +2,17 @@ package com.mockproject.controller;
 
 
 import com.mockproject.Jwt.JwtTokenProvider;
-import com.mockproject.dto.JwtResponseDTO;
-import com.mockproject.dto.LoginFormDTO;
-import com.mockproject.dto.UserDTO;
+import com.mockproject.dto.*;
 import com.mockproject.entity.CustomUserDetails;
-import com.mockproject.entity.User;
+import com.mockproject.entity.PermissionScope;
+import com.mockproject.entity.Role;
+import com.mockproject.entity.RolePermissionScope;
+import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
-import com.mockproject.repository.UserRepository;
-import com.mockproject.service.LevelService;
-import com.mockproject.service.RoleService;
-import com.mockproject.service.UserService;
+import com.mockproject.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import net.bytebuddy.asm.Advice;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -24,8 +22,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/User")
@@ -51,7 +50,13 @@ public class UserController {
     RoleService roleService;
 
     @Autowired
-    LevelService levelService;
+    RolePermissionScopeService rolePermissionScopeService;
+
+    @Autowired
+    PermissionService permissionService;
+
+    @Autowired
+    PermissionScopeService permissionScopeService;
 
     @PostMapping("/Login")
     public ResponseEntity login(@RequestBody LoginFormDTO loginFormDTO){
@@ -77,99 +82,139 @@ public class UserController {
             return ResponseEntity.badRequest().body("Invalid email or password");
         }
     }
-
-    @GetMapping("/Test")
-    @Secured(FULL_ACCESS)
-    public String register(){
-        return "test oke";
+    @GetMapping("/GetAll")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    public ResponseEntity getAll(){
+        List<UserDTO> userDTOList = userService.getAll();
+        if(userDTOList.isEmpty()){
+            return ResponseEntity.badRequest().body("List is empty");
+        } else {
+            return ResponseEntity.ok(userDTOList);
+        }
     }
 
-    //@GetMapping("/GetAllUsers")
-
-    @GetMapping ("/GetUserByFullName")
-    //@Secured({VIEW,MODIFY,CREATE,FULL_ACCESS})
-    public ResponseEntity getUserByFullName (@RequestParam(value = "fullName")String fullName){
-        UserDTO user = userService.findByFullNameContains(fullName);
-        if (user == null) return ResponseEntity.badRequest().body("Not found");
-        return ResponseEntity.ok(user);
+    @GetMapping("/getListUser")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    public ResponseEntity getListUser(@RequestParam(value = "page", required = false, defaultValue = "1") int page,@RequestParam(value = "rowsPerPage", required = false, defaultValue = "10") int rowsPerPage ){
+        List<UserDTO> userDTOList = userService.getAllByPageAndRowPerPage(page, rowsPerPage);
+        if (userDTOList.isEmpty()){
+            return ResponseEntity.badRequest().body("List is empty");
+        } else {
+            return ResponseEntity.ok(userDTOList);
+        }
     }
 
-    @GetMapping("/GetRoleById")
-    public ResponseEntity getRoleById (@RequestParam(value = "id")long id){
-        String role = roleService.getRoleNameById(id);
-        return ResponseEntity.ok(role);
+
+
+    @GetMapping("/getMaxPage")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    public ResponseEntity getMaxPage(@RequestParam(value = "rowsPerPage", required = false, defaultValue = "10") int rowsPerPage){
+        long numberOfUser =  userService.countAllBy();
+        long maxPage = numberOfUser/rowsPerPage;
+        if ( maxPage == 0  ) maxPage =1;
+        return ResponseEntity.ok(maxPage);
     }
 
-    @GetMapping("/GetRoleByName")
-    public ResponseEntity getRoleByName(@RequestParam(value = "roleName")String rolename){
-        long roleId = roleService.getRoleByRoleName(rolename);
-        return ResponseEntity.ok(roleId);
+    @GetMapping("/getAllPermissionName")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    public ResponseEntity getAllPermission(){
+        return ResponseEntity.ok(permissionService.getAll());
     }
 
-    @GetMapping("/GetLevel")
-    public ResponseEntity getLevelCodeById (@RequestParam(value = "id")long id){
-        String levelcode = levelService.getLevelCodeById(id);
-        return ResponseEntity.ok(levelcode);
+    @GetMapping("/getAllRole")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    public ResponseEntity getAllRole(){
+        return ResponseEntity.ok(roleService.getAll());
     }
 
-    @PutMapping("/De-activateUser")
-    public ResponseEntity deactivateUser (@RequestParam(value = "id")long id){
-        int state = userService.updateStateToFalse(id);
-        if (state == 0) return ResponseEntity.ok("De-activate user successfully");
-        return ResponseEntity.badRequest().body("User not found");
+    @GetMapping("/getAllRoleDetail")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    public ResponseEntity getSyllabusPermissionById(){
+        List<FormRoleDTO> list = new ArrayList<>();
+
+
+        for (RoleDTO role: roleService.getAll()) {
+            FormRoleDTO roleDTO = new FormRoleDTO();
+            List<RolePermissionScope> listRolePermissionScope = rolePermissionScopeService.findAllByRole_Id(role.getId());
+            roleDTO.setId(role.getId());
+            roleDTO.setRoleName(role.getRoleName());
+
+            for (RolePermissionScope rpc: listRolePermissionScope) {
+                switch (rpc.getPermissionScope().getScopeName()){
+                    case "Syllabus":
+                        roleDTO.setSyllabusPermission(rpc.getPermission().getPermissionName());
+                        break;
+                    case "Training program":
+                        roleDTO.setTraningProgramPermission(rpc.getPermission().getPermissionName());
+                        break;
+                    case "Class":
+                        roleDTO.setClassPermission(rpc.getPermission().getPermissionName());
+                        break;
+                    case "Learning material":
+                        roleDTO.setLeaningMaterialPermission(rpc.getPermission().getPermissionName());
+                        break;
+                    case "User":
+                        roleDTO.setUserPermission(rpc.getPermission().getPermissionName());
+                        break;
+                }
+            }
+            list.add(roleDTO);
+
+
+        }
+        return ResponseEntity.ok(list);
     }
 
-    @PutMapping("/ActivateUser")
-    public ResponseEntity activateUser (@RequestParam(value = "id")long id){
-        int state = userService.updateStateToTrue(id);
-        if (state == 1) return ResponseEntity.ok("Activate user successfully");
-        return ResponseEntity.badRequest().body("User not found");
+    @PostMapping("/updateRole")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    public ResponseEntity updateAllRole(@RequestBody List<FormRoleDTO> formRoleDTOList){
+
+        for (FormRoleDTO fdto: formRoleDTOList) {
+            if (roleService.checkDuplicatedByRoleName(fdto.getRoleName())) return ResponseEntity.badRequest().body("Role " + fdto.getRoleName() + " is duplicated!");
+            if(fdto.getId() != 0){
+                //listRoleDTOS.add(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
+                roleService.save(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getClassPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Class"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getSyllabusPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Syllabus"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getLeaningMaterialPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Learning material"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getTraningProgramPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Training program"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getUserPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("User"));
+
+            } else {
+                RoleDTO roleSave = RoleMapper.INSTANCE.toDTO(roleService.save(new RoleDTO(fdto.getRoleName(), true)));
+                for (PermissionScopeDTO permissionScopeDTO: permissionScopeService.getAll() ) {
+                    rolePermissionScopeService.save(new RolePermissionScopeDTO(true,roleSave.getId(), permissionService.getPermissionIdByName("Access denied") ,permissionScopeDTO.getId()));
+                }
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getClassPermission(), roleSave.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Class"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getSyllabusPermission(), roleSave.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Syllabus"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getLeaningMaterialPermission(), roleSave.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Learning material"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getTraningProgramPermission(), roleSave.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Training program"));
+                rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getUserPermission(), roleSave.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("User"));
+            }
+        }
+        return ResponseEntity.ok("hihi");
     }
 
-    @PutMapping("/DeleteUser")
-    public ResponseEntity deleteUser (@RequestParam(value = "id")long id){
-        boolean delete = userService.updateStatus(id);
-        if (!delete) return ResponseEntity.badRequest().body("Delete failed");
-        return ResponseEntity.ok("Delete successfully");
+    @PostMapping("/searchByFillet")
+    public ResponseEntity searchByFillter(@RequestBody SearchUserFillerDTO searchUserFillerDTO){
+        List<UserDTO> result = userService.searchByFillter(searchUserFillerDTO);
+        if (result != null && !result.isEmpty())
+            return ResponseEntity.ok(result);
+        else
+            return ResponseEntity.badRequest().body("Not found user!");
     }
 
-    @PutMapping("/ChangeRole")
-    public ResponseEntity changeRole (@RequestParam(value = "id")long id,@RequestParam(value = "roleName")String roleName){
-        boolean change = userService.changeRole(id,roleService.getRoleByRoleName(roleName));
-        if (!change) return ResponseEntity.badRequest().body("Change failed");
-        return ResponseEntity.ok(roleName);
+    @GetMapping("/searchByRoleID")
+    public ResponseEntity searchByRoleId(@RequestParam( value = "roleId", required = false) List<Long> roleId,
+                                         @RequestParam(value = "page", required = false) Optional<Integer> page,
+                                         @RequestParam(value = "size", required = false) Optional<Integer> size){
+
+        return ResponseEntity.ok(userService.searchByRoleId(roleId!=null? roleId : new ArrayList<Long>(), page, size));
     }
 
-//    @PutMapping("/EditUser")
-//    public ResponseEntity editUser (@RequestParam(value = "id")long id, @RequestParam(value = "fullname")String fullname,
-//                                    @RequestParam(value = "dob")LocalDate dob,@RequestParam(value = "gender")boolean gender,
-//                                    @RequestParam(value = "level")String level){
-//        boolean edit = false;
-//        return ResponseEntity.ok(edit);
-//    }
-
-    @PutMapping("/EditName")
-    public ResponseEntity editFullName (@RequestParam(value = "id")long id, @RequestParam(value = "fullname")String fullname){
-        boolean editName = userService.editName(id,fullname);
-        return ResponseEntity.ok(editName);
-    }
-
-    @PutMapping("/EditDoB")
-    public ResponseEntity editDoB (@RequestParam(value = "id")long id, @RequestParam(value = "dob")LocalDate date){
-        boolean editDoB = userService.editDoB(id,date);
-        return ResponseEntity.ok(editDoB);
-    }
-
-    @PutMapping("/EditGender")
-    public ResponseEntity editGender (@RequestParam(value = "id")long id, @RequestParam(value = "gender")boolean gender){
-        boolean editGender = userService.editGender(id,gender);
-        return ResponseEntity.ok(editGender);
-    }
-
-    @PutMapping("/EditLevel")
-    public ResponseEntity editLevel (@RequestParam(value = "id")long id, @RequestParam(value = "levelCode")String levelCode){
-        boolean editLevel = userService.editLevel(id,levelCode);
-        return ResponseEntity.ok(editLevel);
+    @PostMapping("/encodePassword")
+    public ResponseEntity encodePassword(){
+        userService.encodePassword();
+        return ResponseEntity.ok("Oke nha hihi");
     }
 }
-
