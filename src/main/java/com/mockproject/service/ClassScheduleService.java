@@ -119,7 +119,6 @@ public class ClassScheduleService implements IClassScheduleService {
             trainingClasses = filteredResult;
             filteredResult = new ArrayList<>();
         }
-        ;
         return trainingClasses;
     }
 
