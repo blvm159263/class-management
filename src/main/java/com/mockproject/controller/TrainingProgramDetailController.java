@@ -1,6 +1,8 @@
 package com.mockproject.controller;
 
+import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.entity.*;
+import com.mockproject.mapper.TrainingProgramSyllabusMapper;
 import com.mockproject.service.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -35,16 +37,18 @@ public class TrainingProgramDetailController {
         return trainingProgramService.getTrainingProgramById(id);
     }
 
-    @GetMapping("/{id}")
-    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
-    public List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(@PathVariable("id") long id) {
-        return trainingProgramSyllabusService.getTrainingProgramSyllabusListById(id);
+    public List<TrainingProgramSyllabusDTO> getTrainingProgramSyllabusListById(@PathVariable("id") long id) {
+        return trainingProgramSyllabusService.getAllSyllabusByTrainingProgramId(id, true);
     }
 
     @GetMapping("/syllabus/{id}")
     @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
     public List<Syllabus> getSyllabusById(@PathVariable("id") long idTrainingProgram) {
-        List<TrainingProgramSyllabus> listTrainingProgramSyllabus = getTrainingProgramSyllabusListById(idTrainingProgram);
+        List<TrainingProgramSyllabus> listTrainingProgramSyllabus = new ArrayList<>();
+        List<TrainingProgramSyllabusDTO> trainingProgramSyllabusDTOList = getTrainingProgramSyllabusListById(idTrainingProgram);
+        for (TrainingProgramSyllabusDTO t: trainingProgramSyllabusDTOList){
+            listTrainingProgramSyllabus.add(TrainingProgramSyllabusMapper.INSTANCE.toEntity(t));
+        }
         List<Syllabus> list = new ArrayList<>();
         for (int i = 0; i < listTrainingProgramSyllabus.size(); i++) {
             Syllabus s = syllabusService.getSyllabusById(listTrainingProgramSyllabus.get(i).getSyllabus().getId());
@@ -71,7 +75,6 @@ public class TrainingProgramDetailController {
     }
 
     @GetMapping("/syllabus/3/{idSyllabus}")
-    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
     public List<UnitDetail> getUnitDetailListByUnitId(@PathVariable("idSyllabus") long idSyllabus) {
         List<Unit> listUnit = getUnitListByIdSession(idSyllabus);
         List<UnitDetail> listUnitDetail = new ArrayList<>();
@@ -82,7 +85,6 @@ public class TrainingProgramDetailController {
     }
 
     @GetMapping("/syllabus/4/{idSyllabus}")
-    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
     public List<TrainingMaterial> getListTrainingMaterialByUnitDetailId(@PathVariable("idSyllabus") long idSyllabus) {
         List<UnitDetail> listUnitDetail = getUnitDetailListByUnitId(idSyllabus);
         List<TrainingMaterial> listTrainingMaterial = new ArrayList<>();
