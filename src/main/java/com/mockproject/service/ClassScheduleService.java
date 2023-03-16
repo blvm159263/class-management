@@ -59,18 +59,18 @@ public class ClassScheduleService implements IClassScheduleService {
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(TrainingClassFilterRequestDTO filterRequestDTO) {
         return trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterDate(filterRequestDTO))
-                .stream().distinct().map(trainingClass ->getTrainingClassDetail(trainingClass,filterRequestDTO.getNowDate())).collect(Collectors.toList());
+                .stream().distinct().map(trainingClass -> getTrainingClassDetail(trainingClass, filterRequestDTO.getNowDate())).collect(Collectors.toList());
     }
 
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(TrainingClassFilterRequestDTO filterRequestDTO) {
 
-        var trainingClassFiltered= trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterWeek(filterRequestDTO));
+        var trainingClassFiltered = trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterWeek(filterRequestDTO));
         List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
         trainingClassFiltered.stream().distinct().forEach(trainingClass -> {
             trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
-                if(classSchedule.getDate().isAfter(filterRequestDTO.getStartDate().minusDays(1))&&classSchedule.getDate().isBefore(filterRequestDTO.getEndDate().plusDays(1)))
-                result.add(getTrainingClassDetail(trainingClass,classSchedule.getDate()));
+                if (classSchedule.getDate().isAfter(filterRequestDTO.getStartDate().minusDays(1)) && classSchedule.getDate().isBefore(filterRequestDTO.getEndDate().plusDays(1)))
+                    result.add(getTrainingClassDetail(trainingClass, classSchedule.getDate()));
             });
         });
         return result;
@@ -78,41 +78,59 @@ public class ClassScheduleService implements IClassScheduleService {
 
     @Override
     public List<TrainingClassFilterResponseDTO> searchTrainingClassInDate(List<String> textSearch, LocalDate date) {
-        textSearch= textSearch.stream().map(text->"%"+text+"%").collect(Collectors.toList());
-        var trainingClassSet= new HashSet<TrainingClassFilterResponseDTO>();
-        textSearch.stream().forEach(text->{
-
-            trainingClassService.findAllBySearchTextAndDate(text,date)
-                    .stream().map(trainingClass -> getTrainingClassDetail(trainingClass,date))
-                    .forEach(trainingClassFilterResponseDTO -> trainingClassSet.add(trainingClassFilterResponseDTO));
-        });
-        return trainingClassSet.stream().collect(Collectors.toList());
+        var Result = trainingClassService.findAllBySearchTextAndDate("%" + textSearch.get(0) + "%", date);
+        List<String> lowerCaseSearchTerms = textSearch.stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
+        Result= searchByText(Result,lowerCaseSearchTerms);
+        return Result.stream().map(trainingClass -> getTrainingClassDetail(trainingClass, date)).collect(Collectors.toList());
     }
 
     @Override
     public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(List<String> textSearch, LocalDate startDate, LocalDate endDate) {
-        var trainingClassWeek= trainingClassService.findAllBySearchTextAndWeek(textSearch,startDate,endDate);
-        log.info(String.valueOf(trainingClassWeek.size())+textSearch);
+        var trainingClassByWeek = trainingClassService.findAllBySearchTextAndWeek("%" + textSearch.get(0) + "%", startDate, endDate);
+        List<String> lowerCaseSearchTerms = textSearch.stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
+        trainingClassByWeek=searchByText(trainingClassByWeek,lowerCaseSearchTerms);
         List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
-            trainingClassWeek.stream().distinct().forEach(trainingClass -> {
-                trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
-                    if(classSchedule.getDate().isAfter(startDate.minusDays(2))&&classSchedule.getDate().isBefore(endDate.plusDays(1)))
-                        result.add(getTrainingClassDetail(trainingClass,classSchedule.getDate()));
-                });
+        trainingClassByWeek.stream().forEach(trainingClass -> {
+            trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
+                if (classSchedule.getDate().isAfter(startDate.minusDays(2)) && classSchedule.getDate().isBefore(endDate.plusDays(1)))
+                    result.add(getTrainingClassDetail(trainingClass, classSchedule.getDate()));
             });
+        });
         return result;
+    }
+    private  List<TrainingClass> searchByText(List<TrainingClass> trainingClasses, List<String> searchText){
+        var filteredResult = new ArrayList<TrainingClass>();
+        for (var text : searchText) {
+            trainingClasses.stream()
+                    .filter(Class -> Class.getClassCode().toLowerCase().contains(text)
+                            || Class.getFsu().getFsuName().toLowerCase().contains(text)
+                            || Class.getListTrainingClassAdmins().stream().anyMatch(trainingClassAdmin ->
+                            trainingClassAdmin.getAdmin().getFullName().toLowerCase().contains(text))
+                            || Class.getAttendee().getAttendeeName().toLowerCase().contains(text)
+                            || Class.getListTrainingClassUnitInformations().stream().anyMatch(unit ->
+                            unit.getTrainer().getFullName().toLowerCase().contains(text))
+                            || Class.getLocation().getLocationName().toLowerCase().contains(text))
+                    .forEach(filteredResult::add);
+            trainingClasses = filteredResult;
+            filteredResult = new ArrayList<>();
+        };
+        return trainingClasses;
     }
     @Override
     public TrainingClassFilterResponseDTO getTrainingClassDetail(TrainingClass trainingClass, LocalDate date) {
         var learnedDay = repository.countAllByDateBeforeAndTrainingClassId(date, trainingClass.getId()) + 1;
-        var durationDay = learnedDay+"/" + trainingClass.getDay();
+        var durationDay = learnedDay + "/" + trainingClass.getDay();
         var syllabusesList = trainingClass.getTrainingProgram().getListTrainingProgramSyllabuses()
                 .stream()
                 .map(TrainingProgramSyllabus::getSyllabus)
                 .collect(Collectors.toList());
         List<UnitResponseDTO> unit = new ArrayList<>();
         //check syllabus to get unit
-        for (Syllabus syllabus: syllabusesList) {
+        for (Syllabus syllabus : syllabusesList) {
             if (learnedDay > syllabus.getDay()) {
                 learnedDay -= syllabus.getDay();
             } else {
@@ -120,7 +138,7 @@ public class ClassScheduleService implements IClassScheduleService {
                 unit = syllabus.getListSessions()
                         .stream().filter(session -> session.getSessionNumber() == finalLearnedDay)
                         .flatMap(session -> session.getListUnit().stream())
-                        .map(Unit -> new  UnitResponseDTO(Unit.getUnitTitle(),Unit.getUnitNumber())
+                        .map(Unit -> new UnitResponseDTO(Unit.getUnitTitle(), Unit.getUnitNumber())
                         ).collect(Collectors.toList());
                 break;
             }
@@ -137,6 +155,5 @@ public class ClassScheduleService implements IClassScheduleService {
                 durationDay,
                 date,
                 unit);
-
     }
 }

@@ -14,6 +14,6 @@ public interface ITrainingClassService {
 
     public List<TrainingClass> findAllBySearchTextAndDate(String searchText,LocalDate date);
 
-    public List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate,LocalDate endDate);
+    public List<TrainingClass> findAllBySearchTextAndWeek(String searchText, LocalDate startDate,LocalDate endDate);
 
 }

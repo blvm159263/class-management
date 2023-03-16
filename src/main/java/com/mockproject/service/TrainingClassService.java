@@ -35,7 +35,7 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate, LocalDate endDate) {
+    public List<TrainingClass> findAllBySearchTextAndWeek(String searchText, LocalDate startDate, LocalDate endDate) {
         return repository.findAllBySearchTextAndListClassSchedulesWeek(searchText,startDate,endDate);
     }
 

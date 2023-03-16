@@ -39,16 +39,16 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "LEFT JOIN tc.listTrainingClassUnitInformations ti "+
             "LEFT JOIN tc.attendee at " +
             "where " +
-            "(tc.className IN (:listSearchText) OR " +
-            "tc.classCode IN (:listSearchText)  OR " +
-            "tc.fsu.fsuName IN (:listSearchText) OR " +
-            "ta.admin.fullName IN (:listSearchText) OR " +
-            "at.attendeeName IN (:listSearchText) OR "+
-            "ti.trainer.fullName in (:listSearchText) OR "+
-            "lo.locationName IN (:listSearchText)) AND " +
+            "(tc.className LIKE (:searchText) OR " +
+            "tc.classCode LIKE (:searchText)  OR " +
+            "tc.fsu.fsuName LIKE (:searchText) OR " +
+            "ta.admin.fullName LIKE (:searchText) OR " +
+            "at.attendeeName LIKE (:searchText) OR " +
+            "ti.trainer.fullName LIKE (:searchText) OR "+
+            "lo.locationName LIKE (:searchText)) AND " +
             "cs.date BETWEEN :startDate AND :endDate AND " +
             "tc.status = true ")
-    public List<TrainingClass> findAllBySearchTextAndListClassSchedulesWeek(List<String> listSearchText,LocalDate startDate,LocalDate endDate);
+    public List<TrainingClass> findAllBySearchTextAndListClassSchedulesWeek(String searchText,LocalDate startDate,LocalDate endDate);
 
 
 }
