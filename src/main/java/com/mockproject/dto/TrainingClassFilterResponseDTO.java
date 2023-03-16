@@ -1,6 +1,5 @@
 package com.mockproject.dto;
 
-import com.mockproject.entity.Unit;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

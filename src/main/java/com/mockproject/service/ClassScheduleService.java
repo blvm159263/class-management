@@ -1,15 +1,18 @@
 package com.mockproject.service;
 
-import com.mockproject.entity.Syllabus;
-import com.mockproject.specification.TrainingClassSpecification;
-import com.mockproject.dto.*;
+import com.mockproject.dto.ClassScheduleDTO;
+import com.mockproject.dto.TrainingClassFilterRequestDTO;
+import com.mockproject.dto.TrainingClassFilterResponseDTO;
+import com.mockproject.dto.UnitResponseDTO;
 import com.mockproject.entity.ClassSchedule;
+import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.mapper.TrainingClassFilterMap;
 import com.mockproject.repository.ClassScheduleRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
+import com.mockproject.specification.TrainingClassSpecification;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
