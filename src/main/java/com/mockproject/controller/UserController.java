@@ -1,7 +1,7 @@
 package com.mockproject.controller;
 
 
-import com.mockproject.Jwt.JwtTokenProvider;
+import com.mockproject.jwt.JwtTokenProvider;
 import com.mockproject.dto.*;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.RolePermissionScope;
@@ -283,12 +283,6 @@ public class UserController {
 
         if (result != null && !result.isEmpty()) return ResponseEntity.ok(result);
         else return ResponseEntity.badRequest().body("Not found user!");
-    }
-
-    @PostMapping("/encodePassword")
-    public ResponseEntity encodePassword() {
-        userService.encodePassword();
-        return ResponseEntity.ok("Oke nha hihi");
     }
 
     @GetMapping("/getRoleByName")
