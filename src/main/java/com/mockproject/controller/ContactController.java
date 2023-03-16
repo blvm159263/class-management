@@ -46,7 +46,7 @@ public class ContactController {
             return ResponseEntity.ok(contactService.getContactById(id));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Can't find training class with id " + id);
+                    .body("Can't find any contact information with training class Id is " + id);
         }
     }
 }

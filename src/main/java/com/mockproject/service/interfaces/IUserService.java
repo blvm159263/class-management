@@ -5,15 +5,13 @@ import com.mockproject.dto.UserDTO;
 import java.util.List;
 
 public interface IUserService {
-    List<UserDTO> getTrainerByClassCode(String code);
+    List<UserDTO> getTrainerByClassId(long id);
 
-    List<UserDTO> getTrainerOntheDayById(long id, int day);
+    List<UserDTO> getTrainerOnThisDayById(long id, int day);
 
-//    List<UserDTO> getTrainerById(long id);
+    UserDTO getCreatorByClassId(long id);
 
-    UserDTO getCreatorByClassCode(String code);
+    UserDTO getReviewerByClassId(long id);
 
-    UserDTO getReviewerByClassCode(String code);
-
-    UserDTO getApproverByClassCode(String code);
+    UserDTO getApproverByClassId(long id);
 }

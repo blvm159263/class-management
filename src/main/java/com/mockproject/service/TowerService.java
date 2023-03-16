@@ -30,8 +30,8 @@ public class TowerService implements ITowerService {
     private final UnitService unitService;
 
     @Override
-    public List<TowerDTO> getTowerByClassCode(String code) {
-        TrainingClass tc = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
+    public List<TowerDTO> getTowerByClassId(long id) {
+        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<TrainingClassUnitInformation> classUnitInformations = tc.getListTrainingClassUnitInformations()
                 .stream()
                 .filter(TrainingClassUnitInformation::isStatus)

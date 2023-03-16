@@ -28,7 +28,7 @@ public class DeliveryTypeController {
                     content = @Content(schema = @Schema(implementation = DeliveryTypeDTO.class)))
     })
     @Operation(
-            summary = "Get all the delivery type of the training program by Id",
+            summary = "Get all the delivery type of the training program by ID",
             description = "<b>List all the delivery type of the training program</b>"
     )
     @GetMapping("trainingProgram/{id}")
@@ -41,7 +41,7 @@ public class DeliveryTypeController {
             return ResponseEntity.ok(deliveryTypeService.getListDeliveryTypeByClassId(id));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Can't found training class with Id " + id);
+                    .body("Can't find any delivery type with training class Id is" + id);
         }
 
     }

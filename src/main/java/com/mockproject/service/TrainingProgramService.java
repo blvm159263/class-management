@@ -19,12 +19,9 @@ public class TrainingProgramService implements ITrainingProgramService{
     private final TrainingClassRepository trainingClassRepository;
 
     @Override
-    public TrainingProgramDTO getTraningProgramByClassCode(String code) {
-        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
-        if(trainingClass.getTrainingProgram().isStatus()) {
-            return TrainingProgramMapper.INSTANCE.toDTO(trainingClass.getTrainingProgram());
-        }
-        return null;
+    public TrainingProgramDTO getTraningProgramByClassId(long id) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        return TrainingProgramMapper.INSTANCE.toDTO(trainingClass.getTrainingProgram());
     }
 
 }

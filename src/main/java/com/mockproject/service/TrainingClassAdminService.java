@@ -27,8 +27,8 @@ public class TrainingClassAdminService implements ITrainingClassAdminService {
 
 
     @Override
-    public List<UserDTO> getAdminByClassCode(String code) {
-        TrainingClass tc = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
+    public List<UserDTO> getAdminByClassId(long id) {
+        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<TrainingClassAdmin> trainingClassAdmins = tc.getListTrainingClassAdmins()
                 .stream()
                 .filter(TrainingClassAdmin :: isStatus)

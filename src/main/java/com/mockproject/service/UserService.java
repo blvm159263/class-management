@@ -26,8 +26,8 @@ public class UserService implements IUserService {
     private final UnitService unitService;
 
     @Override
-    public List<UserDTO> getTrainerByClassCode(String code) {
-        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
+    public List<UserDTO> getTrainerByClassId(long id) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<TrainingClassUnitInformation> classUnitInformations = trainingClass.getListTrainingClassUnitInformations()
                 .stream()
                 .filter(TrainingClassUnitInformation::isStatus)
@@ -40,7 +40,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserDTO> getTrainerOntheDayById(long id, int day) {
+    public List<UserDTO> getTrainerOnThisDayById(long id, int day) {
         TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<Unit> unitListFromSession = unitService.getListUnitsFromSession(id, day);
         List<TrainingClassUnitInformation> list = unitListFromSession.stream()
@@ -55,44 +55,21 @@ public class UserService implements IUserService {
 
     }
 
-    //    @Override
-//    public List<UserDTO> getTrainerById(long id) {
-//        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).get(0);
-//        List<TrainingClassUnitInformation> trainingClassUnitInfor = trainingClass.getListTrainingClassUnitInformations()
-//                .stream()
-//                .filter(TrainingClassUnitInformation::isStatus)
-//                .toList();
-//        List<User> trainer = trainingClassUnitInfor.stream()
-//                .map(TrainingClassUnitInformation::getTrainer)
-//                .filter(User::isStatus)
-//                .distinct().toList();
-//        return trainer.stream().map(UserMapper.INSTANCE::toDTO).toList();
-//    }
-
     @Override
-    public UserDTO getCreatorByClassCode(String code) {
-        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
-        if(trainingClass.getCreator().isStatus()) {
-            return UserMapper.INSTANCE.toDTO(trainingClass.getCreator());
-        }
-        return null;
+    public UserDTO getCreatorByClassId(long id) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        return UserMapper.INSTANCE.toDTO(trainingClass.getCreator());
     }
 
     @Override
-    public UserDTO getReviewerByClassCode(String code) {
-        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
-        if(trainingClass.getReviewer().isStatus()) {
-            return UserMapper.INSTANCE.toDTO(trainingClass.getReviewer());
-        }
-        return null;
+    public UserDTO getReviewerByClassId(long id) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        return UserMapper.INSTANCE.toDTO(trainingClass.getReviewer());
     }
 
     @Override
-    public UserDTO getApproverByClassCode(String code) {
-        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
-        if(trainingClass.getApprover().isStatus()) {
-            return UserMapper.INSTANCE.toDTO(trainingClass.getApprover());
-        }
-        return null;
+    public UserDTO getApproverByClassId(long id) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        return UserMapper.INSTANCE.toDTO(trainingClass.getApprover());
     }
 }

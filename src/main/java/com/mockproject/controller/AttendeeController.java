@@ -45,7 +45,7 @@ public class AttendeeController {
             return ResponseEntity.ok(attendeeService.getAttendeeById(id));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Can't find any training class with Id " + id);
+                    .body("Can't find any attendee with training class Id is " + id);
         }
     }
 }

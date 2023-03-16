@@ -30,7 +30,7 @@ public class ClassScheduleController {
                     content = @Content(schema = @Schema(implementation = ClassScheduleDTO.class)))
     })
     @Operation(
-            summary = "Get all schedule of the training class by training class Id",
+            summary = "Get all schedule of the training class by training class ID",
             description = "<b>List all schedule of the training class</b>"
     )
     @GetMapping("trainingclassSchedule/{id}")
@@ -43,7 +43,7 @@ public class ClassScheduleController {
             return ResponseEntity.ok(classScheduleService.getScheduleById(id));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Can't found training class with id " + id);
+                    .body("Can't find any schedule with training class Id is " + id);
         }
 
     }

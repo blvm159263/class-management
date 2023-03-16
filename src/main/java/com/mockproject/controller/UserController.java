@@ -1,10 +1,16 @@
 package com.mockproject.controller;
 
+import com.mockproject.dto.UserDTO;
 import com.mockproject.service.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,21 +24,38 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final IUserService userService;
 
+    //Get the trainer by training class ID
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any Training Class"),
+            @ApiResponse(responseCode = "200", description = "When we have found the training class",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
     @Operation(
-            summary = "Get the information of the trainer of the training class by the training class code",
+            summary = "Get the information of the trainer of the training class by the training class ID",
             description = "<b>List the information of the trainer of the training class</b>"
     )
-    @GetMapping("trainingClass/trainer/{classCode}")
-    public ResponseEntity<?> getTrainerByClassCode(
-            @PathVariable("classCode")
+    @GetMapping("trainingClass/trainer/{id}")
+    public ResponseEntity<?> getTrainerByClassId(
+            @PathVariable("id")
             @Parameter(
-                    description = "<b>Insert Training Class Code</b>",
-                    example = "DN22_IN_FT_02"
+                    description = "<b>Insert Training Class ID</b>",
+                    example = "1"
             )
-            String code) {
-        return ResponseEntity.ok(userService.getTrainerByClassCode(code));
+            long id) {
+        try {
+            return ResponseEntity.ok(userService.getTrainerByClassId(id));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't find trainer with training class id " + id);
+        }
     }
 
+    //Get the trainer by id and day
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any Training Class"),
+            @ApiResponse(responseCode = "200", description = "When we have found the training class",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
     @Operation(
             summary = "Get the information of the trainer that the training class will study on that day",
             description = "<b>List the information of the trainer of the training class on that day</b>"
@@ -40,71 +63,98 @@ public class UserController {
     @GetMapping("trainingClass/trainerOnDay")
     public ResponseEntity<?> getTrainerOnTheDay(
             @Parameter(
-                    description = "<b>Insert the training class Id</b>"
+                    description = "<b>Insert the training class ID</b>",
+                    example = "1"
             ) long id,
             @Parameter(
-                    description = "<b>Insert Id of the day</b>"
+                    description = "<b>Insert ID of the day</b>",
+                    example = "1"
             ) int day) {
-        return ResponseEntity.ok(userService.getTrainerOntheDayById(id, day));
+        try {
+            return ResponseEntity.ok(userService.getTrainerOnThisDayById(id, day));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't find any trainer with training class Id " + id +
+                            " and with day Id is " + day);
+        }
     }
 
-//    @Operation(
-//            summary = "Get the information of the trainer that the training class studies by Id",
-//            description = "<b>List the information of the trainer that the training class studies</b>"
-//    )
-//    @GetMapping("trainingClass/trainer/{trainerId}")
-//    public ResponseEntity<?> getTrainerById(
-//            @PathVariable("trainerId")
-//            @Parameter(
-//                    description = "<b>Insert Id of the Trainer</b>",
-//                    example = "1"
-//            )
-//            long id) {
-//        return ResponseEntity.ok(userService.getTrainerById(id));
-//    }
-
+    //Get the creator by training class Id
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any Training Class"),
+            @ApiResponse(responseCode = "200", description = "When we have found the training class",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
     @Operation(
-            summary = "Get the information of the creator of the training class by the training class code",
+            summary = "Get the information of the creator of the training class by the training class ID",
             description = "<b>List the information of the creator of the training class</b>"
     )
-    @GetMapping("trainingClass/creator/{classCode}")
-    public ResponseEntity<?> getCreatorByClassCode(
-            @PathVariable("classCode")
+    @GetMapping("trainingClass/creator/{id}")
+    public ResponseEntity<?> getCreatorByClassId(
+            @PathVariable("id")
             @Parameter(
-                    description = "<b>Insert Training Class Code</b>",
-                    example = "DN22_IN_FT_02"
+                    description = "<b>Insert Training Class ID</b>",
+                    example = "1"
             )
-            String code) {
-        return ResponseEntity.ok(userService.getCreatorByClassCode(code));
+            long id) {
+        try {
+            return ResponseEntity.ok(userService.getCreatorByClassId(id));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't find any creator with training class Id " + id);
+        }
     }
 
+    //Get the reviewer by training class Id
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any Training Class"),
+            @ApiResponse(responseCode = "200", description = "When we have found the training class",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
     @Operation(
-            summary = "Get the information of the reviewer of the training class by the training class code",
+            summary = "Get the information of the reviewer of the training class by the training class ID",
             description = "<b>List the information of the reviewer of the training class</b>"
     )
-    @GetMapping("trainingClass/reviewer/{classCode}")
+    @GetMapping("trainingClass/reviewer/{id}")
     public ResponseEntity<?> getReviewerByClassCode(
-            @PathVariable("classCode")
+            @PathVariable("id")
             @Parameter(
-                    description = "<b>Insert Training Class Code</b>",
-                    example = "DN22_IN_FT_02"
+                    description = "<b>Insert Training Class ID</b>",
+                    example = "1"
             )
-            String code) {
-        return ResponseEntity.ok(userService.getReviewerByClassCode(code));
+            long id) {
+        try {
+            return ResponseEntity.ok(userService.getReviewerByClassId(id));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't find any reviewer with training class Id " + id);
+        }
     }
 
+    //Get the approver by training class Id
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any Training Class"),
+            @ApiResponse(responseCode = "200", description = "When we have found the training class",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
     @Operation(
-            summary = "Get the information of the approver of the training class by the training class code",
+            summary = "Get the information of the approver of the training class by the training class ID",
             description = "<b>List the information of the approver of the training class</b>"
     )
-    @GetMapping("trainingClass/approver/{classCode}")
-    public ResponseEntity<?> getApproverByClassCode(
-            @PathVariable("classCode")
+    @GetMapping("trainingClass/approver/{id}")
+    public ResponseEntity<?> getApproverByClassId(
+            @PathVariable("id")
             @Parameter(
-                    description = "<b>Insert Training Class Code</b>",
-                    example = "DN22_IN_FT_02"
+                    description = "<b>Insert Training Class ID</b>",
+                    example = "1"
             )
-            String code) {
-        return ResponseEntity.ok(userService.getApproverByClassCode(code));
+            long id) {
+        try {
+            return ResponseEntity.ok(userService.getApproverByClassId(id));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't find any approver with training class Id " + id);
+        }
+
     }
 }
