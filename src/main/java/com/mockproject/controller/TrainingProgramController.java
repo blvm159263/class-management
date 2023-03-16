@@ -1,7 +1,6 @@
 package com.mockproject.controller;
 
 import com.mockproject.entity.TrainingProgram;
-import com.mockproject.service.TrainingProgramService;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
