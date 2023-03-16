@@ -59,7 +59,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
-        http.authorizeHttpRequests().requestMatchers("/user/login", "/swagger-ui/**", "/v3/api-docs/**","/user/encodePassword").permitAll()
+        http.authorizeHttpRequests().requestMatchers("/api/user/login", "/swagger-ui/**", "/v3/api-docs/**","/user/encodePassword").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore( jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
