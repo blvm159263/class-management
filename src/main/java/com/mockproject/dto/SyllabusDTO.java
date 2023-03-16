@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
@@ -41,4 +42,5 @@ public class SyllabusDTO implements Serializable {
     private boolean status;
     private Long creatorId;
     private Long lastModifierId;
+    private List<SessionDTO> sessionDTOList;
 }

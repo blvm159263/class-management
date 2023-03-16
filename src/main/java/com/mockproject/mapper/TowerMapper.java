@@ -3,7 +3,6 @@ package com.mockproject.mapper;
 import com.mockproject.dto.TowerDTO;
 import com.mockproject.entity.Location;
 import com.mockproject.entity.Tower;
-import com.mockproject.entity.TrainingClass;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

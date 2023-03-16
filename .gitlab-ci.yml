@@ -1,7 +1,6 @@
 stages:
   - build
   - test
-  - deploy
 
 build:
   stage: build
@@ -18,10 +17,10 @@ test:
   script:
     - mvn test
 
-deploy:
-  stage: deploy
-  image: mcr.microsoft.com/azure-cli:latest
-  script:
-    - az login --service-principal -u $AZ_USER_NAME -p $AZ_USER_PASSWORD --tenant $AZURE_SP_TENANT_ID
-    - az account set --subscription $AZ_SUBSCRIPTION_ID
-    - az webapp deployment source config-zip --resource-group Test --name classfreshmanagement  --src target/*.jar
+#deploy:
+#  stage: deploy
+#  image: mcr.microsoft.com/azure-cli:latest
+#  script:
+#    - az login --service-principal -u $AZ_USER_NAME -p $AZ_USER_PASSWORD --tenant $AZURE_SP_TENANT_ID
+#    - az account set --subscription $AZ_SUBSCRIPTION_ID
+#    - az webapp deployment source config-zip --resource-group Test --name classfreshmanagement  --src target/*.jar

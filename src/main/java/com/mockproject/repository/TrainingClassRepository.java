@@ -1,5 +1,6 @@
 package com.mockproject.repository;
 
+
 import com.mockproject.entity.TrainingClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,9 @@ import java.util.List;
 
 @Repository
 public interface TrainingClassRepository extends JpaRepository<TrainingClass, Long> {
+
+    TrainingClass findByIdAndStatus(long id, Boolean status);
+
 
     List<TrainingClass> findByClassNameContaining(String name);
 
@@ -33,4 +37,35 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
                                      long fsu, List<Long> classId, String search, Pageable page);
 
     List<TrainingClass> findAllByStatus(boolean status);
+    public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date);
+
+    @Query("SELECT tc FROM TrainingClass tc " +
+            "LEFT JOIN tc.listClassSchedules cs " +
+            "LEFT JOIN tc.listTrainingClassAdmins ta " +
+            "LEFT JOIN tc.location lo " +
+            "LEFT JOIN tc.attendee at " +
+            "where " +
+            "(tc.className IN (:listSearchText) OR " +
+            "tc.classCode IN (:listSearchText)  OR " +
+            "tc.fsu.fsuName IN (:listSearchText) OR " +
+            "ta.admin.fullName IN (:listSearchText) OR " +
+            "at.attendeeName IN (:listSearchText) OR " +
+            "lo.locationName IN (:listSearchText)) AND " +
+            "cs.date = :date")
+    List<TrainingClass> findAllBySearchTextAndListClassSchedulesDate(List<String> listSearchText, LocalDate date);
+
+    @Query("SELECT tc FROM TrainingClass tc " +
+            "LEFT JOIN tc.listClassSchedules cs " +
+            "LEFT JOIN tc.listTrainingClassAdmins ta " +
+            "LEFT JOIN tc.location lo " +
+            "LEFT JOIN tc.attendee at " +
+            "where " +
+            "(tc.className IN (:listSearchText) OR " +
+            "tc.classCode IN (:listSearchText)  OR " +
+            "tc.fsu.fsuName IN (:listSearchText) OR " +
+            "ta.admin.fullName IN (:listSearchText) OR " +
+            "at.attendeeName IN (:listSearchText) OR " +
+            "lo.locationName IN (:listSearchText)) AND " +
+            "cs.date BETWEEN :startDate AND :endDate")
+    List<TrainingClass> findAllBySearchTextAndListClassSchedulesWeek(List<String> listSearchText, LocalDate startDate, LocalDate endDate);
 }

@@ -6,7 +6,6 @@ import com.mockproject.mapper.TrainingClassUnitInformationMapper;
 import com.mockproject.repository.TrainingClassUnitInformationRepository;
 import com.mockproject.service.interfaces.ITrainingClassUnitInformationService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +17,11 @@ import java.util.List;
 public class TrainingClassUnitInformationService implements ITrainingClassUnitInformationService {
 
     private final TrainingClassUnitInformationRepository repository;
+
+    @Override
+    public List<TrainingClassUnitInformation> findAllByTrainingClassId(Long id) {
+        return repository.findAllByTrainingClassId(id);
+    }
 
     @Override
     public boolean saveList(List<TrainingClassUnitInformationDTO> listDto) {

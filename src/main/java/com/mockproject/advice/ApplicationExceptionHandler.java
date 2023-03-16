@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
 
 import java.util.HashMap;
@@ -26,6 +27,14 @@ public class ApplicationExceptionHandler {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put("Error Paramater", ex.getParameter().toString());
         errorMap.put("Error Property Name", ex.getPropertyName());
+        errorMap.put("Error Message", ex.getMessage());
+        return errorMap;
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ExceptionHandler(ResponseStatusException.class)
+    public Map<String, String> handleNoContent(ResponseStatusException ex){
+        Map<String, String> errorMap = new HashMap<>();
         errorMap.put("Error Message", ex.getMessage());
         return errorMap;
     }
