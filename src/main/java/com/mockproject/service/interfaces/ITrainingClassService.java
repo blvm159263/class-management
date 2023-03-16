@@ -1,10 +1,8 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.*;
-import com.mockproject.entity.Session;
 
 import java.util.List;
-import java.util.Map;
 
 
 public interface ITrainingClassService {

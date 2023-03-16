@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Class Details API")
 @RequiredArgsConstructor
 @RequestMapping("api/class")
-public class TrainingClassController {
+public class TrainingClass_DetailsController {
 
     private final ITrainingClassService trainingClassService;
 
