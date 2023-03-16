@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContactDTO implements Serializable {
-    private long id;
+    private Long id;
     private String contactEmail;
     private String description;
     private boolean status;

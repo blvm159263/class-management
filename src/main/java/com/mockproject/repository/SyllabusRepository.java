@@ -13,13 +13,12 @@ import java.util.List;
 @Repository
 public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
 
-//    Page<Syllabus> findAllByStatusAndNameContainsIgnoreCaseOrStatusAndCodeContainsIgnoreCaseOrStatusAndCreator
+    List<Syllabus> findByStatus(boolean status);
 
     @Query("SELECT s FROM Syllabus s " +
             "WHERE s.status = ?1 " +
-            "AND s.dateCreated BETWEEN ?2 AND ?3 " +
-            "AND (s.name LIKE '%' + ?4 + '%'" +
-            "OR s.code LIKE '%' + ?4 + '%' " +
+            "AND (?2 IS NULL OR ?3 IS NULL OR s.dateCreated BETWEEN ?2 AND ?3) " +
+            "AND (s.name LIKE '%' + ?4 + '%' OR s.code LIKE '%' + ?4 + '%' " +
             "OR s.creator.fullName LIKE '%' + ?4 + '%' OR s.id IN ?5)")
     Page<Syllabus> getListSyllabus(boolean status,
                                    LocalDate fromDate, LocalDate toDate,

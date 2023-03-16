@@ -20,6 +20,8 @@ public interface UnitDetailRepository extends JpaRepository<UnitDetail, Long> {
             "AND u.unit.session.syllabus.id = ?2")
     List<UnitDetail> findUnitDetailBySyllabusId(boolean status, long syllabusId);
 
+    List<UnitDetail> findByUnitAndStatus(Unit unit, boolean status);
+
     Optional<List<UnitDetail>> findByUnitInAndStatus(List<Unit> units, Boolean status);
 
 }

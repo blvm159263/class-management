@@ -47,56 +47,56 @@ public interface TrainingClassMapper {
 //    }
 
     @Named("mapTrainingProgram")
-    default TrainingProgram mapTrainingProgram(long id) {
+    default TrainingProgram mapTrainingProgram(Long id) {
         TrainingProgram trainingProgram = new TrainingProgram();
         trainingProgram.setId(id);
         return trainingProgram;
     }
 
     @Named("mapReviewer")
-    default User mapReviewer(long id) {
+    default User mapReviewer(Long id) {
         User user = new User();
         user.setId(id);
         return user;
     }
 
     @Named("mapModifier")
-    default User mapModifier(long id) {
+    default User mapModifier(Long id) {
         User user = new User();
         user.setId(id);
         return user;
     }
 
     @Named("mapContact")
-    default Contact mapContact(long id) {
+    default Contact mapContact(Long id) {
         Contact contact = new Contact();
         contact.setId(id);
         return contact;
     }
 
     @Named("mapCreator")
-    default User mapCreator(long id) {
+    default User mapCreator(Long id) {
         User user = new User();
         user.setId(id);
         return user;
     }
 
     @Named("mapFsu")
-    default Fsu mapFsu(long id) {
+    default Fsu mapFsu(Long id) {
         Fsu fsu = new Fsu();
         fsu.setId(id);
         return fsu;
     }
 
     @Named("mapApprover")
-    default User mapApprover(long id) {
+    default User mapApprover(Long id) {
         User user = new User();
         user.setId(id);
         return user;
     }
 
     @Named("mapAttendee")
-    default Attendee mapAttendee(long id) {
+    default Attendee mapAttendee(Long id) {
         Attendee attendee = new Attendee();
         attendee.setId(id);
         return attendee;

@@ -1,15 +1,17 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.SyllabusDTO;
-import com.mockproject.entity.Syllabus;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public interface ISyllabusService {
+
+    List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId);
+
+
 
     Page<SyllabusDTO> getListSyllabus(boolean status,
                                       LocalDate fromDate, LocalDate toDate,

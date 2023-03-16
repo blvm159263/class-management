@@ -25,14 +25,14 @@ public interface TrainingMaterialMapper {
 
 
     @Named("mapUser")
-    default User mapUser(long id) {
+    default User mapUser(Long id) {
         User user = new User();
         user.setId(id);
         return user;
     }
 
     @Named("mapUnitDetail")
-    default UnitDetail mapUnitDetail(long id) {
+    default UnitDetail mapUnitDetail(Long id) {
         UnitDetail unitDetail = new UnitDetail();
         unitDetail.setId(id);
         return unitDetail;
