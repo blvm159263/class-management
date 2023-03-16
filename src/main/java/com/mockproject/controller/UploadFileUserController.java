@@ -2,7 +2,9 @@ package com.mockproject.controller;
 
 import com.mockproject.service.UserService;
 import com.mockproject.service.interfaces.IUserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -20,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/import")
+@Tag(name = "File User CSV", description = "Upload and download template File user CSV")
 @SecurityRequirement(name = "Authorization")
 public class UploadFileUserController {
     public static final String VIEW = "ROLE_View_User";
@@ -29,6 +32,7 @@ public class UploadFileUserController {
     private final IUserService userService;
 
     @GetMapping("/template-csv")
+    @Operation(summary = "Download template")
     @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity downloadTemplate(){
         File file = new File("src/main/resources/CSVFile/Template .xlsx");
@@ -36,6 +40,7 @@ public class UploadFileUserController {
     }
 
     @PostMapping("/user")
+    @Operation(summary = "Import CSV")
     @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity readFileCSV(@RequestParam("file") MultipartFile mFile) {
         LocalDateTime current = LocalDateTime.now();

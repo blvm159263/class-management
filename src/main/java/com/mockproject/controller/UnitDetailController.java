@@ -4,7 +4,10 @@ import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.service.interfaces.IUnitDetailService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Unit Detail", description = "API related Unit detail")
 @SecurityRequirement(name = "Authorization")
 @RequestMapping(value = "/api/unit-detail")
 public class UnitDetailController {
@@ -28,6 +32,7 @@ public class UnitDetailController {
     private final IUnitDetailService unitDetailService;
 
     @GetMapping("/{unitId}")
+    @Operation(summary = "Get all unit by unit id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<List<UnitDetailDTO>> getAllUnitDetailByUnitId(@PathVariable("unitId") long unitId) {
         List<UnitDetailDTO> listUnitDetail = unitDetailService.getAllUnitDetailByUnitId(unitId, true);
@@ -35,13 +40,15 @@ public class UnitDetailController {
     }
 
     @PostMapping("/create/{id}")
+    @Operation(summary = "Create unit detail")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> createUnitDetails(@PathVariable("id") long unitId, @RequestBody List<UnitDetailDTO> listUnitDetail) {
+    public ResponseEntity<Boolean> createUnitDetails(@PathVariable("id")@Parameter(description = "Unit id") long unitId, @RequestBody List<UnitDetailDTO> listUnitDetail) {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(unitDetailService.createUnitDetail(unitId, listUnitDetail, user.getUser()));
     }
 
     @PutMapping("/edit")
+    @Operation(summary = "Edit unit detail")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<UnitDetail> editUnitDetail(@RequestBody UnitDetailDTO unitDetailDTO) throws IOException {
         UnitDetail updateUnitDetail = unitDetailService.editUnitDetail(unitDetailDTO, true);
@@ -49,20 +56,23 @@ public class UnitDetailController {
     }
 
     @PutMapping("/delete/{id}")
+    @Operation(summary = "Delete unit detail")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnitDetail(@PathVariable("id") long unitDetailId) {
+    public ResponseEntity<Boolean> deleteUnitDetail(@PathVariable("id") @Parameter(description = "Unit detail id") long unitDetailId) {
         return ResponseEntity.ok(unitDetailService.deleteUnitDetail(unitDetailId, true));
     }
 
     @PutMapping("/multi-delete/{id}")
+    @Operation(summary = "Delete list unit detail by unit id")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnitDetails(@PathVariable("id") long unitId) {
+    public ResponseEntity<Boolean> deleteUnitDetails(@PathVariable("id") @Parameter(description = "Unit id") long unitId) {
         return ResponseEntity.ok(unitDetailService.deleteUnitDetails(unitId, true));
     }
 
     @PutMapping("/toggle/{id}")
+    @Operation(summary = "Change state on/off of unit detail  by unit detail by id")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> toggleUnitDetailType(@PathVariable("id") long unitDetailId) {
+    public ResponseEntity<Boolean> toggleUnitDetailType(@PathVariable("id") @Parameter(description = "Unit detail id") long unitDetailId) {
         return ResponseEntity.ok(unitDetailService.toggleUnitDetailType(unitDetailId, true));
     }
 }
