@@ -10,6 +10,8 @@ import com.mockproject.service.interfaces.IAttendeeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,14 +35,8 @@ public class AttendeeService implements IAttendeeService {
     }
 
     @Override
-    public AttendeeDTO getAttendeeByClassCode(String code) {
-        TrainingClass tc =  trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
-        if(tc.getAttendee().isStatus()) {
-            return AttendeeMapper.INSTANCE.INSTANCE.toDTO(tc.getAttendee());
-        }
-        return null;
-
+    public AttendeeDTO getAttendeeById(long id){
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        return AttendeeMapper.INSTANCE.toDTO(trainingClass.getAttendee());
     }
-
-
 }

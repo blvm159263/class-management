@@ -11,5 +11,5 @@ public interface IAttendeeService {
 
     Attendee save(AttendeeDTO dto);
 
-    AttendeeDTO getAttendeeByClassCode(String code);
+    AttendeeDTO getAttendeeById(long id);
 }

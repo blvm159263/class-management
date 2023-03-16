@@ -41,7 +41,7 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserDTO> getTrainerOntheDayById(long id, int day) {
-        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true);
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<Unit> unitListFromSession = unitService.getListUnitsFromSession(id, day);
         List<TrainingClassUnitInformation> list = unitListFromSession.stream()
                 .map(p -> trainingClassUnitInformationRepository

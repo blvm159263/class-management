@@ -33,22 +33,19 @@ public class AttendeeController {
             content = @Content(schema = @Schema(implementation = AttendeeDTO.class)))
     })
     @Operation(
-            summary = "Get Attendee Name by TrainingClass Code"
+            summary = "Get Attendee Name by TrainingClass Id"
     )
-    @GetMapping("ClassAttendee/{classCode}")
-    public ResponseEntity<?> getAttendeeNameByClassCode(
-            @PathVariable("classCode")
+    @GetMapping("ClassAttendee/{id}")
+    public ResponseEntity<?> getAttendeeNameById (
+            @PathVariable("id")
             @Parameter(
-                    description = "<b>Insert Class Code</b>",
-                    example = "DN22_IN_FT_02") String code) {
-        AttendeeDTO attendee = attendeeService.getAttendeeByClassCode(code);
-        if(attendee.isStatus()) {
-            return ResponseEntity.ok(attendee);
-        }
-        else {
+                    description = "<b>Insert Training Class ID to get attendee</b>",
+                    example = "1") long id){
+        try {
+            return ResponseEntity.ok(attendeeService.getAttendeeById(id));
+        }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Don't find any training class with class code " + code);
+                    .body("Can't find any training class with Id " + id);
         }
-
     }
 }

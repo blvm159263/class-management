@@ -20,10 +20,7 @@ public class ContactService implements IContactService {
     private final TrainingClassRepository trainingClassRepository;
     @Override
     public ContactDTO getContactById(long id) {
-        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true);
-        if(trainingClass.getContact().isStatus()) {
-            return ContactMapper.INSTANCE.toDTO(trainingClass.getContact());
-        }
-        return null;
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        return ContactMapper.INSTANCE.toDTO(trainingClass.getContact());
     }
 }

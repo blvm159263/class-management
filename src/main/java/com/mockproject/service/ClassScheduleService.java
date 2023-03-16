@@ -41,12 +41,9 @@ public class ClassScheduleService implements IClassScheduleService{
     }
 
     @Override
-    public List<ClassScheduleDTO> getScheduleByClassCode(String code) {
-        TrainingClass tc = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
-        if(!tc.getListClassSchedules().isEmpty()){
-            return tc.getListClassSchedules().stream().map(ClassScheduleMapper.INSTANCE::toDTO).collect(Collectors.toList());
-        }
-        return null;
+    public List<ClassScheduleDTO> getScheduleById(long id) {
+        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        return tc.getListClassSchedules().stream().map(ClassScheduleMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
 

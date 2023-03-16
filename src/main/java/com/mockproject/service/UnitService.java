@@ -34,7 +34,7 @@ public class UnitService implements IUnitService {
     //Get list units that training class studies
     public List<Unit> getListUnitsById(long id) {
         //Get the training class
-        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true);
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         //Get list units
         List<TrainingClassUnitInformation> listUnits =
         trainingClassUnitInformationRepository.findByTrainingClassAndStatus(trainingClass, true);

@@ -46,7 +46,7 @@ public class TowerService implements ITowerService {
 
     @Override
     public List<TowerDTO> getTowerForTheDay(long id, int day) {
-        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true);
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<Unit> unitListFromSession = unitService.getListUnitsFromSession(id, day);
         List<TrainingClassUnitInformation> list = unitListFromSession.stream()
                         .map(p -> trainingClassUnitInformationRepository

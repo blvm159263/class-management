@@ -22,8 +22,8 @@ public class DeliveryTypeService implements IDeliveryTypeService {
     private final TrainingClassRepository trainingClassRepository;
 
     @Override
-    public List<DeliveryTypeDTO> getListDeliveryTpeByCLassCode(String code) {
-        TrainingClass trainingClass = trainingClassRepository.findByClassCodeAndStatus(code, true).get(0);
+    public List<DeliveryTypeDTO> getListDeliveryTypeByClassId(long id) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<TrainingClassUnitInformation> trainingClassUnitInformations = trainingClass
                 .getListTrainingClassUnitInformations()
                 .stream()

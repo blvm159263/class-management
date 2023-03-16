@@ -13,5 +13,5 @@ public interface IClassScheduleService {
 
     ClassSchedule save(ClassScheduleDTO dto);
 
-    List<ClassScheduleDTO> getScheduleByClassCode(String code);
+    List<ClassScheduleDTO> getScheduleById(long id);
 }
