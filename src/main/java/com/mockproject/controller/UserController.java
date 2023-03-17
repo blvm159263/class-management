@@ -1,6 +1,7 @@
 package com.mockproject.controller;
 
 
+
 import com.mockproject.Jwt.JwtTokenProvider;
 import com.mockproject.dto.*;
 import com.mockproject.entity.CustomUserDetails;
@@ -199,8 +200,6 @@ public class UserController {
         }
         return ResponseEntity.ok("Successfull");
     }
-
-
     @PostMapping("/searchByFilter")
     @Operation(summary = "Search User by filter and order")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
