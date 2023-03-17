@@ -24,7 +24,7 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public Map<String, String> handleBadRequest(MethodArgumentTypeMismatchException ex){
         Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("Error Paramater", ex.getParameter().toString());
+        errorMap.put("Error Parameter", ex.getParameter().toString());
         errorMap.put("Error Property Name", ex.getPropertyName());
         errorMap.put("Error Message", ex.getMessage());
         return errorMap;

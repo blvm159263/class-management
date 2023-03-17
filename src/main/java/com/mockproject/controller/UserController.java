@@ -79,7 +79,7 @@ public class UserController {
         }
     }
 
-    //Get the creator by training class Id
+    //Get the creator by training class ID
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any Training Class"),
             @ApiResponse(responseCode = "200", description = "When we have found the training class",
@@ -105,7 +105,7 @@ public class UserController {
         }
     }
 
-    //Get the reviewer by training class Id
+    //Get the reviewer by training class ID
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any Training Class"),
             @ApiResponse(responseCode = "200", description = "When we have found the training class",
@@ -131,7 +131,7 @@ public class UserController {
         }
     }
 
-    //Get the approver by training class Id
+    //Get the approver by training class ID
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any Training Class"),
             @ApiResponse(responseCode = "200", description = "When we have found the training class",
