@@ -2,6 +2,7 @@ package com.mockproject.controller;
 
 import com.mockproject.dto.OutputStandardDTO;
 import com.mockproject.service.interfaces.IOutputStandardService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Output Standard API")
 @RequestMapping(value = "/api/outputStandard")
+@SecurityRequirement(name = "Authorization")
 public class OutputStandardController {
 
     private final IOutputStandardService outputStandardService;

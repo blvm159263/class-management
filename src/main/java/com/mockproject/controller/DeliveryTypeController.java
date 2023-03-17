@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
@@ -24,6 +25,7 @@ import java.util.List;
 @Tag(name = "Delivery API")
 @RequestMapping(value = "/api/delivery")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class DeliveryTypeController {
 
     private final IDeliveryTypeService deliveryTypeService;

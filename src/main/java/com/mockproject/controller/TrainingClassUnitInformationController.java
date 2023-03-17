@@ -5,6 +5,7 @@ import com.mockproject.service.interfaces.ITrainingClassUnitInformationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.List;
 @RestController
 @Tag(name = "Training Class Unit Information API")
 @RequestMapping("api/training-class-unit-information")
+@SecurityRequirement(name = "Authorization")
 public class TrainingClassUnitInformationController {
 
     private final ITrainingClassUnitInformationService service;
