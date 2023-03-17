@@ -171,7 +171,7 @@ public class UserController {
 
     @PutMapping("/updateRole")
     @Operation(summary = "Update role by list FormRoleDTO", description = "If role exits -> Update else  Create new Role")
-    @Secured({MODIFY, FULL_ACCESS, CREATE})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity updateAllRole(@RequestBody List<FormRoleDTO> formRoleDTOList) {
 
         for (FormRoleDTO fdto : formRoleDTOList) {
@@ -199,6 +199,7 @@ public class UserController {
         }
         return ResponseEntity.ok("Successfull");
     }
+
 
     @PostMapping("/searchByFilter")
     @Operation(summary = "Search User by filter and order")
