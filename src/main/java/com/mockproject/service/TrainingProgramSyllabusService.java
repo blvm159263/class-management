@@ -26,7 +26,7 @@ public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusS
         Optional<List<TrainingProgramSyllabus>> list = repository.findByTrainingProgramIdAndStatus(trainProgramID, status);
         ListUtils.checkList(list);
 
-        List<TrainingProgramSyllabusDTO> trainingProgramSyllabusDTOList = new ArrayList<>();
+        List<TrainingProgramSyllabusDTO> trainingProgramSyllabusDTOList = new ArrayList<>(); 
         for (TrainingProgramSyllabus t: list.get()){
             trainingProgramSyllabusDTOList.add(TrainingProgramSyllabusMapper.INSTANCE.toDTO(t));
         }
