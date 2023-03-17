@@ -14,10 +14,8 @@ import java.util.Map;
 public class ApplicationExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
-    public Map<String, String> handleNotFound(NotFoundException ex){
-        Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("Error Message", ex.getMessage());
-        return errorMap;
+    public String handleNotFound(NotFoundException ex){
+        return "Error Message : " + ex.getMessage();
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -29,4 +27,8 @@ public class ApplicationExceptionHandler {
         return errorMap;
     }
 
+    @ExceptionHandler(ArrayIndexOutOfBoundsException.class)
+    public String handleOutOfIndex(ArrayIndexOutOfBoundsException ex) {
+        return "Error Message : " + ex.getMessage();
+    }
 }

@@ -33,15 +33,27 @@ public class SyllabusService implements ISyllabusService {
 
     @Override
     public Page<SyllabusDTO> getListSyllabus(boolean status, LocalDate fromDate, LocalDate toDate,
-                                             String search, String[] sort, Optional<Integer> page) {
+                                             String search, String[] sort, Optional<Integer> page){
         List<Sort.Order> order = new ArrayList<>();
+        Set<String> sourceFieldList = getAllFields(new Syllabus().getClass());
         if(sort[0].contains(",")){
             for (String sortItem: sort) {
                 String[] subSort = sortItem.split(",");
-                order.add(new Sort.Order(getSortDirection(subSort[1]),subSort[0]));
+                if(ifPropertpresent(sourceFieldList, subSort[0])){
+                    order.add(new Sort.Order(getSortDirection(subSort[1]),subSort[0]));
+                } else {
+                    throw new NotFoundException(subSort[0] + " is not a propertied of Syllabus!");
+                }
             }
-        }else {
-            order.add(new Sort.Order(getSortDirection(sort[1]),sort[0]));
+        } else {
+            if(sort.length == 1){
+                throw new ArrayIndexOutOfBoundsException("Sort direction(asc/desc) not found!");
+            }
+            if(ifPropertpresent(sourceFieldList, sort[0])){
+                order.add(new Sort.Order(getSortDirection(sort[1]),sort[0]));
+            } else {
+                throw new NotFoundException(sort[0] + " is not a propertied of Syllabus!");
+            }
         }
         Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
         Page<Syllabus> pages = syllabusRepo.getListSyllabus(status, fromDate, toDate, search, getListSyllabusIdByOSD(search), pageable);
@@ -53,6 +65,13 @@ public class SyllabusService implements ISyllabusService {
         } else {
             throw new NotFoundException("Syllabus not found!");
         }
+    }
+
+    private static boolean ifPropertpresent(final Set<String> properties, final String propertyName) {
+        if (properties.contains(propertyName)) {
+            return true;
+        }
+        return false;
     }
 
     private static Set<String> getAllFields(final Class<?> type) {
