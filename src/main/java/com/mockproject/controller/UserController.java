@@ -79,7 +79,6 @@ public class UserController {
             CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
             String token = jwtTokenProvider.generateToken(user);
             UserDTO userDTO = UserMapper.INSTANCE.toDTO(user.getUser());
-
             return ResponseEntity.ok(new JwtResponseDTO(userDTO, token));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Invalid email or password");
