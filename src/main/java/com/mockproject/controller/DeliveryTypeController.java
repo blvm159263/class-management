@@ -46,7 +46,7 @@ public class DeliveryTypeController {
             @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = DeliveryTypeDTO.class)))
     })
-    @GetMapping("/class-deliveryTypes")
+    @GetMapping("/class-delivery-types")
     public ResponseEntity<?> getAllDeliveryTypes(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
         try{
             return ResponseEntity.ok(service.getAllDeliveryTypesByTrainingClassId(id));
