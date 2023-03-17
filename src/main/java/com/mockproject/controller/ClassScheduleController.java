@@ -4,6 +4,7 @@ import com.mockproject.dto.SearchByDTO;
 import com.mockproject.dto.TrainingClassFilterRequestDTO;
 import com.mockproject.dto.TrainingClassFilterResponseDTO;
 import com.mockproject.service.interfaces.IClassScheduleService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,7 @@ public class ClassScheduleController {
 
     @PostMapping("/week")
     public ResponseEntity getTrainingClassByWeek(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO){
+
         var trainingClass= classScheduleService.getTrainingClassByWeek(filterRequestDTO);
         if(trainingClass.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
