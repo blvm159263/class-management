@@ -19,17 +19,25 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusService {
+
     private final TrainingProgramSyllabusRepository repository;
 
     @Override
-    public List<TrainingProgramSyllabusDTO> getAllSyllabusByTrainingProgramId(long trainProgramID, boolean status) {
+    public List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(long trainProgramID) {
+        return repository.getTrainingProgramSyllabusByTrainingProgramId(trainProgramID);
+    }
+
+    @Override
+    public List<TrainingProgramSyllabusDTO> getAllSyllabusByTrainingProgramId(long trainProgramID,
+                                                                              boolean status) {
         Optional<List<TrainingProgramSyllabus>> list = repository.findByTrainingProgramIdAndStatus(trainProgramID, status);
         ListUtils.checkList(list);
 
         List<TrainingProgramSyllabusDTO> trainingProgramSyllabusDTOList = new ArrayList<>();
-        for (TrainingProgramSyllabus t: list.get()){
+        for (TrainingProgramSyllabus t : list.get()) {
             trainingProgramSyllabusDTOList.add(TrainingProgramSyllabusMapper.INSTANCE.toDTO(t));
         }
         return trainingProgramSyllabusDTOList;
     }
+
 }

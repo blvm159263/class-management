@@ -1,4 +1,4 @@
-package com.mockproject.jwt;
+package com.mockproject.Jwt;
 
 import com.mockproject.entity.CustomUserDetails;
 import io.jsonwebtoken.*;
