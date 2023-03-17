@@ -23,7 +23,7 @@ public interface ITrainingClassService {
     Page<TrainingClassDTO> getListClass(boolean status,
                                         List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                         List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                        long fsu, long trainerId, String search, String[] sort, Optional<Integer> page);
+                                        long fsu, long trainerId, List<String> search, String[] sort, Optional<Integer> page);
 
     List<TrainingClassDTO> getAllClass();
 

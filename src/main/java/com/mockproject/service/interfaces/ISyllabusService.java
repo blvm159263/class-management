@@ -3,8 +3,11 @@ package com.mockproject.service.interfaces;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.User;
+import com.mockproject.entity.Syllabus;
+import com.mockproject.entity.User;
 import org.springframework.data.domain.Page;
 
+import java.io.IOException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -17,7 +20,10 @@ public interface ISyllabusService {
 
 
     Page<SyllabusDTO> getListSyllabus(boolean status,
-                                      LocalDate fromDate, LocalDate toDate, String search, String[] sort, Optional<Integer> page);
+                                      LocalDate fromDate, LocalDate toDate,
+                                      List<String> search, String[] sort, Optional<Integer> page);
+
+    List<Long> getListSyllabusIdByOSD(String osd);
 
     List<SyllabusDTO> getAll(boolean state, boolean status);
 
@@ -30,8 +36,6 @@ public interface ISyllabusService {
     Syllabus editSyllabus(SyllabusDTO syllabusDTO, boolean status) throws IOException;
 
     boolean deleteSyllabus(long syllabusId, boolean status);
-
-    List<Long> getListSyllabusIdByOSD(String osd);
 
     Syllabus getSyllabusById(long id);
 }

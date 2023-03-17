@@ -10,6 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -29,9 +33,15 @@ import java.util.stream.Collectors;
 public class TrainingClassService implements ITrainingClassService {
 
     private final TrainingClassRepository classRepo;
+
     private final LocationRepository locationRepository;
+
     private final TrainingProgramRepository trainingProgramRepository;
+
     private final TrainingClassUnitInformationRepository classUnitRepo;
+
+    private static final int RESULTS_PER_PAGE = 10;
+
 
     @Override
     public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date) {
@@ -119,9 +129,10 @@ public class TrainingClassService implements ITrainingClassService {
     public Page<TrainingClassDTO> getListClass(boolean status,
                                                List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                                List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                               long fsu, long trainerId, String search, String[] sort, Optional<Integer> page)
+                                               long fsu, long trainerId, List<String> search, String[] sort, Optional<Integer> page)
     {
         List<Sort.Order> order = new ArrayList<>();
+        int skipCount = page.orElse(0) * RESULTS_PER_PAGE;
         if(sort[0].contains(",")){
             for (String sortItem: sort) {
                 String[] subSort = sortItem.split(",");
@@ -138,14 +149,23 @@ public class TrainingClassService implements ITrainingClassService {
                     .collect(Collectors.toList());
             classId.add(-1L);
         }
-        Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
-        Page<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
-                isOnline, state, attendeeId, fsu, classId, search, pageable);
-        if(pages.getContent().size() > 0){
+        List<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
+                isOnline, state, attendeeId, fsu, classId, search.size() > 0 ? search.get(0) : "", Sort.by(order));
+        if (search.size() > 1){
+            for (int i = 1; i < search.size(); i++) {
+                String subSearch = search.get(i).toUpperCase();
+                pages = pages.stream().filter(c
+                                -> c.getClassName().toUpperCase().contains(subSearch) ||
+                                c.getClassCode().toUpperCase().contains(subSearch) ||
+                                c.getCreator().getFullName().toUpperCase().contains(subSearch))
+                        .collect(Collectors.toList());
+            }
+        }
+        if(pages.size() > 0){
             return new PageImpl<>(
-                    pages.stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                    pages.getPageable(),
-                    pages.getTotalElements());
+                    pages.stream().skip(skipCount).limit(RESULTS_PER_PAGE).map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    PageRequest.of(page.orElse(0), 10, Sort.by(order)),
+                    pages.size());
         }else {
             throw new NotFoundException("Training Class not found!");
         }

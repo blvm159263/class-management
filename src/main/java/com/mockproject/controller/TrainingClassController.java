@@ -77,12 +77,11 @@ public class TrainingClassController {
             description = "<b>List of training class according to search, sort, filter, and pages<b>"
     )
     @Secured({VIEW, CREATE, MODIFY, FULL_ACCESS})
-
     public ResponseEntity<?> getListClass(
             @RequestParam(defaultValue = "")
             @Parameter(
                     description = "<b>Filter by location ID<b>",
-                    example = "1"
+                    example = ""
             ) List<Long> location,
 
             @RequestParam(defaultValue = "")
@@ -106,8 +105,8 @@ public class TrainingClassController {
                     description = "<b>Class time:<b>"
                             + "<ul><li>0: Morning</li>"
                             + "<li>1: Noon</li>"
-                            + "<li>2: Night</li></ul>",
-                    example = "0"
+                            + "<li>2: Night</li></ul><b>",
+                    example = ""
             ) List<Integer> period,
 
             @RequestParam(defaultValue = "false")
@@ -124,19 +123,19 @@ public class TrainingClassController {
                             + "<ul><li>Planning</li>"
                             + "<li>Openning</li>"
                             + "<li>Closed</li></u><b>",
-                    example = "Planning"
+                    example = ""
             ) String state,
 
             @RequestParam(defaultValue = "")
             @Parameter(
                     description = "<b>Attendee - Filter by attendee ID<b>",
-                    example = "1"
+                    example = ""
             ) List<Long> attendee,
 
             @RequestParam(defaultValue = "0")
             @Parameter(
                     description = "<b>FSU - Filter by FSU ID<b>",
-                    example = "1"
+                    example = "0"
             ) long fsu,
 
             @RequestParam(defaultValue = "0")
@@ -148,8 +147,8 @@ public class TrainingClassController {
             @RequestParam(defaultValue = "")
             @Parameter(
                     description = "<b>Search by class name, code, or creator's name<b>",
-                    example = "Fresher Develop Operation"
-            ) String search,
+                    example = ""
+            ) List<String> search,
 
             @RequestParam(defaultValue = "startTime,asc")
             @Parameter(
