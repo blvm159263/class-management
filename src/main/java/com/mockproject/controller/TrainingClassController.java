@@ -63,7 +63,9 @@ public class TrainingClassController {
 
             @RequestParam(defaultValue = "false")
             @Parameter(
-                    description = "<b>Class time - true: Online, false: No filter<b>",
+                    description = "<b>Class time<b>"
+                            + "<ul><li>true : Online</li>"
+                            + "<li>false : No filter</li>",
                     example = "false"
             ) boolean isOnline,
 
