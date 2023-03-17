@@ -33,7 +33,6 @@ public class TrainingClassSpecification {
 
     public static Specification<TrainingClass> hasClassScheduleBetween(LocalDate startDate, LocalDate endDate) {
         return (root, query, builder) -> {
-
             Join<TrainingClass, ClassSchedule> classSchedule = root.join("listClassSchedules");
             return builder.between(classSchedule.get("date"), startDate, endDate);
         };
