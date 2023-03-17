@@ -7,6 +7,7 @@ import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.OutputStandardRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitDetailRepository;
+import com.mockproject.service.interfaces.IOutputStandardService;
 import com.mockproject.service.interfaces.ISyllabusService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +32,15 @@ public class SyllabusService implements ISyllabusService {
 
     private final UnitDetailRepository unitDetailRepo;
 
+    private final IOutputStandardService outputStandardService;
+
+    private static final int RESULTS_PER_PAGE = 10;
+
     @Override
     public Page<SyllabusDTO> getListSyllabus(boolean status, LocalDate fromDate, LocalDate toDate,
-                                             String search, String[] sort, Optional<Integer> page){
+                                             List<String> search, String[] sort, Optional<Integer> page){
         List<Sort.Order> order = new ArrayList<>();
+        int skipCount = page.orElse(0) * RESULTS_PER_PAGE;
         Set<String> sourceFieldList = getAllFields(new Syllabus().getClass());
         if(sort[0].contains(",")){
             for (String sortItem: sort) {
@@ -55,16 +61,35 @@ public class SyllabusService implements ISyllabusService {
                 throw new NotFoundException(sort[0] + " is not a propertied of Syllabus!");
             }
         }
-        Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
-        Page<Syllabus> pages = syllabusRepo.getListSyllabus(status, fromDate, toDate, search, getListSyllabusIdByOSD(search), pageable);
-        if(pages.getContent().size() > 0){
+        Pageable pageable = PageRequest.of(page.orElse(0), 5, Sort.by(order));
+        List<Syllabus> pages = syllabusRepo.getListSyllabus(status, fromDate, toDate, search.size() > 0 ? search.get(0) : "", getListSyllabusIdByOSD(search.size() > 0 ? search.get(0) : ""), Sort.by(order));
+        if (search.size() > 1){
+            for (int i = 1; i < search.size(); i++) {
+                System.out.println("Loop");
+                String subSearch = search.get(i).toUpperCase();
+                pages = pages.stream().filter(s
+                        -> s.getName().toUpperCase().contains(subSearch) ||
+                                s.getCode().toUpperCase().contains(subSearch) ||
+                                s.getCreator().getFullName().toUpperCase().contains(subSearch) ||
+                                checkOsdBelongSyllabus(s.getId(), subSearch))
+                        .collect(Collectors.toList());
+            }
+        }
+        if(pages.size() > 0){
             return new PageImpl<>(
-                    pages.stream().map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                    pages.getPageable(),
-                    pages.getTotalElements());
+                    pages.stream().skip(skipCount).limit(RESULTS_PER_PAGE).map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    pageable,
+                    pages.size());
         } else {
             throw new NotFoundException("Syllabus not found!");
         }
+    }
+
+    private boolean checkOsdBelongSyllabus(long syllabusId, String search) {
+            if (getListSyllabusIdByOSD(search).contains(syllabusId)) {
+                return true;
+            }
+        return false;
     }
 
     private static boolean ifPropertpresent(final Set<String> properties, final String propertyName) {

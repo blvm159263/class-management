@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -48,9 +49,9 @@ public class SyllabusController {
             @RequestParam(defaultValue = "")
             @Parameter(
                     description = "<b>Search by syllabus name, code, creator's name, or output standard<b>",
-                    example = "C#"
+                    example = ""
             )
-            String search,
+            List<String> search,
 
             @RequestParam(defaultValue = "0")
             @Parameter(
