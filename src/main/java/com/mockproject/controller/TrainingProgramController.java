@@ -8,14 +8,21 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -32,8 +39,18 @@ public class TrainingProgramController {
     })
     @Operation(summary = "Get all Training Program")
     @GetMapping("list")
-    public ResponseEntity<?> getAllTrainingProgram(){
-        List<TrainingProgramDTO> list =service.getAllTrainingProgram();
+    public ResponseEntity<?> getAllTrainingProgram(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                   @RequestParam(defaultValue = "10") Integer pageSize,
+                                                   Model model)
+    {
+        long rows=service.countAll();
+        long totalPage=rows/pageSize;
+        if(totalPage==0||rows%pageSize!=0){
+            totalPage+=1;
+        }
+        model.addAttribute("NUMBER_OF_PAGE",totalPage);
+
+        Page<TrainingProgramDTO> list =service.getAll(pageNo, pageSize);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
@@ -47,10 +64,35 @@ public class TrainingProgramController {
     })
     @Operation(summary = "Get Training Program by program name and creator name")
     @GetMapping("search-name")
-    public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search") @RequestParam(defaultValue = "") String name) {
-        List<TrainingProgramDTO> list = service.searchByProgramName(name);
-        for (TrainingProgramDTO dto:service.searchByCreatorName(name)){
-            list.add(dto);
+    public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search")
+                                              @RequestParam(name="name",required = false) String name,
+                                              @RequestParam(defaultValue = "0") Integer pageNo,
+                                              @RequestParam(defaultValue = "10") Integer pageSize,
+                                              HttpServletResponse response,
+                                              HttpServletRequest request,
+                                              Model model) throws IOException {
+        long rows=service.countAll();
+        long totalPage=rows/pageSize;
+        if(totalPage==0||rows%pageSize!=0){
+            totalPage+=1;
+        }
+        model.addAttribute("NUMBER_OF_PAGE",totalPage);
+
+        HttpSession session=request.getSession();
+        List<String> listName=(List<String>) session.getAttribute("LIST_NAME");
+        if(listName==null && name==null) {
+            response.sendRedirect("list");
+        }
+        if (listName==null){
+            listName=new ArrayList<>();
+        }
+        listName.add(name);
+        session.setAttribute("LIST_NAME",listName);
+        List<TrainingProgramDTO> list = new ArrayList<>();
+        for(String key:listName){
+            for (TrainingProgramDTO dto:service.findByNameContaining(pageNo, pageSize, key, key)){
+                list.add(dto);
+            }
         }
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
