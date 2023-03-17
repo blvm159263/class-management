@@ -1,6 +1,6 @@
 package com.mockproject.service.interfaces;
 
-import com.mockproject.dto.*;
+import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.TrainingClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;

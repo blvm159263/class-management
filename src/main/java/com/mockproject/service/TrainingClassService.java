@@ -1,28 +1,27 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.*;
-import com.mockproject.entity.*;
-import com.mockproject.mapper.*;
-import com.mockproject.repository.*;
+import com.mockproject.dto.TrainingClassDTO;
+import com.mockproject.entity.TrainingClass;
+import com.mockproject.mapper.TrainingClassMapper;
+import com.mockproject.repository.LocationRepository;
+import com.mockproject.repository.TrainingClassRepository;
+import com.mockproject.repository.TrainingClassUnitInformationRepository;
+import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.HashMap;
-import java.util.Map;
-
 import java.util.*;
 import java.util.stream.Collectors;
 

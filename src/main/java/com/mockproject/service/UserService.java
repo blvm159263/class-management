@@ -1,19 +1,9 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.UserDTO;
-import com.mockproject.entity.Level;
-import com.mockproject.entity.Role;
-import com.mockproject.entity.User;
-import com.mockproject.mapper.UserMapper;
-import com.mockproject.repository.LevelRepository;
-import com.mockproject.repository.RoleRepository;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.UserMapper;
-
-import com.mockproject.repository.TrainingClassAdminRepository;
-import com.mockproject.repository.TrainingClassRepository;
-import com.mockproject.repository.TrainingClassUnitInformationRepository;
-import com.mockproject.repository.UserRepository;
+import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitService;
 import com.mockproject.service.interfaces.IUserService;
 import com.opencsv.CSVReader;

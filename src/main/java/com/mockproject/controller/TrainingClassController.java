@@ -1,8 +1,6 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.TrainingClassDTO;
-import com.mockproject.service.interfaces.IFsuService;
-import com.mockproject.service.interfaces.ILocationService;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,7 +12,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

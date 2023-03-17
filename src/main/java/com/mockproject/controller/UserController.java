@@ -1,10 +1,10 @@
 package com.mockproject.controller;
 
 
-import com.mockproject.jwt.JwtTokenProvider;
 import com.mockproject.dto.*;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.RolePermissionScope;
+import com.mockproject.jwt.JwtTokenProvider;
 import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.service.interfaces.*;
@@ -17,9 +17,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;

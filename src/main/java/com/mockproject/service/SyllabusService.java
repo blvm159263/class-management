@@ -5,32 +5,26 @@ import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.OutputStandardRepository;
-import com.mockproject.dto.SyllabusDTO;
-import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.TrainingProgram;
-import com.mockproject.entity.TrainingProgramSyllabus;
-import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.SyllabusRepository;
-import com.mockproject.repository.UnitDetailRepository;
-import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.service.interfaces.ISessionService;
-import com.mockproject.service.interfaces.IOutputStandardService;
 import com.mockproject.service.interfaces.ISyllabusService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.server.handler.ExceptionHandlingWebHandler;
 import org.webjars.NotFoundException;
 
-import java.lang.reflect.Field;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -52,10 +46,6 @@ public class SyllabusService implements ISyllabusService {
     private final ISessionService sessionService;
 
     private final TrainingProgramSyllabusRepository trainingProgramSyllabusRepository;
-
-    private final UnitDetailRepository detailRepository;
-
-    private final OutputStandardRepository outputStandardRepository;
 
     private static final int RESULTS_PER_PAGE = 10;
 

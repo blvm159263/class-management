@@ -3,11 +3,8 @@ package com.mockproject.service.interfaces;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.User;
-import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.User;
 import org.springframework.data.domain.Page;
 
-import java.io.IOException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
