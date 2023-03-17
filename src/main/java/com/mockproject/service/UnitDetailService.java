@@ -148,6 +148,12 @@ public class UnitDetailService implements IUnitDetailService {
         unitDetail.get().setType(unitDetail.get().isType() == true ? false: true);
         return true;
     }
+
+    @Override
+    public List<UnitDetailDTO> listByUnitIdTrue(Long id) {
+        return null;
+    }
+
     public List<UnitDetail> getUnitDetailByUnitId(long idUnit){
         return unitDetailRepository.getListUnitDetailByUnitId(idUnit);
     }
