@@ -36,7 +36,7 @@ public class UnitService implements IUnitService {
     private final SyllabusRepository syllabusRepository;
     private final TrainingClassRepository trainingClassRepository;
     private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
-    private final SessionRepository sessionRepository;
+
 
     @Override
     public List<UnitDTO> getAllUnitBySessionId(long sessionId, boolean status){
@@ -165,7 +165,7 @@ public class UnitService implements IUnitService {
 
         // Get all units
         List<TrainingClassUnitInformation> list = trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc, true).orElseThrow();
-        return list.stream().map(p-> repository.findByIdAndStatus(p.getUnit().getId(), true).orElseThrow()).toList();
+        return list.stream().map(p-> unitRepository.findByIdAndStatus(p.getUnit().getId(), true).orElseThrow()).toList();
     }
 
 
@@ -175,7 +175,7 @@ public class UnitService implements IUnitService {
         List<Session> sessions = getListUnitsByTrainingClassId(id).stream().map(p -> sessionRepository.findByIdAndStatus(p.getSession().getId(), true).orElseThrow()).toList();
 
         List<Long> sessionIds = sessions.stream().map(Session::getId).distinct().toList();
-        return sessionRepository.findByIdAndStatus(sessionIds.get(dayNth - 1),true).orElseThrow();
+        return sessionRepository.findByIdAndStatus(sessionIds.get(dayNth - 1), true).orElseThrow();
 
 //        Map<Integer, Long> list = new HashMap<>();
 //        list.put(1, sessions.get(0).getId());
@@ -194,6 +194,6 @@ public class UnitService implements IUnitService {
     // Get list units from a session
     public List<Unit> getListUnitsInASessionByTrainingClassId(long id, int dayNth){
         Session session = getSession(id, dayNth);
-        return repository.findBySessionAndStatusOrderByUnitNumber(session, true).orElseThrow();
+        return unitRepository.findBySessionAndStatusOrderByUnitNumber(session, true).orElseThrow();
     }
 }

@@ -65,7 +65,7 @@ public class DeliveryTypeController {
     @GetMapping("/class-delivery-types")
     public ResponseEntity<?> getAllDeliveryTypes(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
         try{
-            return ResponseEntity.ok(service.getAllDeliveryTypesByTrainingClassId(id));
+            return ResponseEntity.ok(deliveryTypeService.getAllDeliveryTypesByTrainingClassId(id));
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
         }

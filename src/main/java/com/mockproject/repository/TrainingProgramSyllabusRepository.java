@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface TrainingProgramSyllabusRepository extends JpaRepository<TrainingProgramSyllabus, Long> {
-    Optional<List<TrainingProgramSyllabus>> findByTrainingProgramAndStatus(TrainingProgram trainingProgram, Boolean status);
 
     List<TrainingProgramSyllabus> getTrainingProgramSyllabusByTrainingProgramId(long trainProgramID);
 

@@ -18,7 +18,7 @@ public interface UnitRepository extends JpaRepository<Unit, Long> {
 
     Optional<List<Unit>> findUnitBySessionIdAndStatus(long sessionId, boolean status);
 
-    List<Unit> findBySession(Session session);  Optional<Unit> findByIdAndStatus(long id, boolean status);
+    List<Unit> findBySession(Session session);
 
     Optional<List<Unit>> findAllBySessionIdAndStatus(long sessionId, boolean status);
 

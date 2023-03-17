@@ -29,8 +29,6 @@ import java.util.stream.Collectors;
 public class TrainingClassService implements ITrainingClassService {
 
     private final TrainingClassRepository classRepo;
-    private final UserRepository userRepository;
-    private final TowerRepository towerRepository;
     private final LocationRepository locationRepository;
     private final TrainingProgramRepository trainingProgramRepository;
     private final TrainingClassUnitInformationRepository classUnitRepo;
@@ -57,7 +55,7 @@ public class TrainingClassService implements ITrainingClassService {
 
     @Override
     public TrainingClassDTO getAllDetails(long id) {
-        TrainingClass details = classRepo.findByIdAndStatus(id, true);
+        TrainingClass details = classRepo.findByIdAndStatus(id, true).orElseThrow();
         return TrainingClassMapper.INSTANCE.toDTO(details);
     }
 

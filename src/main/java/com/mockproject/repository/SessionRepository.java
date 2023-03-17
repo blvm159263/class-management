@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface SessionRepository extends JpaRepository<Session, Long> {
-    Optional<Session> findByIdAndStatus(long id, Boolean status);
 
     List<Session> findBySyllabus(Syllabus syllabus);
 

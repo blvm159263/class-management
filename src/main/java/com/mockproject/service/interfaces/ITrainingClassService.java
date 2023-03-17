@@ -11,13 +11,13 @@ import java.util.Optional;
 
 
 public interface ITrainingClassService {
-    public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date);
+    List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date);
 
-    public List<TrainingClass> findAllBySpecification(Specification specification);
+    List<TrainingClass> findAllBySpecification(Specification specification);
 
-    public List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText,LocalDate date);
+    List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText,LocalDate date);
 
-    public List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate,LocalDate endDate);
+    List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate,LocalDate endDate);
 
 
     Page<TrainingClassDTO> getListClass(boolean status,
@@ -32,24 +32,5 @@ public interface ITrainingClassService {
 
     TrainingClassDTO getAllDetails(long id);
 
-    List<UserDTO> getAllTrainers(long id);
-
-    List<TowerDTO> getAllTowers(long id);
-
-    AttendeeDTO getAttendee(long id);
-
-    List<ClassScheduleDTO> getClassSchedule(long id);
-
-    List<UserDTO> getAllAdmins(long id);
-
-    FsuDTO getFsu(long id);
-
-    ContactDTO getContact(long id);
-
-    UserDTO getCreator(long id);
-
-    Integer getShortDetails(long id, LocalDate targetDate);
-
-    DeliveryTypeDTO getDeliveryType(long id);
 
 }

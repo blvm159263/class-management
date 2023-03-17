@@ -37,7 +37,7 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
 
     List<TrainingClass> findAllByStatus(boolean status);
 
-    public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date);
+    List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date);
 
     @Query("SELECT tc FROM TrainingClass tc " +
             "LEFT JOIN tc.listClassSchedules cs " +

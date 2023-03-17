@@ -52,8 +52,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     )
     Page<User> searchByFilter(Long id, LocalDate dob, String email, String fullname, Boolean gender, String phone, List<Integer> state, List<Long> attendee_id, List<Long> level_id, List<Long> role_id,Pageable pageable);
 
-    List<User> findByRoleAndStatus(Role role, boolean status);
-
-    Optional<User> findByEmailAndStatus(String email, boolean status);
 
 }

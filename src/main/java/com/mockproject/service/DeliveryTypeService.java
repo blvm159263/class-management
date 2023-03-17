@@ -52,7 +52,7 @@ public class DeliveryTypeService implements IDeliveryTypeService {
     public DeliveryTypeDTO getByIdTrue(Long id) {
         UnitDetail unitDetail = new UnitDetail();
         unitDetail.setId(id);
-        return DeliveryTypeMapper.INSTANCE.toDTO(deliveryTypeRepository.findByIdAndStatus(id,true));
+        return DeliveryTypeMapper.INSTANCE.toDTO(deliveryTypeRepository.findByIdAndStatus(id,true).orElseThrow());
     }
 
     @Override
