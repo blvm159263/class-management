@@ -7,36 +7,57 @@ import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.HashMap;
 import java.util.Map;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class TrainingClassService implements ITrainingClassService {
 
-    private final TrainingClassRepository trainingClassRepository;
-    private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
+    private final TrainingClassRepository classRepo;
+    private final UserRepository userRepository;
+    private final TowerRepository towerRepository;
     private final LocationRepository locationRepository;
     private final TrainingProgramRepository trainingProgramRepository;
+    private final TrainingClassUnitInformationRepository classUnitRepo;
+
+    @Override
+    public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date) {
+        return classRepo.findAllByListClassSchedulesDate(date);
+    }
+
+    @Override
+    public List<TrainingClass> findAllBySpecification(Specification specification) {
+        return classRepo.findAll((Sort) specification);
+    }
+
+    @Override
+    public List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText, LocalDate date) {
+        return classRepo.findAllBySearchTextAndListClassSchedulesDate(searchText,date);
+    }
+
+    @Override
+    public List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate, LocalDate endDate) {
+        return classRepo.findAllBySearchTextAndListClassSchedulesWeek(searchText,startDate,endDate);
+    }
 
     @Override
     public TrainingClassDTO getAllDetails(long id) {
-        TrainingClass details = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        TrainingClass details = classRepo.findByIdAndStatus(id, true);
         return TrainingClassMapper.INSTANCE.toDTO(details);
     }
 
@@ -46,7 +67,7 @@ public class TrainingClassService implements ITrainingClassService {
         trainingClassDTO.setClassCode(generateClassCode(trainingClassDTO));
         trainingClassDTO.setPeriod(getPeriod(trainingClassDTO.getStartTime(),trainingClassDTO.getEndTime()));
         TrainingClass entity = TrainingClassMapper.INSTANCE.toEntity(trainingClassDTO);
-        TrainingClass trainingClass = trainingClassRepository.save(entity);
+        TrainingClass trainingClass = classRepo.save(entity);
         if (trainingClass != null) {
             return trainingClass.getId();
         }
@@ -70,7 +91,7 @@ public class TrainingClassService implements ITrainingClassService {
         String programCode = programName.split(" ", 2)[0];
         Year yearCode = Year.now().minusYears(2000);
         StringBuilder builder = new StringBuilder();
-        List<TrainingClass> listExisting = trainingClassRepository.findByClassNameContaining(trainingClassDTO.getClassName());
+        List<TrainingClass> listExisting = classRepo.findByClassNameContaining(trainingClassDTO.getClassName());
         String versionCode = String.valueOf(listExisting.size() + 1);
 
         builder.append(locationCode)
@@ -89,30 +110,10 @@ public class TrainingClassService implements ITrainingClassService {
         if(startTime.before(Time.valueOf("12:00:00"))){
             return 0;
         }
-        if(startTime.after(Time.valueOf("17:00:00"))){
+        else if(startTime.after(Time.valueOf("17:00:00"))){
             return 2;
         }
         return 1;
-    }
-
-
-
-
-
-
-    @Override
-    public List<TrainingClassDTO> getAllClass() {
-        return trainingClassRepository.findAllByStatus(true).stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList());
-    }
-
-
-    public Sort.Direction getSortDirection(String direction) {
-        if (direction.equals("asc")) {
-            return Sort.Direction.ASC;
-        } else if (direction.equals("desc")) {
-            return Sort.Direction.DESC;
-        }
-        return Sort.Direction.ASC;
     }
 
 
@@ -133,14 +134,14 @@ public class TrainingClassService implements ITrainingClassService {
         }
         List<Long> classId = new ArrayList<>();
         if(trainerId!=0){
-            classId = trainingClassUnitInformationRepository
+            classId = classUnitRepo
                     .findByStatusAndTrainerId( true, trainerId)
                     .stream().map(t -> t.getTrainingClass().getId())
                     .collect(Collectors.toList());
             classId.add(-1L);
         }
         Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
-        Page<TrainingClass> pages = trainingClassRepository.getListClass(status, locationId, fromDate, toDate, period,
+        Page<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
                 isOnline, state, attendeeId, fsu, classId, search, pageable);
         if(pages.getContent().size() > 0){
             return new PageImpl<>(
@@ -150,5 +151,19 @@ public class TrainingClassService implements ITrainingClassService {
         }else {
             throw new NotFoundException("Training Class not found!");
         }
+    }
+
+    public Sort.Direction getSortDirection(String direction) {
+        if (direction.equals("asc")) {
+            return Sort.Direction.ASC;
+        } else if (direction.equals("desc")) {
+            return Sort.Direction.DESC;
+        }
+        return Sort.Direction.ASC;
+    }
+
+    @Override
+    public List<TrainingClassDTO> getAllClass() {
+        return classRepo.findAllByStatus(true).stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 }

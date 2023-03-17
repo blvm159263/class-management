@@ -10,11 +10,11 @@ import java.util.Optional;
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
+    public List<Location> findDistinctAllByListTowersListTrainingClassUnitInformationsTrainingClassId(Long id);
+
     List<Location> findByStatus(boolean status);
 
     Optional<Location> findFirstByLocationNameAndStatus(String name, boolean status);
-
-
 
     Optional<Location> findByStatusAndId(boolean status, long id);
 

@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface TrainingClassAdminRepository extends JpaRepository<TrainingClassAdmin, Long> {
     List<TrainingClassAdmin> findByTrainingClassAndStatus(TrainingClass trainingClass, Boolean status);
+
+    List<TrainingClassAdmin> findAllByTrainingClassId(Long id);
 }

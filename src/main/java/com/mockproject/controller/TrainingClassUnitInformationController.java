@@ -3,9 +3,9 @@ package com.mockproject.controller;
 import com.mockproject.dto.TrainingClassUnitInformationDTO;
 import com.mockproject.service.interfaces.ITrainingClassUnitInformationService;
 import io.swagger.v3.oas.annotations.Operation;
-
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +19,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "Training Class Unit Information API")
 @RequestMapping("api/training-class-unit-information")
 public class TrainingClassUnitInformationController {
 

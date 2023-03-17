@@ -3,7 +3,6 @@ package com.mockproject.service;
 import com.mockproject.dto.LocationDTO;
 import com.mockproject.entity.Location;
 import com.mockproject.mapper.LocationMapper;
-
 import com.mockproject.repository.LocationRepository;
 import com.mockproject.service.interfaces.ILocationService;
 import jakarta.transaction.Transactional;
@@ -30,7 +29,10 @@ public class LocationService implements ILocationService {
     public List<LocationDTO> getAllLocation(boolean status) {
         return locationRepo.findAllByStatus(status).stream().map(LocationMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
-
+    @Override
+    public List<Location> findLocationByTrainingClassID(Long id) {
+        return locationRepo.findDistinctAllByListTowersListTrainingClassUnitInformationsTrainingClassId(id);
+    }
 
     @Override
     public LocationDTO getLocationById(boolean status, long id) {

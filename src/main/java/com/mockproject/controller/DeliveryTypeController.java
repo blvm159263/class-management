@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
@@ -17,12 +18,27 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequiredArgsConstructor
+import java.util.List;
+
 @RestController
-@RequestMapping("api/delivery-type")
+@Tag(name = "Delivery API")
+@RequestMapping(value = "/api/delivery")
+@RequiredArgsConstructor
 public class DeliveryTypeController {
 
-    private final IDeliveryTypeService service;
+    private final IDeliveryTypeService deliveryTypeService;
+
+    @GetMapping("")
+    public ResponseEntity<List<DeliveryTypeDTO>> getAll(){
+        List<DeliveryTypeDTO> deliveryTypeDTOList = deliveryTypeService.getDeliveryTypes(true);
+        return ResponseEntity.ok(deliveryTypeDTOList);
+    }
+
+    @GetMapping("/{deliveryTypeId}")
+    public ResponseEntity<DeliveryTypeDTO> getDeliveryTypeById(@PathVariable("deliveryTypeId") long id){
+        DeliveryTypeDTO deliveryTypeDTO = deliveryTypeService.getDeliveryType(id, true);
+        return ResponseEntity.ok(deliveryTypeDTO);
+    }
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any delivery type"),
@@ -32,7 +48,7 @@ public class DeliveryTypeController {
     @Operation(summary = "Get Delivery Type by given ID")
     @GetMapping("{id}")
     public ResponseEntity<?> getById(@Parameter(description = "Delivery Type ID") @PathVariable("id") Long id) {
-        DeliveryTypeDTO deliveryTypeDTO = service.getByIdTrue(id);
+        DeliveryTypeDTO deliveryTypeDTO = deliveryTypeService.getByIdTrue(id);
         if (deliveryTypeDTO != null) {
             return ResponseEntity.ok(deliveryTypeDTO);
         } else {

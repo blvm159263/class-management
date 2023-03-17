@@ -4,9 +4,11 @@ import com.mockproject.dto.FileClassResponseDTO;
 import com.mockproject.exception.file.FileFormatException;
 import com.mockproject.service.interfaces.IFileService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.*;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +24,7 @@ import java.nio.file.Paths;
 
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "File API")
 @RequestMapping("api/file-csv")
 public class FileController {
 

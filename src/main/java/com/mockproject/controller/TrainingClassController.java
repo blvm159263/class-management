@@ -1,6 +1,8 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.TrainingClassDTO;
+import com.mockproject.service.interfaces.IFsuService;
+import com.mockproject.service.interfaces.ILocationService;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,26 +10,34 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @Tag(name = "Training Class API")
-@RequestMapping("api/training-class")
+@RequestMapping("api/class")
+@SecurityRequirement(name = "Authorization")
 public class TrainingClassController {
 
-    private final ITrainingClassService service;
+    public static final String VIEW = "ROLE_View_Class";
+    public static final String MODIFY = "ROLE_Modify_Class";
+    public static final String CREATE = "ROLE_Create_Class";
+    public static final String FULL_ACCESS = "ROLE_Full access_Class";
 
+    private final ITrainingClassService trainingClassService;
 
 
     @Operation(summary = "Get all fields from TrainingClass entity by id")
@@ -38,7 +48,7 @@ public class TrainingClassController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getAll(@Parameter(description = "TrainingClass id", example = "1") @PathVariable("id") long id) {
         try {
-            return ResponseEntity.ok(service.getAllDetails(id));
+            return ResponseEntity.ok(trainingClassService.getAllDetails(id));
         }catch (Exception ex){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
         }
@@ -53,7 +63,7 @@ public class TrainingClassController {
     @Operation(summary = "Create new Training Class")
     @PostMapping("")
     public ResponseEntity<?> create(@Valid @RequestBody TrainingClassDTO dto){
-        Long id = service.create(dto);
+        Long id = trainingClassService.create(dto);
         if(id!=null){
             return new ResponseEntity<>(id, HttpStatus.CREATED);
         }else{
@@ -66,6 +76,8 @@ public class TrainingClassController {
             summary = "Get training class list",
             description = "<b>List of training class according to search, sort, filter, and pages<b>"
     )
+    @Secured({VIEW, CREATE, MODIFY, FULL_ACCESS})
+
     public ResponseEntity<?> getListClass(
             @RequestParam(defaultValue = "")
             @Parameter(
@@ -149,10 +161,9 @@ public class TrainingClassController {
             @Parameter(
                     description = "<b>Insert page number (0 => first page)<b>",
                     example = "0"
-            ) Optional<Integer> page)
-    {
+            ) Optional<Integer> page) {
         return ResponseEntity
-                .ok(service.getListClass(true, location, fromDate, toDate, period,
+                .ok(trainingClassService.getListClass(true, location, fromDate, toDate, period,
                         isOnline? "Online" : "", state, attendee, fsu, trainerId, search, sort, page));
     }
 

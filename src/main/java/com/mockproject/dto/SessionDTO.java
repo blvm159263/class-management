@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Builder
@@ -16,4 +17,5 @@ public class SessionDTO implements Serializable {
     private int sessionNumber;
     private boolean status;
     private Long syllabusId;
+    private List<UnitDTO> unitDTOList;
 }

@@ -1,6 +1,8 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.SyllabusDTO;
+import com.mockproject.entity.CustomUserDetails;
+import com.mockproject.entity.Syllabus;
 import com.mockproject.service.interfaces.ISyllabusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,24 +10,76 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @Tag(name = "Syllabus API")
-@RequestMapping("api/syllabus")
+@RequestMapping(value = "/api/syllabus")
+@SecurityRequirement(name = "Authorization")
 public class SyllabusController {
 
+    public static final String VIEW = "ROLE_View_Syllabus";
+    public static final String MODIFY = "ROLE_Modify_Syllabus";
+    public static final String CREATE = "ROLE_Create_Syllabus";
+    public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
+
     private final ISyllabusService syllabusService;
+
+    @GetMapping()
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+    public ResponseEntity<List<SyllabusDTO>> getAll(){
+        List<SyllabusDTO> listSyllabus = syllabusService.getAll(true, true);
+        return ResponseEntity.ok(listSyllabus);
+    }
+
+    @GetMapping("/{syllabusId}")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+    public ResponseEntity<SyllabusDTO> getSyllabus(@PathVariable("syllabusId") long syllabusId){
+        SyllabusDTO syllabus = syllabusService.getSyllabusById(syllabusId, true, true);
+        return ResponseEntity.ok(syllabus);
+    }
+
+    @GetMapping("get-all")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+    public ResponseEntity<List<SyllabusDTO>> getAllSyllabus(){
+        return ResponseEntity.ok(syllabusService.getSyllabusList(true));
+    }
+
+    @PostMapping(value = "/create")
+    @Secured({CREATE,FULL_ACCESS})
+    public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus){
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        long syllabusID = syllabusService.create(syllabus, user.getUser());
+        return ResponseEntity.ok(syllabusID);
+    }
+
+    @PutMapping("edit")
+    @Secured({MODIFY,CREATE, FULL_ACCESS})
+    public ResponseEntity<Syllabus> editSyllabus(@RequestBody SyllabusDTO syllabusDTO)throws IOException {
+        Syllabus editsyllabus = syllabusService.editSyllabus(syllabusDTO, true);
+        return ResponseEntity.ok(editsyllabus);
+    }
+
+
+    @PutMapping("delete/{id}")
+    @Secured({MODIFY,CREATE, FULL_ACCESS})
+    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id") long syllabusId){
+        return ResponseEntity.ok(syllabusService.deleteSyllabus(syllabusId, true));
+    }
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any syllabus"),
@@ -89,5 +143,4 @@ public class SyllabusController {
         return ResponseEntity
                 .ok(syllabusService.getListSyllabus(true,  fromDate, toDate, search, sort, page));
     }
-
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
@@ -23,5 +24,13 @@ public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
     Page<Syllabus> getListSyllabus(boolean status,
                                    LocalDate fromDate, LocalDate toDate,
                                    String search, List<Long> syllabusIdList, Pageable pageable);
+    Optional<Syllabus> findByIdAndStatus(long id, boolean status);
 
+    Optional<List<Syllabus>> findByStateAndStatus(boolean state, boolean status);
+
+    Optional<List<Syllabus>> findAllByStatus(boolean status);
+
+    Optional<Syllabus> findByIdAndStateAndStatus(long syllabusId, boolean state, boolean status);
+
+    Syllabus getSyllabusById(long id);
 }

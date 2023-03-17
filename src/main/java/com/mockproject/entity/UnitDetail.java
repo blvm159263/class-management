@@ -49,8 +49,8 @@ public class UnitDetail implements Serializable {
     @Column(name = "status")
     private boolean status;
 
-    @ManyToOne
-    @JsonManagedReference
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonManagedReference(value = "unit_unitdetail")
     @JoinColumn(name = "unit_id")
     private Unit unit;
 

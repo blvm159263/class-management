@@ -15,6 +15,8 @@ public interface UnitDetailRepository extends JpaRepository<UnitDetail, Long> {
 
     List<UnitDetail> findByStatusAndOutputStandardIn(boolean status, List<OutputStandard> osd);
 
+    Optional<List<UnitDetail>> findByUnitIdAndStatus(long unitId, boolean status);
+
     @Query("SELECT u FROM UnitDetail u " +
             "WHERE u.status = ?1 " +
             "AND u.unit.session.syllabus.id = ?2")
@@ -24,4 +26,7 @@ public interface UnitDetailRepository extends JpaRepository<UnitDetail, Long> {
 
     Optional<List<UnitDetail>> findByUnitInAndStatus(List<Unit> units, Boolean status);
 
+    Optional<UnitDetail> findByIdAndStatus(long unitDetailId, boolean status);
+
+    List<UnitDetail> getListUnitDetailByUnitId(long idUnit);
 }

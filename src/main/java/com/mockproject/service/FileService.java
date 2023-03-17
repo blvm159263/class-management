@@ -50,17 +50,12 @@ public class FileService implements IFileService {
         LocalDate startDate;
         Time startTime;
         Time endTime;
-        String className;
         BigDecimal hour;
         int day;
         int planned;
         int accepted;
         int actual;
-        String locationName;
-        String fsuName;
-        String contactEmail;
-        String trainingProgramName;
-        String attendeeName;
+        String className, locationName, fsuName, contactEmail, trainingProgramName, attendeeName;
 
         try {
             startDate = LocalDate.parse(record.get(1), formatter);
