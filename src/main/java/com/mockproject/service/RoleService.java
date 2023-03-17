@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RoleService implements IRoleService {
 
-
     private final RoleRepository repository;
 
     @Override
@@ -62,6 +61,5 @@ public class RoleService implements IRoleService {
         } else
         return false;
     }
-
 
 }

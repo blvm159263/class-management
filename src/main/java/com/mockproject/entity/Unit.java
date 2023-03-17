@@ -38,8 +38,10 @@ public class Unit implements Serializable {
 
     @Column(
             name = "unit_number",
-            nullable = false
+            nullable = false,
+            unique = false
     )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int unitNumber;
 
     @Column(

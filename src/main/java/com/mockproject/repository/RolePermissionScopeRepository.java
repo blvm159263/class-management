@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface RolePermissionScopeRepository extends JpaRepository<RolePermissionScope, Long> {
 
-    List<RolePermissionScope> findAllByRole_Id(Long roleId);
+    List<RolePermissionScope> findAllByRoleId(Long roleId);
 
     RolePermissionScope findByRoleIdAndAndPermissionScopeId(long roleId, long permissionScopeId);
 }

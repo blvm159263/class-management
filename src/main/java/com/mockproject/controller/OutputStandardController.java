@@ -5,6 +5,7 @@ import com.mockproject.service.interfaces.IOutputStandardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Output Standard API")
 @Tag(name = "Output Standard", description = "API related Output standard")
 @RequestMapping(value = "/api/outputStandard")
 public class OutputStandardController {

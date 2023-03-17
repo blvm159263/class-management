@@ -11,11 +11,18 @@ import com.mockproject.mapper.UserMapper;
 import com.mockproject.service.interfaces.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -76,7 +83,6 @@ public class UserController {
             CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
             String token = jwtTokenProvider.generateToken(user);
             UserDTO userDTO = UserMapper.INSTANCE.toDTO(user.getUser());
-
             return ResponseEntity.ok(new JwtResponseDTO(userDTO, token));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Invalid email or password");
@@ -129,7 +135,7 @@ public class UserController {
         List<FormRoleDTO> list = new ArrayList<>();
         for (RoleDTO role : roleService.getAll()) {
             FormRoleDTO roleDTO = new FormRoleDTO();
-            List<RolePermissionScope> listRolePermissionScope = rolePermissionScopeService.findAllByRole_Id(role.getId());
+            List<RolePermissionScope> listRolePermissionScope = rolePermissionScopeService.findAllByRoleId(role.getId());
             roleDTO.setId(role.getId());
             roleDTO.setRoleName(role.getRoleName());
 
@@ -200,6 +206,7 @@ public class UserController {
         }
         return ResponseEntity.ok("Successfull");
     }
+
     @PostMapping("/searchByFilter")
     @Operation(summary = "Search User by filter and order")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})

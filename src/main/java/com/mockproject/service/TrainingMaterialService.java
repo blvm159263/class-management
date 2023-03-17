@@ -8,7 +8,6 @@ import com.mockproject.mapper.TrainingMaterialMapper;
 import com.mockproject.repository.TrainingMaterialRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
 import com.mockproject.service.interfaces.IUnitDetailService;
-import com.mockproject.service.interfaces.IUnitService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +31,15 @@ public class TrainingMaterialService implements ITrainingMaterialService {
     private final TrainingMaterialRepository trainingMaterialRepository;
 
     private final IUnitDetailService unitDetailService;
+
+    private final UserService userService;
+
     @Autowired
     public TrainingMaterialService(@Lazy  IUnitDetailService unitDetailService, TrainingMaterialRepository trainingMaterialRepository, UserService userService){
         this.unitDetailService = unitDetailService;
         this.trainingMaterialRepository = trainingMaterialRepository;
         this.userService = userService;
     }
-    private final UserService userService;
 
     @Override
     public TrainingMaterialDTO uploadAFile(TrainingMaterialDTO createDTO,UnitDetail unitDetail, User user) throws IOException {
@@ -96,6 +97,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
                 .build()));
     }
 
+    @Override
     public List<TrainingMaterial> getListTrainingMaterialByUnitDetailId(long id){
         return trainingMaterialRepository.getListTrainingMaterialByUnitDetailId(id);
     }
@@ -127,7 +129,6 @@ public class TrainingMaterialService implements ITrainingMaterialService {
             Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(trainingMaterialId, status);
             trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Training "+ trainingMaterialId));
             trainingMaterial.get().setStatus(false);
-
             trainingMaterialRepository.save(trainingMaterial.get());
         } catch (Exception e){
             e.printStackTrace();

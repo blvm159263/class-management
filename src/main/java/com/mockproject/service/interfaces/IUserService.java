@@ -1,16 +1,15 @@
 package com.mockproject.service.interfaces;
 
-import java.io.File;
-
-import com.mockproject.dto.SearchUserFillerDTO;
 import com.mockproject.dto.UserDTO;
 import org.springframework.data.domain.Page;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
+
     String readCSVFile(File file);
 
     List<UserDTO> getAll();
@@ -21,7 +20,15 @@ public interface IUserService {
 
     boolean updateStatus(long id);
 
+    List<UserDTO> listClassAdminTrue();
+
+    List<UserDTO> listTrainerTrue();
+
     Integer updateStateToFalse(long id);
+
+    UserDTO getUserById(Long id);
+
+    List<UserDTO> getAllUser(boolean status);
 
     Integer updateStateToTrue(long id);
 
@@ -38,4 +45,6 @@ public interface IUserService {
     boolean editUser(UserDTO user);
 
     void encodePassword();
+
+    UserDTO getUserById(boolean status, long id);
 }

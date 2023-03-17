@@ -16,6 +16,7 @@ import com.mockproject.service.interfaces.IUnitDetailService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,16 +30,16 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UnitDetailService implements IUnitDetailService {
+
     private final UnitRepository unitRepository;
+
     private final UnitDetailRepository unitDetailRepository;
+
     private final ITrainingMaterialService trainingMaterialService;
 
-    public UnitDetailService(UnitDetailRepository unitDetailRepository, ITrainingMaterialService trainingMaterialService, UnitRepository unitRepository) {
-        this.unitDetailRepository = unitDetailRepository;
-        this.trainingMaterialService = trainingMaterialService;
-        this.unitRepository = unitRepository;
-    }
+
 
     @Override
     public List<UnitDetailDTO> getAllUnitDetailByUnitId(long unitId, boolean status) {
@@ -148,6 +149,7 @@ public class UnitDetailService implements IUnitDetailService {
         unitDetail.get().setType(unitDetail.get().isType() == true ? false: true);
         return true;
     }
+
     public List<UnitDetail> getUnitDetailByUnitId(long idUnit){
         return unitDetailRepository.getListUnitDetailByUnitId(idUnit);
     }

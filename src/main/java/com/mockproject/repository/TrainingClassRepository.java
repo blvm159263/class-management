@@ -1,5 +1,6 @@
 package com.mockproject.repository;
 
+
 import com.mockproject.entity.TrainingClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +11,14 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
+
 @Repository
 public interface TrainingClassRepository extends JpaRepository<TrainingClass, Long> {
+
+    TrainingClass findByIdAndStatus(long id, Boolean status);
+
+
+    List<TrainingClass> findByClassNameContaining(String name);
 
     @Query("SELECT c FROM TrainingClass c " +
             "WHERE c.status = ?1 " +

@@ -10,6 +10,10 @@ import java.util.Optional;
 @Repository
 public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
 
+    List<Attendee> findByStatus(boolean status);
+
+    Optional<Attendee> findByAttendeeNameAndStatus(String name, boolean status);
+
     List<Attendee> findAllByStatusIs(boolean status);
 
     Optional<Attendee> findByStatusAndId(boolean status, long id);

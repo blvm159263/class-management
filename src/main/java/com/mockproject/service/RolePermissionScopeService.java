@@ -22,8 +22,8 @@ public class RolePermissionScopeService implements IRolePermissionScopeService {
     private final PermissionRepository permissionRepository;
 
     @Override
-    public List<RolePermissionScope> findAllByRole_Id(Long roleId) {
-        return repository.findAllByRole_Id(roleId);
+    public List<RolePermissionScope> findAllByRoleId(Long roleId) {
+        return repository.findAllByRoleId(roleId);
     }
 
     @Override
@@ -38,17 +38,11 @@ public class RolePermissionScopeService implements IRolePermissionScopeService {
 
     @Override
     public RolePermissionScopeDTO updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(String permissionName, long roleId, long scopeId) {
-
         long permissionId = permissionRepository.getPermissionsByPermissionName(permissionName).getId();
-
         RolePermissionScopeDTO rolePermissionScopeDTO = RolePermissionScopeMapper.INSTANCE.toDTO(repository.findByRoleIdAndAndPermissionScopeId(roleId, scopeId));
-
         rolePermissionScopeDTO.setPermissionId(permissionId);
-
         repository.save(RolePermissionScopeMapper.INSTANCE.toEntity(rolePermissionScopeDTO));
-
         return null;
     }
-
 
 }
