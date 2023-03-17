@@ -69,5 +69,19 @@ public class UnitService implements IUnitService {
         return unitRepository.findBySessionAndStatusOrderByUnitNumberAsc(session, true);
     }
 
+    @Override
+    public List<UnitDTO> getAllUnitByClassId(long id) {
+        //Get the training class
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        //Get list units
+        List<TrainingClassUnitInformation> trainingClassUnitInformationList =
+                trainingClassUnitInformationRepository.findByTrainingClassAndStatus(trainingClass, true);
+        List<Unit> unitList = trainingClassUnitInformationList
+                .stream()
+                .map(TrainingClassUnitInformation::getUnit)
+                .filter(Unit::isStatus)
+                .toList();
+        return unitList.stream().map(UnitMapper.INSTANCE::toDTO).toList();
+    }
 
 }

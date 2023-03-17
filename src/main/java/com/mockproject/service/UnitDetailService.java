@@ -10,6 +10,5 @@ import org.springframework.stereotype.Service;
 @Transactional
 @RequiredArgsConstructor
 public class UnitDetailService implements IUnitDetailService {
-    private final UnitDetailRepository repository;
-
+    private final UnitDetailRepository unitDetailRepository;
 }

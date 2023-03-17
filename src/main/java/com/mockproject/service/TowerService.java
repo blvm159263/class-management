@@ -51,7 +51,8 @@ public class TowerService implements ITowerService {
         List<TrainingClassUnitInformation> list = unitListFromSession.stream()
                         .map(p -> trainingClassUnitInformationRepository
                                 .findByUnitAndTrainingClassAndStatus(p, trainingClass, true)
-                                .orElseThrow()).toList();
+                                .orElseThrow())
+                .toList();
         List<Tower> towers = list.stream()
                 .map(TrainingClassUnitInformation::getTower)
                 .filter(Tower::isStatus)
