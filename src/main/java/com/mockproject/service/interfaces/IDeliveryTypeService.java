@@ -8,6 +8,8 @@ public interface IDeliveryTypeService {
 
     DeliveryTypeDTO getByIdTrue(Long id);
 
+    List<DeliveryTypeDTO> getAllDeliveryTypesByTrainingClassId(long id);
+
     List<DeliveryTypeDTO> getDeliveryTypes(boolean status);
 
     DeliveryTypeDTO getDeliveryType(Long deliveryId, boolean status);

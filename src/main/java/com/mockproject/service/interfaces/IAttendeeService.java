@@ -14,4 +14,6 @@ public interface IAttendeeService {
     AttendeeDTO getAttendeeById(boolean status, Long id);
 
     List<AttendeeDTO> listAllTrue();
+
+    AttendeeDTO getAttendeeByTrainingClassId(long id);
 }

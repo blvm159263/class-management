@@ -7,4 +7,8 @@ import java.util.List;
 public interface ITowerService {
 
     List<TowerDTO> listByTowerIdTrue(Long id);
+
+    List<TowerDTO> getAllTowersByTrainingClassId(long id);
+
+    List<TowerDTO> getAllTowersForADateByTrainingClassId(long id, int dayNth);
 }

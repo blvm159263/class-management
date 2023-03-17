@@ -125,9 +125,9 @@ public class SyllabusController {
             @RequestParam(defaultValue = "")
             @Parameter(
                     description = "<b>Search by syllabus name, code, creator's name, or output standard<b>",
-                    example = "C#"
+                    example = ""
             )
-            String search,
+            List<String> search,
 
             @RequestParam(defaultValue = "0")
             @Parameter(

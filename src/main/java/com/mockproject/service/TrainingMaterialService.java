@@ -32,13 +32,10 @@ public class TrainingMaterialService implements ITrainingMaterialService {
 
     private final IUnitDetailService unitDetailService;
 
-    private final UserService userService;
-
     @Autowired
-    public TrainingMaterialService(@Lazy  IUnitDetailService unitDetailService, TrainingMaterialRepository trainingMaterialRepository, UserService userService){
+    public TrainingMaterialService(@Lazy  IUnitDetailService unitDetailService, TrainingMaterialRepository trainingMaterialRepository){
         this.unitDetailService = unitDetailService;
         this.trainingMaterialRepository = trainingMaterialRepository;
-        this.userService = userService;
     }
 
     @Override

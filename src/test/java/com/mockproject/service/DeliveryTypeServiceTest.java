@@ -15,7 +15,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {DeliveryTypeService.class})
 @ExtendWith(SpringExtension.class)
@@ -39,7 +40,7 @@ class DeliveryTypeServiceTest {
 
         Long id = 3L;
 
-        when(deliveryTypeRepository.findByIdAndStatus(id, true)).thenReturn(Optional.ofNullable(deliveryType3));
+        when(deliveryTypeRepository.findByIdAndStatus(id, true).orElseThrow()).thenReturn(deliveryType3);
         DeliveryTypeDTO result = deliveryTypeService.getByIdTrue(3L);
         assertEquals(3L, result.getId());
         assertTrue(result.isStatus());

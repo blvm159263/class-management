@@ -1,8 +1,6 @@
 package com.mockproject.advice;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,13 +13,10 @@ import java.util.Map;
 public class ApplicationExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
-    public Map<String, String> handleNotFound(NotFoundException ex){
-        Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("Error Message", ex.getMessage());
-        return errorMap;
+    public String handleNotFound(NotFoundException ex){
+        return "Error Message : " + ex.getMessage();
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public Map<String, String> handleBadRequest(MethodArgumentTypeMismatchException ex){
         Map<String, String> errorMap = new HashMap<>();
@@ -31,11 +26,13 @@ public class ApplicationExceptionHandler {
         return errorMap;
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ExceptionHandler(ResponseStatusException.class)
-    public Map<String, String> handleNoContent(ResponseStatusException ex){
-        Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("Error Message", ex.getMessage());
-        return errorMap;
+    public String handleNoContent(ResponseStatusException ex){
+        return "Error Message : " + ex.getMessage();
+    }
+
+    @ExceptionHandler(ArrayIndexOutOfBoundsException.class)
+    public String handleOutOfIndex(ArrayIndexOutOfBoundsException ex) {
+        return "Error Message : " + ex.getMessage();
     }
 }

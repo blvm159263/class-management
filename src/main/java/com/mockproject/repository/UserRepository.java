@@ -15,13 +15,20 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByStatusAndId(boolean status, Long id);
+    List<User> findByRoleAndStatus(Role role, boolean status);
+
+    Optional<User> findByEmailAndStatus(String email, boolean status);
+
+    Optional<User> findByStatusAndId(boolean status, long id);
 
     Optional<User> findByEmail(String email);
 
     Optional<User> findById(Long id);
 
     List<User> findAllByStatus(boolean status);
+
+    Optional<User> findByIdAndStatus(long id, Boolean status);
+
 
     List<User> findAllBy();
 
@@ -45,8 +52,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     )
     Page<User> searchByFilter(Long id, LocalDate dob, String email, String fullname, Boolean gender, String phone, List<Integer> state, List<Long> attendeeId, List<Long> levelId, List<Long> roleId,Pageable pageable);
 
-    List<User> findByRoleAndStatus(Role role, boolean status);
-
-    Optional<User> findByEmailAndStatus(String email, boolean status);
 
 }

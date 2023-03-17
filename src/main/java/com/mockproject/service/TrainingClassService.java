@@ -1,14 +1,20 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.*;
-import com.mockproject.entity.*;
-import com.mockproject.mapper.*;
-import com.mockproject.repository.*;
+import com.mockproject.dto.TrainingClassDTO;
+import com.mockproject.entity.TrainingClass;
+import com.mockproject.mapper.TrainingClassMapper;
+import com.mockproject.repository.LocationRepository;
+import com.mockproject.repository.TrainingClassRepository;
+import com.mockproject.repository.TrainingClassUnitInformationRepository;
+import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -26,15 +32,15 @@ import java.util.stream.Collectors;
 public class TrainingClassService implements ITrainingClassService {
 
     private final TrainingClassRepository classRepo;
-    private final UserRepository userRepository;
-
-    private final TowerRepository towerRepository;
 
     private final LocationRepository locationRepository;
 
     private final TrainingProgramRepository trainingProgramRepository;
 
     private final TrainingClassUnitInformationRepository classUnitRepo;
+
+    private static final int RESULTS_PER_PAGE = 10;
+
 
     @Override
     public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date) {
@@ -58,156 +64,10 @@ public class TrainingClassService implements ITrainingClassService {
 
     @Override
     public TrainingClassDTO getAllDetails(Long id) {
-        TrainingClass details = classRepo.findByIdAndStatus(id, true);
+        TrainingClass details = classRepo.findByIdAndStatus(id, true).orElseThrow();
         return TrainingClassMapper.INSTANCE.toDTO(details);
     }
 
-//    @Override
-//    public List<UserDTO> getAllTrainers(int id) {
-//        List<User> trainers = repository.getAllTrainersInfo(id);
-//        return trainers.stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
-//    }
-
-    @Override
-    public List<UserDTO> getAllTrainers(Long id) {
-        TrainingClass tc = classRepo.findByIdAndStatus(id, true);
-
-        List<TrainingClassUnitInformation> list = tc.getListTrainingClassUnitInformations()
-                .stream()
-                .filter(TrainingClassUnitInformation::isStatus)
-                .toList();
-
-        List<User> listUser = list
-                .stream()
-                .map(p -> userRepository.findById(p.getTrainer().getId())
-                        .filter(User::isStatus)
-                        .orElseThrow())
-                .toList();
-
-        return listUser.stream().map(UserMapper.INSTANCE::toDTO).toList();
-    }
-
-    @Override
-    public List<TowerDTO> getAllTowers(Long id) {
-        TrainingClass tc = classRepo.findByIdAndStatus(id, true);
-
-        List<TrainingClassUnitInformation> list = tc.getListTrainingClassUnitInformations()
-                .stream()
-                .filter(TrainingClassUnitInformation::isStatus)
-                .toList();
-
-        List<Tower> listTower = list.stream()
-                .map(p -> towerRepository.findById(p.getTower().getId())
-                        .filter(Tower::isStatus)
-                        .orElseThrow())
-                .toList();
-
-        return listTower.stream().map(TowerMapper.INSTANCE::toDTO).toList();
-    }
-
-//    @Override
-//    public List<TowerDTO> getAllTowers(Long id) {
-//        List<Tower> list = trainingClassRepository.getAllTowersInfo(id);
-//        return list.stream().map(TowerMapper.INSTANCE::toDTO).collect(Collectors.toList());
-//    }
-
-    @Override
-    public AttendeeDTO getAttendee(Long id) {
-        TrainingClass tc = classRepo.findByIdAndStatus(id, true);
-
-        if (tc.getAttendee().isStatus()){
-            return AttendeeMapper.INSTANCE.toDTO(tc.getAttendee());
-        }
-
-//        Attendee attendee = attendeeRepository.findById(tc.getAttendee().getId())
-//                .filter(Attendee::isStatus)
-//                .orElseThrow();
-
-        return null;
-    }
-
-    @Override
-    public List<ClassScheduleDTO> getClassSchedule(Long id) {
-        TrainingClass tc = classRepo.findByIdAndStatus(id, true);
-
-        List<ClassSchedule> schedules = tc.getListClassSchedules()
-                .stream()
-                .filter(ClassSchedule::isStatus)
-                .toList();
-
-        return schedules.stream().map(ClassScheduleMapper.INSTANCE::toDTO).toList();
-    }
-
-    @Override
-    public List<UserDTO> getAllAdmins(Long id) {
-        TrainingClass tc = classRepo.findByIdAndStatus(id, true);
-
-        List<TrainingClassAdmin> list = tc.getListTrainingClassAdmins()
-                .stream()
-                .filter(TrainingClassAdmin::isStatus)
-                .toList();
-
-        List<User> admins = list.stream()
-                .map(p -> userRepository.findById(p.getAdmin().getId())
-                        .filter(User::isStatus)
-                        .orElseThrow())
-                .toList();
-
-        return admins.stream().map(UserMapper.INSTANCE::toDTO).toList();
-    }
-
-    @Override
-    public FsuDTO getFsu(Long id) {
-        TrainingClass tc = classRepo.findByIdAndStatus(id, true);
-
-        if(tc.getFsu().isStatus()){
-            return FsuMapper.INSTANCE.toDTO(tc.getFsu());
-        }
-        return null;
-    }
-
-    @Override
-    public ContactDTO getContact(Long id) {
-        TrainingClass tc = classRepo.findByIdAndStatus(id, true);
-
-        if(tc.getContact().isStatus()){
-            return ContactMapper.INSTANCE.toDTO(tc.getContact());
-        }
-        return null;
-    }
-
-    @Override
-    public UserDTO getCreator(Long id) {
-        TrainingClass tc = classRepo.findByIdAndStatus(id, true);
-        User user = userRepository.findById(tc.getCreator().getId()).filter(User::isStatus).orElseThrow();
-        return UserMapper.INSTANCE.toDTO(user);
-    }
-
-    @Override
-    public Integer getShortDetails(Long id, LocalDate targetDate) {
-        // Get class
-        TrainingClass tc = classRepo.findByIdAndStatus(id, true);
-
-        // Get list of days from schedule
-        List<ClassSchedule> schedules = tc.getListClassSchedules().stream().filter(ClassSchedule::isStatus).toList();
-        List<LocalDate> listOfDates = schedules.stream().map(ClassSchedule::getDate).toList();
-
-        // Count day(s) before the chosen day
-        int daysBefore = 0;
-        for (LocalDate date : listOfDates){
-            if(date.isBefore(targetDate)){
-                daysBefore++;
-            }
-        }
-
-        return daysBefore + 1;
-    }
-
-    @Override
-    public DeliveryTypeDTO getDeliveryType(Long id) {
-
-        return null;
-    }
 
     @Override
     public Long create(TrainingClassDTO trainingClassDTO) {
@@ -263,6 +123,7 @@ public class TrainingClassService implements ITrainingClassService {
         return 1;
     }
 
+
     @Override
     public Page<TrainingClassDTO> getListClass(boolean status,
                                                List<Long> locationId, LocalDate fromDate, LocalDate toDate,
@@ -270,6 +131,7 @@ public class TrainingClassService implements ITrainingClassService {
                                                Long fsu, Long trainerId, String search, String[] sort, Optional<Integer> page)
     {
         List<Sort.Order> order = new ArrayList<>();
+        int skipCount = page.orElse(0) * RESULTS_PER_PAGE;
         if(sort[0].contains(",")){
             for (String sortItem: sort) {
                 String[] subSort = sortItem.split(",");
@@ -286,14 +148,23 @@ public class TrainingClassService implements ITrainingClassService {
                     .collect(Collectors.toList());
             classId.add(-1L);
         }
-        Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
-        Page<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
-                isOnline, state, attendeeId, fsu, classId, search, pageable);
-        if(pages.getContent().size() > 0){
+        List<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
+                isOnline, state, attendeeId, fsu, classId, search.size() > 0 ? search.get(0) : "", Sort.by(order));
+        if (search.size() > 1){
+            for (int i = 1; i < search.size(); i++) {
+                String subSearch = search.get(i).toUpperCase();
+                pages = pages.stream().filter(c
+                                -> c.getClassName().toUpperCase().contains(subSearch) ||
+                                c.getClassCode().toUpperCase().contains(subSearch) ||
+                                c.getCreator().getFullName().toUpperCase().contains(subSearch))
+                        .collect(Collectors.toList());
+            }
+        }
+        if(pages.size() > 0){
             return new PageImpl<>(
-                    pages.stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                    pages.getPageable(),
-                    pages.getTotalElements());
+                    pages.stream().skip(skipCount).limit(RESULTS_PER_PAGE).map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    PageRequest.of(page.orElse(0), 10, Sort.by(order)),
+                    pages.size());
         }else {
             throw new NotFoundException("Training Class not found!");
         }

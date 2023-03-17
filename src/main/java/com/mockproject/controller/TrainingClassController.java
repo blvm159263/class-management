@@ -1,11 +1,11 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.TrainingClassDTO;
-import com.mockproject.service.interfaces.IFsuService;
-import com.mockproject.service.interfaces.ILocationService;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -39,9 +39,19 @@ public class TrainingClassController {
 
     private final ITrainingClassService trainingClassService;
 
+
+    @Operation(summary = "Get all fields from TrainingClass entity by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TrainingClassDTO.class)))
+    })
     @GetMapping("/{id}")
     public ResponseEntity<?> getAll(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(trainingClassService.getAllDetails(id));
+        try {
+            return ResponseEntity.ok(trainingClassService.getAllDetails(id));
+        }catch (Exception ex){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
+        }
     }
 
     @GetMapping("/trainers")
@@ -64,31 +74,8 @@ public class TrainingClassController {
         return ResponseEntity.ok(trainingClassService.getAllTowers(id));
     }
 
-    @GetMapping("/attendee")
-    public ResponseEntity<?> getAttendeeName(@Param("id") Long id) {
-        return ResponseEntity.ok(trainingClassService.getAttendee(id));
     }
 
-    @GetMapping("/schedule")
-    public ResponseEntity<?> getClassSchedule(@Param("id") Long id) {
-        return ResponseEntity.ok(trainingClassService.getClassSchedule(id));
-    }
-
-    @GetMapping("/fsu")
-    public ResponseEntity<?> getClassFsu(@Param("id") Long id) {
-        return ResponseEntity.ok(trainingClassService.getFsu(id));
-    }
-
-    @GetMapping("/contact")
-    public ResponseEntity<?> getClassContact(@Param("id") Long id) {
-        return ResponseEntity.ok(trainingClassService.getContact(id));
-    }
-
-    // Test get days before
-    @GetMapping("/day-in")
-    public ResponseEntity<?> getDayIn(@Param("id") Long id, @Param("date") LocalDate date) {
-        return ResponseEntity.ok(trainingClassService.getShortDetails(id, date));
-    }
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "When Training Class created successfully!"),
@@ -111,12 +98,11 @@ public class TrainingClassController {
             description = "<b>List of training class according to search, sort, filter, and pages<b>"
     )
     @Secured({VIEW, CREATE, MODIFY, FULL_ACCESS})
-
     public ResponseEntity<?> getListClass(
             @RequestParam(defaultValue = "")
             @Parameter(
                     description = "<b>Filter by location ID<b>",
-                    example = "1"
+                    example = ""
             ) List<Long> location,
 
             @RequestParam(defaultValue = "")
@@ -140,8 +126,8 @@ public class TrainingClassController {
                     description = "<b>Class time:<b>"
                             + "<ul><li>0: Morning</li>"
                             + "<li>1: Noon</li>"
-                            + "<li>2: Night</li></ul>",
-                    example = "0"
+                            + "<li>2: Night</li></ul><b>",
+                    example = ""
             ) List<Integer> period,
 
             @RequestParam(defaultValue = "false")
@@ -158,13 +144,13 @@ public class TrainingClassController {
                             + "<ul><li>Planning</li>"
                             + "<li>Openning</li>"
                             + "<li>Closed</li></u><b>",
-                    example = "Planning"
+                    example = ""
             ) String state,
 
             @RequestParam(defaultValue = "")
             @Parameter(
                     description = "<b>Attendee - Filter by attendee ID<b>",
-                    example = "1"
+                    example = ""
             ) List<Long> attendee,
 
             @RequestParam(defaultValue = "0")
@@ -182,8 +168,8 @@ public class TrainingClassController {
             @RequestParam(defaultValue = "")
             @Parameter(
                     description = "<b>Search by class name, code, or creator's name<b>",
-                    example = "Fresher Develop Operation"
-            ) String search,
+                    example = ""
+            ) List<String> search,
 
             @RequestParam(defaultValue = "startTime,asc")
             @Parameter(

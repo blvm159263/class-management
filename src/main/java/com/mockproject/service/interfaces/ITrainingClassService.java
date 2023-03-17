@@ -1,6 +1,6 @@
 package com.mockproject.service.interfaces;
 
-import com.mockproject.dto.*;
+import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.TrainingClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,13 +11,13 @@ import java.util.Optional;
 
 
 public interface ITrainingClassService {
-    public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date);
+    List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date);
 
-    public List<TrainingClass> findAllBySpecification(Specification specification);
+    List<TrainingClass> findAllBySpecification(Specification specification);
 
-    public List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText,LocalDate date);
+    List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText,LocalDate date);
 
-    public List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate,LocalDate endDate);
+    List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate,LocalDate endDate);
 
 
     Page<TrainingClassDTO> getListClass(boolean status,

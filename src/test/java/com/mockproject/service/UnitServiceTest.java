@@ -33,9 +33,6 @@ class UnitServiceTest {
     @MockBean
     private SyllabusRepository syllabusRepository;
 
-
-
-
     @Autowired
     private UnitService unitService;
 
