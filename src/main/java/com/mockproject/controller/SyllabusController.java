@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ import java.util.Optional;
 @Tag(name = "Syllabus API")
 @RequestMapping(value = "/api/syllabus")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 public class SyllabusController {
 
     public static final String VIEW = "ROLE_View_Syllabus";
@@ -48,7 +50,7 @@ public class SyllabusController {
 
     @GetMapping("/{syllabusId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<SyllabusDTO> getSyllabus(@PathVariable("syllabusId") long syllabusId){
+    public ResponseEntity<SyllabusDTO> getSyllabus(@PathVariable("syllabusId") Long syllabusId){
         SyllabusDTO syllabus = syllabusService.getSyllabusById(syllabusId, true, true);
         return ResponseEntity.ok(syllabus);
     }
@@ -63,7 +65,7 @@ public class SyllabusController {
     @Secured({CREATE,FULL_ACCESS})
     public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        long syllabusID = syllabusService.create(syllabus, user.getUser());
+        Long syllabusID = syllabusService.create(syllabus, user.getUser());
         return ResponseEntity.ok(syllabusID);
     }
 
@@ -77,7 +79,7 @@ public class SyllabusController {
 
     @PutMapping("delete/{id}")
     @Secured({MODIFY,CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id") long syllabusId){
+    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id") Long syllabusId){
         return ResponseEntity.ok(syllabusService.deleteSyllabus(syllabusId, true));
     }
 

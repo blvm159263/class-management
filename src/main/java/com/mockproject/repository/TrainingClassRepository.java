@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface TrainingClassRepository extends JpaRepository<TrainingClass, Long> {
 
-    TrainingClass findByIdAndStatus(long id, Boolean status);
+    TrainingClass findByIdAndStatus(Long id, Boolean status);
 
 
     List<TrainingClass> findByClassNameContaining(String name);
@@ -34,7 +34,7 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "OR c.creator.fullName LIKE '%' + ?11 + '%')")
     Page<TrainingClass> getListClass(boolean status, List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                      List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                     long fsu, List<Long> classId, String search, Pageable page);
+                                     Long fsu, List<Long> classId, String search, Pageable page);
 
     List<TrainingClass> findAllByStatus(boolean status);
     public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date);

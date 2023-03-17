@@ -16,7 +16,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     Optional<Location> findFirstByLocationNameAndStatus(String name, boolean status);
 
-    Optional<Location> findByStatusAndId(boolean status, long id);
+    Optional<Location> findByStatusAndId(boolean status, Long id);
 
     List<Location> findAllByStatus(boolean status);
 }

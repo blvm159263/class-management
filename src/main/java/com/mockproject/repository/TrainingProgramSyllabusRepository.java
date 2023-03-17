@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface TrainingProgramSyllabusRepository extends JpaRepository<TrainingProgramSyllabus, Long> {
 
-    List<TrainingProgramSyllabus> getTrainingProgramSyllabusByTrainingProgramId(long trainProgramID);
+    List<TrainingProgramSyllabus> getTrainingProgramSyllabusByTrainingProgramId(Long trainProgramID);
 
     List<TrainingProgramSyllabus> findByTrainingProgramAndStatus(TrainingProgram trainingProgram, boolean status);
 }

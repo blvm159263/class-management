@@ -40,7 +40,7 @@ import java.util.Optional;
 @SecurityRequirement(name = "Authorization")
 public class UserController {
 
-    public static final String VIEW = "ROLE_View_User";
+    public static final String VIEW = "ROLE_View_ User";
     public static final String MODIFY = "ROLE_Modify_User";
     public static final String CREATE = "ROLE_Create_User";
     public static final String FULL_ACCESS = "ROLE_Full access_User";
@@ -98,7 +98,7 @@ public class UserController {
 
     @GetMapping("/getListUser")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getListUser(@RequestParam(value = "page", required = false, defaultValue = "1") int page, @RequestParam(value = "rowsPerPage", required = false, defaultValue = "10") int rowsPerPage) {
+    public ResponseEntity getListUser(@RequestParam(value = "page", required = false, defaultValue = "1") Long page, @RequestParam(value = "rowsPerPage", required = false, defaultValue = "10") Long rowsPerPage) {
         List<UserDTO> userDTOList = userService.getAllByPageAndRowPerPage(page, rowsPerPage);
         if (userDTOList.isEmpty()) {
             return ResponseEntity.badRequest().body("List is empty");
@@ -214,7 +214,7 @@ public class UserController {
 
     @GetMapping("/getRoleById")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getRoleById (@RequestParam(value = "id")long id){
+    public ResponseEntity getRoleById (@RequestParam(value = "id")Long id){
         RoleDTO role = roleService.getRoleById(id);
         if (role != null){
             return ResponseEntity.ok(role);
@@ -263,7 +263,7 @@ public class UserController {
                                           @RequestParam(value = "StateId", required = false, defaultValue = "") List<Integer> stateId,
                                           @RequestParam(value = "AtendeeId", required = false, defaultValue = "") List<Long> atendeeId,
                                           @RequestParam(value = "LevelId", required = false, defaultValue = "") List<Long> levelId,
-                                          @RequestParam(value = "RoleId", required = false, defaultValue = "") List<Long> role_id,
+                                          @RequestParam(value = "RoleId", required = false, defaultValue = "") List<Long> roleId,
                                           @RequestParam(value = "Page", required = false) Optional<Integer> page,
                                           @RequestParam(value = "Size", required = false) Optional<Integer> size,
                                           @RequestParam(value = "Order", required = false) List<String> order
@@ -271,7 +271,7 @@ public class UserController {
     ) {
         Page<UserDTO> result;
         try {
-            result = userService.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, page, size, order);
+            result = userService.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, roleId, page, size, order);
         } catch (InvalidDataAccessApiUsageException e) {
             return ResponseEntity.badRequest().body("==============================================\nCOULD NOT FOUND ATTRIBUTE ORDER" + "\nExample: " + "id-asc\n" + "email-asc\n" + "fullname-asc\n" + "state-asc\n" + "dob-asc\n" + "phone-asc\n" + "attendee-asc\n" + "level-asc\n" + "role-asc\n" + "NOTE:::::::: asc = ascending; desc = descending");
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -287,13 +287,13 @@ public class UserController {
     @GetMapping("/getRoleByName")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getRoleByName(@RequestParam(value = "roleName")String rolename){
-        long roleId = roleService.getRoleByRoleName(rolename);
+        Long roleId = roleService.getRoleByRoleName(rolename);
         return ResponseEntity.ok(roleId);
     }
 
     @GetMapping("/getLevel")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getLevelById (@RequestParam(value = "id")long id){
+    public ResponseEntity getLevelById (@RequestParam(value = "id")Long id){
         LevelDTO level = levelService.getLevelById(id);
         if (level != null){
             return ResponseEntity.ok(level);
@@ -303,7 +303,7 @@ public class UserController {
 
     @PutMapping("/de-activateUser")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity deactivateUser (@RequestParam(value = "id")long id){
+    public ResponseEntity deactivateUser (@RequestParam(value = "id")Long id){
         int state = userService.updateStateToFalse(id);
         if (state == 0) return ResponseEntity.ok("De-activate user successfully");
         return ResponseEntity.badRequest().body("User not found");
@@ -311,7 +311,7 @@ public class UserController {
 
     @PutMapping("/activateUser")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity activateUser (@RequestParam(value = "id")long id){
+    public ResponseEntity activateUser (@RequestParam(value = "id")Long id){
         int state = userService.updateStateToTrue(id);
         if (state == 1) return ResponseEntity.ok("Activate user successfully");
         return ResponseEntity.badRequest().body("User not found");
@@ -319,7 +319,7 @@ public class UserController {
 
     @DeleteMapping("/deleteUser")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity deleteUser (@RequestParam(value = "id")long id){
+    public ResponseEntity deleteUser (@RequestParam(value = "id")Long id){
         boolean delete = userService.updateStatus(id);
         if (!delete) return ResponseEntity.badRequest().body("Delete failed");
         return ResponseEntity.ok("Delete successfully");
@@ -327,7 +327,7 @@ public class UserController {
 
     @PutMapping("/changeRole")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity changeRole (@RequestParam(value = "id")long id,@RequestParam(value = "roleName")String roleName){
+    public ResponseEntity changeRole (@RequestParam(value = "id")Long id,@RequestParam(value = "roleName")String roleName){
         if (roleService.getRoleByRoleName(roleName) == null){
             return ResponseEntity.badRequest().body("Role not found!");
         }
@@ -338,7 +338,7 @@ public class UserController {
 
     @PutMapping("/editName")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editFullName (@RequestParam(value = "id")long id, @RequestParam(value = "fullname")String fullname){
+    public ResponseEntity editFullName (@RequestParam(value = "id")Long id, @RequestParam(value = "fullname")String fullname){
         boolean editName = userService.editName(id,fullname);
         if (editName)
             return ResponseEntity.ok("Successfully");
@@ -347,7 +347,7 @@ public class UserController {
 
     @PutMapping("/editDoB")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editDoB (@RequestParam(value = "id")long id, @RequestParam(value = "dob")LocalDate date){
+    public ResponseEntity editDoB (@RequestParam(value = "id")Long id, @RequestParam(value = "dob")LocalDate date){
             boolean editDoB = userService.editDoB(id, date);
             if (editDoB)
                 return ResponseEntity.ok("Successfully");
@@ -356,14 +356,14 @@ public class UserController {
 
     @PutMapping("/editGender")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editGender (@RequestParam(value = "id")long id, @RequestParam(value = "gender")boolean gender){
+    public ResponseEntity editGender (@RequestParam(value = "id")Long id, @RequestParam(value = "gender")boolean gender){
         boolean editGender = userService.editGender(id,gender);
         return ResponseEntity.ok(editGender);
     }
 
     @PutMapping("/editLevel")
     @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editLevel (@RequestParam(value = "id")long id, @RequestParam(value = "levelCode")String levelCode){
+    public ResponseEntity editLevel (@RequestParam(value = "id")Long id, @RequestParam(value = "levelCode")String levelCode){
         boolean editLevel = userService.editLevel(id,levelCode);
         return ResponseEntity.ok(editLevel);
     }

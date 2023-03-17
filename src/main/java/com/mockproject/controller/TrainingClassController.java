@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import java.util.Optional;
 @Tag(name = "Training Class API")
 @RequestMapping("api/class")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 public class TrainingClassController {
 
     public static final String VIEW = "ROLE_View_Class";
@@ -38,53 +40,53 @@ public class TrainingClassController {
     private final ITrainingClassService trainingClassService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAll(@PathVariable("id") long id) {
+    public ResponseEntity<?> getAll(@PathVariable("id") Long id) {
         return ResponseEntity.ok(trainingClassService.getAllDetails(id));
     }
 
     @GetMapping("/trainers")
-    public ResponseEntity<?> getAllTrainers(@Param("id") long id) {
+    public ResponseEntity<?> getAllTrainers(@Param("id") Long id) {
         return ResponseEntity.ok(trainingClassService.getAllTrainers(id));
     }
 
     @GetMapping("/admins")
-    public ResponseEntity<?> getAllAdmins(@Param("id") long id) {
+    public ResponseEntity<?> getAllAdmins(@Param("id") Long id) {
         return ResponseEntity.ok(trainingClassService.getAllAdmins(id));
     }
 
     @GetMapping("/creator")
-    public ResponseEntity<?> getCreator(@Param("id") long id) {
+    public ResponseEntity<?> getCreator(@Param("id") Long id) {
         return ResponseEntity.ok(trainingClassService.getCreator(id));
     }
 
     @GetMapping("/towers")
-    public ResponseEntity<?> getAllTowers(@Param("id") long id) {
+    public ResponseEntity<?> getAllTowers(@Param("id") Long id) {
         return ResponseEntity.ok(trainingClassService.getAllTowers(id));
     }
 
     @GetMapping("/attendee")
-    public ResponseEntity<?> getAttendeeName(@Param("id") long id) {
+    public ResponseEntity<?> getAttendeeName(@Param("id") Long id) {
         return ResponseEntity.ok(trainingClassService.getAttendee(id));
     }
 
     @GetMapping("/schedule")
-    public ResponseEntity<?> getClassSchedule(@Param("id") long id) {
+    public ResponseEntity<?> getClassSchedule(@Param("id") Long id) {
         return ResponseEntity.ok(trainingClassService.getClassSchedule(id));
     }
 
     @GetMapping("/fsu")
-    public ResponseEntity<?> getClassFsu(@Param("id") long id) {
+    public ResponseEntity<?> getClassFsu(@Param("id") Long id) {
         return ResponseEntity.ok(trainingClassService.getFsu(id));
     }
 
     @GetMapping("/contact")
-    public ResponseEntity<?> getClassContact(@Param("id") long id) {
+    public ResponseEntity<?> getClassContact(@Param("id") Long id) {
         return ResponseEntity.ok(trainingClassService.getContact(id));
     }
 
     // Test get days before
     @GetMapping("/day-in")
-    public ResponseEntity<?> getDayIn(@Param("id") long id, @Param("date") LocalDate date) {
+    public ResponseEntity<?> getDayIn(@Param("id") Long id, @Param("date") LocalDate date) {
         return ResponseEntity.ok(trainingClassService.getShortDetails(id, date));
     }
 
@@ -169,13 +171,13 @@ public class TrainingClassController {
             @Parameter(
                     description = "<b>FSU - Filter by FSU ID<b>",
                     example = "1"
-            ) long fsu,
+            ) Long fsu,
 
             @RequestParam(defaultValue = "0")
             @Parameter(
                     description = "<b>Trainer - Filter by trainer ID<b>",
                     example = "0"
-            ) long trainerId,
+            ) Long trainerId,
 
             @RequestParam(defaultValue = "")
             @Parameter(

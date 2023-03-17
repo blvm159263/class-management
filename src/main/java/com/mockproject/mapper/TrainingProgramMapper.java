@@ -14,8 +14,9 @@ public interface TrainingProgramMapper {
     TrainingProgramMapper INSTANCE = Mappers.getMapper(TrainingProgramMapper.class);
 
     @Mapping(target = "lastModifierId", source = "lastModifier.id")
+    @Mapping(target = "lastModifierName", source = "lastModifier.fullName")
     @Mapping(target = "creatorId", source = "creator.id")
-//    @Mapping(target = "name", source = "name")
+    @Mapping(target = "creatorName", source = "creator.fullName")
     TrainingProgramDTO toDTO(TrainingProgram trainingProgram);
 
     @Mapping(target = "lastModifier", source = "lastModifierId", qualifiedByName = "mapModifier")

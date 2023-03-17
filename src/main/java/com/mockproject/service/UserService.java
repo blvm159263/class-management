@@ -46,7 +46,7 @@ public class UserService implements IUserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public UserDTO getUserById(boolean status, long id) {
+    public UserDTO getUserById(boolean status, Long id) {
         User user = userRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Users not found with id: "+ id));
         return UserMapper.INSTANCE.toDTO(user);
     }
@@ -83,12 +83,12 @@ public class UserService implements IUserService {
 
 
     @Override
-    public List<UserDTO> getAllByPageAndRowPerPage(long page, long rowPerPage) {
+    public List<UserDTO> getAllByPageAndRowPerPage(Long page, Long rowPerPage) {
         return userRepo.getAllByPageAndRowPerPage(page, rowPerPage).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override
-    public Page<UserDTO> searchByFilter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> role_id, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception {
+    public Page<UserDTO> searchByFilter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> roleId, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception {
         int page1 = 0;
         int size1 = 10;
         Pageable pageable;
@@ -106,7 +106,7 @@ public class UserService implements IUserService {
         }
         Page<User> pages;
         try {
-            pages = userRepo.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, pageable);
+            pages = userRepo.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, roleId, pageable);
         } catch (Exception e) {
             throw e;
         }
@@ -133,7 +133,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean updateStatus(long id) {
+    public boolean updateStatus(Long id) {
         boolean status = false;
         Optional<User> user = userRepo.findById(id);
         if (user.isPresent()) {
@@ -146,7 +146,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Integer updateStateToFalse(long id) {
+    public Integer updateStateToFalse(Long id) {
         Optional<User> user = userRepo.findById(id);
         int state = -1;
         if (user.isPresent()) {
@@ -159,7 +159,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Integer updateStateToTrue(long id) {
+    public Integer updateStateToTrue(Long id) {
         Optional<User> user = userRepo.findById(id);
         int state = -1;
         if (user.isPresent()) {
@@ -172,7 +172,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean changeRole(long id, long roleId) {
+    public boolean changeRole(Long id, Long roleId) {
         Optional<User> user = userRepo.findById(id);
         Optional<Role> role = roleRepository.getRoleById(roleId);
         if (user.isPresent() && role.isPresent()) {
@@ -186,7 +186,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean editName(long id, String name) {
+    public boolean editName(Long id, String name) {
         Optional<User> user = userRepo.findById(id);
         if (user.isPresent()) {
             User u = user.get();
@@ -198,7 +198,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean editDoB(long id, LocalDate date) {
+    public boolean editDoB(Long id, LocalDate date) {
         Optional<User> user = userRepo.findById(id);
         if (user.isPresent()) {
             User u = user.get();
@@ -210,7 +210,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean editGender(long id, boolean gender) {
+    public boolean editGender(Long id, boolean gender) {
         Optional<User> user = userRepo.findById(id);
         if (user.isPresent()) {
             User u = user.get();
@@ -222,7 +222,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean editLevel(long id, String levelCode) {
+    public boolean editLevel(Long id, String levelCode) {
         Optional<User> user = userRepo.findById(id);
         Optional<Level> level = levelRepository.getLevelByLevelCode(levelCode);
         if (user.isPresent() && level.isPresent()) {

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -26,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Unit Detail API")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 @RequestMapping(value = "/api/unit-detail")
 public class UnitDetailController {
 
@@ -38,14 +40,14 @@ public class UnitDetailController {
 
     @GetMapping("/{unitId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<UnitDetailDTO>> getAllUnitDetailByUnitId(@PathVariable("unitId") long unitId) {
+    public ResponseEntity<List<UnitDetailDTO>> getAllUnitDetailByUnitId(@PathVariable("unitId") Long unitId) {
         List<UnitDetailDTO> listUnitDetail = unitDetailService.getAllUnitDetailByUnitId(unitId, true);
         return ResponseEntity.ok(listUnitDetail);
     }
 
     @PostMapping("/create/{id}")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> createUnitDetails(@PathVariable("id") long unitId, @RequestBody List<UnitDetailDTO> listUnitDetail) {
+    public ResponseEntity<Boolean> createUnitDetails(@PathVariable("id") Long unitId, @RequestBody List<UnitDetailDTO> listUnitDetail) {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(unitDetailService.createUnitDetail(unitId, listUnitDetail, user.getUser()));
     }
@@ -59,19 +61,19 @@ public class UnitDetailController {
 
     @PutMapping("/delete/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnitDetail(@PathVariable("id") long unitDetailId) {
+    public ResponseEntity<Boolean> deleteUnitDetail(@PathVariable("id") Long unitDetailId) {
         return ResponseEntity.ok(unitDetailService.deleteUnitDetail(unitDetailId, true));
     }
 
     @PutMapping("/multi-delete/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnitDetails(@PathVariable("id") long unitId) {
+    public ResponseEntity<Boolean> deleteUnitDetails(@PathVariable("id") Long unitId) {
         return ResponseEntity.ok(unitDetailService.deleteUnitDetails(unitId, true));
     }
 
     @PutMapping("/toggle/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> toggleUnitDetailType(@PathVariable("id") long unitDetailId) {
+    public ResponseEntity<Boolean> toggleUnitDetailType(@PathVariable("id") Long unitDetailId) {
         return ResponseEntity.ok(unitDetailService.toggleUnitDetailType(unitDetailId, true));
     }
 

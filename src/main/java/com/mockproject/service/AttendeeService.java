@@ -31,7 +31,7 @@ public class AttendeeService implements IAttendeeService {
     }
 
     @Override
-    public AttendeeDTO getAttendeeById(boolean status, long id) {
+    public AttendeeDTO getAttendeeById(boolean status, Long id) {
         Attendee attendee = attendeeRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Attendee not found with id: " + id));
         return AttendeeMapper.INSTANCE.toDTO(attendee);
     }

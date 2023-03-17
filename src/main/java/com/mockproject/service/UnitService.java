@@ -33,7 +33,7 @@ public class UnitService implements IUnitService {
     private final SyllabusRepository syllabusRepository;
 
     @Override
-    public List<UnitDTO> getAllUnitBySessionId(long sessionId, boolean status){
+    public List<UnitDTO> getAllUnitBySessionId(Long sessionId, boolean status){
         Optional<List<Unit>> listUnit = unitRepository.findUnitBySessionIdAndStatus(sessionId, status);
         ListUtils.checkList(listUnit);
         List<UnitDTO> unitDTOList = new ArrayList<>();
@@ -50,7 +50,7 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public boolean createUnit(long sessionId, List<UnitDTO> listUnit, User user){
+    public boolean createUnit(Long sessionId, List<UnitDTO> listUnit, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
 
@@ -61,7 +61,7 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public boolean createUnit(long sessionId, UnitDTO unitDTO, User user){
+    public boolean createUnit(Long sessionId, UnitDTO unitDTO, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(session.get().getSyllabus().getId(),true);
@@ -114,7 +114,7 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public boolean deleteUnit(long unitId, boolean status){
+    public boolean deleteUnit(Long unitId, boolean status){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, status);
         unit.orElseThrow(() -> new  ResponseStatusException(HttpStatus.NO_CONTENT,"Unit "+ unitId));
         unit.get().setStatus(false);
@@ -125,7 +125,7 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public boolean deleteUnits(long sessionId, boolean status){
+    public boolean deleteUnits(Long sessionId, boolean status){
         Optional<List<Unit>> units = unitRepository.findAllBySessionIdAndStatus(sessionId, status);
         ListUtils.checkList(units);
         units.get().forEach((i) -> deleteUnit(i.getId(), status));
@@ -133,7 +133,7 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public List<Unit> getUnitBySessionId(long idSession){
+    public List<Unit> getUnitBySessionId(Long idSession){
         return unitRepository.getListUnitBySessionId(idSession);
     }
 

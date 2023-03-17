@@ -25,7 +25,7 @@ public class FsuService implements IFsuService {
         return fsuRepo.findByStatus(true).stream().map(FsuMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
     @Override
-    public FsuDTO getFsuById(boolean status, long id) {
+    public FsuDTO getFsuById(boolean status, Long id) {
         Fsu fsu = fsuRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Fsu not found with id: "+ id));
         return FsuMapper.INSTANCE.toDTO(fsu);
     }

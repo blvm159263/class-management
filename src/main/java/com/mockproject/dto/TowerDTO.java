@@ -17,4 +17,5 @@ public class TowerDTO implements Serializable {
     private String address;
     private boolean status;
     private Long locationId;
+    private String locationName;
 }

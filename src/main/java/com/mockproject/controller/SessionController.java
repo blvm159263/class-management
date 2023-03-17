@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -27,6 +28,7 @@ import java.util.List;
 @Tag(name = "Session API")
 @RequestMapping(value = "/api/session")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 public class SessionController {
 
     public static final String VIEW = "ROLE_View_Syllabus";
@@ -38,13 +40,13 @@ public class SessionController {
 
     @GetMapping("/{syllabusId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<SessionDTO>> getAll(@PathVariable ("syllabusId") long syllabusId){
+    public ResponseEntity<List<SessionDTO>> getAll(@PathVariable ("syllabusId") Long syllabusId){
         return ResponseEntity.ok(sessionService.getAllSessionBySyllabusId(syllabusId, true));
     }
 
     @PostMapping("/create/{id}")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> createSessions(@PathVariable("id") long syllabusId, @RequestBody List<SessionDTO> listSession){
+    public ResponseEntity<Boolean> createSessions(@PathVariable("id") Long syllabusId, @RequestBody List<SessionDTO> listSession){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(sessionService.createSession(syllabusId, listSession, user.getUser()));
     }
@@ -58,13 +60,13 @@ public class SessionController {
 
     @PutMapping("/delete/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteSession(@PathVariable("id") long sessionId){
+    public ResponseEntity<Boolean> deleteSession(@PathVariable("id") Long sessionId){
         return ResponseEntity.ok(sessionService.deleteSession(sessionId, true));
     }
 
     @PutMapping("/multi-delete/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteSessions(@PathVariable("id") long syllabusId) {
+    public ResponseEntity<Boolean> deleteSessions(@PathVariable("id") Long syllabusId) {
         return ResponseEntity.ok(sessionService.deleteSessions(syllabusId, true));
     }
 

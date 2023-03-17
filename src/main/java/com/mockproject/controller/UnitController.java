@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -27,6 +28,7 @@ import java.util.List;
 @Tag(name = "Unit API")
 @RequestMapping(value = "/api/unit")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 public class UnitController {
     public static final String VIEW = "ROLE_View_Syllabus";
     public static final String MODIFY = "ROLE_Modify_Syllabus";
@@ -37,14 +39,14 @@ public class UnitController {
 
     @GetMapping("/{sessionId}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<UnitDTO>> getAllUnitBySessionId(@PathVariable("sessionId") long sessionId){
+    public ResponseEntity<List<UnitDTO>> getAllUnitBySessionId(@PathVariable("sessionId") Long sessionId){
         List<UnitDTO> listUnit = unitService.getAllUnitBySessionId(sessionId, true);
         return ResponseEntity.ok(listUnit);
     }
 
     @PostMapping("/create/{id}")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> createUnit(@PathVariable("id") long sessionId,@RequestBody List<UnitDTO> listUnit){
+    public ResponseEntity<Boolean> createUnit(@PathVariable("id") Long sessionId,@RequestBody List<UnitDTO> listUnit){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(unitService.createUnit(sessionId, listUnit, user.getUser()));
     }
@@ -58,13 +60,13 @@ public class UnitController {
 
     @PutMapping("delete/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnit(@PathVariable("id") long unitId){
+    public ResponseEntity<Boolean> deleteUnit(@PathVariable("id") Long unitId){
         return ResponseEntity.ok(unitService.deleteUnit(unitId, true));
     }
 
     @PutMapping("multi-delete/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnits(@PathVariable("id") long sessionId) {
+    public ResponseEntity<Boolean> deleteUnits(@PathVariable("id") Long sessionId) {
         return ResponseEntity.ok(unitService.deleteUnits(sessionId, true));
     }
 

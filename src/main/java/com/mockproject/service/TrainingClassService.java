@@ -57,7 +57,7 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public TrainingClassDTO getAllDetails(long id) {
+    public TrainingClassDTO getAllDetails(Long id) {
         TrainingClass details = classRepo.findByIdAndStatus(id, true);
         return TrainingClassMapper.INSTANCE.toDTO(details);
     }
@@ -69,7 +69,7 @@ public class TrainingClassService implements ITrainingClassService {
 //    }
 
     @Override
-    public List<UserDTO> getAllTrainers(long id) {
+    public List<UserDTO> getAllTrainers(Long id) {
         TrainingClass tc = classRepo.findByIdAndStatus(id, true);
 
         List<TrainingClassUnitInformation> list = tc.getListTrainingClassUnitInformations()
@@ -88,7 +88,7 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public List<TowerDTO> getAllTowers(long id) {
+    public List<TowerDTO> getAllTowers(Long id) {
         TrainingClass tc = classRepo.findByIdAndStatus(id, true);
 
         List<TrainingClassUnitInformation> list = tc.getListTrainingClassUnitInformations()
@@ -106,13 +106,13 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
 //    @Override
-//    public List<TowerDTO> getAllTowers(long id) {
+//    public List<TowerDTO> getAllTowers(Long id) {
 //        List<Tower> list = trainingClassRepository.getAllTowersInfo(id);
 //        return list.stream().map(TowerMapper.INSTANCE::toDTO).collect(Collectors.toList());
 //    }
 
     @Override
-    public AttendeeDTO getAttendee(long id) {
+    public AttendeeDTO getAttendee(Long id) {
         TrainingClass tc = classRepo.findByIdAndStatus(id, true);
 
         if (tc.getAttendee().isStatus()){
@@ -127,7 +127,7 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public List<ClassScheduleDTO> getClassSchedule(long id) {
+    public List<ClassScheduleDTO> getClassSchedule(Long id) {
         TrainingClass tc = classRepo.findByIdAndStatus(id, true);
 
         List<ClassSchedule> schedules = tc.getListClassSchedules()
@@ -139,7 +139,7 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public List<UserDTO> getAllAdmins(long id) {
+    public List<UserDTO> getAllAdmins(Long id) {
         TrainingClass tc = classRepo.findByIdAndStatus(id, true);
 
         List<TrainingClassAdmin> list = tc.getListTrainingClassAdmins()
@@ -157,7 +157,7 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public FsuDTO getFsu(long id) {
+    public FsuDTO getFsu(Long id) {
         TrainingClass tc = classRepo.findByIdAndStatus(id, true);
 
         if(tc.getFsu().isStatus()){
@@ -167,7 +167,7 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public ContactDTO getContact(long id) {
+    public ContactDTO getContact(Long id) {
         TrainingClass tc = classRepo.findByIdAndStatus(id, true);
 
         if(tc.getContact().isStatus()){
@@ -177,14 +177,14 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public UserDTO getCreator(long id) {
+    public UserDTO getCreator(Long id) {
         TrainingClass tc = classRepo.findByIdAndStatus(id, true);
         User user = userRepository.findById(tc.getCreator().getId()).filter(User::isStatus).orElseThrow();
         return UserMapper.INSTANCE.toDTO(user);
     }
 
     @Override
-    public Integer getShortDetails(long id, LocalDate targetDate) {
+    public Integer getShortDetails(Long id, LocalDate targetDate) {
         // Get class
         TrainingClass tc = classRepo.findByIdAndStatus(id, true);
 
@@ -204,7 +204,7 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public DeliveryTypeDTO getDeliveryType(long id) {
+    public DeliveryTypeDTO getDeliveryType(Long id) {
 
         return null;
     }
@@ -267,7 +267,7 @@ public class TrainingClassService implements ITrainingClassService {
     public Page<TrainingClassDTO> getListClass(boolean status,
                                                List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                                List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                               long fsu, long trainerId, String search, String[] sort, Optional<Integer> page)
+                                               Long fsu, Long trainerId, String search, String[] sort, Optional<Integer> page)
     {
         List<Sort.Order> order = new ArrayList<>();
         if(sort[0].contains(",")){

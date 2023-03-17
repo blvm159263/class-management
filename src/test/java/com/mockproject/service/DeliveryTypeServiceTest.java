@@ -11,6 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -37,7 +39,7 @@ class DeliveryTypeServiceTest {
 
         Long id = 3L;
 
-        when(deliveryTypeRepository.findByIdAndStatus(id, true)).thenReturn(deliveryType3);
+        when(deliveryTypeRepository.findByIdAndStatus(id, true)).thenReturn(Optional.ofNullable(deliveryType3));
         DeliveryTypeDTO result = deliveryTypeService.getByIdTrue(3L);
         assertEquals(3L, result.getId());
         assertTrue(result.isStatus());

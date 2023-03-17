@@ -4,6 +4,7 @@ import com.mockproject.service.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 @Tag(name = "Import API")
 @RequestMapping("/import")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 public class UploadFileUserController {
 
     public static final String VIEW = "ROLE_View_User";

@@ -16,5 +16,5 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
 
     List<Attendee> findAllByStatusIs(boolean status);
 
-    Optional<Attendee> findByStatusAndId(boolean status, long id);
+    Optional<Attendee> findByStatusAndId(boolean status, Long id);
 }

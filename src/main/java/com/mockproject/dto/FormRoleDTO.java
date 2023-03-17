@@ -8,7 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 public class FormRoleDTO {
-    private long id;
+    private Long id;
 
     private String roleName;
 

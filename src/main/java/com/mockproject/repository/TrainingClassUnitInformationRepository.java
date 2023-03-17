@@ -11,5 +11,5 @@ public interface TrainingClassUnitInformationRepository extends JpaRepository<Tr
     public List<TrainingClassUnitInformation> findAllByTrainingClassId(Long Id);
 
 
-    List<TrainingClassUnitInformation> findByStatusAndTrainerId(boolean status, long trainerId);
+    List<TrainingClassUnitInformation> findByStatusAndTrainerId(boolean status, Long trainerId);
 }

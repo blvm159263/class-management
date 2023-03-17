@@ -11,5 +11,5 @@ public interface RolePermissionScopeRepository extends JpaRepository<RolePermiss
 
     List<RolePermissionScope> findAllByRoleId(Long roleId);
 
-    RolePermissionScope findByRoleIdAndAndPermissionScopeId(long roleId, long permissionScopeId);
+    RolePermissionScope findByRoleIdAndAndPermissionScopeId(Long roleId, Long permissionScopeId);
 }

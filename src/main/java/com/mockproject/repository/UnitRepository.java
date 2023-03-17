@@ -11,12 +11,12 @@ import java.util.Optional;
 @Repository
 public interface UnitRepository extends JpaRepository<Unit, Long> {
 
-    List<Unit> getListUnitBySessionId(long idSession);
+    List<Unit> getListUnitBySessionId(Long idSession);
 
-    Optional<List<Unit>> findUnitBySessionIdAndStatus(long sessionId, boolean status);
+    Optional<List<Unit>> findUnitBySessionIdAndStatus(Long sessionId, boolean status);
 
-    List<Unit> findBySession(Session session);  Optional<Unit> findByIdAndStatus(long id, boolean status);
+    List<Unit> findBySession(Session session);  Optional<Unit> findByIdAndStatus(Long id, boolean status);
 
-    Optional<List<Unit>> findAllBySessionIdAndStatus(long sessionId, boolean status);
+    Optional<List<Unit>> findAllBySessionIdAndStatus(Long sessionId, boolean status);
 
 }

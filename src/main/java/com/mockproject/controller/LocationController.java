@@ -8,8 +8,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,8 @@ import java.util.List;
 @RestController
 @Tag(name = "Location API")
 @RequestMapping("api/location")
+@SecurityRequirement(name = "Authorization")
+@Slf4j
 public class LocationController {
 
     private final ILocationService locationService;
@@ -60,7 +64,7 @@ public class LocationController {
             @Parameter(
                     description = "<b>Insert ID to get location<b>",
                     example = "1"
-            ) long id) {
+            ) Long id) {
         return ResponseEntity.ok(locationService.getLocationById(true, id));
     }
 }

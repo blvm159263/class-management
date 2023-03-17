@@ -14,7 +14,7 @@ public interface FsuRepository extends JpaRepository<Fsu, Long> {
 
     Optional<Fsu> findByFsuNameAndStatus(String name, boolean status);
 
-    Optional<Fsu> findByStatusAndId(boolean status, long id);
+    Optional<Fsu> findByStatusAndId(boolean status, Long id);
 
     List<Fsu> findAllByStatus(boolean status);
 }

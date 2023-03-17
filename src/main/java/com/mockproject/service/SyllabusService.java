@@ -123,7 +123,7 @@ public class SyllabusService implements ISyllabusService {
     }
 
     @Override
-    public long create(SyllabusDTO syllabus, User user){
+    public Long create(SyllabusDTO syllabus, User user){
         syllabus.setCreatorId(user.getId());
         syllabus.setLastModifierId(user.getId());
         syllabus.setDateCreated(java.time.LocalDate.now());
@@ -168,7 +168,7 @@ public class SyllabusService implements ISyllabusService {
     }
 
     @Override
-    public boolean deleteSyllabus(long syllabusId, boolean status){
+    public boolean deleteSyllabus(Long syllabusId, boolean status){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusId, status);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         syllabus.get().setStatus(false);
@@ -178,12 +178,12 @@ public class SyllabusService implements ISyllabusService {
     }
 
     @Override
-    public Syllabus getSyllabusById(long id){
+    public Syllabus getSyllabusById(Long id){
         return syllabusRepository.getSyllabusById(id);
     }
 
     @Override
-    public SyllabusDTO getSyllabusById(long syllabusId,boolean state, boolean status){
+    public SyllabusDTO getSyllabusById(Long syllabusId,boolean state, boolean status){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, state, status);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         SyllabusDTO syllabusDTO = SyllabusMapper.INSTANCE.toDTO(syllabus.get());

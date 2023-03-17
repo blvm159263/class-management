@@ -3,6 +3,7 @@ package com.mockproject.mapper;
 import com.mockproject.dto.PermissionScopeDTO;
 import com.mockproject.entity.PermissionScope;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")

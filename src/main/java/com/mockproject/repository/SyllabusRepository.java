@@ -24,13 +24,13 @@ public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
     Page<Syllabus> getListSyllabus(boolean status,
                                    LocalDate fromDate, LocalDate toDate,
                                    String search, List<Long> syllabusIdList, Pageable pageable);
-    Optional<Syllabus> findByIdAndStatus(long id, boolean status);
+    Optional<Syllabus> findByIdAndStatus(Long id, boolean status);
 
     Optional<List<Syllabus>> findByStateAndStatus(boolean state, boolean status);
 
     Optional<List<Syllabus>> findAllByStatus(boolean status);
 
-    Optional<Syllabus> findByIdAndStateAndStatus(long syllabusId, boolean state, boolean status);
+    Optional<Syllabus> findByIdAndStateAndStatus(Long syllabusId, boolean state, boolean status);
 
-    Syllabus getSyllabusById(long id);
+    Syllabus getSyllabusById(Long id);
 }

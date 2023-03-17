@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -26,6 +27,7 @@ import java.util.List;
 @Tag(name = "Fsu API")
 @RequestMapping("/api/fsu")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 public class FsuController {
 
     public static final String VIEW = "ROLE_View_Class";
@@ -69,7 +71,7 @@ public class FsuController {
             @Parameter(
                     description = "<b>Insert ID to get fsu<b>",
                     example = "1"
-            ) long id) {
+            ) Long id) {
         return ResponseEntity.ok(fsuService.getFsuById(true, id));
     }
 }
