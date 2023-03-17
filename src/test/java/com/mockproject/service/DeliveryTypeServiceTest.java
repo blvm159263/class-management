@@ -34,18 +34,18 @@ class DeliveryTypeServiceTest {
     /**
      * Method under test: {@link DeliveryTypeService#getByIdTrue(Long)}
      */
-    @Test
-    @Disabled
-    void canGetDeliveryTypeByIdTrue() {
-
-        Long id = 3L;
-
-        when(deliveryTypeRepository.findByIdAndStatus(id, true).orElseThrow()).thenReturn(deliveryType3);
-        DeliveryTypeDTO result = deliveryTypeService.getByIdTrue(3L);
-        assertEquals(3L, result.getId());
-        assertTrue(result.isStatus());
-        assertEquals("Practice", result.getTypeName());
-        verify(deliveryTypeRepository).findByIdAndStatus(3L, true);
-    }
+//    @Test
+//    @Disabled
+//    void canGetDeliveryTypeByIdTrue() {
+//
+//        Long id = 3L;
+//
+//        when(deliveryTypeRepository.findByIdAndStatus(id, true).orElseThrow()).thenReturn(deliveryType3);
+//        DeliveryTypeDTO result = deliveryTypeService.getByIdTrue(3L);
+//        assertEquals(3L, result.getId());
+//        assertTrue(result.isStatus());
+//        assertEquals("Practice", result.getTypeName());
+//        verify(deliveryTypeRepository).findByIdAndStatus(3L, true);
+//    }
 }
 

@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailAndStatus(String email, boolean status);
 
-    Optional<User> findByStatusAndId(boolean status, long id);
+    Optional<User> findByStatusAndId(boolean status, Long id);
 
     Optional<User> findByEmail(String email);
 
@@ -27,7 +27,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findAllByStatus(boolean status);
 
-    Optional<User> findByIdAndStatus(long id, Boolean status);
+    Optional<User> findByIdAndStatus(Long id, Boolean status);
 
 
     List<User> findAllBy();

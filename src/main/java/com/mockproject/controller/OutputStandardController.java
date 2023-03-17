@@ -35,12 +35,12 @@ public class OutputStandardController {
             @Parameter(
                     description = "<b>Insert syllabus ID to get output standard<b>",
                     example = "7"
-            ) long id) {
+            ) Long id) {
         return ResponseEntity.ok(outputStandardService.getOsdBySyllabusId(true, id));
     }
 
     @GetMapping("/{outputStandardId}")
-    public ResponseEntity<OutputStandardDTO> getOutputStandardById(@PathVariable("outputStandardId") long id){
+    public ResponseEntity<OutputStandardDTO> getOutputStandardById(@PathVariable("outputStandardId") Long id){
         OutputStandardDTO outputStandardDTO = outputStandardService.getOutputStandardById(id, true);
         return ResponseEntity.ok(outputStandardDTO);
     }

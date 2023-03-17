@@ -51,7 +51,7 @@ public class ContactController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = ContactDTO.class)))
     })
     @GetMapping("/class-contact")
-    public ResponseEntity<?> getClassContact(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+    public ResponseEntity<?> getClassContact(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(service.getContactByTrainingClassId(id));
         }catch (Exception e){

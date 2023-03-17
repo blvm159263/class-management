@@ -38,7 +38,6 @@ public class UserService implements IUserService {
     private final UserRepository userRepo;
     private final LevelRepository levelRepository;
     private final RoleRepository roleRepository;
-    private final UserRepository repository;
     private final TrainingClassRepository trainingClassRepository;
     private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
     private final TrainingClassAdminRepository trainingClassAdminRepository;
@@ -299,7 +298,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserDTO> getAllTrainersByTrainingClassId(long id) {
+    public List<UserDTO> getAllTrainersByTrainingClassId(Long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<TrainingClassUnitInformation> list = trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc, true).orElseThrow();
         List<User> listUser = list.stream().map(p -> userRepo.findByIdAndStatus(p.getTrainer().getId(), true).orElseThrow()).distinct().toList();
@@ -307,7 +306,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserDTO> getAllAdminsByTrainingClassId(long id) {
+    public List<UserDTO> getAllAdminsByTrainingClassId(Long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<TrainingClassAdmin> list = trainingClassAdminRepository.findByTrainingClassAndStatus(tc, true);
         List<User> admins = list.stream().map(p -> userRepo.findByIdAndStatus(p.getAdmin().getId(), true).orElseThrow()).toList();
@@ -315,14 +314,14 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserDTO getCreatorByTrainingClassId(long id) {
+    public UserDTO getCreatorByTrainingClassId(Long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         User user = userRepo.findByIdAndStatus(tc.getCreator().getId(), true).orElseThrow();
         return UserMapper.INSTANCE.toDTO(user);
     }
 
     @Override
-    public List<UserDTO> getAllTrainersForADateByTrainingClassId(long id, int dayNth) {
+    public List<UserDTO> getAllTrainersForADateByTrainingClassId(Long id, int dayNth) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<Unit> units = unitService.getListUnitsInASessionByTrainingClassId(id, dayNth);
         List<TrainingClassUnitInformation> list = units.stream().map(p-> trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(p, tc, true).orElseThrow()).toList();

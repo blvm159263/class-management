@@ -23,7 +23,7 @@ public interface ITrainingClassService {
     Page<TrainingClassDTO> getListClass(boolean status,
                                         List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                         List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                        Long fsu, Long trainerId, String search, String[] sort, Optional<Integer> page);
+                                        Long fsu, Long trainerId, List<String> search, String[] sort, Optional<Integer> page);
 
     List<TrainingClassDTO> getAllClass();
 
@@ -32,24 +32,7 @@ public interface ITrainingClassService {
 
     TrainingClassDTO getAllDetails(Long id);
 
-    List<UserDTO> getAllTrainers(Long id);
 
-    List<TowerDTO> getAllTowers(Long id);
 
-    AttendeeDTO getAttendee(Long id);
-
-    List<ClassScheduleDTO> getClassSchedule(Long id);
-
-    List<UserDTO> getAllAdmins(Long id);
-
-    FsuDTO getFsu(Long id);
-
-    ContactDTO getContact(Long id);
-
-    UserDTO getCreator(Long id);
-
-    Integer getShortDetails(Long id, LocalDate targetDate);
-
-    DeliveryTypeDTO getDeliveryType(Long id);
 
 }

@@ -8,7 +8,7 @@ public interface ITowerService {
 
     List<TowerDTO> listByTowerIdTrue(Long id);
 
-    List<TowerDTO> getAllTowersByTrainingClassId(long id);
+    List<TowerDTO> getAllTowersByTrainingClassId(Long id);
 
-    List<TowerDTO> getAllTowersForADateByTrainingClassId(long id, int dayNth);
+    List<TowerDTO> getAllTowersForADateByTrainingClassId(Long id, int dayNth);
 }

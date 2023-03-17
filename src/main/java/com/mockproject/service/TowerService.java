@@ -22,8 +22,6 @@ public class TowerService implements ITowerService {
     private final TowerRepository repository;
     private final TrainingClassRepository trainingClassRepository;
     private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
-
-
     private final IUnitService unitService;
 
 
@@ -35,7 +33,7 @@ public class TowerService implements ITowerService {
     }
 
     @Override
-    public List<TowerDTO> getAllTowersByTrainingClassId(long id) {
+    public List<TowerDTO> getAllTowersByTrainingClassId(Long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<TrainingClassUnitInformation> list = trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc, true).orElseThrow();
         List<Tower> listTower = list.stream().map(p -> repository.findByIdAndStatus(p.getTower().getId(), true).orElseThrow()).distinct().toList();
@@ -43,7 +41,7 @@ public class TowerService implements ITowerService {
     }
 
     @Override
-    public List<TowerDTO> getAllTowersForADateByTrainingClassId(long id, int dayNth) {
+    public List<TowerDTO> getAllTowersForADateByTrainingClassId(Long id, int dayNth) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<Unit> units = unitService.getListUnitsInASessionByTrainingClassId(id, dayNth);
         List<TrainingClassUnitInformation> list = units.stream().map(p-> trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(p, tc, true).orElseThrow()).toList();

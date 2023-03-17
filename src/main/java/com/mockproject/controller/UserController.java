@@ -389,7 +389,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UserDTO.class)))
     })
     @GetMapping("/all-class-trainers")
-    public ResponseEntity<?> getAllTrainers(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+    public ResponseEntity<?> getAllTrainers(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(userService.getAllTrainersByTrainingClassId(id));
         }catch (Exception ex){
@@ -405,7 +405,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UserDTO.class)))
     })
     @GetMapping("/all-class-admins")
-    public ResponseEntity<?> getAllAdmins(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+    public ResponseEntity<?> getAllAdmins(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(userService.getAllAdminsByTrainingClassId(id));
         }catch (Exception e){
@@ -421,7 +421,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UserDTO.class)))
     })
     @GetMapping("/class-creator")
-    public ResponseEntity<?> getCreator(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+    public ResponseEntity<?> getCreator(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try {
             return ResponseEntity.ok(userService.getCreatorByTrainingClassId(id));
         }catch (Exception e){
@@ -441,7 +441,7 @@ public class UserController {
     })
     @GetMapping("/class-trainers-for-a-date")
     public ResponseEntity<?> getAllTrainersForADate(
-            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
+            @Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id,
             @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth
     ) {
         try{

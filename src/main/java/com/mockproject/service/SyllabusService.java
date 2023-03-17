@@ -107,7 +107,7 @@ public class SyllabusService implements ISyllabusService {
                         -> s.getName().toUpperCase().contains(subSearch) ||
                                 s.getCode().toUpperCase().contains(subSearch) ||
                                 s.getCreator().getFullName().toUpperCase().contains(subSearch) ||
-                                checkOsdBelongSyllabus(s.getId(), subSearch))
+                                checkOsdBeLongSyllabus(s.getId(), subSearch))
                         .collect(Collectors.toList());
             }
         }
@@ -121,7 +121,7 @@ public class SyllabusService implements ISyllabusService {
         }
     }
 
-    private boolean checkOsdBelongSyllabus(long syllabusId, String search) {
+    private boolean checkOsdBeLongSyllabus(Long syllabusId, String search) {
             if (getListSyllabusIdByOSD(search).contains(syllabusId)) {
                 return true;
             }

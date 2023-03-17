@@ -146,7 +146,7 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public List<UnitDTO> getAllUnitsForADateByTrainingClassId(long id, int dayNth) {
+    public List<UnitDTO> getAllUnitsForADateByTrainingClassId(Long id, int dayNth) {
         List<Unit> units = getListUnitsInASessionByTrainingClassId(id, dayNth);
         return units.stream().map(UnitMapper.INSTANCE::toDTO).toList();
     }
@@ -154,7 +154,7 @@ public class UnitService implements IUnitService {
 
     @Override
     // get all units from a class
-    public List<Unit> getListUnitsByTrainingClassId(long id){
+    public List<Unit> getListUnitsByTrainingClassId(Long id){
         // Get Class
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
 
@@ -165,7 +165,7 @@ public class UnitService implements IUnitService {
 
 
     // Get a session from a date
-    private Session getSession(long id, int dayNth) {
+    private Session getSession(Long id, int dayNth) {
         // Get all sessions
         List<Session> sessions = getListUnitsByTrainingClassId(id).stream().map(p -> sessionRepository.findByIdAndStatus(p.getSession().getId(), true).orElseThrow()).toList();
 
@@ -187,7 +187,7 @@ public class UnitService implements IUnitService {
 
     @Override
     // Get list units from a session
-    public List<Unit> getListUnitsInASessionByTrainingClassId(long id, int dayNth){
+    public List<Unit> getListUnitsInASessionByTrainingClassId(Long id, int dayNth){
         Session session = getSession(id, dayNth);
         return unitRepository.findBySessionAndStatusOrderByUnitNumber(session, true).orElseThrow();
     }

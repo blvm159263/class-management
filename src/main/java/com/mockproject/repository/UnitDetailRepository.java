@@ -27,7 +27,5 @@ public interface UnitDetailRepository extends JpaRepository<UnitDetail, Long> {
     Optional<UnitDetail> findByIdAndStatus(Long unitDetailId, boolean status);
     Optional<List<UnitDetail>> findByUnitInAndStatus(List<Unit> units, Boolean status);
 
-    Optional<UnitDetail> findByIdAndStatus(long unitDetailId, boolean status);
-
     List<UnitDetail> getListUnitDetailByUnitId(Long idUnit);
 }

@@ -30,16 +30,15 @@ public interface IUserService {
 
     List<UserDTO> getAllUser(boolean status);
 
+    List<UserDTO> getAllTrainersByTrainingClassId(Long id);
+
+    List<UserDTO> getAllAdminsByTrainingClassId(Long id);
+
+    UserDTO getCreatorByTrainingClassId(Long id);
+
+    List<UserDTO> getAllTrainersForADateByTrainingClassId(Long id, int dayNth);
+
     Integer updateStateToTrue(Long id);
-    List<UserDTO> getAllTrainersByTrainingClassId(long id);
-
-    List<UserDTO> getAllAdminsByTrainingClassId(long id);
-
-    UserDTO getCreatorByTrainingClassId(long id);
-
-    List<UserDTO> getAllTrainersForADateByTrainingClassId(long id, int dayNth);
-
-    Integer updateStateToTrue(long id);
 
     boolean changeRole(Long id, Long roleId);
 

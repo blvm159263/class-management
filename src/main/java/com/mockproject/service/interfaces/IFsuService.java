@@ -12,5 +12,5 @@ public interface IFsuService {
 
     List<FsuDTO> listAllTrue();
 
-    FsuDTO getFsuByTrainingClassId(long id);
+    FsuDTO getFsuByTrainingClassId(Long id);
 }

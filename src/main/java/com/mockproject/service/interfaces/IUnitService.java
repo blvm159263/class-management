@@ -11,13 +11,13 @@ public interface IUnitService {
 
     List<UnitDTO> listBySessionId(Long sid);
 
-    List<UnitDTO> getAllUnitsForADateByTrainingClassId(long id, int dayNth);
+    List<UnitDTO> getAllUnitsForADateByTrainingClassId(Long id, int dayNth);
 
-    List<Unit> getListUnitsByTrainingClassId(long id);
+    List<Unit> getListUnitsByTrainingClassId(Long id);
 
-    List<Unit> getListUnitsInASessionByTrainingClassId(long id, int dayNth);
+    List<Unit> getListUnitsInASessionByTrainingClassId(Long id, int dayNth);
 
-    List<Unit> getUnitBySessionId(long idSession);
+    List<Unit> getUnitBySessionId(Long idSession);
 
     List<UnitDTO> getAllUnitBySessionId(Long sessionId, boolean status);
 

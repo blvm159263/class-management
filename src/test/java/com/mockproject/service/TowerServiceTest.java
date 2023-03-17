@@ -4,6 +4,9 @@ import com.mockproject.dto.TowerDTO;
 import com.mockproject.entity.Location;
 import com.mockproject.entity.Tower;
 import com.mockproject.repository.TowerRepository;
+import com.mockproject.repository.TrainingClassRepository;
+import com.mockproject.repository.TrainingClassUnitInformationRepository;
+import com.mockproject.service.interfaces.IUnitService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,12 @@ import static org.mockito.Mockito.when;
 class TowerServiceTest {
     @MockBean
     private TowerRepository towerRepository;
+    @MockBean
+    private TrainingClassRepository trainingClassRepository;
+    @MockBean
+    private TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
+    @MockBean
+    private IUnitService unitService;
 
     @Autowired
     private TowerService towerService;

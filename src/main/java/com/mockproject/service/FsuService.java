@@ -29,7 +29,7 @@ public class FsuService implements IFsuService {
     }
 
     @Override
-    public FsuDTO getFsuByTrainingClassId(long id) {
+    public FsuDTO getFsuByTrainingClassId(Long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         if(tc.getFsu().isStatus()){return FsuMapper.INSTANCE.toDTO(tc.getFsu());}
         return null;

@@ -78,7 +78,7 @@ public class AttendeeController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = AttendeeDTO.class)))
     })
     @GetMapping("/class-attendee")
-    public ResponseEntity<?> getAttendeeName(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+    public ResponseEntity<?> getAttendeeName(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(attendeeService.getAttendeeByTrainingClassId(id));
         }catch (Exception e){

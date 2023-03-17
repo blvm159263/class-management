@@ -1,6 +1,7 @@
 package com.mockproject.repository;
 
 import com.mockproject.entity.Syllabus;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,7 +23,7 @@ public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
             "OR s.creator.fullName LIKE '%' + ?4 + '%' OR s.id IN ?5)")
     List<Syllabus> getListSyllabus(boolean status,
                                    LocalDate fromDate, LocalDate toDate,
-                                   String search, List<Long> syllabusIdList, Pageable pageable);
+                                   String search, List<Long> syllabusIdList, Sort sort);
     Optional<Syllabus> findByIdAndStatus(Long id, boolean status);
 
     Optional<List<Syllabus>> findByStateAndStatus(boolean state, boolean status);

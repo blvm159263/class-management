@@ -54,29 +54,6 @@ public class TrainingClassController {
         }
     }
 
-    @GetMapping("/trainers")
-    public ResponseEntity<?> getAllTrainers(@Param("id") Long id) {
-        return ResponseEntity.ok(trainingClassService.getAllTrainers(id));
-    }
-
-    @GetMapping("/admins")
-    public ResponseEntity<?> getAllAdmins(@Param("id") Long id) {
-        return ResponseEntity.ok(trainingClassService.getAllAdmins(id));
-    }
-
-    @GetMapping("/creator")
-    public ResponseEntity<?> getCreator(@Param("id") Long id) {
-        return ResponseEntity.ok(trainingClassService.getCreator(id));
-    }
-
-    @GetMapping("/towers")
-    public ResponseEntity<?> getAllTowers(@Param("id") Long id) {
-        return ResponseEntity.ok(trainingClassService.getAllTowers(id));
-    }
-
-    }
-
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "When Training Class created successfully!"),
             @ApiResponse(responseCode = "400", description = "When Training Class can't be created - Object is not valid!")

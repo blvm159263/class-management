@@ -83,7 +83,7 @@ public class FsuController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = FsuDTO.class)))
     })
     @GetMapping("/class-fsu")
-    public ResponseEntity<?> getClassFsu(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+    public ResponseEntity<?> getClassFsu(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(fsuService.getFsuByTrainingClassId(id));
         }catch (Exception e){

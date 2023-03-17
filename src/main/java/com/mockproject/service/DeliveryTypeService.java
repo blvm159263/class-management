@@ -56,7 +56,7 @@ public class DeliveryTypeService implements IDeliveryTypeService {
     }
 
     @Override
-    public List<DeliveryTypeDTO> getAllDeliveryTypesByTrainingClassId(long id) {
+    public List<DeliveryTypeDTO> getAllDeliveryTypesByTrainingClassId(Long id) {
         List<Unit> units = service.getListUnitsByTrainingClassId(id);
         List<UnitDetail> list = unitDetailRepository.findByUnitInAndStatus(units, true).orElseThrow();
         List<DeliveryType> deliveryTypes = list.stream().map(p-> deliveryTypeRepository.findByIdAndStatus(p.getDeliveryType().getId(), true).orElseThrow()).distinct().toList();

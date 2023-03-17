@@ -101,7 +101,7 @@ public class UnitController {
     })
     @GetMapping("/class-units-for-a-date")
     public ResponseEntity<?> getAllUnitsForADate(
-            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
+            @Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id,
             @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth
     ) {
         try{

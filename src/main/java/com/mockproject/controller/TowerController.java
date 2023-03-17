@@ -56,7 +56,7 @@ public class TowerController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TowerDTO.class)))
     })
     @GetMapping("/class-towers")
-    public ResponseEntity<?> getAllTowers(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+    public ResponseEntity<?> getAllTowers(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(service.getAllTowersByTrainingClassId(id));
         }catch (Exception e){
@@ -76,7 +76,7 @@ public class TowerController {
     })
     @GetMapping("/class-towers-for-a-date")
     public ResponseEntity<?> getAllTowersForADate(
-            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
+            @Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id,
             @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth
     ) {
         try{

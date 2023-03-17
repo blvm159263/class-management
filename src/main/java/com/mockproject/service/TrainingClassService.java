@@ -128,7 +128,7 @@ public class TrainingClassService implements ITrainingClassService {
     public Page<TrainingClassDTO> getListClass(boolean status,
                                                List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                                List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                               Long fsu, Long trainerId, String search, String[] sort, Optional<Integer> page)
+                                               Long fsu, Long trainerId,  List<String> search, String[] sort, Optional<Integer> page)
     {
         List<Sort.Order> order = new ArrayList<>();
         int skipCount = page.orElse(0) * RESULTS_PER_PAGE;

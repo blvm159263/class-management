@@ -34,7 +34,5 @@ public interface ISyllabusService {
 
     boolean deleteSyllabus(Long syllabusId, boolean status);
 
-    List<Long> getListSyllabusIdByOSD(String osd);
-
     Syllabus getSyllabusById(Long id);
 }
