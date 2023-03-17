@@ -1,8 +1,8 @@
 package com.mockproject.repository;
 
 import com.mockproject.entity.TrainingClass;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,9 +25,9 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "AND (:#{#classId.size()} = 0 OR c.id IN ?10) " +
             "AND (c.className LIKE '%' + ?11 + '%' OR c.classCode LIKE '%' + ?11 + '%' " +
             "OR c.creator.fullName LIKE '%' + ?11 + '%')")
-    Page<TrainingClass> getListClass(boolean status, List<Long> locationId, LocalDate fromDate, LocalDate toDate,
+    List<TrainingClass> getListClass(boolean status, List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                      List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                     long fsu, List<Long> classId, String search, Pageable page);
+                                     long fsu, List<Long> classId, String search, Sort sort);
 
     List<TrainingClass> findAllByStatus(boolean status);
 }

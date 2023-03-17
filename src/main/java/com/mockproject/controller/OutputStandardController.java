@@ -27,7 +27,7 @@ public class OutputStandardController {
             @PathVariable("syllabusId")
             @Parameter(
                     description = "<b>Insert syllabus ID to get output standard<b>",
-                    example = "1"
+                    example = "7"
             ) long id) {
         return ResponseEntity.ok(outputStandardService.getOsdBySyllabusId(true, id));
     }

@@ -32,8 +32,6 @@ public class SyllabusService implements ISyllabusService {
 
     private final UnitDetailRepository unitDetailRepo;
 
-    private final IOutputStandardService outputStandardService;
-
     private static final int RESULTS_PER_PAGE = 10;
 
     @Override
@@ -61,11 +59,9 @@ public class SyllabusService implements ISyllabusService {
                 throw new NotFoundException(sort[0] + " is not a propertied of Syllabus!");
             }
         }
-        Pageable pageable = PageRequest.of(page.orElse(0), 5, Sort.by(order));
         List<Syllabus> pages = syllabusRepo.getListSyllabus(status, fromDate, toDate, search.size() > 0 ? search.get(0) : "", getListSyllabusIdByOSD(search.size() > 0 ? search.get(0) : ""), Sort.by(order));
         if (search.size() > 1){
             for (int i = 1; i < search.size(); i++) {
-                System.out.println("Loop");
                 String subSearch = search.get(i).toUpperCase();
                 pages = pages.stream().filter(s
                         -> s.getName().toUpperCase().contains(subSearch) ||
@@ -78,7 +74,7 @@ public class SyllabusService implements ISyllabusService {
         if(pages.size() > 0){
             return new PageImpl<>(
                     pages.stream().skip(skipCount).limit(RESULTS_PER_PAGE).map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                    pageable,
+                    PageRequest.of(page.orElse(0), 10, Sort.by(order)),
                     pages.size());
         } else {
             throw new NotFoundException("Syllabus not found!");

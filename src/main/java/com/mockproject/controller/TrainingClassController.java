@@ -98,7 +98,7 @@ public class TrainingClassController {
             @Parameter(
                     description = "<b>Search by class name, code, or creator's name<b>",
                     example = "Fresher Develop Operation"
-            ) String search,
+            ) List<String> search,
 
             @RequestParam(defaultValue = "startTime,asc")
             @Parameter(
