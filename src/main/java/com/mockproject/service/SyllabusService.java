@@ -74,7 +74,7 @@ public class SyllabusService implements ISyllabusService {
         if(pages.size() > 0){
             return new PageImpl<>(
                     pages.stream().skip(skipCount).limit(RESULTS_PER_PAGE).map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                    PageRequest.of(page.orElse(0), 10, Sort.by(order)),
+                    PageRequest.of(page.orElse(0), RESULTS_PER_PAGE, Sort.by(order)),
                     pages.size());
         } else {
             throw new NotFoundException("Syllabus not found!");
