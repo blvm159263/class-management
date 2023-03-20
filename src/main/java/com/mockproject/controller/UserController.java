@@ -243,6 +243,7 @@ public class UserController {
         for (FormRoleDTO fdto : formRoleDTOList) {
             if (roleService.checkDuplicatedByRoleIdAndRoleName(fdto.getId(),fdto.getRoleName()))
                 return ResponseEntity.badRequest().body("Role " + fdto.getRoleName() + " is duplicated!");
+            if (fdto.getSyllabusPermission().equals("Access denied")) { fdto.setLeaningMaterialPermission("Access denied"); }
             if (fdto.getId() != 0) {
                 roleService.save(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getClassPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Class"));
