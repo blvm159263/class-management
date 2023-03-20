@@ -4,6 +4,7 @@ import com.mockproject.dto.TrainingProgramDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.ui.Model;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,16 +42,8 @@ public class TrainingProgramController {
     @Operation(summary = "Get all Training Program")
     @GetMapping("list")
     public ResponseEntity<?> getAllTrainingProgram(@RequestParam(defaultValue = "0") Integer pageNo,
-                                                   @RequestParam(defaultValue = "10") Integer pageSize,
-                                                   Model model)
+                                                   @RequestParam(defaultValue = "10") Integer pageSize)
     {
-        long rows=service.countAll();
-        long totalPage=rows/pageSize;
-        if(totalPage==0||rows%pageSize!=0){
-            totalPage+=1;
-        }
-        model.addAttribute("NUMBER_OF_PAGE",totalPage);
-
         Page<TrainingProgramDTO> list =service.getAll(pageNo, pageSize);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
@@ -69,34 +62,47 @@ public class TrainingProgramController {
                                               @RequestParam(name="name",required = false) String name,
                                               @RequestParam(defaultValue = "0") Integer pageNo,
                                               @RequestParam(defaultValue = "10") Integer pageSize,
-                                              HttpServletResponse response,
-                                              HttpServletRequest request,
-                                              Model model) throws IOException {
-        long rows=service.countAll();
-        long totalPage=rows/pageSize;
-        if(totalPage==0||rows%pageSize!=0){
-            totalPage+=1;
-        }
-        model.addAttribute("NUMBER_OF_PAGE",totalPage);
+                                              HttpServletRequest request) throws IOException {
+
 
         HttpSession session=request.getSession();
+
+        //==================== get list search keyword from session
         List<String> listName=(List<String>) session.getAttribute("LIST_NAME");
+        //========================================================================
+        //
+        //==================== no keyword and empty list, return all training program
         if(listName==null && name==null) {
-            response.sendRedirect("list");
+            Page<TrainingProgramDTO> list =service.getAll(pageNo, pageSize);
+            return ResponseEntity.ok(list);
         }
         if (listName==null){
             listName=new ArrayList<>();
         }
-        listName.add(name);
+        //===================== check duplicate search keyword in the list
+        boolean check=false;
+        for (String s:listName){
+            if(s.equals(name))
+                check=true;
+        }
+        if (check==false)
+            listName.add(name);
+        //==================================================================
+        //================== save list keyword to session
         session.setAttribute("LIST_NAME",listName);
+        //==================================================================
+
         List<TrainingProgramDTO> list = new ArrayList<>();
+        //================================= load search result from database
         for(String key:listName){
             for (TrainingProgramDTO dto:service.findByNameContaining(pageNo, pageSize, key, key)){
                 list.add(dto);
             }
         }
+        //==================================================================
+        Page<TrainingProgramDTO> result=new PageImpl<>(list);
         if (!list.isEmpty()) {
-            return ResponseEntity.ok(list);
+            return ResponseEntity.ok(result);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
         }
@@ -120,14 +126,5 @@ public class TrainingProgramController {
         }
         session.setAttribute("LIST_NAME", listName);
         return ResponseEntity.ok().body("detele successfully");
-    }
-    @GetMapping("view-searchkey")
-    public ResponseEntity<?> getSearchKey(HttpServletRequest request){
-        HttpSession session = request.getSession();
-        List<String> listName=(List<String>) session.getAttribute("LIST_NAME");
-        if (listName==null){
-            listName=new ArrayList<>();
-        }
-        return ResponseEntity.ok(listName);
     }
 }
