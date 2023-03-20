@@ -20,7 +20,11 @@ public class PermissionScopeService implements IPermissionScopeService {
 
     @Override
     public Long getPermissionScopeIdByPermissionScopeName(String name) {
-        return repository.getPermissionScopeByScopeName(name).getId();
+
+        if(repository.getPermissionScopeByScopeName(name).isPresent()){
+            return repository.getPermissionScopeByScopeName(name).get().getId();
+        } else return 0L;
+
     }
 
     @Override

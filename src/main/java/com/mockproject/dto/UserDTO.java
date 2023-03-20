@@ -33,6 +33,7 @@ public class UserDTO implements Serializable {
     private String fullName;
     private String image;
     private int state;
+
     private LocalDate dob;
     private String phone;
     private boolean gender;
@@ -43,4 +44,6 @@ public class UserDTO implements Serializable {
     private String levelCode;
     private Long attendeeId;
     private String attendeeName;
+
+    private String stateName;
 }

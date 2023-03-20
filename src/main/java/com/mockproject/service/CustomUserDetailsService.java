@@ -26,10 +26,10 @@ public class CustomUserDetailsService implements ICustomUserDetailsService, User
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (userRepository.findByEmail(username).isEmpty()) {
+        if (userRepository.findByEmailAndStatus(username, true).isEmpty()) {
             throw new UsernameNotFoundException(username);
         }
-        User user = userRepository.findByEmail(username).get();
+        User user = userRepository.findByEmailAndStatus(username, true).get();
         Set<GrantedAuthority> authoritySet;
         authoritySet = new HashSet<>();
         String role = user.getRole().getRoleName();

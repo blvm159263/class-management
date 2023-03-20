@@ -84,12 +84,12 @@ public class UserService implements IUserService {
 
 
     @Override
-    public List<UserDTOCustom> getAllByPageAndRowPerPage(long page, long rowPerPage) {
+    public List<UserDTOCustom> getAllByPageAndRowPerPage(Long page, Long rowPerPage) {
         List<User> listUser = userRepo.getAllByPageAndRowPerPage(page, rowPerPage);
 
         List<UserDTOCustom> mlist = new ArrayList<>();
         for (User u: listUser) {
-            UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), u.getState(), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
+            UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), getState(u.getState()), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
                     RoleMapper.INSTANCE.toDTO( u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()) );
             mlist.add(userDTOCustom);
         }
@@ -124,7 +124,7 @@ public class UserService implements IUserService {
 
             List<UserDTOCustom> result = new ArrayList<>();
             for (User u: pages) {
-                UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), u.getState(), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
+                UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), getState(u.getState()), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
                         RoleMapper.INSTANCE.toDTO( u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()) );
                 result.add(userDTOCustom);
             }
@@ -319,5 +319,20 @@ public class UserService implements IUserService {
             return String.valueOf(e);
         }
         return userList.toString();
+    }
+
+    private String getState(int id){
+        switch (id){
+            case 1:
+                return "Off class";
+            case 2:
+                return "In class";
+            case 3:
+                return "Active";
+            case 4:
+                return "On boaring";
+            default:
+                return "";
+        }
     }
 }
