@@ -60,10 +60,12 @@ public class SyllabusController {
             )
             Optional<Integer> page,
 
-            @RequestParam(defaultValue = "dateCreated,asc")
+            @RequestParam(defaultValue = "name,asc")
             @Parameter(
-                    description = "<b>Sort by attribute descending/ascending (dateCreated,asc => sort by dateCreated ascending)<b>",
-                    example = "dateCreated,asc"
+                    description = "<b>Sort by attribute descending/ascending"
+                            + "<li>dateCreated,asc => sort by dateCreated ascending</li>"
+                            + "<li>creator,desc => sort by creator's name descending</li></u><b>",
+                    example = "name,asc"
             )
             String[] sort) {
         return ResponseEntity

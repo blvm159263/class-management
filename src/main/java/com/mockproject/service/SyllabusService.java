@@ -44,7 +44,7 @@ public class SyllabusService implements ISyllabusService {
             for (String sortItem: sort) {
                 String[] subSort = sortItem.split(",");
                 if(ifPropertpresent(sourceFieldList, subSort[0])){
-                    order.add(new Sort.Order(getSortDirection(subSort[1]),subSort[0]));
+                    order.add(new Sort.Order(getSortDirection(subSort[1]), transferProperty(subSort[0])));
                 } else {
                     throw new NotFoundException(subSort[0] + " is not a propertied of Syllabus!");
                 }
@@ -54,7 +54,7 @@ public class SyllabusService implements ISyllabusService {
                 throw new ArrayIndexOutOfBoundsException("Sort direction(asc/desc) not found!");
             }
             if(ifPropertpresent(sourceFieldList, sort[0])){
-                order.add(new Sort.Order(getSortDirection(sort[1]),sort[0]));
+                order.add(new Sort.Order(getSortDirection(sort[1]), transferProperty(sort[0])));
             } else {
                 throw new NotFoundException(sort[0] + " is not a propertied of Syllabus!");
             }
@@ -78,6 +78,15 @@ public class SyllabusService implements ISyllabusService {
                     pages.size());
         } else {
             throw new NotFoundException("Syllabus not found!");
+        }
+    }
+
+    private static String transferProperty(String property){
+        switch (property) {
+            case "creator":
+                return "creator.fullName";
+            default:
+                return property;
         }
     }
 
