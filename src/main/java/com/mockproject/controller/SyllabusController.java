@@ -38,7 +38,6 @@ public class SyllabusController {
 
     private final ISyllabusService syllabusService;
 
-
     private final ITrainingProgramSyllabusService trainingProgramSyllabusService;
 
     @GetMapping("/getSyllabusByTrainingProgram/{trainingProgramId}")
@@ -80,7 +79,6 @@ public class SyllabusController {
         Syllabus editsyllabus = syllabusService.editSyllabus(syllabusDTO, true);
         return ResponseEntity.ok(editsyllabus);
     }
-
 
     @PutMapping("delete/{id}")
     @Operation(summary = "Delete syllabus by syllabusId")

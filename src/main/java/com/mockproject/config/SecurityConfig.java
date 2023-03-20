@@ -1,7 +1,5 @@
 package com.mockproject.config;
 
-
-//import com.mockproject.jwt.JwtAuthenticationFilter;
 import com.mockproject.jwt.JwtAuthenticationFilter;
 import com.mockproject.service.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,7 +32,6 @@ import java.io.IOException;
 public class SecurityConfig {
     @Autowired
     CustomUserDetailsService customUserDetailsService;
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -81,6 +78,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-
 }

@@ -36,7 +36,6 @@ public class UnitDetailService implements IUnitDetailService {
 
     private final ITrainingMaterialService trainingMaterialService;
 
-
     @Override
     public List<UnitDetail> getUnitDetailByUnitId(Long idUnit) {
         return null;
@@ -150,5 +149,4 @@ public class UnitDetailService implements IUnitDetailService {
         unitDetail.get().setType(unitDetail.get().isType() == true ? false: true);
         return true;
     }
-
 }

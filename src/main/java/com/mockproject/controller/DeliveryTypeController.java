@@ -61,7 +61,6 @@ public class DeliveryTypeController {
         }
     }
 
-
     @Operation(summary = "Get all class's DeliveryTypes by TrainingClass id ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),

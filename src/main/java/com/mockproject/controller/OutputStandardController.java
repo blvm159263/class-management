@@ -23,7 +23,6 @@ import java.util.List;
 @SecurityRequirement(name = "Authorization")
 public class OutputStandardController {
 
-
     private final IOutputStandardService outputStandardService;
 
     @GetMapping("/getBySyllabusId/{syllabusId}")
@@ -52,5 +51,4 @@ public class OutputStandardController {
         List<OutputStandardDTO> outputStandardDTOList = outputStandardService.getOutputStandard(true);
         return ResponseEntity.ok(outputStandardDTOList);
     }
-
 }

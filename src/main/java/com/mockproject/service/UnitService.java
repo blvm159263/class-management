@@ -77,7 +77,6 @@ public class UnitService implements IUnitService {
         unit = unitRepository.findByIdAndStatus(unit.getId(), true).get();
         duration = duration.add(unit.getDuration());
 
-
         // Set duration syllabus
         syllabus.get().setHour(duration);
         return true;
@@ -117,9 +116,8 @@ public class UnitService implements IUnitService {
     @Override
     public boolean deleteUnit(Long unitId, boolean status){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, status);
-        unit.orElseThrow(() -> new  ResponseStatusException(HttpStatus.NO_CONTENT,"Unit "+ unitId));
+        unit.orElseThrow(() -> new  ResponseStatusException(HttpStatus.NO_CONTENT));
         unit.get().setStatus(false);
-        System.out.println("unit: "+unitId);
         unitDetailService.deleteUnitDetails(unitId, status);
         unitRepository.save(unit.get());
         return true;
@@ -151,7 +149,6 @@ public class UnitService implements IUnitService {
         return units.stream().map(UnitMapper.INSTANCE::toDTO).toList();
     }
 
-
     @Override
     // get all units from a class
     public List<Unit> getListUnitsByTrainingClassId(Long id){
@@ -162,7 +159,6 @@ public class UnitService implements IUnitService {
         List<TrainingClassUnitInformation> list = trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc, true).orElseThrow();
         return list.stream().map(p-> unitRepository.findByIdAndStatus(p.getUnit().getId(), true).orElseThrow()).toList();
     }
-
 
     // Get a session from a date
     private Session getSession(Long id, int dayNth) {
