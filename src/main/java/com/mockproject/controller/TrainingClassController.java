@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -148,10 +147,15 @@ public class TrainingClassController {
                     example = ""
             ) List<String> search,
 
-            @RequestParam(defaultValue = "startTime,asc")
+            @RequestParam(defaultValue = "className,asc")
             @Parameter(
-                    description = "<b>Sort by attribute descending/ascending (startTime,asc => sort by startTime ascending)<b>",
-                    example = "startTime,asc"
+                    description = "<b>Sort by attribute descending/ascending"
+                            + "<ul><li>startTime,asc => sort by startTime ascending</li>"
+                            + "<li>creator,asc => sort by creator's name ascending</li>"
+                            + "<li>attendee,desc => sort by attendee's name descending</li>"
+                            + "<li>location,desc => sort by location's name descending</li>"
+                            + "<li>fsu,desc => sort by fsu's name descending</li></u><b>",
+                    example = "className,asc"
             ) String[] sort,
 
             @RequestParam(defaultValue = "0")
