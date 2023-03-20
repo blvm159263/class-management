@@ -9,6 +9,8 @@ import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.service.interfaces.*;
+import com.mockproject.utils.CSVUtils;
+import io.github.classgraph.Resource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,9 +22,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -426,6 +431,18 @@ public class UserController {
         if (editUser)
             return ResponseEntity.ok("Successfully");
         else return ResponseEntity.badRequest().body("Could not change!");
+    }
+
+    @GetMapping("/downloadCSVUser")
+    @Operation(summary = "Download file UserCSVExample")
+    public ResponseEntity<InputStreamResource> getFile() {
+        String filename = "User_import.csv";
+        InputStreamResource file = new InputStreamResource(CSVUtils.getCSVUserFileExample());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/csv"))
+                .body(file);
     }
 
 }
