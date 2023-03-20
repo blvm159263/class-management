@@ -4,7 +4,7 @@ import com.mockproject.dto.LevelDTO;
 
 public interface ILevelService {
 
-    LevelDTO getLevelById(long id);
+    LevelDTO getLevelById(Long id);
 
-    long getLevelByLevelCode(String levelCode);
+    Long getLevelByLevelCode(String levelCode);
 }

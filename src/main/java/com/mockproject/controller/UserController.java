@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@Tag(name = "User API", description = "API related User")
 @RequiredArgsConstructor
+@Tag(name = "User API")
 @RequestMapping("/api/user")
 @SecurityRequirement(name = "Authorization")
 public class UserController {
@@ -65,7 +65,6 @@ public class UserController {
     private final ILevelService levelService;
 
     @PostMapping("/login")
-    @Operation(summary = "Login into system")
     public ResponseEntity login(@RequestBody LoginFormDTO loginFormDTO) {
         String email = loginFormDTO.getEmail();
         String pass = loginFormDTO.getPassword();
@@ -86,6 +85,17 @@ public class UserController {
             return ResponseEntity.ok(new JwtResponseDTO(userDTO, token));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Invalid email or password");
+        }
+    }
+
+    @GetMapping("/getAll")
+    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    public ResponseEntity getAll() {
+        List<UserDTO> userDTOList = userService.getAll();
+        if (userDTOList.isEmpty()) {
+            return ResponseEntity.badRequest().body("List is empty");
+        } else {
+            return ResponseEntity.ok(userDTOList);
         }
     }
 
@@ -153,6 +163,62 @@ public class UserController {
         return ResponseEntity.ok(list);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any User"),
+            @ApiResponse(responseCode = "200", description = "When get list admin successfully!",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
+    @Operation(summary = "Get all User have role CLASS_ADMIN")
+    @GetMapping("/class-admin")
+    public ResponseEntity<?> listClassAdmin() {
+        List<UserDTO> list = userService.listClassAdminTrue();
+        if (!list.isEmpty()) {
+            return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any User (Class Admin)!");
+        }
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any User"),
+            @ApiResponse(responseCode = "200", description = "When get list trainer successfully!",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
+    @Operation(summary = "Get all User have role TRAINER")
+    @GetMapping("/trainer")
+    public ResponseEntity<?> listTrainer() {
+        List<UserDTO> list = userService.listTrainerTrue();
+        if (!list.isEmpty()) {
+            return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any User (Trainer)!");
+        }
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any User"),
+            @ApiResponse(responseCode = "200", description = "When get user successfully!",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
+    @Operation(summary = "Get User by given {ID}")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@Parameter(description = "User's ID") @PathVariable("id") Long id) {
+        UserDTO user = userService.getUserById(id);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any User have ID = " + id);
+        }
+    }
+
+    @GetMapping("/list")
+    @Operation(
+            summary = "Get user list"
+    )
+    public ResponseEntity<?> getAllUser() {
+        return ResponseEntity.ok(userService.getAllUser(true));
+    }
+
     @GetMapping("/getRoleById")
     @Operation(summary = "Get a role by role id")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
@@ -179,6 +245,8 @@ public class UserController {
 
 
         for (FormRoleDTO fdto : formRoleDTOList) {
+            if (roleService.checkDuplicatedByRoleName(fdto.getRoleName()))
+                return ResponseEntity.badRequest().body("Role " + fdto.getRoleName() + " is duplicated!");
             if (fdto.getId() != 0) {
                 roleService.save(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getClassPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Class"));

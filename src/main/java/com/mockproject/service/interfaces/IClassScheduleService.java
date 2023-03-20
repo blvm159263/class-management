@@ -15,6 +15,8 @@ public interface IClassScheduleService {
 
     boolean saveClassScheduleForTrainingClass(List<LocalDate> listDate, Long tcId);
 
+    List<ClassScheduleDTO> getClassScheduleByTrainingClassId(Long id);
+
     List<ClassSchedule> listEntity();
 
     ClassSchedule save(ClassScheduleDTO dto);

@@ -10,22 +10,22 @@ import java.util.List;
 public interface IUnitDetailService {
 
 
-    List<UnitDetail> getUnitDetailByUnitId(long idUnit);
+    List<UnitDetail> getUnitDetailByUnitId(Long idUnit);
 
-    List<UnitDetailDTO> getAllUnitDetailByUnitId(long unitId, boolean status);
+    List<UnitDetailDTO> getAllUnitDetailByUnitId(Long unitId, boolean status);
 
-    boolean createUnitDetail(long unitId, List<UnitDetailDTO> listUnitDetail, User user);
+    boolean createUnitDetail(Long unitId, List<UnitDetailDTO> listUnitDetail, User user);
 
-    boolean createUnitDetail(long unitId, UnitDetailDTO unitDetailDTO, User user);
+    boolean createUnitDetail(Long unitId, UnitDetailDTO unitDetailDTO, User user);
 
-    UnitDetail getUnitDetailById(long id, boolean status);
+    UnitDetail getUnitDetailById(Long id, boolean status);
 
     UnitDetail editUnitDetail(UnitDetailDTO unitDetailDTO, boolean status) throws IOException;
 
-    boolean deleteUnitDetail(long unitDetailId, boolean status);
+    boolean deleteUnitDetail(Long unitDetailId, boolean status);
 
-    boolean deleteUnitDetails(long unitId, boolean status);
+    boolean deleteUnitDetails(Long unitId, boolean status);
 
-    boolean toggleUnitDetailType(long unitDetailId, boolean status);
+    boolean toggleUnitDetailType(Long unitDetailId, boolean status);
 
 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface ITrainingProgramSyllabusService {
 
-    List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(long trainProgramID);
+    List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(Long trainProgramID);
 
 
     List<TrainingProgramSyllabusDTO> getAllSyllabusByTrainingProgramId(long trainProgramID, boolean status);

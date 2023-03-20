@@ -35,7 +35,7 @@ public class LocationService implements ILocationService {
     }
 
     @Override
-    public LocationDTO getLocationById(boolean status, long id) {
+    public LocationDTO getLocationById(boolean status, Long id) {
         Location location = locationRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Location not found with id: " + id));
         return LocationMapper.INSTANCE.toDTO(location);
     }

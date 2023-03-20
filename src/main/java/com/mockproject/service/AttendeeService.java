@@ -2,8 +2,10 @@ package com.mockproject.service;
 
 import com.mockproject.dto.AttendeeDTO;
 import com.mockproject.entity.Attendee;
+import com.mockproject.entity.TrainingClass;
 import com.mockproject.mapper.AttendeeMapper;
 import com.mockproject.repository.AttendeeRepository;
+import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.service.interfaces.IAttendeeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class AttendeeService implements IAttendeeService {
 
     private final AttendeeRepository attendeeRepo;
+    private final TrainingClassRepository trainingClassRepository;
 
     @Override
     public List<AttendeeDTO> getAllAttendee(boolean status) {
@@ -31,7 +34,7 @@ public class AttendeeService implements IAttendeeService {
     }
 
     @Override
-    public AttendeeDTO getAttendeeById(boolean status, long id) {
+    public AttendeeDTO getAttendeeById(boolean status, Long id) {
         Attendee attendee = attendeeRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Attendee not found with id: " + id));
         return AttendeeMapper.INSTANCE.toDTO(attendee);
     }
@@ -39,5 +42,12 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public List<AttendeeDTO> listAllTrue() {
         return attendeeRepo.findByStatus(true).stream().map(AttendeeMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public AttendeeDTO getAttendeeByTrainingClassId(Long id) {
+        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        if (tc.getAttendee().isStatus()){return AttendeeMapper.INSTANCE.toDTO(tc.getAttendee());}
+        return null;
     }
 }

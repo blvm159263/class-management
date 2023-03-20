@@ -20,7 +20,10 @@ public class SearchUserFillerDTO {
     private Boolean gender;
     private String phone;
     private Long state;
-    private Long attendee_id;
-    private Long level_id;
-    private Long role_id;
+    private Long attendeeId;
+    private String attendeeName;
+    private Long levelId;
+    private String levelCode;
+    private Long roleId;
+    private String roleName;
 }

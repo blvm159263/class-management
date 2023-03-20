@@ -5,6 +5,7 @@ import com.mockproject.entity.ClassSchedule;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.mapper.TrainingClassFilterMap;
 import com.mockproject.repository.ClassScheduleRepository;
+import com.mockproject.repository.TrainingClassRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,8 @@ class ClassScheduleServiceTest {
     private TrainingClassUnitInformationService trainingClassUnitInformationService;
     @MockBean
     private TrainingClassFilterMap trainingClassFilterMap;
+    @MockBean
+    private TrainingClassRepository trainingClassRepository;
 
     @Autowired
     private ClassScheduleService classScheduleService;

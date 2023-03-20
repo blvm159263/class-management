@@ -37,8 +37,8 @@ public class RolePermissionScopeService implements IRolePermissionScopeService {
     }
 
     @Override
-    public RolePermissionScopeDTO updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(String permissionName, long roleId, long scopeId) {
-        long permissionId = permissionRepository.getPermissionsByPermissionName(permissionName).getId();
+    public RolePermissionScopeDTO updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(String permissionName, Long roleId, Long scopeId) {
+        Long permissionId = permissionRepository.getPermissionsByPermissionName(permissionName).getId();
         RolePermissionScopeDTO rolePermissionScopeDTO = RolePermissionScopeMapper.INSTANCE.toDTO(repository.findByRoleIdAndAndPermissionScopeId(roleId, scopeId));
         rolePermissionScopeDTO.setPermissionId(permissionId);
         repository.save(RolePermissionScopeMapper.INSTANCE.toEntity(rolePermissionScopeDTO));

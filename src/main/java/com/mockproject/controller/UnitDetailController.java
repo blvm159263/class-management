@@ -6,9 +6,15 @@ import com.mockproject.entity.UnitDetail;
 import com.mockproject.service.interfaces.IUnitDetailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -22,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Unit Detail", description = "API related Unit detail")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 @RequestMapping(value = "/api/unit-detail")
 public class UnitDetailController {
 
@@ -29,12 +36,13 @@ public class UnitDetailController {
     public static final String MODIFY = "ROLE_Modify_Syllabus";
     public static final String CREATE = "ROLE_Create_Syllabus";
     public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
+
     private final IUnitDetailService unitDetailService;
 
     @GetMapping("/{unitId}")
     @Operation(summary = "Get all unit by unit id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<UnitDetailDTO>> getAllUnitDetailByUnitId(@PathVariable("unitId") long unitId) {
+    public ResponseEntity<List<UnitDetailDTO>> getAllUnitDetailByUnitId(@PathVariable("unitId") Long unitId) {
         List<UnitDetailDTO> listUnitDetail = unitDetailService.getAllUnitDetailByUnitId(unitId, true);
         return ResponseEntity.ok(listUnitDetail);
     }
@@ -42,7 +50,7 @@ public class UnitDetailController {
     @PostMapping("/create/{id}")
     @Operation(summary = "Create unit detail")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> createUnitDetails(@PathVariable("id")@Parameter(description = "Unit id") long unitId, @RequestBody List<UnitDetailDTO> listUnitDetail) {
+    public ResponseEntity<Boolean> createUnitDetails(@PathVariable("id")@Parameter(description = "Unit id") Long unitId, @RequestBody List<UnitDetailDTO> listUnitDetail) {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(unitDetailService.createUnitDetail(unitId, listUnitDetail, user.getUser()));
     }
@@ -58,21 +66,21 @@ public class UnitDetailController {
     @PutMapping("/delete/{id}")
     @Operation(summary = "Delete unit detail")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnitDetail(@PathVariable("id") @Parameter(description = "Unit detail id") long unitDetailId) {
+    public ResponseEntity<Boolean> deleteUnitDetail(@PathVariable("id") @Parameter(description = "Unit detail id") Long unitDetailId) {
         return ResponseEntity.ok(unitDetailService.deleteUnitDetail(unitDetailId, true));
     }
 
     @PutMapping("/multi-delete/{id}")
     @Operation(summary = "Delete list unit detail by unit id")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnitDetails(@PathVariable("id") @Parameter(description = "Unit id") long unitId) {
+    public ResponseEntity<Boolean> deleteUnitDetails(@PathVariable("id") @Parameter(description = "Unit id") Long unitId) {
         return ResponseEntity.ok(unitDetailService.deleteUnitDetails(unitId, true));
     }
 
     @PutMapping("/toggle/{id}")
     @Operation(summary = "Change state on/off of unit detail  by unit detail by id")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> toggleUnitDetailType(@PathVariable("id") @Parameter(description = "Unit detail id") long unitDetailId) {
+    public ResponseEntity<Boolean> toggleUnitDetailType(@PathVariable("id") @Parameter(description = "Unit detail id") Long unitDetailId) {
         return ResponseEntity.ok(unitDetailService.toggleUnitDetailType(unitDetailId, true));
     }
 }

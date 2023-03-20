@@ -58,7 +58,7 @@ class TrainingClassUnitInformationServiceTest {
         listAfter.add(new TrainingClassUnitInformation(3L, true, user, unit, tc, tower));
 
 
-        TrainingClassUnitInformationDTO dto = new TrainingClassUnitInformationDTO(null, true, 1L, 1L, 1L, 1L);
+        TrainingClassUnitInformationDTO dto = new TrainingClassUnitInformationDTO(null, true, 1L,null, 1L,null, 1L,null, 1L,null);
         List<TrainingClassUnitInformationDTO> listDto = new ArrayList<>();
         listDto.add(dto);
         listDto.add(dto);
@@ -82,7 +82,7 @@ class TrainingClassUnitInformationServiceTest {
         listBefore.add(ui);
         listBefore.add(ui);
 
-        TrainingClassUnitInformationDTO dto = new TrainingClassUnitInformationDTO(null, true, null, null, null, null);
+        TrainingClassUnitInformationDTO dto = new TrainingClassUnitInformationDTO(null, true, null,null,null,null,null, null, null, null);
         List<TrainingClassUnitInformationDTO> listDto = new ArrayList<>();
         listDto.add(dto);
         listDto.add(dto);

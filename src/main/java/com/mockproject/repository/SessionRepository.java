@@ -13,9 +13,9 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
 
     List<Session> findBySyllabus(Syllabus syllabus);
 
-    Optional<List<Session>> findBySyllabusIdAndStatus(long syllabusID, boolean status);
+    Optional<List<Session>> findBySyllabusIdAndStatus(Long syllabusID, boolean status);
 
-    Optional<Session> findByIdAndStatus(long id, boolean status);
+    Optional<Session> findByIdAndStatus(Long id, boolean status);
 
-    List<Session> getSessionListBySyllabusId(long idSyllabus);
+    List<Session> getSessionListBySyllabusId(Long idSyllabus);
 }

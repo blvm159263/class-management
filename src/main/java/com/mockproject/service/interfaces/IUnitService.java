@@ -11,18 +11,24 @@ public interface IUnitService {
 
     List<UnitDTO> listBySessionId(Long sid);
 
-    List<Unit> getUnitBySessionId(long idSession);
+    List<UnitDTO> getAllUnitsForADateByTrainingClassId(Long id, int dayNth);
 
-    List<UnitDTO> getAllUnitBySessionId(long sessionId, boolean status);
+    List<Unit> getListUnitsByTrainingClassId(Long id);
 
-    boolean createUnit(long sessionId, List<UnitDTO> listUnit, User user);
+    List<Unit> getListUnitsInASessionByTrainingClassId(Long id, int dayNth);
 
-    boolean createUnit(long sessionId, UnitDTO unitDTO, User user);
+    List<Unit> getUnitBySessionId(Long idSession);
+
+    List<UnitDTO> getAllUnitBySessionId(Long sessionId, boolean status);
+
+    boolean createUnit(Long sessionId, List<UnitDTO> listUnit, User user);
+
+    boolean createUnit(Long sessionId, UnitDTO unitDTO, User user);
 
     Unit editUnit(UnitDTO unitDTO, boolean status) throws IOException;
 
-    boolean deleteUnit(long unitId, boolean status);
+    boolean deleteUnit(Long unitId, boolean status);
 
-    boolean deleteUnits(long sessionId, boolean status);
+    boolean deleteUnits(Long sessionId, boolean status);
 
 }

@@ -3,6 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.FsuDTO;
 import com.mockproject.entity.Fsu;
 import com.mockproject.repository.FsuRepository;
+import com.mockproject.repository.TrainingClassRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ import static org.mockito.Mockito.*;
 class FsuServiceTest {
     @MockBean
     private FsuRepository fsuRepository;
+    @MockBean
+    private TrainingClassRepository trainingClassRepository;
+
 
     @Autowired
     private FsuService fsuService;

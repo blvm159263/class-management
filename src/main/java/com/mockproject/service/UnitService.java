@@ -4,9 +4,7 @@ import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.UnitMapper;
-import com.mockproject.repository.SessionRepository;
-import com.mockproject.repository.SyllabusRepository;
-import com.mockproject.repository.UnitRepository;
+import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitDetailService;
 import com.mockproject.service.interfaces.IUnitService;
 import com.mockproject.utils.ListUtils;
@@ -31,9 +29,12 @@ public class UnitService implements IUnitService {
     private final IUnitDetailService unitDetailService;
     private final SessionRepository sessionRepository;
     private final SyllabusRepository syllabusRepository;
+    private final TrainingClassRepository trainingClassRepository;
+    private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
+
 
     @Override
-    public List<UnitDTO> getAllUnitBySessionId(long sessionId, boolean status){
+    public List<UnitDTO> getAllUnitBySessionId(Long sessionId, boolean status){
         Optional<List<Unit>> listUnit = unitRepository.findUnitBySessionIdAndStatus(sessionId, status);
         ListUtils.checkList(listUnit);
         List<UnitDTO> unitDTOList = new ArrayList<>();
@@ -50,7 +51,7 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public boolean createUnit(long sessionId, List<UnitDTO> listUnit, User user){
+    public boolean createUnit(Long sessionId, List<UnitDTO> listUnit, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
 
@@ -61,7 +62,7 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public boolean createUnit(long sessionId, UnitDTO unitDTO, User user){
+    public boolean createUnit(Long sessionId, UnitDTO unitDTO, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(session.get().getSyllabus().getId(),true);
@@ -114,7 +115,7 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public boolean deleteUnit(long unitId, boolean status){
+    public boolean deleteUnit(Long unitId, boolean status){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, status);
         unit.orElseThrow(() -> new  ResponseStatusException(HttpStatus.NO_CONTENT,"Unit "+ unitId));
         unit.get().setStatus(false);
@@ -125,7 +126,7 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public boolean deleteUnits(long sessionId, boolean status){
+    public boolean deleteUnits(Long sessionId, boolean status){
         Optional<List<Unit>> units = unitRepository.findAllBySessionIdAndStatus(sessionId, status);
         ListUtils.checkList(units);
         units.get().forEach((i) -> deleteUnit(i.getId(), status));
@@ -133,7 +134,7 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public List<Unit> getUnitBySessionId(long idSession){
+    public List<Unit> getUnitBySessionId(Long idSession){
         return unitRepository.getListUnitBySessionId(idSession);
     }
 
@@ -142,5 +143,52 @@ public class UnitService implements IUnitService {
         Session session = new Session();
         session.setId(sid);
         return unitRepository.findBySession(session).stream().map(UnitMapper.INSTANCE::toDTO).toList();
+    }
+
+    @Override
+    public List<UnitDTO> getAllUnitsForADateByTrainingClassId(Long id, int dayNth) {
+        List<Unit> units = getListUnitsInASessionByTrainingClassId(id, dayNth);
+        return units.stream().map(UnitMapper.INSTANCE::toDTO).toList();
+    }
+
+
+    @Override
+    // get all units from a class
+    public List<Unit> getListUnitsByTrainingClassId(Long id){
+        // Get Class
+        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+
+        // Get all units
+        List<TrainingClassUnitInformation> list = trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc, true).orElseThrow();
+        return list.stream().map(p-> unitRepository.findByIdAndStatus(p.getUnit().getId(), true).orElseThrow()).toList();
+    }
+
+
+    // Get a session from a date
+    private Session getSession(Long id, int dayNth) {
+        // Get all sessions
+        List<Session> sessions = getListUnitsByTrainingClassId(id).stream().map(p -> sessionRepository.findByIdAndStatus(p.getSession().getId(), true).orElseThrow()).toList();
+
+        List<Long> sessionIds = sessions.stream().map(Session::getId).distinct().toList();
+        return sessionRepository.findByIdAndStatus(sessionIds.get(dayNth - 1), true).orElseThrow();
+
+//        Map<Integer, Long> list = new HashMap<>();
+//        list.put(1, sessions.get(0).getId());
+//
+//
+//        for (int i = 1; i < sessions.size(); i++) {
+//            if (sessions.get(i).getId() == sessions.get(i - 1).getId()) {
+//                list.put(i + 1, null);
+//            } else list.put(i + 1, sessions.get(i).getId());
+//        }
+//
+//        return sessionRepository.findByIdAndStatus(list.get(dayNth), true).orElseThrow();
+    }
+
+    @Override
+    // Get list units from a session
+    public List<Unit> getListUnitsInASessionByTrainingClassId(Long id, int dayNth){
+        Session session = getSession(id, dayNth);
+        return unitRepository.findBySessionAndStatusOrderByUnitNumber(session, true).orElseThrow();
     }
 }

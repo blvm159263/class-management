@@ -17,7 +17,11 @@ public class TrainingClassUnitInformationDTO implements Serializable {
     private Long id;
     private boolean status;
     private Long trainerId;
+    private String trainerName;
     private Long unitId;
+    private String unitTitle;
     private Long trainingClassId;
+    private String trainingClassName;
     private Long towerId;
+    private String towerName;
 }

@@ -10,9 +10,9 @@ import java.util.Optional;
 @Repository
 public interface DeliveryTypeRepository extends JpaRepository<DeliveryType, Long> {
 
-    DeliveryType findByIdAndStatus(Long id, boolean status);
+//    DeliveryType findByIdAndStatus(Long id, boolean status);
 
     Optional<List<DeliveryType>> findByStatus(boolean status);
 
-    Optional<DeliveryType> findByIdAndStatus(long deliveryId, boolean status);
+    Optional<DeliveryType> findByIdAndStatus(Long deliveryId, boolean status);
 }

@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -93,5 +94,22 @@ public class SyllabusController {
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id")@Parameter(description = "Syllabus id") long syllabusId){
         return ResponseEntity.ok(syllabusService.deleteSyllabus(syllabusId, true));
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any syllabus"),
+            @ApiResponse(responseCode = "200", description = "When found list of syllabus",
+                    content = @Content(schema = @Schema(implementation = SyllabusDTO.class)))
+    })
+    @Operation(summary = "Get all Syllabus by given Training Program ID")
+    @GetMapping("/list-by-training-program/{id}")
+    public ResponseEntity<?> listSyllabusByTrainingProgramId(@Parameter(description = "Training Class's ID that want to get Syllabus")
+                                                             @PathVariable("id") Long id) {
+        List<SyllabusDTO> list = syllabusService.listByTrainingProgramIdTrue(id);
+        if (!list.isEmpty()) {
+            return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any syllabus with Training Program = " + id);
+        }
     }
 }

@@ -23,7 +23,7 @@ public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusS
     private final TrainingProgramSyllabusRepository repository;
 
     @Override
-    public List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(long trainProgramID) {
+    public List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(Long trainProgramID) {
         return repository.getTrainingProgramSyllabusByTrainingProgramId(trainProgramID);
     }
 

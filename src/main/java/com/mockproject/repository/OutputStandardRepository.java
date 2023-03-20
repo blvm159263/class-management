@@ -12,7 +12,7 @@ public interface OutputStandardRepository extends JpaRepository<OutputStandard, 
 
     List<OutputStandard> findByStatusAndStandardCodeContainingIgnoreCase(boolean status, String name);
 
-    Optional<OutputStandard> findByIdAndStatus(long outputStandardId, boolean status);
+    Optional<OutputStandard> findByIdAndStatus(Long outputStandardId, boolean status);
 
     Optional<List<OutputStandard>> findByStatus(boolean status);
 }

@@ -24,12 +24,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findAllByStatus(boolean status);
 
+    Optional<User> findByIdAndStatus(Long id, Boolean status);
+
+
     List<User> findAllBy();
 
     @Query(value = "SELECT * FROM tblUser\n" +
             "ORDER BY ID\n" +
             "OFFSET ((?1-1)*?2) ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
-    List<User> getAllByPageAndRowPerPage(long page, long rowPerPage);
+    List<User> getAllByPageAndRowPerPage(Long page, Long rowPerPage);
 
     @Query(value = "select u from User u "+
             "where (:id is null or u.id = :id) " +
@@ -39,12 +42,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "and (:gender is null or u.gender = :gender)" +
             "and (:phone is null or u.phone like '%'+:phone+'%')" +
             "and (:#{#state.size()} = 0 or u.state in :state)" +
-            "and (:#{#attendee_id.size()} = 0 or u.attendee.id in :attendee_id)" +
-            "and (:#{#level_id.size()} = 0 or u.level.id in :level_id)" +
-            "and (:#{#role_id.size()} = 0 or u.role.id in :role_id)" +
+            "and (:#{#attendeeId.size()} = 0 or u.attendee.id in :attendeeId)" +
+            "and (:#{#levelId.size()} = 0 or u.level.id in :levelId)" +
+            "and (:#{#roleId.size()} = 0 or u.role.id in :roleId)" +
             "and u.status = true"
     )
-    Page<User> searchByFilter(Long id, LocalDate dob, String email, String fullname, Boolean gender, String phone, List<Integer> state, List<Long> attendee_id, List<Long> level_id, List<Long> role_id,Pageable pageable);
+    Page<User> searchByFilter(Long id, LocalDate dob, String email, String fullname, Boolean gender, String phone, List<Integer> state, List<Long> attendeeId, List<Long> levelId, List<Long> roleId,Pageable pageable);
 
     List<User> findByRoleAndStatus(Role role, boolean status);
 
