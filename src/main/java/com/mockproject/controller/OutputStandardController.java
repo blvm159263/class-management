@@ -21,6 +21,7 @@ import java.util.List;
 @Tag(name = "Output Standard API")
 @Tag(name = "Output Standard", description = "API related Output standard")
 @RequestMapping(value = "/api/outputStandard")
+@SecurityRequirement(name = "Authorization")
 public class OutputStandardController {
 
 

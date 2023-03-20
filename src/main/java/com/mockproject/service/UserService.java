@@ -1,9 +1,13 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.UserDTO;
+import com.mockproject.dto.UserDTOCustom;
 import com.mockproject.entity.Level;
 import com.mockproject.entity.Role;
 import com.mockproject.entity.User;
+import com.mockproject.mapper.AttendeeMapper;
+import com.mockproject.mapper.LevelMapper;
+import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.LevelRepository;
 import com.mockproject.repository.RoleRepository;
@@ -76,15 +80,18 @@ public class UserService implements IUserService {
         return userRepo.findAllByStatus(status).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
-    @Override
-    public List<UserDTO> getAll() {
-        return userRepo.findAllBy().stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
-    }
-
 
     @Override
-    public List<UserDTO> getAllByPageAndRowPerPage(long page, long rowPerPage) {
-        return userRepo.getAllByPageAndRowPerPage(page, rowPerPage).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    public List<UserDTOCustom> getAllByPageAndRowPerPage(long page, long rowPerPage) {
+        List<User> listUser = userRepo.getAllByPageAndRowPerPage(page, rowPerPage);
+
+        List<UserDTOCustom> mlist = new ArrayList<>();
+        for (User u: listUser) {
+            UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), u.getState(), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
+                    RoleMapper.INSTANCE.toDTO( u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()) );
+            mlist.add(userDTOCustom);
+        }
+        return mlist;
     }
 
     @Override
@@ -107,6 +114,14 @@ public class UserService implements IUserService {
         Page<User> pages;
         try {
             pages = userRepo.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, pageable);
+
+            List<UserDTOCustom> result = new ArrayList<>();
+            for (User u: pages) {
+                UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), u.getState(), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
+                        RoleMapper.INSTANCE.toDTO( u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()) );
+                result.add(userDTOCustom);
+            }
+
         } catch (Exception e) {
             throw e;
         }

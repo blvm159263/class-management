@@ -27,6 +27,7 @@ import java.util.List;
 @Tag(name = "Delivery API")
 @RequestMapping(value = "/api/delivery")
 @Tag(name = "Delivery type", description = "API related delivery type")
+@SecurityRequirement(name = "Authorization")
 @RequiredArgsConstructor
 public class DeliveryTypeController {
 

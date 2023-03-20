@@ -89,23 +89,11 @@ public class UserController {
         }
     }
 
-    @GetMapping("/getAll")
-    @Operation(summary = "Get all user")
-    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getAll() {
-        List<UserDTO> userDTOList = userService.getAll();
-        if (userDTOList.isEmpty()) {
-            return ResponseEntity.badRequest().body("List is empty");
-        } else {
-            return ResponseEntity.ok(userDTOList);
-        }
-    }
-
     @GetMapping("/getListUser")
     @Operation(summary = "Get user list by page and rows per page")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getListUser(@RequestParam(value = "page", required = false, defaultValue = "1") @Parameter(description = "page number to display") int page, @RequestParam(value = "rowsPerPage", required = false, defaultValue = "10")@Parameter(description = "number of row per page to display") int rowsPerPage) {
-        List<UserDTO> userDTOList = userService.getAllByPageAndRowPerPage(page, rowsPerPage);
+        List<UserDTOCustom> userDTOList = userService.getAllByPageAndRowPerPage(page, rowsPerPage);
         if (userDTOList.isEmpty()) {
             return ResponseEntity.badRequest().body("List is empty");
         } else {
@@ -177,13 +165,20 @@ public class UserController {
     }
 
     @PutMapping("/updateRole")
-    @Operation(summary = "Update role by list FormRoleDTO", description = "If role exits -> Update else  Create new Role")
+    @Operation(summary = "Update role by list FormRoleDTO")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity updateAllRole(@RequestBody List<FormRoleDTO> formRoleDTOList) {
 
+        for (int i = 0; i < formRoleDTOList.size()-1; i++){
+            for (int j=i+1; j < formRoleDTOList.size(); j ++ ){
+                if (formRoleDTOList.get(i).getRoleName().equals(formRoleDTOList.get(j).getRoleName())) {
+                    return ResponseEntity.badRequest().body("Role " + formRoleDTOList.get(i).getRoleName() + " is duplicated!");
+                }
+            }
+        }
+
+
         for (FormRoleDTO fdto : formRoleDTOList) {
-            if (roleService.checkDuplicatedByRoleName(fdto.getRoleName()))
-                return ResponseEntity.badRequest().body("Role " + fdto.getRoleName() + " is duplicated!");
             if (fdto.getId() != 0) {
                 roleService.save(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getClassPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Class"));
@@ -192,10 +187,28 @@ public class UserController {
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getTraningProgramPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Training program"));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getUserPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("User"));
 
-            } else {
+            }
+        }
+        return ResponseEntity.ok("Successfull");
+    }
+
+    @PostMapping("/createRole")
+    @Operation(summary = "Create Roles by list FormRoleDTO", description = "Set id of new Role = 0 to create")
+    @Secured({FULL_ACCESS, CREATE})
+    public ResponseEntity cretaeRole(@RequestBody List<FormRoleDTO> formRoleDTOList) {
+        for (int i = 0; i < formRoleDTOList.size()-1; i++){
+            for (int j=i+1; j < formRoleDTOList.size(); j ++ ){
+                if (formRoleDTOList.get(i).getRoleName().equals(formRoleDTOList.get(j).getRoleName())) {
+                    return ResponseEntity.badRequest().body("Role " + formRoleDTOList.get(i).getRoleName() + " is duplicated!");
+                }
+            }
+        }
+        for (FormRoleDTO fdto : formRoleDTOList) {
+            if (roleService.checkDuplicatedByRoleIdAndRoleName(fdto.getId(), fdto.getRoleName())) return ResponseEntity.badRequest().body("Role name: "+ fdto.getRoleName() +"is exits!");
+            if (fdto.getId() == 0) {
                 RoleDTO roleSave = RoleMapper.INSTANCE.toDTO(roleService.save(new RoleDTO(fdto.getRoleName(), true)));
                 for (PermissionScopeDTO permissionScopeDTO : permissionScopeService.getAll()) {
-                    rolePermissionScopeService.save(new RolePermissionScopeDTO(true, roleSave.getId(), permissionService.getPermissionIdByName("Access denied"), permissionScopeDTO.getId()));
+                    rolePermissionScopeService.save(new RolePermissionScopeDTO  (true, roleSave.getId(), permissionService.getPermissionIdByName("Access denied"), permissionScopeDTO.getId()));
                 }
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getClassPermission(), roleSave.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Class"));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getSyllabusPermission(), roleSave.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Syllabus"));
