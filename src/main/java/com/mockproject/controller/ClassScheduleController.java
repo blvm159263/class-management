@@ -25,7 +25,7 @@ public class ClassScheduleController {
     public ResponseEntity getTrainingClassByDay(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO){
        var trainingClass= classScheduleService.getTrainingClassByDay(filterRequestDTO);
        if(trainingClass.isEmpty()){
-           return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
        }else{
            return ResponseEntity.ok(trainingClass);
        }
@@ -36,7 +36,7 @@ public class ClassScheduleController {
 
         var trainingClass= classScheduleService.getTrainingClassByWeek(filterRequestDTO);
         if(trainingClass.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
         }else{
             return ResponseEntity.ok(trainingClass);
         }
@@ -45,7 +45,7 @@ public class ClassScheduleController {
     public ResponseEntity searchTrainingClassInDay(@RequestBody SearchByDTO searchByDTO){
         var trainingClass= classScheduleService.searchTrainingClassInDate(searchByDTO.getSearchText(),searchByDTO.getNowDate());
         if(trainingClass.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
         }else{
             return ResponseEntity.ok(trainingClass);
         }
@@ -54,7 +54,7 @@ public class ClassScheduleController {
     public ResponseEntity searchTrainingClassInWeek(@RequestBody SearchByDTO searchByDTO){
         var trainingClass= classScheduleService.searchTrainingClassInWeek(searchByDTO.getSearchText(),searchByDTO.getStartDate(),searchByDTO.getEndDate());
         if(trainingClass.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
         }else{
             return ResponseEntity.ok(trainingClass);
         }
