@@ -13,14 +13,23 @@ public interface TrainingClassMapper {
     TrainingClassMapper INSTANCE = Mappers.getMapper(TrainingClassMapper.class);
 
     @Mapping(target = "trainingProgramId", source = "trainingProgram.id")
+    @Mapping(target = "trainingProgramName", source = "trainingProgram.name")
     @Mapping(target = "reviewerId", source = "reviewer.id")
+    @Mapping(target = "reviewerName", source = "reviewer.fullName")
     @Mapping(target = "lastModifierId", source = "lastModifier.id")
+    @Mapping(target = "lastModifierName", source = "lastModifier.fullName")
     @Mapping(target = "fsuId", source = "fsu.id")
+    @Mapping(target = "fsuName", source = "fsu.fsuName")
     @Mapping(target = "creatorId", source = "creator.id")
+    @Mapping(target = "creatorName", source = "creator.fullName")
     @Mapping(target = "contactId", source = "contact.id")
+    @Mapping(target = "contactName", source = "contact.contactEmail")
     @Mapping(target = "attendeeId", source = "attendee.id")
+    @Mapping(target = "attendeeName", source = "attendee.attendeeName")
     @Mapping(target = "approverId", source = "approver.id")
+    @Mapping(target = "approverName", source = "approver.fullName")
     @Mapping(target = "locationId", source = "location.id")
+    @Mapping(target = "locationName", source = "location.locationName")
     TrainingClassDTO toDTO(TrainingClass trainingClass);
 
     @Mapping(target = "trainingProgram", source = "trainingProgramId", qualifiedByName = "mapTrainingProgram")
