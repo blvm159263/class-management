@@ -323,12 +323,12 @@ public class UserService implements IUserService {
 
     private String getState(int id){
         switch (id){
-            case 1:
+            case 0:
                 return "Off class";
-            case 2:
-                return "In class";
-            case 3:
+            case 1:
                 return "Active";
+            case 3:
+                return "On class";
             case 4:
                 return "On boaring";
             default:
