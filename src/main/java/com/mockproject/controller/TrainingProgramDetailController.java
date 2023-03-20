@@ -1,9 +1,6 @@
 package com.mockproject.controller;
 
-import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.entity.*;
-import com.mockproject.mapper.TrainingProgramSyllabusMapper;
-import com.mockproject.service.*;
 import com.mockproject.service.interfaces.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

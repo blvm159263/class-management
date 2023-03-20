@@ -8,7 +8,6 @@ import com.mockproject.entity.User;
 import com.mockproject.mapper.AttendeeMapper;
 import com.mockproject.mapper.LevelMapper;
 import com.mockproject.mapper.RoleMapper;
-import com.mockproject.entity.*;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitService;
