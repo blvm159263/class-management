@@ -13,8 +13,12 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(target = "roleId", source = "role.id")
+    @Mapping(target = "roleName", source = "role.roleName")
     @Mapping(target = "levelId", source = "level.id")
+    @Mapping(target = "levelCode", source = "level.levelCode")
+    @Mapping(target = "levelDescription", source = "level.description")
     @Mapping(target = "attendeeId", source = "attendee.id")
+    @Mapping(target = "attendeeName", source = "attendee.attendeeName")
     UserDTO toDTO(User user);
 
     @Mapping(target = "password", ignore = true)

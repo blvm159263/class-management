@@ -23,6 +23,10 @@ public class UserDTO implements Serializable {
     private boolean gender;
     private boolean status;
     private Long roleId;
+    private String roleName;
     private Long levelId;
+    private String levelCode;
+    private String levelDescription;
     private Long attendeeId;
+    private String attendeeName;
 }

@@ -15,6 +15,7 @@ public interface ClassScheduleMapper {
     ClassScheduleMapper INSTANCE = Mappers.getMapper(ClassScheduleMapper.class);
 
     @Mapping(target = "trainingClassId", source = "trainingClass.id")
+    @Mapping(target = "trainingClassName", source = "trainingClass.className")
     ClassScheduleDTO toDTO(ClassSchedule classSchedule);
 
     @Mapping(source = "trainingClassId", target = "trainingClass", qualifiedByName = "mapTrainingClass")
