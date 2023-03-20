@@ -104,8 +104,13 @@ public class TrainingClassController {
 
             @RequestParam(defaultValue = "startTime,asc")
             @Parameter(
-                    description = "<b>Sort by attribute descending/ascending (startTime,asc => sort by startTime ascending)<b>",
-                    example = "startTime,asc"
+                    description = "<b>Sort by attribute descending/ascending"
+                            + "<ul><li>startTime,asc => sort by startTime ascending</li>"
+                            + "<li>creator,asc => sort by creator's name ascending</li>"
+                            + "<li>attendee,asc => sort by attendee's name ascending</li>"
+                            + "<li>location,asc => sort by location's name ascending</li>"
+                            + "<li>fsu,asc => sort by fsu's name ascending</li></u><b>",
+                    example = "className,asc"
             ) String[] sort,
 
             @RequestParam(defaultValue = "0")
