@@ -84,7 +84,7 @@ public class SyllabusService implements ISyllabusService {
             for (String sortItem: sort) {
                 String[] subSort = sortItem.split(",");
                 if(ifPropertpresent(sourceFieldList, subSort[0])){
-                    order.add(new Sort.Order(getSortDirection(subSort[1]),subSort[0]));
+                    order.add(new Sort.Order(getSortDirection(subSort[1]), transferProperty(subSort[0])));
                 } else {
                     throw new NotFoundException(subSort[0] + " is not a propertied of Syllabus!");
                 }
@@ -94,7 +94,7 @@ public class SyllabusService implements ISyllabusService {
                 throw new ArrayIndexOutOfBoundsException("Sort direction(asc/desc) not found!");
             }
             if(ifPropertpresent(sourceFieldList, sort[0])){
-                order.add(new Sort.Order(getSortDirection(sort[1]),sort[0]));
+                order.add(new Sort.Order(getSortDirection(sort[1]), transferProperty(sort[0])));
             } else {
                 throw new NotFoundException(sort[0] + " is not a propertied of Syllabus!");
             }
@@ -107,21 +107,30 @@ public class SyllabusService implements ISyllabusService {
                         -> s.getName().toUpperCase().contains(subSearch) ||
                                 s.getCode().toUpperCase().contains(subSearch) ||
                                 s.getCreator().getFullName().toUpperCase().contains(subSearch) ||
-                                checkOsdBeLongSyllabus(s.getId(), subSearch))
+                                checkOsdBelongSyllabus(s.getId(), subSearch))
                         .collect(Collectors.toList());
             }
         }
         if(pages.size() > 0){
             return new PageImpl<>(
                     pages.stream().skip(skipCount).limit(RESULTS_PER_PAGE).map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                    PageRequest.of(page.orElse(0), 10, Sort.by(order)),
+                    PageRequest.of(page.orElse(0), RESULTS_PER_PAGE, Sort.by(order)),
                     pages.size());
         } else {
             throw new NotFoundException("Syllabus not found!");
         }
     }
 
-    private boolean checkOsdBeLongSyllabus(Long syllabusId, String search) {
+    private static String transferProperty(String property){
+        switch (property) {
+            case "creator":
+                return "creator.fullName";
+            default:
+                return property;
+        }
+    }
+
+    private boolean checkOsdBelongSyllabus(long syllabusId, String search) {
             if (getListSyllabusIdByOSD(search).contains(syllabusId)) {
                 return true;
             }
