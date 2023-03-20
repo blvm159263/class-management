@@ -101,4 +101,20 @@ public class TrainingProgramController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
         }
     }
+    @GetMapping("delete-searchkey")
+    public ResponseEntity<?> deleteSearchKey(HttpServletRequest request)
+    {
+        HttpSession session = request.getSession();
+        session.removeAttribute("LIST_NAME");
+        return ResponseEntity.ok().body("detele successfully");
+    }
+    @GetMapping("view-searchkey")
+    public ResponseEntity<?> getSearchKey(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        List<String> listName=(List<String>) session.getAttribute("LIST_NAME");
+        if (listName==null){
+            listName=new ArrayList<>();
+        }
+        return ResponseEntity.ok(listName);
+    }
 }

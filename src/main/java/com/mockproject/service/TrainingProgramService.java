@@ -34,15 +34,6 @@ public class TrainingProgramService implements ITrainingProgramService{
         return programDTOPage;
     }
 
-    @Override
-    public Page<TrainingProgramDTO> findByCreatorFullNameContaining(Integer pageNo, Integer pageSize, String name) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<TrainingProgram> page = repository.findByCreatorFullNameContaining(pageable, name);
-        Page<TrainingProgramDTO> programDTOPage = page.map(TrainingProgramMapper.INSTANCE::toDTO);
-        return programDTOPage;
-    }
-
-
     public long countAll() {
         return repository.count();
     }

@@ -19,6 +19,4 @@ public interface TrainingProgramRepository extends JpaRepository<TrainingProgram
     Page<TrainingProgram> findAllByNameContainingOrCreatorFullNameContaining(Pageable pageable, String name, String name2);
 
     Optional<TrainingProgram> findFirstByNameAndStatus(String name, boolean status);
-
-    Page<TrainingProgram> findByCreatorFullNameContaining(Pageable pageable, String name);
 }
