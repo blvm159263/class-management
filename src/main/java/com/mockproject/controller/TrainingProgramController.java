@@ -102,10 +102,23 @@ public class TrainingProgramController {
         }
     }
     @GetMapping("delete-searchkey")
-    public ResponseEntity<?> deleteSearchKey(HttpServletRequest request)
+    public ResponseEntity<?> deleteSearchKey(HttpServletRequest request,
+                                             HttpServletResponse response,
+                                             @RequestParam(name="name",required = false) String name)
     {
         HttpSession session = request.getSession();
-        session.removeAttribute("LIST_NAME");
+        List<String> listName=(List<String>) session.getAttribute("LIST_NAME");
+        if(listName==null && name==null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any keywords to delete!");
+        }
+        if (listName==null){
+            listName=new ArrayList<>();
+        }
+        listName.remove(name);
+        if(listName.isEmpty()){
+            session.removeAttribute("LIST_NAME");
+        }
+        session.setAttribute("LIST_NAME", listName);
         return ResponseEntity.ok().body("detele successfully");
     }
     @GetMapping("view-searchkey")
