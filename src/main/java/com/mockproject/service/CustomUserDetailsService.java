@@ -4,10 +4,10 @@ package com.mockproject.service;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.entity.User;
-import com.mockproject.repository.*;
+import com.mockproject.repository.UserRepository;
 import com.mockproject.service.interfaces.ICustomUserDetailsService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,17 +19,17 @@ import java.util.*;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements ICustomUserDetailsService, UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (userRepository.findByEmailAndStatus(username, true).isEmpty()) {
+        if (userRepository.findByEmail(username).isEmpty()) {
             throw new UsernameNotFoundException(username);
         }
-        User user = userRepository.findByEmailAndStatus(username, true).get();
+        User user = userRepository.findByEmail(username).get();
         Set<GrantedAuthority> authoritySet;
         authoritySet = new HashSet<>();
         String role = user.getRole().getRoleName();
@@ -41,6 +41,7 @@ public class CustomUserDetailsService implements ICustomUserDetailsService, User
         return new CustomUserDetails(user, authoritySet, role);
     }
 
+    @Override
     public UserDetails loadUserById(Long id) throws Exception {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
@@ -58,7 +59,8 @@ public class CustomUserDetailsService implements ICustomUserDetailsService, User
         return new CustomUserDetails(result, authoritySet, role);
     }
 
-    public List<String> generateAuthoriessByRoleId(List<RolePermissionScope> rolePermissionScopeEntityList){
+    @Override
+    public List<String> generateAuthoriessByRoleId(List<RolePermissionScope> rolePermissionScopeEntityList) {
         List<String> result = new ArrayList<>();
         for (RolePermissionScope item: rolePermissionScopeEntityList) {
             String s = "";

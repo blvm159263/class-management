@@ -1,30 +1,29 @@
 package com.mockproject.controller;
 
-import com.mockproject.service.UserService;
 import com.mockproject.service.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Import API")
 @RequestMapping("/import")
 @Tag(name = "File User CSV", description = "Upload and download template File user CSV")
 @SecurityRequirement(name = "Authorization")
 public class UploadFileUserController {
+
     public static final String VIEW = "ROLE_View_User";
     public static final String MODIFY = "ROLE_Modify_User";
     public static final String CREATE = "ROLE_Create_User";

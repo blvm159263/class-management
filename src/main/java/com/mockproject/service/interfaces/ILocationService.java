@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface ILocationService {
 
-    public List<Location> findLocationByTrainingClassID(Long id);
+    List<LocationDTO> listAllTrue();
+
+    List<Location> findLocationByTrainingClassID(Long id);
 
     List<LocationDTO> getAllLocation(boolean status);
 
