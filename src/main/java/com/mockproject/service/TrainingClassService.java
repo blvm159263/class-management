@@ -55,7 +55,7 @@ public class TrainingClassService implements ITrainingClassService{
                 throw new ArrayIndexOutOfBoundsException("Sort direction(asc/desc) not found!");
             }
             if(ifPropertpresent(sourceFieldList, sort[0])) {
-                order.add(new Sort.Order(getSortDirection(sort[1]),sort[0]));
+                order.add(new Sort.Order(getSortDirection(sort[1]), sort[0]));
             } else {
                 throw new NotFoundException(sort[0] + " is not a propertied of Training CLass!");
             }
@@ -87,6 +87,21 @@ public class TrainingClassService implements ITrainingClassService{
                     pages.size());
         }else {
             throw new NotFoundException("Training Class not found!");
+        }
+    }
+
+    private static String transferProperty(String property){
+        switch (property) {
+            case "creator":
+                return "creator.fullName";
+            case "attendee":
+                return "attendee.attendeeName";
+            case "location":
+                return "location.locationName";
+            case "fsu":
+                return "fsu.fsuName";
+            default:
+                return property;
         }
     }
 
