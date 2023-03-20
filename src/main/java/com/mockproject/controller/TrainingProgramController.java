@@ -1,68 +1,104 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.TrainingProgramDTO;
-import com.mockproject.entity.TrainingProgram;
-import com.mockproject.service.TrainingProgramService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.AllArgsConstructor;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import com.mockproject.service.interfaces.ITrainingProgramService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
-@AllArgsConstructor
-@RequestMapping("/view")
+@RequestMapping("api/training-program")
 public class TrainingProgramController {
-    private final TrainingProgramService trainingProgramService;
 
-    @GetMapping("/trainingprogram")
-    public List<TrainingProgram> getAllTrainingProgram(@RequestParam(defaultValue = "0") Integer pageNo,
-                                                          @RequestParam(defaultValue = "10") Integer pageSize,
-                                                          Model model)
+    private final ITrainingProgramService service;
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any Training Program"),
+            @ApiResponse(responseCode = "200", description = "When find training program and return list program",
+                    content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
+    })
+    @Operation(summary = "Get all Training Program")
+    @GetMapping("list")
+    public ResponseEntity<?> getAllTrainingProgram(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                   @RequestParam(defaultValue = "10") Integer pageSize,
+                                                   Model model)
     {
-        long rows=trainingProgramService.countAll();
+        long rows=service.countAll();
         long totalPage=rows/pageSize;
         if(totalPage==0||rows%pageSize!=0){
             totalPage+=1;
         }
         model.addAttribute("NUMBER_OF_PAGE",totalPage);
-        return trainingProgramService.getAll(pageNo, pageSize);
+
+        Page<TrainingProgramDTO> list =service.getAll(pageNo, pageSize);
+        if (!list.isEmpty()) {
+            return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
+        }
     }
-    @PostMapping("/searchtrainingprogram")
-    public List<TrainingProgram> getByKeyword(@RequestParam(name="keyword",required = false) String keyword,
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any Training Program"),
+            @ApiResponse(responseCode = "200", description = "When find training program and return list program",
+                    content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
+    })
+    @Operation(summary = "Get Training Program by program name and creator name")
+    @GetMapping("search-name")
+    public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search")
+                                              @RequestParam(name="name",required = false) String name,
+                                              @RequestParam(defaultValue = "0") Integer pageNo,
+                                              @RequestParam(defaultValue = "10") Integer pageSize,
                                               HttpServletResponse response,
-                                              Model model,
-                                              HttpServletRequest request) throws IOException {
+                                              HttpServletRequest request,
+                                              Model model) throws IOException {
+        long rows=service.countAll();
+        long totalPage=rows/pageSize;
+        if(totalPage==0||rows%pageSize!=0){
+            totalPage+=1;
+        }
+        model.addAttribute("NUMBER_OF_PAGE",totalPage);
+
         HttpSession session=request.getSession();
-        List<String> listKeyword=(List<String>) session.getAttribute("LIST_KEYWORD");
-        if(listKeyword==null && keyword==null) {
-            response.sendRedirect("/trainingprogram");
+        List<String> listName=(List<String>) session.getAttribute("LIST_NAME");
+        if(listName==null && name==null) {
+            response.sendRedirect("list");
         }
-        if (listKeyword==null){
-            listKeyword=new ArrayList<>();
+        if (listName==null){
+            listName=new ArrayList<>();
         }
-        listKeyword.add(keyword);
-        session.setAttribute("LIST_KEYWORD",listKeyword);
-        for (String s:listKeyword){
-            System.out.println(s);
-        }
-        List<TrainingProgram> resultList=new ArrayList<>();
-        for (String key:listKeyword){
-            for (TrainingProgram p:trainingProgramService.getByName(keyword)){
-                resultList.add(p);
-            }
-            for (TrainingProgram p:trainingProgramService.getByCreatorFullname(keyword)){
-                resultList.add(p);
+        listName.add(name);
+        session.setAttribute("LIST_NAME",listName);
+        List<TrainingProgramDTO> list = new ArrayList<>();
+        for(String key:listName){
+            for (TrainingProgramDTO dto:service.findByNameContaining(pageNo, pageSize, key, key)){
+                list.add(dto);
             }
         }
-
-
-        return resultList;
-
+        if (!list.isEmpty()) {
+            return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
+        }
     }
 }

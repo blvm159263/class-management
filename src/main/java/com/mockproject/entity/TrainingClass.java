@@ -28,7 +28,7 @@ public class TrainingClass implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Nationalized
     @Column(
@@ -114,6 +114,11 @@ public class TrainingClass implements Serializable {
     )
     private LocalDate lastDateModified;
 
+    @Column(
+            name = "period"
+    )
+    private int period;
+
     @Column(name = "status")
     private boolean status;
 
@@ -173,4 +178,6 @@ public class TrainingClass implements Serializable {
     @OneToMany(mappedBy = "trainingClass", fetch = FetchType.LAZY)
     @JsonBackReference
     private List<TrainingClassAdmin> listTrainingClassAdmins;
+
+
 }

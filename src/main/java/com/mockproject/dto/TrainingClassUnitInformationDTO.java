@@ -1,5 +1,6 @@
 package com.mockproject.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +13,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainingClassUnitInformationDTO implements Serializable {
-    private long id;
+    @Schema(hidden = true)
+    private Long id;
     private boolean status;
-    private long trainerId;
-    private long unitId;
-    private long trainingClassId;
-    private long towerId;
+    private Long trainerId;
+    private Long unitId;
+    private Long trainingClassId;
+    private Long towerId;
 }

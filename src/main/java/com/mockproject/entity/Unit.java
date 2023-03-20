@@ -26,7 +26,7 @@ public class Unit implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Lob
     @Nationalized
@@ -38,8 +38,10 @@ public class Unit implements Serializable {
 
     @Column(
             name = "unit_number",
-            nullable = false
+            nullable = false,
+            unique = false
     )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int unitNumber;
 
     @Column(

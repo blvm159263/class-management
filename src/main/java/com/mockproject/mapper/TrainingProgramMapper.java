@@ -15,6 +15,7 @@ public interface TrainingProgramMapper {
 
     @Mapping(target = "lastModifierId", source = "lastModifier.id")
     @Mapping(target = "creatorId", source = "creator.id")
+//    @Mapping(target = "name", source = "name")
     TrainingProgramDTO toDTO(TrainingProgram trainingProgram);
 
     @Mapping(target = "lastModifier", source = "lastModifierId", qualifiedByName = "mapModifier")
@@ -22,14 +23,14 @@ public interface TrainingProgramMapper {
     TrainingProgram toEntity(TrainingProgramDTO dto);
 
     @Named("mapCreator")
-    default User mapCreator(long id) {
+    default User mapCreator(Long id) {
         User user = new User();
         user.setId(id);
         return user;
     }
 
     @Named("mapModifier")
-    default User mapModifier(long id) {
+    default User mapModifier(Long id) {
         User user = new User();
         user.setId(id);
         return user;

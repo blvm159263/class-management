@@ -7,7 +7,11 @@ import java.util.List;
 
 public interface IAttendeeService {
 
-    List<AttendeeDTO> listAll();
+    List<AttendeeDTO> getAllAttendee(boolean status);
 
     Attendee save(AttendeeDTO dto);
+
+    AttendeeDTO getAttendeeById(boolean status, long id);
+
+    List<AttendeeDTO> listAllTrue();
 }
