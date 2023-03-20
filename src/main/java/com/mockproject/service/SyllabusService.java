@@ -7,13 +7,14 @@ import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.OutputStandardRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitDetailRepository;
-import com.mockproject.service.interfaces.IOutputStandardService;
 import com.mockproject.service.interfaces.ISyllabusService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.handler.ExceptionHandlingWebHandler;
 import org.webjars.NotFoundException;
 
 import java.lang.reflect.Field;

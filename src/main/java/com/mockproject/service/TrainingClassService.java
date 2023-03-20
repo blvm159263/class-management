@@ -1,7 +1,6 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.TrainingClassDTO;
-import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.mapper.TrainingClassMapper;
 import com.mockproject.repository.TrainingClassRepository;
