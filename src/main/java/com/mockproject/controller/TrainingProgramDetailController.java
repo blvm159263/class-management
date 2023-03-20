@@ -41,13 +41,13 @@ public class TrainingProgramDetailController {
 
     @GetMapping("/{id}")
     @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
-    public List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(@PathVariable("id") Long id) {
+    public List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(@PathVariable("id") long id) {
         return trainingProgramSyllabusService.getTrainingProgramSyllabusListById(id);
     }
 
     @GetMapping("/syllabus/{id}")
     @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
-    public List<Syllabus> getSyllabusById(@PathVariable("id") Long idTrainingProgram) {
+    public List<Syllabus> getSyllabusById(@PathVariable("id") long idTrainingProgram) {
         List<TrainingProgramSyllabus> listTrainingProgramSyllabus = getTrainingProgramSyllabusListById(idTrainingProgram);
         List<Syllabus> list = new ArrayList<>();
         for (int i = 0; i < listTrainingProgramSyllabus.size(); i++) {

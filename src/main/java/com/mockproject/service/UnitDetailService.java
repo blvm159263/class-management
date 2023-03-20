@@ -36,6 +36,12 @@ public class UnitDetailService implements IUnitDetailService {
 
     private final ITrainingMaterialService trainingMaterialService;
 
+
+    @Override
+    public List<UnitDetail> getUnitDetailByUnitId(Long idUnit) {
+        return null;
+    }
+
     @Override
     public List<UnitDetailDTO> getAllUnitDetailByUnitId(Long unitId, boolean status) {
         Optional<List<UnitDetail>> unitDetails = unitDetailRepository.findByUnitIdAndStatus(unitId, status);
@@ -145,15 +151,4 @@ public class UnitDetailService implements IUnitDetailService {
         return true;
     }
 
-    @Override
-    public List<UnitDetail> getUnitDetailByUnitId(Long idUnit) {
-        return unitDetailRepository.getListUnitDetailByUnitId(idUnit);
-    }
-
-    @Override
-    public List<UnitDetailDTO> listByUnitIdTrue(Long id) {
-        Unit unit = new Unit();
-        unit.setId(id);
-        return unitDetailRepository.findByUnitAndStatus(unit,true).stream().map(UnitDetailMapper.INSTANCE::toDTO).toList();
-    }
 }

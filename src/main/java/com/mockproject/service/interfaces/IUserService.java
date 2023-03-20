@@ -1,6 +1,7 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.UserDTO;
+import com.mockproject.dto.UserDTOCustom;
 import org.springframework.data.domain.Page;
 
 import java.io.File;
@@ -12,11 +13,10 @@ public interface IUserService {
 
     String readCSVFile(File file);
 
+    List<UserDTOCustom> getAllByPageAndRowPerPage(Long page, Long rowPerPage);
     List<UserDTO> getAll();
 
-    List<UserDTO> getAllByPageAndRowPerPage(Long page, Long rowPerPage);
-
-    Page<UserDTO> searchByFilter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> roleId, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception;
+    Page<UserDTO> searchByFilter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> role_id, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception;
 
     boolean updateStatus(Long id);
 
@@ -29,14 +29,6 @@ public interface IUserService {
     UserDTO getUserById(Long id);
 
     List<UserDTO> getAllUser(boolean status);
-
-    List<UserDTO> getAllTrainersByTrainingClassId(Long id);
-
-    List<UserDTO> getAllAdminsByTrainingClassId(Long id);
-
-    UserDTO getCreatorByTrainingClassId(Long id);
-
-    List<UserDTO> getAllTrainersForADateByTrainingClassId(Long id, int dayNth);
 
     Integer updateStateToTrue(Long id);
 

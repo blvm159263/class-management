@@ -26,7 +26,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Unit API")
+@Tag(name = "Unit", description = "API realted Unit")
 @RequestMapping(value = "/api/unit")
 @SecurityRequirement(name = "Authorization")
 @Slf4j
@@ -39,6 +39,7 @@ public class UnitController {
     private final IUnitService unitService;
 
     @GetMapping("/{sessionId}")
+    @Operation(summary = "Get all unit by session id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<List<UnitDTO>> getAllUnitBySessionId(@PathVariable("sessionId") Long sessionId){
         List<UnitDTO> listUnit = unitService.getAllUnitBySessionId(sessionId, true);
@@ -46,28 +47,32 @@ public class UnitController {
     }
 
     @PostMapping("/create/{id}")
+    @Operation(summary = "Create unit by session id")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> createUnit(@PathVariable("id") Long sessionId,@RequestBody List<UnitDTO> listUnit){
+    public ResponseEntity<Boolean> createUnit(@PathVariable("id") @Parameter(description = "Session id") Long sessionId, @RequestBody List<UnitDTO> listUnit){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(unitService.createUnit(sessionId, listUnit, user.getUser()));
     }
 
     @PutMapping("/edit")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Operation(summary = "Edit unit by UnitDTO")
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Unit> editUnit(@RequestBody UnitDTO unitDTO)throws IOException {
         Unit updateUnit = unitService.editUnit(unitDTO, true);
         return ResponseEntity.ok(updateUnit);
     }
 
     @PutMapping("delete/{id}")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnit(@PathVariable("id") Long unitId){
+    @Operation(summary = "Delete unit by unit id")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<Boolean> deleteUnit(@PathVariable("id") @Parameter(description = "Unit id") Long unitId){
         return ResponseEntity.ok(unitService.deleteUnit(unitId, true));
     }
 
     @PutMapping("multi-delete/{id}")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnits(@PathVariable("id") Long sessionId) {
+    @Operation(summary = "Delete multi units by sessionId")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<Boolean> deleteUnits(@PathVariable("id") @Parameter(description = "Session id") Long sessionId){
         return ResponseEntity.ok(unitService.deleteUnits(sessionId, true));
     }
 

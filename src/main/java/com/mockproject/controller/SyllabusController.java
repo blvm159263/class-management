@@ -1,9 +1,11 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.SyllabusDTO;
+import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.service.interfaces.ISyllabusService;
+import com.mockproject.service.interfaces.ITrainingProgramSyllabusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -41,6 +43,8 @@ public class SyllabusController {
 
     private final ISyllabusService syllabusService;
 
+    private final ITrainingProgramSyllabusService trainingProgramSyllabusService;
+
     @GetMapping()
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<List<SyllabusDTO>> getAll(){
@@ -48,7 +52,16 @@ public class SyllabusController {
         return ResponseEntity.ok(listSyllabus);
     }
 
+    @GetMapping("/getSyllabusByTrainingProgram/{trainingProgramId}")
+    @Operation(summary = "Get all syllabus by training program id")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+    public ResponseEntity<List<TrainingProgramSyllabusDTO>> getAllTrainingProgramSyllabus(@PathVariable("trainingProgramId") long id){
+        List<TrainingProgramSyllabusDTO> list = trainingProgramSyllabusService.getAllSyllabusByTrainingProgramId(id, true);
+        return ResponseEntity.ok(list);
+    }
+
     @GetMapping("/{syllabusId}")
+    @Operation(summary = "Get syllabus by syllabus id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<SyllabusDTO> getSyllabus(@PathVariable("syllabusId") Long syllabusId){
         SyllabusDTO syllabus = syllabusService.getSyllabusById(syllabusId, true, true);
@@ -56,12 +69,14 @@ public class SyllabusController {
     }
 
     @GetMapping("get-all")
+    @Operation(summary = "Get all syllabus")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<List<SyllabusDTO>> getAllSyllabus(){
         return ResponseEntity.ok(syllabusService.getSyllabusList(true));
     }
 
     @PostMapping(value = "/create")
+    @Operation(description = "Create Syllabus")
     @Secured({CREATE,FULL_ACCESS})
     public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -70,7 +85,8 @@ public class SyllabusController {
     }
 
     @PutMapping("edit")
-    @Secured({MODIFY,CREATE, FULL_ACCESS})
+    @Operation(summary = "Edit syllabus by SyllabusDTO")
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Syllabus> editSyllabus(@RequestBody SyllabusDTO syllabusDTO)throws IOException {
         Syllabus editsyllabus = syllabusService.editSyllabus(syllabusDTO, true);
         return ResponseEntity.ok(editsyllabus);
@@ -78,8 +94,9 @@ public class SyllabusController {
 
 
     @PutMapping("delete/{id}")
-    @Secured({MODIFY,CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id") Long syllabusId){
+    @Operation(summary = "Delete syllabus by syllabusId")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id")@Parameter(description = "Syllabus id") long syllabusId){
         return ResponseEntity.ok(syllabusService.deleteSyllabus(syllabusId, true));
     }
 

@@ -124,7 +124,6 @@ public class SessionService implements ISessionService {
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, status);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         session.get().setStatus(false);
-        System.out.println("Sessioln: "+sessionId);
         unitService.deleteUnits(sessionId, status);
         sessionRepository.save(session.get());
         return true;

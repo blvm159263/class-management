@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface IUnitDetailService {
 
-    List<UnitDetailDTO> listByUnitIdTrue(Long id);
 
     List<UnitDetail> getUnitDetailByUnitId(Long idUnit);
 

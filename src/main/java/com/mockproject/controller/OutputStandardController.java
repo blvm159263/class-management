@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,14 +18,15 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Output Standard API")
-@RequestMapping(value = "/api/output-standard")
+@Tag(name = "Output Standard", description = "API related Output standard")
+@RequestMapping(value = "/api/osd")
 @SecurityRequirement(name = "Authorization")
-@Slf4j
 public class OutputStandardController {
+
 
     private final IOutputStandardService outputStandardService;
 
-    @GetMapping("/{syllabusId}")
+    @GetMapping("/syllabus/{syllabusId}")
     @Operation(
             summary = "Get output standard by syllabus ID"
     )
@@ -35,17 +35,19 @@ public class OutputStandardController {
             @Parameter(
                     description = "<b>Insert syllabus ID to get output standard<b>",
                     example = "7"
-            ) Long id) {
+            ) long id) {
         return ResponseEntity.ok(outputStandardService.getOsdBySyllabusId(true, id));
     }
 
     @GetMapping("/{outputStandardId}")
+    @Operation(summary = "Get output standard by output standard id")
     public ResponseEntity<OutputStandardDTO> getOutputStandardById(@PathVariable("outputStandardId") Long id){
         OutputStandardDTO outputStandardDTO = outputStandardService.getOutputStandardById(id, true);
         return ResponseEntity.ok(outputStandardDTO);
     }
 
     @GetMapping("")
+    @Operation(summary = "Get all output standard")
     public ResponseEntity<List<OutputStandardDTO>> getAll(){
         List<OutputStandardDTO> outputStandardDTOList = outputStandardService.getOutputStandard(true);
         return ResponseEntity.ok(outputStandardDTOList);
