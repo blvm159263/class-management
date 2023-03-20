@@ -13,7 +13,7 @@ public interface IUserService {
 
     String readCSVFile(File file);
 
-    List<UserDTOCustom> getAllByPageAndRowPerPage(long page, long rowPerPage);
+    List<UserDTOCustom> getAllByPageAndRowPerPage(Long page, Long rowPerPage);
     List<UserDTO> getAll();
 
     Page<UserDTO> searchByFilter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> role_id, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception;

@@ -17,7 +17,7 @@ public class UserDTOCustom {
     private String email;
     private String fullName;
     private String image;
-    private int state;
+    private String state;
     private LocalDate dob;
     private String phone;
     private boolean gender;

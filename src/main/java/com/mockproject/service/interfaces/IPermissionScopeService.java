@@ -2,6 +2,7 @@ package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.PermissionScopeDTO;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 
 public interface IPermissionScopeService {
