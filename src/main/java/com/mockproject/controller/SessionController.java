@@ -79,8 +79,6 @@ public class SessionController {
         return ResponseEntity.ok(sessionService.deleteSessions(syllabusId, true));
     }
 
-    private final ISessionService service;
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any Session"),
             @ApiResponse(responseCode = "200", description = "When found Session",
@@ -89,7 +87,7 @@ public class SessionController {
     @Operation(summary = "Get all Session by given syllabus ID")
     @GetMapping("list-by-syllus/{sid}")
     public ResponseEntity<?> listBySyllabusId(@Parameter(description = "Syllabus's ID") @PathVariable("sid") Long sid) {
-        List<SessionDTO> list = service.listBySyllabus(sid);
+        List<SessionDTO> list = sessionService.listBySyllabus(sid);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
