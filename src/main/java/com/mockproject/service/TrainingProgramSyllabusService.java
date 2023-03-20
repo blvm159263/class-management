@@ -34,10 +34,9 @@ public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusS
         ListUtils.checkList(list);
 
         List<TrainingProgramSyllabusDTO> trainingProgramSyllabusDTOList = new ArrayList<>();
-        for (TrainingProgramSyllabus t : list.get()) {
+        for (TrainingProgramSyllabus t: list.get()){
             trainingProgramSyllabusDTOList.add(TrainingProgramSyllabusMapper.INSTANCE.toDTO(t));
         }
         return trainingProgramSyllabusDTOList;
     }
-
 }
