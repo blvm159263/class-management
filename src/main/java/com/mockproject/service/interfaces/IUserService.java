@@ -18,7 +18,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public interface IUserService {
-    public String readCSVFile(File file);
+    public String readCSVFile(File file, String scanning, String duplicateHandle);
     List<UserDTO> getAll();
 
     List<UserDTO> getAllByPageAndRowPerPage(long page, long rowPerPage);

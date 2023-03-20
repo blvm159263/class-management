@@ -230,7 +230,7 @@ public class UserService implements IUserService {
 
 
     @Override
-    public String readCSVFile(File file) {
+    public String readCSVFile(File file, String scanning, String duplicateHandle) {
         List<User> userList = new ArrayList<>();
         try {
             if (!file.exists()) {
@@ -242,18 +242,9 @@ public class UserService implements IUserService {
                 // read the header row
                 String[] headerRow = reader.readNext();
 
-                // read the data rows and map them to Product objects
+                // read the data rows and map them to objects
                 String[] rowData;
                 while ((rowData = reader.readNext()) != null) {
-                    System.out.println(rowData[0]);
-                    System.out.println(rowData[1]);
-                    System.out.println(rowData[2]);
-                    System.out.println(rowData[3]);
-                    System.out.println(rowData[4]);
-                    System.out.println(rowData[5]);
-
-
-
                     User user = new User();
                     user.setEmail(rowData[0]);
                     user.setPassword(passwordEncoder.encode("123456"));
@@ -267,8 +258,35 @@ public class UserService implements IUserService {
                     user.setDob(LocalDate.parse(rowData[3],formatter));
                     user.setPhone(rowData[4]);
                     user.setStatus(true);
+
+                    if(scanning.toLowerCase().equals("fullname")){
+                        if(duplicateHandle.toLowerCase().equals("replace")){
+                            User user1 = repository.findByFullName(user.getFullName()).get();
+                            if(user1 != null){
+                                user1.setEmail(user.getEmail());
+                                user1.setGender(user.isGender());
+                                user1.setDob(user.getDob());
+                                user1.setPhone(user.getPhone());
+                                repository.save(user1);
+                            }else{
+                                repository.save(user);
+                            }
+                        }
+                    }else{
+                        if(duplicateHandle.toLowerCase().equals("replace")){
+                            User user1 = repository.findByEmail(user.getEmail()).get();
+                            if(user1 != null){
+                                user1.setEmail(user.getEmail());
+                                user1.setGender(user.isGender());
+                                user1.setDob(user.getDob());
+                                user1.setPhone(user.getPhone());
+                                repository.save(user1);
+                            }else{
+                                repository.save(user);
+                            }
+                        }
+                    }
                     userList.add(user);
-                    repository.save(user);
                 }
                 reader.close();
             }
@@ -276,7 +294,7 @@ public class UserService implements IUserService {
         } catch (Exception e) {
             return String.valueOf(e);
         }
-        return userList.toString();
+        return "Done!!!";
 
     }
 }
