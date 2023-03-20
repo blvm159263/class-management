@@ -28,7 +28,7 @@ public class OutputStandardController {
 
     private final IOutputStandardService outputStandardService;
 
-    @GetMapping("/{syllabusId}")
+    @GetMapping("/getBySyllabusId/{syllabusId}")
     @Operation(
             summary = "Get output standard by syllabus ID"
     )
@@ -37,7 +37,7 @@ public class OutputStandardController {
             @Parameter(
                     description = "<b>Insert syllabus ID to get output standard<b>",
                     example = "7"
-            ) Long id) {
+            ) long id) {
         return ResponseEntity.ok(outputStandardService.getOsdBySyllabusId(true, id));
     }
 

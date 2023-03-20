@@ -1,4 +1,4 @@
-package com.mockproject.Jwt;
+package com.mockproject.jwt;
 
 import com.mockproject.Jwt.JwtTokenProvider;
 import com.mockproject.service.CustomUserDetailsService;
