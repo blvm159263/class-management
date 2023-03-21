@@ -1,7 +1,6 @@
 package com.mockproject.repository;
 
 
-import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.entity.TrainingProgram;
 import com.mockproject.entity.TrainingProgramSyllabus;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -49,6 +49,9 @@ public class UserService implements IUserService {
     private final UserRepository userRepo;
     private final LevelRepository levelRepository;
     private final RoleRepository roleRepository;
+    private final TrainingClassRepository trainingClassRepository;
+    private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
+    private final TrainingClassAdminRepository trainingClassAdminRepository;
 
     private final AttendeeRepository attendeeRepository;
 
@@ -281,7 +284,7 @@ public class UserService implements IUserService {
     public boolean editUser(UserDTO user) {
         Optional<User> user1 = userRepo.findById(user.getId());
         Optional<Level> level = levelRepository.getLevelById(user.getLevelId());
-        if (user1.isPresent()) {
+        if (user1.isPresent()){
             User u = user1.get();
             Level level1 = level.get();
             u.setFullName(user.getFullName());
@@ -326,7 +329,7 @@ public class UserService implements IUserService {
                         user.setGender(false);
                     }
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    user.setDob(LocalDate.parse(rowData[3], formatter));
+                    user.setDob(LocalDate.parse(rowData[3],formatter));
                     user.setPhone(rowData[4]);
                     user.setStatus(true);
                     userList.add(user);

@@ -2,7 +2,7 @@ package com.mockproject.config;
 
 
 //import com.mockproject.jwt.JwtAuthenticationFilter;
-import com.mockproject.Jwt.JwtAuthenticationFilter;
+import com.mockproject.jwt.JwtAuthenticationFilter;
 import com.mockproject.service.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
