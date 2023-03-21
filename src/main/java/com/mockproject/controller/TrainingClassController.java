@@ -133,7 +133,7 @@ public class TrainingClassController {
             @Parameter(
                     description = "<b>FSU - Filter by FSU ID<b>",
                     example = "1"
-            ) Long fsu,
+            ) Optional<Long> fsu,
 
             @RequestParam(defaultValue = "0")
             @Parameter(
@@ -171,7 +171,7 @@ public class TrainingClassController {
             ) Optional<Integer> row) {
         return ResponseEntity
                 .ok(trainingClassService.getListClass(true, location, fromDate, toDate, period,
-                        isOnline? "Online" : "", state, attendee, fsu, trainerId, search, sort, page, row));
+                        isOnline? "Online" : "", state, attendee, fsu.orElse(0L), trainerId, search, sort, page, row));
     }
 
 }

@@ -152,7 +152,6 @@ class TrainingClassServiceTest {
         verify(trainingClassRepository, times(1)).getListClass(true, null, null, null,
                 null, "", null, null, 0L, classId, "",
                 Sort.by(Sort.Direction.ASC, "className"));
-
     }
 
 }
