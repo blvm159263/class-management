@@ -1,8 +1,12 @@
 package com.mockproject.controller;
 
+import com.mockproject.dto.*;
 import com.mockproject.entity.*;
 import com.mockproject.service.*;
+import com.mockproject.service.interfaces.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -11,67 +15,77 @@ import java.util.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/trainingprogramdetail")
 public class TrainingProgramDetailController {
-    private final TrainingProgramService trainingProgramService;
-    private final TrainingProgramSyllabusService trainingProgramSyllabusService;
-    private final SyllabusService syllabusService;
-    private final SessionService sessionService;
-    private final UnitService unitService;
-    private final UnitDetailService unitDetailService;
-    private final TrainingMaterialService trainingMaterialService;
+    private final ITrainingProgramService trainingProgramService;
+    private final ITrainingProgramSyllabusService trainingProgramSyllabusService;
+    private final ISyllabusService syllabusService;
+    private final ISessionService sessionService;
+    private final IUnitService unitService;
+    private final IUnitDetailService unitDetailService;
+    private final ITrainingMaterialService trainingMaterialService;
 
     @GetMapping("/")
-    public TrainingProgram getTrainingProgramById(@RequestParam long id) {
-        return trainingProgramService.getTrainingProgramById(id);
+    public ResponseEntity getTrainingProgramById(@RequestParam Long id) {
+        return ResponseEntity.ok(trainingProgramService.getTrainingProgramById(id));
     }
 
     @GetMapping("/{id}")
-    public List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(@PathVariable("id") long id) {
-        return trainingProgramSyllabusService.getTrainingProgramSyllabusListById(id);
+    public ResponseEntity getTrainingProgramSyllabusListById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(trainingProgramSyllabusService.getTrainingProgramSyllabusListById(id));
     }
 
     @GetMapping("/syllabus/{id}")
-    public List<Syllabus> getSyllabusById(@PathVariable("id") long idTrainingProgram) {
-        List<TrainingProgramSyllabus> listTrainingProgramSyllabus = getTrainingProgramSyllabusListById(idTrainingProgram);
-        List<Syllabus> list = new ArrayList<>();
+    public ResponseEntity getSyllabusById(@PathVariable("id") Long idTrainingProgram) {
+        List<TrainingProgramSyllabusDTO> listTrainingProgramSyllabus = trainingProgramSyllabusService.getTrainingProgramSyllabusListById(idTrainingProgram);
+        List<SyllabusDTO> list = new ArrayList<>();
         for (int i = 0; i < listTrainingProgramSyllabus.size(); i++) {
-            Syllabus s = syllabusService.getSyllabusById(listTrainingProgramSyllabus.get(i).getSyllabus().getId());
+            SyllabusDTO s = syllabusService.getSyllabusById(listTrainingProgramSyllabus.get(i).getId());
             list.add(s);
         }
-        return list;
+        if (list.isEmpty()) {
+            return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any thing in list Syllabus");
+        }
     }
 
     @GetMapping("/syllabus/1/{idSyllabus}")
-    public List<Session> getSessionListBySyllabusId(@PathVariable("idSyllabus") long idSyllabus) {
-        return sessionService.getSessionListBySyllabusId(idSyllabus);
+    public ResponseEntity getSessionListBySyllabusId(@PathVariable("idSyllabus") Long idSyllabus) {
+        return ResponseEntity.ok(sessionService.getSessionListBySyllabusId(idSyllabus));
     }
 
     @GetMapping("/syllabus/2/{idSyllabus}")
-    public List<Unit> getUnitListByIdSession(@PathVariable("idSyllabus") long idSyllabus) {
-        List<Session> listSession = getSessionListBySyllabusId(idSyllabus);
-        List<Unit> listUnit = new ArrayList<>();
-        for (Session s : listSession) {
-            listUnit.addAll(unitService.getUnitBySessionId(s.getId()));
+    public ResponseEntity getUnitListByIdSession(@PathVariable("idSyllabus") Long idSyllabus) {
+        List<SessionDTO> listSession = sessionService.getSessionListBySyllabusId(idSyllabus);
+        List<UnitDTO> listUnit = unitService.getListUnit(listSession);
+        if (listUnit.isEmpty()) {
+            return ResponseEntity.ok(listUnit);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any thing in list Unit");
         }
-        return listUnit;
     }
 
     @GetMapping("/syllabus/3/{idSyllabus}")
-    public List<UnitDetail> getUnitDetailListByUnitId(@PathVariable("idSyllabus") long idSyllabus) {
-        List<Unit> listUnit = getUnitListByIdSession(idSyllabus);
-        List<UnitDetail> listUnitDetail = new ArrayList<>();
-        for (Unit u : listUnit) {
-            listUnitDetail.addAll(unitDetailService.getUnitDetailByUnitId(u.getId()));
+    public ResponseEntity getUnitDetailListByUnitId(@PathVariable("idSyllabus") Long idSyllabus) {
+        List<SessionDTO> listSession = sessionService.getSessionListBySyllabusId(idSyllabus);
+        List<UnitDTO> listUnit = unitService.getListUnit(listSession);
+        List<UnitDetailDTO> listUnitDetail = unitDetailService.getListUnitDetail(listUnit);
+        if (listUnitDetail.isEmpty()) {
+            return ResponseEntity.ok(listUnitDetail);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any thing in list UnitDetail");
         }
-        return listUnitDetail;
     }
 
     @GetMapping("/syllabus/4/{idSyllabus}")
-    public List<TrainingMaterial> getListTrainingMaterialByUnitDetailId(@PathVariable("idSyllabus") long idSyllabus) {
-        List<UnitDetail> listUnitDetail = getUnitDetailListByUnitId(idSyllabus);
-        List<TrainingMaterial> listTrainingMaterial = new ArrayList<>();
-        for (UnitDetail ud : listUnitDetail) {
-            listTrainingMaterial.addAll(trainingMaterialService.getListTrainingMaterialByUnitDetailId(ud.getId()));
+    public ResponseEntity getListTrainingMaterialByUnitDetailId(@PathVariable("idSyllabus") Long idSyllabus) {
+        List<SessionDTO> listSession = sessionService.getSessionListBySyllabusId(idSyllabus);
+        List<UnitDTO> listUnit = unitService.getListUnit(listSession);
+        List<UnitDetailDTO> listUnitDetail = unitDetailService.getListUnitDetail(listUnit);
+        List<TrainingMaterialDTO> listTrainingMaterial = trainingMaterialService.getListTrainingMaterial(listUnitDetail);
+        if (listTrainingMaterial.isEmpty()) {
+            return ResponseEntity.ok(listTrainingMaterial);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any thing in list Training Material");
         }
-        return listTrainingMaterial;
     }
 }

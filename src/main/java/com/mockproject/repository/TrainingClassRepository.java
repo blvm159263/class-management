@@ -4,6 +4,7 @@ import com.mockproject.entity.TrainingClass;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -30,7 +31,9 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "lo.locationName LIKE (:SearchText)) AND " +
             "cs.date = :date AND " +
             "tc.status = true ")
-    public List<TrainingClass> findAllBySearchTextAndListClassSchedulesDate(String SearchText,LocalDate date);
+    public List<TrainingClass> findAllBySearchTextAndListClassSchedulesDate(
+            @Param("SearchText") String SearchText,
+            @Param("date") LocalDate date);
 
     @Query("SELECT tc FROM TrainingClass tc " +
             "LEFT JOIN tc.listClassSchedules cs " +
@@ -48,7 +51,10 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "lo.locationName LIKE (:searchText)) AND " +
             "cs.date BETWEEN :startDate AND :endDate AND " +
             "tc.status = true ")
-    public List<TrainingClass> findAllBySearchTextAndListClassSchedulesWeek(String searchText,LocalDate startDate,LocalDate endDate);
+    public List<TrainingClass> findAllBySearchTextAndListClassSchedulesWeek(
+            @Param("searchText") String searchText,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 
 
 }

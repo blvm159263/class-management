@@ -10,17 +10,29 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class TrainingClassSpecification {
 
     public static Specification<TrainingClass> hasLocationIn(List<String> locations) {
-        return (root, query, builder) -> root.get("location").get("locationName").in(locations);
+//        return (root, query, builder) -> root.get("location").get("locationName").in(locations);
+        Specification<TrainingClass> trainingClassSpecification = null;
+        locations=locations.stream().map(loca -> "%"+loca+"%").collect(Collectors.toList());
+        for (String location : locations) {
+            if (trainingClassSpecification == null) {
+                trainingClassSpecification = (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("location").get("locationName"), location);
+            } else {
+                trainingClassSpecification = trainingClassSpecification.or(trainingClassSpecification = (root, query, criteriaBuilder) ->
+                        criteriaBuilder.like(root.get("location").get("locationName"), location));
+            }
+        }
+        return trainingClassSpecification;
+
     }
 
     public static Specification<TrainingClass> hasClassScheduleBetween(LocalDate startDate, LocalDate endDate) {
         return (root, query, builder) -> {
-
             Join<TrainingClass, ClassSchedule> classSchedule = root.join("listClassSchedules");
             return builder.between(classSchedule.get("date"), startDate, endDate);
         };

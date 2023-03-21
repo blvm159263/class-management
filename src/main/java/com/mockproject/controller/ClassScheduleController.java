@@ -20,41 +20,40 @@ public class ClassScheduleController {
     IClassScheduleService classScheduleService;
 
     @PostMapping("/day")
-    public ResponseEntity getTrainingClassByDay(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO) {
-        var trainingClass = classScheduleService.getTrainingClassByDay(filterRequestDTO);
-        if (trainingClass.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
-        } else {
+    public ResponseEntity getTrainingClassByDay(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO){
+        var trainingClass= classScheduleService.getTrainingClassByDay(filterRequestDTO);
+        if(trainingClass.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
+        }else{
             return ResponseEntity.ok(trainingClass);
         }
     }
 
     @PostMapping("/week")
-    public ResponseEntity getTrainingClassByWeek(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO) {
-        var trainingClass = classScheduleService.getTrainingClassByWeek(filterRequestDTO);
-        if (trainingClass.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
-        } else {
+    public ResponseEntity getTrainingClassByWeek(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO){
+
+        var trainingClass= classScheduleService.getTrainingClassByWeek(filterRequestDTO);
+        if(trainingClass.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
+        }else{
             return ResponseEntity.ok(trainingClass);
         }
     }
-
     @PostMapping("/search/day")
-    public ResponseEntity searchTrainingClassInDay(@RequestBody SearchByDTO searchByDTO) {
-        var trainingClass = classScheduleService.searchTrainingClassInDate(searchByDTO.getSearchText(), searchByDTO.getNowDate());
-        if (trainingClass.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
-        } else {
+    public ResponseEntity searchTrainingClassInDay(@RequestBody SearchByDTO searchByDTO){
+        var trainingClass= classScheduleService.searchTrainingClassInDate(searchByDTO.getSearchText(),searchByDTO.getNowDate());
+        if(trainingClass.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
+        }else{
             return ResponseEntity.ok(trainingClass);
         }
     }
-
     @PostMapping("/search/week")
-    public ResponseEntity searchTrainingClassInWeek(@RequestBody SearchByDTO searchByDTO) {
-        var trainingClass = classScheduleService.searchTrainingClassInWeek(searchByDTO.getSearchText(), searchByDTO.getStartDate(), searchByDTO.getEndDate());
-        if (trainingClass.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
-        } else {
+    public ResponseEntity searchTrainingClassInWeek(@RequestBody SearchByDTO searchByDTO){
+        var trainingClass= classScheduleService.searchTrainingClassInWeek(searchByDTO.getSearchText(),searchByDTO.getStartDate(),searchByDTO.getEndDate());
+        if(trainingClass.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
+        }else{
             return ResponseEntity.ok(trainingClass);
         }
     }
