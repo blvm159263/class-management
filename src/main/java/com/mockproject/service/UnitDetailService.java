@@ -36,7 +36,6 @@ public class UnitDetailService implements IUnitDetailService {
 
     private final ITrainingMaterialService trainingMaterialService;
 
-
     @Override
     public List<UnitDetail> getUnitDetailByUnitId(Long idUnit) {
         return null;
@@ -151,4 +150,13 @@ public class UnitDetailService implements IUnitDetailService {
         return true;
     }
 
+    @Override
+    public UnitDetail get(long id) {
+        return null;
+    }
+
+    @Override
+    public List<UnitDetailDTO> listByUnitIdTrue(Long id) {
+        return null;
+    }
 }

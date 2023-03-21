@@ -37,7 +37,6 @@ public class SessionController {
     public static final String CREATE = "ROLE_Create_Syllabus";
     public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
 
-
     private final ISessionService sessionService;
 
     @GetMapping("/{syllabusId}")

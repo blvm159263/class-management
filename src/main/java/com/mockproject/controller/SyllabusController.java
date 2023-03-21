@@ -4,6 +4,7 @@ import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Syllabus;
+import com.mockproject.entity.User;
 import com.mockproject.service.interfaces.ISyllabusService;
 import com.mockproject.service.interfaces.ITrainingProgramSyllabusService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,11 +18,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -75,6 +79,13 @@ public class SyllabusController {
         return ResponseEntity.ok(syllabusService.getSyllabusList(true));
     }
 
+    @PostMapping(value = "/replace")
+    @Operation(description = "Replace Syllabus")
+    @Secured({CREATE,FULL_ACCESS})
+    public ResponseEntity<Boolean> replace(@RequestBody SyllabusDTO syllabusDTO){
+        return ResponseEntity.ok(syllabusService.replace(syllabusDTO, true));
+    }
+
     @PostMapping(value = "/create")
     @Operation(description = "Create Syllabus")
     @Secured({CREATE,FULL_ACCESS})
@@ -91,7 +102,6 @@ public class SyllabusController {
         Syllabus editsyllabus = syllabusService.editSyllabus(syllabusDTO, true);
         return ResponseEntity.ok(editsyllabus);
     }
-
 
     @PutMapping("delete/{id}")
     @Operation(summary = "Delete syllabus by syllabusId")
@@ -169,5 +179,35 @@ public class SyllabusController {
             String[] sort) {
         return ResponseEntity
                 .ok(syllabusService.getListSyllabus(true,  fromDate, toDate, search, sort, page, row));
+    }
+
+
+    @PostMapping(path = "read-file",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Read file")
+    public ResponseEntity<SyllabusDTO> readSyllabusCsv(@RequestPart("file")MultipartFile file,
+                                                       @Parameter(description = "1. Name\n" +
+                                                               "2. Code\n" +
+                                                               "3. Name and Code") int condition,
+                                                       @Parameter(description = "1. Allow\n" +
+                                                               "2. Replace\n" +
+                                                               "3. Skip") int handle) throws IOException {
+//        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(syllabusService.readFileCsv(file, condition, handle));
+    }
+
+    @GetMapping("get-template-file")
+    @Operation(summary = "Download file")
+    public ResponseEntity<byte[]> getTemplateFile() throws IOException {
+
+        String filename = "Syllabus_import.csv";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/csv"))
+                .body(syllabusService.getTemplateCsvFile());
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.asMediaType(MimeType.valueOf("text/csv")))
+//                .body(service.getTemplateCsvFile());
     }
 }

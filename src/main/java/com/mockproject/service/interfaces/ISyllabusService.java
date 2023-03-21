@@ -4,6 +4,7 @@ import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.User;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -28,6 +29,8 @@ public interface ISyllabusService {
 
     SyllabusDTO getSyllabusById(Long syllabusId,boolean state, boolean status);
 
+    boolean replace(SyllabusDTO syllabusDTO, boolean status);
+
     Long create(SyllabusDTO syllabus, User user);
 
     Syllabus editSyllabus(SyllabusDTO syllabusDTO, boolean status) throws IOException;
@@ -35,4 +38,8 @@ public interface ISyllabusService {
     boolean deleteSyllabus(Long syllabusId, boolean status);
 
     Syllabus getSyllabusById(Long id);
+
+    SyllabusDTO readFileCsv(MultipartFile file, int condition, int handle) throws IOException;
+
+    byte[] getTemplateCsvFile() throws IOException;
 }

@@ -31,7 +31,6 @@ public class TrainingMaterialController {
     public static final String CREATE = "ROLE_Create_Learning material";
     public static final String FULL_ACCESS = "ROLE_Full access_Learning material";
 
-
     private final ITrainingMaterialService trainingMaterialService;
 
     @GetMapping("get-all/{unitDetailId}")
@@ -40,7 +39,6 @@ public class TrainingMaterialController {
     public ResponseEntity<List<TrainingMaterialDTO>> getFiles(@PathVariable("unitDetailId") Long unitDetailId){
         return ResponseEntity.ok(trainingMaterialService.getFiles(unitDetailId, true));
     }
-
 
     @PostMapping("/upload-file/{unitDetailID}")
     @Operation(summary = "Upload file by unit detail id")

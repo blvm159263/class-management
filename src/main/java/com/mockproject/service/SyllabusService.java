@@ -11,9 +11,13 @@ import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.service.interfaces.ISessionService;
 import com.mockproject.service.interfaces.ISyllabusService;
+import com.mockproject.utils.FileUtils;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
 
@@ -29,6 +34,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.time.LocalDate;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,6 +54,8 @@ public class SyllabusService implements ISyllabusService {
     private final ISessionService sessionService;
 
     private final TrainingProgramSyllabusRepository trainingProgramSyllabusRepository;
+
+    private static final String TEMPLATE_FILE_PATH = "file-format\\syllabus-template.csv";
 
     @Override
     public List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId) {
@@ -188,6 +196,19 @@ public class SyllabusService implements ISyllabusService {
     }
 
     @Override
+    public boolean replace(SyllabusDTO syllabusDTO, boolean status){
+        sessionService.deleteSessions(syllabusDTO.getId(), true);
+
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabusDTO));
+
+        sessionService.createSession(syllabusDTO.getId(), syllabusDTO.getSessionDTOList(), user.getUser());
+
+        return true;
+    }
+
+    @Override
     public Long create(SyllabusDTO syllabus, User user){
         syllabus.setCreatorId(user.getId());
         syllabus.setLastModifierId(user.getId());
@@ -243,8 +264,155 @@ public class SyllabusService implements ISyllabusService {
     }
 
     @Override
-    public Syllabus getSyllabusById(Long id){
-        return syllabusRepository.getSyllabusById(id);
+    public Syllabus getSyllabusById(Long id) {
+        return syllabusRepository.findByIdAndStatus(id, true).get();
+    }
+
+    @Override
+    public SyllabusDTO readFileCsv(MultipartFile file, int condition, int handle) throws IOException {
+
+        final String[] HEADERS = {"Syllabus Name","Syllabus Code","Syllabus Version","Syllabus Level","Attendee Amount","Technical Requirements","Course Objectives","Quiz","Assignment","Final","Final Theory","Final Practice","GPA","Training Description","Retest Description","Marking Description","Waiver Criteria Description","Other Description","State","Status"};
+        CSVParser parser = CSVParser.parse(file.getInputStream(), Charset.defaultCharset(), CSVFormat.DEFAULT.builder().setHeader(HEADERS).setSkipHeaderRecord(true).build());
+        List<CSVRecord> records = parser.getRecords();
+
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        SyllabusDTO syllabusDTO = new SyllabusDTO();
+        for(CSVRecord record: records) {
+            String name = record.get(0);
+            if(name.isBlank())
+              throw new NotFoundException("Name cannot empty");
+            String code = record.get(1);
+            if(code.isBlank())
+                throw new NotFoundException("Code cannot empty");
+            String version = record.get(2);
+            String level = record.get(3);
+            int attendee = Integer.parseInt(record.get(4));
+            String technicalRequirements = record.get(5);
+            String courseObjectives = record.get(6);
+            BigDecimal quiz = new BigDecimal(Double.parseDouble(record.get(7)));
+            BigDecimal assignment = new BigDecimal(Double.valueOf(record.get(8)));
+            BigDecimal finalExam = new BigDecimal(Double.valueOf(record.get(9)));
+            BigDecimal finalTheory = new BigDecimal(Double.valueOf(record.get(10)));
+            BigDecimal finalPractice = new BigDecimal(Double.valueOf(record.get(11)));
+            BigDecimal gpa = new BigDecimal(Double.parseDouble(record.get(12)));
+            String trainingDes = record.get(13);
+            String reTestDes = record.get(14);
+            String markingDes = record.get(15);
+            String waiverCriteriaDes = record.get(16);
+            String otherDes = record.get(17);
+            boolean status = true;
+            boolean state = true;
+            Syllabus syllabus = Syllabus.builder()
+                    .name(name)
+                    .code(code)
+                    .version(version)
+                    .level(level)
+                    .attendee(attendee)
+                    .technicalRequirements(technicalRequirements)
+                    .courseObjectives(courseObjectives)
+                    .dateCreated(java.time.LocalDate.now())
+                    .lastDateModified(java.time.LocalDate.now())
+                    .quiz(quiz)
+                    .assignment(assignment)
+                    .finalExam(finalExam)
+                    .finalTheory(finalTheory)
+                    .finalPractice(finalPractice)
+                    .gpa(gpa)
+                    .trainingDes(trainingDes)
+                    .reTestDes(reTestDes)
+                    .markingDes(markingDes)
+                    .waiverCriteriaDes(waiverCriteriaDes)
+                    .otherDes(otherDes)
+                    .state(state)
+                    .status(status)
+                    .creator(user.getUser())
+                    .lastModifier(user.getUser())
+                    .build();
+            syllabusDTO = SyllabusMapper.INSTANCE.toDTO(syllabus);
+        }
+
+        // condition Name or code
+        // 1 Name
+        // 2 Code
+        // 3 Name and Code
+
+        // handle Allow, Replace or Skip
+        // 1 Allow
+        // 2 Replace
+        // 3 Skip
+        if(condition == 3){
+            if(handle == 1){
+                return syllabusDTO;
+            }
+            else if (handle == 2) {
+                Optional<List<Syllabus>> syllabusList = syllabusRepository.findByNameAndCodeAndStatus(syllabusDTO.getName(), syllabusDTO.getCode(),true);
+                if (syllabusList.isEmpty()){
+                    return syllabusDTO;
+                } else {
+                    Syllabus syllabus = syllabusList.get().get(syllabusList.get().size()-1);
+                    syllabusDTO.setId(syllabus.getId());
+                    return syllabusDTO;
+                }
+            }
+            else if (handle == 3){
+                Optional<List<Syllabus>> syllabusList = syllabusRepository.findByNameAndCodeAndStatus(syllabusDTO.getName(), syllabusDTO.getCode(),true);
+                if (syllabusList.isEmpty()){
+                    return syllabusDTO;
+                }
+                else {
+                    return new SyllabusDTO();
+                }
+            }
+        }
+        else if (condition == 1){
+            if(handle == 1) {
+                return syllabusDTO;
+            }
+            else if (handle == 2) {
+                Optional<List<Syllabus>> syllabusList = syllabusRepository.findByNameAndStatus(syllabusDTO.getName(), true);
+                if (syllabusList.isEmpty()){
+                    return syllabusDTO;
+                } else {
+                    Syllabus syllabus = syllabusList.get().get(syllabusList.get().size()-1);
+                    syllabusDTO.setId(syllabus.getId());
+                    return syllabusDTO;
+                }
+            }
+            else if (handle == 3){
+                Optional<List<Syllabus>> syllabusList = syllabusRepository.findByNameAndStatus(syllabusDTO.getName(), true);
+                if (syllabusList.isEmpty()){
+                    return syllabusDTO;
+                }
+                else {
+                    return new SyllabusDTO();
+                }
+            }
+        } else if (condition == 2){
+            if(handle == 1){
+                return syllabusDTO;
+            }
+            else if (handle == 2) {
+                Optional<List<Syllabus>> syllabusList = syllabusRepository.findByCodeAndStatus(syllabusDTO.getName(), true);
+                if (syllabusList.isEmpty()){
+                    return syllabusDTO;
+                } else {
+                    Syllabus syllabus = syllabusList.get().get(syllabusList.get().size()-1);
+                    syllabusDTO.setId(syllabus.getId());
+                    return syllabusDTO;
+                }
+            }
+            else if (handle == 3){
+                Optional<List<Syllabus>> syllabusList = syllabusRepository.findByCodeAndStatus(syllabusDTO.getName(), true);
+                if (syllabusList.isEmpty()){
+                    return syllabusDTO;
+                }
+                else {
+                    return new SyllabusDTO();
+                }
+            }
+        }
+        return syllabusDTO;
     }
 
     @Override
@@ -255,5 +423,11 @@ public class SyllabusService implements ISyllabusService {
         List<SessionDTO> sessionDTOList = sessionService.getAllSessionBySyllabusId(syllabusId, true);
         syllabusDTO.setSessionDTOList(sessionDTOList);
         return syllabusDTO;
+    }
+
+    public byte[] getTemplateCsvFile() throws IOException {
+        byte[] bytes = FileUtils.getFileBytes(TEMPLATE_FILE_PATH);
+
+        return bytes;
     }
 }

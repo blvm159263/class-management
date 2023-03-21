@@ -94,8 +94,6 @@ public class UnitController {
         }
     }
 
-
-
     @Operation(
             summary = "Get all class Units for day-nth of total days of the class schedule",
             description = "Get list of Units in a date clicked in the class schedule table by the user"
