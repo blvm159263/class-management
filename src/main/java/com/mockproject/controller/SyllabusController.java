@@ -68,14 +68,14 @@ public class SyllabusController {
     }
 
     @PostMapping(value = "/replace")
-    @Operation(description = "Replace Syllabus")
+    @Operation(summary = "Replace Syllabus")
     @Secured({CREATE,FULL_ACCESS})
     public ResponseEntity<Boolean> replace(@RequestBody SyllabusDTO syllabusDTO){
         return ResponseEntity.ok(syllabusService.replace(syllabusDTO, true));
     }
 
     @PostMapping(value = "/create")
-    @Operation(description = "Create Syllabus")
+    @Operation(summary = "Create Syllabus")
     @Secured({CREATE,FULL_ACCESS})
     public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
