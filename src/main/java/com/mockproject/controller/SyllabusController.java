@@ -4,7 +4,6 @@ import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.User;
 import com.mockproject.service.interfaces.ISyllabusService;
 import com.mockproject.service.interfaces.ITrainingProgramSyllabusService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -119,12 +118,14 @@ public class SyllabusController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Read file")
     public ResponseEntity<SyllabusDTO> readSyllabusCsv(@RequestPart("file")MultipartFile file,
-                                                       @Parameter(description = "1. Name\n" +
-                                                                                "2. Code\n" +
-                                                                                "3. Name and Code") int condition,
-                                                       @Parameter(description = "1. Allow\n" +
-                                                                                "2. Replace\n" +
-                                                                                "3. Skip") int handle) throws IOException {
+                                                       @Parameter(description = """
+                                                               1. Name
+                                                               2. Code
+                                                               3. Name and Code""") int condition,
+                                                       @Parameter(description = """
+                                                               1. Allow
+                                                               2. Replace
+                                                               3. Skip""") int handle) throws IOException {
 //        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(syllabusService.readFileCsv(file, condition, handle));
     }
@@ -139,8 +140,5 @@ public class SyllabusController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.parseMediaType("application/csv"))
                 .body(syllabusService.getTemplateCsvFile());
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.asMediaType(MimeType.valueOf("text/csv")))
-//                .body(service.getTemplateCsvFile());
     }
 }
