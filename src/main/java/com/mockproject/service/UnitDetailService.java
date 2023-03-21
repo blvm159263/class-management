@@ -157,6 +157,8 @@ public class UnitDetailService implements IUnitDetailService {
 
     @Override
     public List<UnitDetailDTO> listByUnitIdTrue(Long id) {
-        return null;
+        Unit unit = new Unit();
+        unit.setId(id);
+        return unitDetailRepository.findByUnitAndStatus(unit,true).stream().map(UnitDetailMapper.INSTANCE::toDTO).toList();
     }
 }

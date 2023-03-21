@@ -4,7 +4,6 @@ import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.User;
 import com.mockproject.service.interfaces.ISyllabusService;
 import com.mockproject.service.interfaces.ITrainingProgramSyllabusService;
 import io.swagger.v3.oas.annotations.Operation;

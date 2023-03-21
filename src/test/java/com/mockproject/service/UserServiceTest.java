@@ -41,8 +41,7 @@ class UserServiceTest {
     @MockBean
     private TrainingClassAdminRepository trainingClassAdminRepository;
     @MockBean
-    private IUnitService unitService;
-
+    private AttendeeRepository attendeeRepository;
 
     @Autowired
     private UserService userService;
