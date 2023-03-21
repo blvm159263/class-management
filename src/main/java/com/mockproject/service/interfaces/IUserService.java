@@ -11,6 +11,15 @@ import java.util.Optional;
 
 public interface IUserService {
 
+    List<UserDTO> getTrainerByClassId(Long id);
+
+    List<UserDTO> getTrainerOnThisDayById(Long id, int dayNth);
+
+    UserDTO getCreatorByClassId(Long id);
+
+    UserDTO getReviewerByClassId(Long id);
+
+    UserDTO getApproverByClassId(Long id);
     String readCSVFile(File file);
 
     List<UserDTOCustom> getAllByPageAndRowPerPage(Long page, Long rowPerPage);

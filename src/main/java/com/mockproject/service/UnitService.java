@@ -146,29 +146,35 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public List<UnitDTO> getAllUnitsForADateByTrainingClassId(Long id, int dayNth) {
+    public List<UnitDTO> getAllUnitsForTheDateByTrainingClassId(Long id, int dayNth) {
         List<Unit> units = getListUnitsInASessionByTrainingClassId(id, dayNth);
         return units.stream().map(UnitMapper.INSTANCE::toDTO).toList();
     }
 
 
+    //Get list units that training class studies
     @Override
-    // get all units from a class
     public List<Unit> getListUnitsByTrainingClassId(Long id){
-        // Get Class
-        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-
-        // Get all units
-        List<TrainingClassUnitInformation> list = trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc, true).orElseThrow();
-        return list.stream().map(p-> unitRepository.findByIdAndStatus(p.getUnit().getId(), true).orElseThrow()).toList();
+        //Get the training class
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        //Get list units
+        List<TrainingClassUnitInformation> listUnits = trainingClassUnitInformationRepository
+                .findByTrainingClassAndStatus(trainingClass, true).orElseThrow();
+        return listUnits.stream()
+                .map(TrainingClassUnitInformation::getUnit)
+                .filter(Unit::isStatus)
+                .toList();
     }
 
 
     // Get a session from a date
     private Session getSession(Long id, int dayNth) {
         // Get all sessions
-        List<Session> sessions = getListUnitsByTrainingClassId(id).stream().map(p -> sessionRepository.findByIdAndStatus(p.getSession().getId(), true).orElseThrow()).toList();
-
+        List<Session> sessions = getListUnitsByTrainingClassId(id)
+                .stream()
+                .map(Unit::getSession)
+                .filter(Session::isStatus)
+                .toList();
         List<Long> sessionIds = sessions.stream().map(Session::getId).distinct().toList();
         return sessionRepository.findByIdAndStatus(sessionIds.get(dayNth - 1), true).orElseThrow();
 

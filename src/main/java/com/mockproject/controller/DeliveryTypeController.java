@@ -14,10 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -62,18 +59,32 @@ public class DeliveryTypeController {
     }
 
 
-    @Operation(summary = "Get all class's DeliveryTypes by TrainingClass id ")
+    @Operation(
+            summary = "Get all the delivery type of the training program by ID",
+            description = "<b>List all the delivery type of the training program</b>"
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
-            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = DeliveryTypeDTO.class)))
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "No Such Value",
+                    content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200",
+                    description = "Return Sample",
+                    content = @Content(schema = @Schema(implementation = DeliveryTypeDTO.class)))
     })
     @GetMapping("/class-delivery-types")
-    public ResponseEntity<?> getAllDeliveryTypes(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
-        try{
+    public ResponseEntity<?> getDeliveryTypeById(
+            @RequestParam(defaultValue = "1")
+            @Param("id")
+            @Parameter(
+                    description = "<b>Insert Training Class ID to get the training program</b>") Long id) {
+        try {
             return ResponseEntity.ok(deliveryTypeService.getAllDeliveryTypesByTrainingClassId(id));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't find any delivery type with training class Id is " + id);
         }
+
     }
 
 }

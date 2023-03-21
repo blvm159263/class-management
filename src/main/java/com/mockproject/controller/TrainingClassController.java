@@ -39,17 +39,27 @@ public class TrainingClassController {
     private final ITrainingClassService trainingClassService;
 
 
-    @Operation(summary = "Get all fields from TrainingClass entity by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
-            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TrainingClassDTO.class)))
+            @ApiResponse(responseCode = "404", description = "When don't find any Training Class"),
+            @ApiResponse(responseCode = "200", description = "When we have found the training class",
+                    content = @Content(schema = @Schema(implementation = TrainingClassDTO.class)))
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getAll(@PathVariable("id") Long id) {
+    @Operation(
+            summary = "Get all the data of the training class"
+    )
+    @GetMapping("{id}")
+    public ResponseEntity<?> getTrainingClassByClassId(
+            @PathVariable("id")
+            @Parameter(
+                    description = "<b>Insert Training Class ID</b>",
+                    example = "1"
+            )
+            Long id){
         try {
-            return ResponseEntity.ok(trainingClassService.getAllDetails(id));
-        }catch (Exception ex){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
+            return  ResponseEntity.ok(trainingClassService.getTrainingClassByClassId(id));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't find any training class with Id is " + id);
         }
     }
 

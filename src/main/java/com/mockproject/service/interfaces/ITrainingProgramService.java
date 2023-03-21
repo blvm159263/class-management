@@ -18,4 +18,6 @@ public interface ITrainingProgramService {
     Long countAll();
 
     List<TrainingProgram> getByCreatorFullname(String keyword);
+
+    TrainingProgramDTO getTrainingProgramByClassId(Long id);
 }

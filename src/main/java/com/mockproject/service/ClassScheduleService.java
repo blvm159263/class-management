@@ -11,6 +11,7 @@ import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.mapper.TrainingClassFilterMap;
 import com.mockproject.repository.ClassScheduleRepository;
+import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
 import com.mockproject.specification.TrainingClassSpecification;
 import jakarta.transaction.Transactional;

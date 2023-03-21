@@ -64,9 +64,9 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public TrainingClassDTO getAllDetails(Long id) {
-        TrainingClass details = classRepo.findByIdAndStatus(id, true).orElseThrow();
-        return TrainingClassMapper.INSTANCE.toDTO(details);
+    public TrainingClassDTO getTrainingClassByClassId(Long id) {
+        TrainingClass trainingClass = classRepo.findByIdAndStatus(id, true).orElseThrow();
+        return TrainingClassMapper.INSTANCE.toDTO(trainingClass);
     }
 
 

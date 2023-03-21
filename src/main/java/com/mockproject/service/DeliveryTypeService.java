@@ -57,9 +57,14 @@ public class DeliveryTypeService implements IDeliveryTypeService {
 
     @Override
     public List<DeliveryTypeDTO> getAllDeliveryTypesByTrainingClassId(Long id) {
-        List<Unit> units = service.getListUnitsByTrainingClassId(id);
-        List<UnitDetail> list = unitDetailRepository.findByUnitInAndStatus(units, true).orElseThrow();
-        List<DeliveryType> deliveryTypes = list.stream().map(p-> deliveryTypeRepository.findByIdAndStatus(p.getDeliveryType().getId(), true).orElseThrow()).distinct().toList();
-        return deliveryTypes.stream().map(DeliveryTypeMapper.INSTANCE::toDTO).toList();
+        List<Unit> unitList = service.getListUnitsByTrainingClassId(id);
+        List<UnitDetail> unitDetailList = unitDetailRepository.findByUnitInAndStatus(unitList, true).orElseThrow();
+        List<DeliveryType> deliveryType = unitDetailList
+                .stream()
+                .map(UnitDetail::getDeliveryType)
+                .filter(DeliveryType::isStatus)
+                .distinct()
+                .toList();
+        return deliveryType.stream().map(DeliveryTypeMapper.INSTANCE::toDTO).toList();
     }
 }

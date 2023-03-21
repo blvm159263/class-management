@@ -76,7 +76,7 @@ public class UnitController {
         return ResponseEntity.ok(unitService.deleteUnits(sessionId, true));
     }
 
-    private final IUnitService service;
+
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any Unit"),
@@ -86,7 +86,7 @@ public class UnitController {
     @Operation(summary = "Get All Unit by given Session ID")
     @GetMapping("list-by-session/{sid}")
     public ResponseEntity<?> listBySessionId(@Parameter(description = "Session ID") @PathVariable("sid") Long sid) {
-        List<UnitDTO> list = service.listBySessionId(sid);
+        List<UnitDTO> list = unitService.listBySessionId(sid);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
@@ -97,22 +97,36 @@ public class UnitController {
 
 
     @Operation(
-            summary = "Get all class Units for day-nth of total days of the class schedule",
-            description = "Get list of Units in a date clicked in the class schedule table by the user"
+            summary = "Get the unit that the training class studies on that day",
+            description = "<b>List the information of the unit that the training class studies on that day"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Day [-] of Training class id[-] not found!!!"))),
-            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UnitDTO.class)))
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "No Such Value",
+                    content = @Content(schema = @Schema(defaultValue = "Day [-] of Training class id[-] not found!!!"))),
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Return Sample",
+                    content = @Content(schema = @Schema(implementation = UnitDTO.class)))
     })
     @GetMapping("/class-units-for-a-date")
-    public ResponseEntity<?> getAllUnitsForADate(
-            @Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id,
-            @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth
-    ) {
-        try{
-            return ResponseEntity.ok(service.getAllUnitsForADateByTrainingClassId(id, dayNth));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Day [" + dayNth + "] of Training class id[" + id + "] not found!!!");
+    public ResponseEntity<?> getAllUnitsForTheDate(
+            @Parameter(
+                    description = "<b>Insert Training Class ID</b>",
+                    example = "1"
+            ) Long id,
+            @Parameter(
+                    description = "<b>Insert the Id of the day to get the unit of the Training Class</b>",
+                    example = "1"
+
+            ) int dayNth) {
+        try {
+            return ResponseEntity.ok(unitService.getAllUnitsForTheDateByTrainingClassId(id, dayNth));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't find any unit that the training class with Id is " + id +
+                            " and with day Id is " + dayNth + " that the training class will study");
         }
     }
 }

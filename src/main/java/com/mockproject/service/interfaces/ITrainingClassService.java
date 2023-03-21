@@ -1,6 +1,7 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.TrainingClassDTO;
+import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.TrainingClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,7 +31,7 @@ public interface ITrainingClassService {
     Long create(TrainingClassDTO trainingClassDTO);
 
 
-    TrainingClassDTO getAllDetails(Long id);
+    TrainingClassDTO getTrainingClassByClassId(Long id);
 
 
 

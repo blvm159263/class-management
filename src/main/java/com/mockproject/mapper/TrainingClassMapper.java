@@ -56,13 +56,6 @@ public interface TrainingClassMapper {
 //        return (Time) formatter.parse(time_str);
 //    }
 
-    @Named("mapLocation")
-    default Location mapLocation(Long id) {
-        Location location = new Location();
-        location.setId(id);
-        return location;
-    }
-
     @Named("mapTrainingProgram")
     default TrainingProgram mapTrainingProgram(Long id) {
         TrainingProgram trainingProgram = new TrainingProgram();

@@ -84,17 +84,26 @@ public class ClassScheduleController {
     }
 
 
-    @Operation(summary = "Get class schedule by TrainingClass id")
+    @Operation(
+            summary = "Get all schedule of the training class by training class ID",
+            description = "<b>List all schedule of the training class</b>"
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = ClassScheduleDTO.class)))
     })
-    @GetMapping("/in-class")
-    public ResponseEntity<?> getClassSchedule(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
-        try{
+    @GetMapping("trainingclassSchedule/{id}")
+    public ResponseEntity<?> getCLassScheduleyClassId(
+            @PathVariable("id")
+            @Parameter(
+                    description = "<b>Insert Training Class ID to get schedule</b>",
+                    example = "1") Long id) {
+        try {
             return ResponseEntity.ok(classScheduleService.getClassScheduleByTrainingClassId(id));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't find any schedule with training class Id is " + id);
         }
+
     }
 }

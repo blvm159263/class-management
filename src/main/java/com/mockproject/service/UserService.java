@@ -2,9 +2,7 @@ package com.mockproject.service;
 
 import com.mockproject.dto.UserDTO;
 import com.mockproject.dto.UserDTOCustom;
-import com.mockproject.entity.Level;
-import com.mockproject.entity.Role;
-import com.mockproject.entity.User;
+import com.mockproject.entity.*;
 import com.mockproject.mapper.AttendeeMapper;
 import com.mockproject.mapper.LevelMapper;
 import com.mockproject.mapper.RoleMapper;
@@ -49,6 +47,53 @@ public class UserService implements IUserService {
     private final TrainingClassAdminRepository trainingClassAdminRepository;
 
     private final IUnitService unitService;
+
+    @Override
+    public List<UserDTO> getTrainerByClassId(Long id) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        List<TrainingClassUnitInformation> classUnitInformations = trainingClass.getListTrainingClassUnitInformations()
+                .stream()
+                .filter(TrainingClassUnitInformation::isStatus)
+                .toList();
+        List<User> trainer = classUnitInformations.stream()
+                .map(TrainingClassUnitInformation :: getTrainer)
+                .filter(User::isStatus)
+                .distinct().toList();
+        return trainer.stream().map(UserMapper.INSTANCE :: toDTO).toList();
+    }
+
+    @Override
+    public List<UserDTO> getTrainerOnThisDayById(Long id, int dayNth) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        List<Unit> unitListFromSession = unitService.getListUnitsInASessionByTrainingClassId(id, dayNth);
+        List<TrainingClassUnitInformation> list = unitListFromSession.stream()
+                .map(p -> trainingClassUnitInformationRepository
+                        .findByUnitAndTrainingClassAndStatus(p, trainingClass, true).orElseThrow())
+                .toList();
+        List<User> trainers = list.stream()
+                .map(TrainingClassUnitInformation::getTrainer)
+                .filter(User::isStatus)
+                .toList();
+        return trainers.stream().map(UserMapper.INSTANCE::toDTO).toList();
+    }
+
+    @Override
+    public UserDTO getCreatorByClassId(Long id) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        return UserMapper.INSTANCE.toDTO(trainingClass.getCreator());
+    }
+
+    @Override
+    public UserDTO getReviewerByClassId(Long id) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        return UserMapper.INSTANCE.toDTO(trainingClass.getReviewer());
+    }
+
+    @Override
+    public UserDTO getApproverByClassId(Long id) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        return UserMapper.INSTANCE.toDTO(trainingClass.getApprover());
+    }
 
     @Override
     public UserDTO getUserById(boolean status, Long id) {

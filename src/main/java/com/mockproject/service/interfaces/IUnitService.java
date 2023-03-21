@@ -11,7 +11,7 @@ public interface IUnitService {
 
     List<UnitDTO> listBySessionId(Long sid);
 
-    List<UnitDTO> getAllUnitsForADateByTrainingClassId(Long id, int dayNth);
+    List<UnitDTO> getAllUnitsForTheDateByTrainingClassId(Long id, int dayNth);
 
     List<Unit> getListUnitsByTrainingClassId(Long id);
 

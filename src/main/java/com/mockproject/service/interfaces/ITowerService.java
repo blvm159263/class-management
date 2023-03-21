@@ -10,5 +10,5 @@ public interface ITowerService {
 
     List<TowerDTO> getAllTowersByTrainingClassId(Long id);
 
-    List<TowerDTO> getAllTowersForADateByTrainingClassId(Long id, int dayNth);
+    List<TowerDTO> getTowerForTheDayByTrainingClassId(Long id, int dayNth);
 }

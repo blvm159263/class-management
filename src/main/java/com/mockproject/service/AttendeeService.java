@@ -46,8 +46,7 @@ public class AttendeeService implements IAttendeeService {
 
     @Override
     public AttendeeDTO getAttendeeByTrainingClassId(Long id) {
-        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        if (tc.getAttendee().isStatus()){return AttendeeMapper.INSTANCE.toDTO(tc.getAttendee());}
-        return null;
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        return AttendeeMapper.INSTANCE.toDTO(trainingClass.getAttendee());
     }
 }

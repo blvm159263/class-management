@@ -101,4 +101,29 @@ public class TrainingProgramController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
         }
     }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any Training Class"),
+            @ApiResponse(responseCode = "200", description = "When we have found the training class",
+                    content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
+    })
+    @Operation(
+            summary = "Get the training program that the training class studies",
+            description = "<b>List the data of the training program that the training class studies</b>"
+    )
+    @GetMapping("trainingClass/{id}")
+    public ResponseEntity<?> getTrainingProgramByClassId(
+            @PathVariable("id")
+            @Parameter(
+                    description = "<b>Insert Training Class ID</b>",
+                    example = "1"
+            )
+            Long id) {
+        try {
+            return ResponseEntity.ok(trainingProgramService.getTrainingProgramByClassId(id));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't find any program that the training class with Id is " + id + " studies");
+        }
+    }
 }

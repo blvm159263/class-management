@@ -35,17 +35,31 @@ public class TowerService implements ITowerService {
     @Override
     public List<TowerDTO> getAllTowersByTrainingClassId(Long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        List<TrainingClassUnitInformation> list = trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc, true).orElseThrow();
-        List<Tower> listTower = list.stream().map(p -> repository.findByIdAndStatus(p.getTower().getId(), true).orElseThrow()).distinct().toList();
-        return listTower.stream().map(TowerMapper.INSTANCE::toDTO).toList();
+        List<TrainingClassUnitInformation> classUnitInformations = tc.getListTrainingClassUnitInformations()
+                .stream()
+                .filter(TrainingClassUnitInformation::isStatus)
+                .toList();
+        List<Tower> towers = classUnitInformations.stream()
+                .map(TrainingClassUnitInformation :: getTower)
+                .filter(Tower::isStatus)
+                .distinct()
+                .toList();
+        return towers.stream().map(TowerMapper.INSTANCE::toDTO).toList();
     }
 
     @Override
-    public List<TowerDTO> getAllTowersForADateByTrainingClassId(Long id, int dayNth) {
-        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        List<Unit> units = unitService.getListUnitsInASessionByTrainingClassId(id, dayNth);
-        List<TrainingClassUnitInformation> list = units.stream().map(p-> trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(p, tc, true).orElseThrow()).toList();
-        List<Tower> towers = list.stream().map(p-> repository.findByIdAndStatus(p.getTower().getId(), true).orElseThrow()).distinct().toList();
+    public List<TowerDTO> getTowerForTheDayByTrainingClassId(Long id, int dayNth) {
+        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        List<Unit> unitListFromSession = unitService.getListUnitsInASessionByTrainingClassId(id, dayNth);
+        List<TrainingClassUnitInformation> list = unitListFromSession.stream()
+                .map(p -> trainingClassUnitInformationRepository
+                        .findByUnitAndTrainingClassAndStatus(p, trainingClass, true)
+                        .orElseThrow())
+                .toList();
+        List<Tower> towers = list.stream()
+                .map(TrainingClassUnitInformation::getTower)
+                .filter(Tower::isStatus)
+                .toList();
         return towers.stream().map(TowerMapper.INSTANCE::toDTO).toList();
     }
 }

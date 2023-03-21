@@ -74,15 +74,26 @@ public class AttendeeController {
 
     @Operation(summary = "Get class's Attendee type (Fresher,...) by TrainingClass id ")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
-            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = AttendeeDTO.class)))
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "No Such Value",
+                    content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Return Sample",
+                    content = @Content(schema = @Schema(implementation = AttendeeDTO.class)))
     })
-    @GetMapping("/class-attendee")
-    public ResponseEntity<?> getAttendeeName(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
-        try{
+    @GetMapping("ClassAttendee/{id}")
+    public ResponseEntity<?> getAttendeeNameById (
+            @PathVariable("id")
+            @Parameter(
+                    description = "<b>Insert Training Class ID to get attendee</b>",
+                    example = "1") Long id){
+        try {
             return ResponseEntity.ok(attendeeService.getAttendeeByTrainingClassId(id));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't find any attendee with training class Id is " + id);
         }
     }
 
