@@ -2,13 +2,11 @@ package com.mockproject.service;
 
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.*;
-import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.OutputStandardRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.service.interfaces.ISessionService;
-import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -50,23 +47,26 @@ public class SyllabusServiceTest {
     @Autowired
     private SyllabusService syllabusService;
 
+    User user = new User(1L, "abc@gmail.com", "***", "Pham Quoc Thinh", "avatar", 1, LocalDate.now(), "0938081927", true, true,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
     Syllabus syllabus1 = new Syllabus(1L, "Syllabus number 1", "SLB1", "1.0", "All level",
             1, BigDecimal.TEN, 10,"Technical Requirements", "Course Objectives",
             LocalDate.now(), LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN,
             BigDecimal.TEN, "Training Description", "ReTest Description", "Marking Description",
-            "Waiver CriteriaDes", "Other Description", true, true, new User(), new User(),
+            "Waiver CriteriaDes", "Other Description", true, true, user, new User(),
             null, null);
-    Syllabus syllabus2 = new Syllabus(2L, "Syllabus number 2", "SLB1", "1.0", "All level",
+    Syllabus syllabus2 = new Syllabus(2L, "Syllabus number 2", "SLB2", "1.0", "All level",
             1, BigDecimal.TEN, 10,"Technical Requirements", "Course Objectives",
             LocalDate.now(), LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN,
             BigDecimal.TEN, "Training Description", "ReTest Description", "Marking Description",
-            "Waiver CriteriaDes", "Other Description", true, true, new User(), new User(),
+            "Waiver CriteriaDes", "Other Description", true, true, user, new User(),
             null, null);
-    Syllabus syllabus3 = new Syllabus(3L, "Syllabus number 3", "SLB1", "1.0", "All level",
+    Syllabus syllabus3 = new Syllabus(3L, "Syllabus number 3", "SLB3", "1.0", "All level",
             1, BigDecimal.TEN, 10,"Technical Requirements", "Course Objectives",
             LocalDate.now(), LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN,
             BigDecimal.TEN, "Training Description", "ReTest Description", "Marking Description",
-            "Waiver CriteriaDes", "Other Description", true, true, new User(), new User(),
+            "Waiver CriteriaDes", "Other Description", true, true, user, new User(),
             null, null);
 
     Session  session1 = new Session(1L, 1, true, syllabus1, null);
@@ -110,6 +110,10 @@ public class SyllabusServiceTest {
         when(unitDetailRepo.findByStatusAndOutputStandardIn(true, outputStandardList)).thenReturn(detailList);
         Page<SyllabusDTO> result = syllabusService.getListSyllabus(true, null, null, search, new String[] {"name","asc"}, Optional.of(0));
         assertEquals(3, result.getContent().size());
-        verify(syllabusRepository).getListSyllabus(true, null, null, "", listId, Sort.by(Sort.Direction.ASC, "name"));
+        search.add("Syllabus number 2");
+        result = syllabusService.getListSyllabus(true, null, null, search, new String[] {"name","asc"}, Optional.of(0));
+        assertEquals(1, result.getContent().size());
+        assertEquals("SLB2", result.getContent().get(0).getCode());
+        verify(syllabusRepository, times(2)).getListSyllabus(true, null, null, "", listId, Sort.by(Sort.Direction.ASC, "name"));
     }
 }
