@@ -28,4 +28,9 @@ public class AttendeeService implements IAttendeeService {
     public Attendee save(AttendeeDTO dto) {
         return repository.save(AttendeeMapper.INSTANCE.toEntity(dto));
     }
+
+    @Override
+    public List<AttendeeDTO> listAllTrue() {
+        return repository.findByStatus(true).stream().map(AttendeeMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
 }

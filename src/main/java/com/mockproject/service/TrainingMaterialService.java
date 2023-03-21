@@ -11,12 +11,12 @@ import com.mockproject.service.interfaces.IUnitDetailService;
 import com.mockproject.service.interfaces.IUserService;
 import com.mockproject.utils.FileUtils;
 import jakarta.transaction.Transactional;
-//<<<<<<< HEAD
-//import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 //=======
 import lombok.RequiredArgsConstructor;
 //>>>>>>> dev
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

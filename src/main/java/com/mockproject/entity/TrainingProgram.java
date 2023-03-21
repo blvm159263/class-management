@@ -28,11 +28,14 @@ public class TrainingProgram implements Serializable {
             updatable = false
     )
     private Long id;
+//<<<<<<< HEAD
 
     @Column(
             name = "program_id"
     )
     private int programId;
+//=======
+//>>>>>>> ed0aa085b95a13c82c9adb2ccaee04db52e424cf
 
     @Lob
     @Nationalized

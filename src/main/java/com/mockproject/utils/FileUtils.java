@@ -1,7 +1,13 @@
 package com.mockproject.utils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -20,7 +26,6 @@ public class FileUtils {
             byteArrayOutputStream.write(bufferBytes,0,size);
         }
         byteArrayOutputStream.close();
-//        deflater.end();
         return byteArrayOutputStream.toByteArray();
     }
 
@@ -34,7 +39,13 @@ public class FileUtils {
             outputStream.write(bufferBytes, 0, count);
         }
         outputStream.close();
-//        inflater.end();
         return outputStream.toByteArray();
+    }
+
+    public static byte[] getFileBytes(String filePath) throws IOException {
+        File file = new File(filePath);
+        byte[] bytes = Files.readAllBytes(file.toPath());
+        Base64.getEncoder().encode(bytes);
+        return bytes;
     }
 }
