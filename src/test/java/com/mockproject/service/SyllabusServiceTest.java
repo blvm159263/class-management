@@ -80,8 +80,8 @@ public class SyllabusServiceTest {
     OutputStandard osd1 = new OutputStandard(1L, "ABC", "Ăn bát cơm", "No", true,  null);
 
     UnitDetail detail1 = new UnitDetail(1L, "Detail 1", BigDecimal.valueOf(30), true, true, uni1, null, osd1, null);
-    UnitDetail detail2 = new UnitDetail(1L, "Detail 1", BigDecimal.valueOf(30), true, true, uni2, null, osd1, null);
-    UnitDetail detail3 = new UnitDetail(1L, "Detail 1", BigDecimal.valueOf(30), true, true, uni3, null, osd1, null);
+    UnitDetail detail2 = new UnitDetail(1L, "Detail 2", BigDecimal.valueOf(30), true, true, uni2, null, osd1, null);
+    UnitDetail detail3 = new UnitDetail(1L, "Detail 3", BigDecimal.valueOf(30), true, true, uni3, null, osd1, null);
 
     @Test
     void getAllSyllabusByStatus() {
