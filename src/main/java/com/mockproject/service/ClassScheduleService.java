@@ -33,7 +33,7 @@ public class ClassScheduleService implements IClassScheduleService {
     private final TrainingClassService trainingClassService;
 
     private final TrainingClassUnitInformationService trainingClassUnitInformationService;
-    private final TrainingClassFilterMap trainingClassFilterMap;
+    private TrainingClassFilterMap trainingClassFilterMap;
 
     @Override
     public List<ClassScheduleDTO> listAll() {
@@ -54,7 +54,6 @@ public class ClassScheduleService implements IClassScheduleService {
     public Long countDayBefore(LocalDate date, Long id) {
         return repository.countAllByDateBeforeAndTrainingClassId(date, id);
     }
-
 
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(TrainingClassFilterRequestDTO filterRequestDTO) {
@@ -77,29 +76,39 @@ public class ClassScheduleService implements IClassScheduleService {
     }
 
     @Override
-    public List<TrainingClassFilterResponseDTO> searchTrainingClassInDate(List<String> textSearch, LocalDate date) {
-        var Result = trainingClassService.findAllBySearchTextAndDate("%" + textSearch.get(0) + "%", date);
-        List<String> lowerCaseSearchTerms = textSearch.stream()
-                .map(String::toLowerCase)
-                .collect(Collectors.toList());
-        Result = searchByText(Result, lowerCaseSearchTerms);
+    public List<TrainingClassFilterResponseDTO> searchTrainingClassInDate(List<String> searchText, LocalDate date) {
+        var checkSize = searchText.isEmpty();
+
+        var Result = trainingClassService.findAllBySearchTextAndDate("%" + (checkSize ? "" : searchText.get(0)) + "%", date);
+        if (!checkSize) {
+            List<String> lowerCaseSearchTerms = searchText.stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+            Result = searchByText(Result, lowerCaseSearchTerms);
+        }
+
         return Result.stream().map(trainingClass -> getTrainingClassDetail(trainingClass, date)).collect(Collectors.toList());
     }
 
     @Override
-    public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(List<String> textSearch, LocalDate startDate, LocalDate endDate) {
-        var trainingClassByWeek = trainingClassService.findAllBySearchTextAndWeek("%" + textSearch.get(0) + "%", startDate, endDate);
-        List<String> lowerCaseSearchTerms = textSearch.stream()
-                .map(String::toLowerCase)
-                .collect(Collectors.toList());
-        trainingClassByWeek = searchByText(trainingClassByWeek, lowerCaseSearchTerms);
+    public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(List<String> searchText, LocalDate startDate, LocalDate endDate) {
+        var checkSize = searchText.isEmpty();
         List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
+        var trainingClassByWeek = trainingClassService.findAllBySearchTextAndWeek("%" + (checkSize ? "" : searchText.get(0)) + "%", startDate, endDate);
+
+        if (!checkSize) {
+            List<String> lowerCaseSearchTerms = searchText.stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+            trainingClassByWeek = searchByText(trainingClassByWeek, lowerCaseSearchTerms);
+        }
         trainingClassByWeek.stream().forEach(trainingClass -> {
             trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
                 if (classSchedule.getDate().isAfter(startDate.minusDays(2)) && classSchedule.getDate().isBefore(endDate.plusDays(1)))
                     result.add(getTrainingClassDetail(trainingClass, classSchedule.getDate()));
             });
         });
+
         return result;
     }
 
@@ -122,8 +131,7 @@ public class ClassScheduleService implements IClassScheduleService {
         return trainingClasses;
     }
 
-    @Override
-    public TrainingClassFilterResponseDTO getTrainingClassDetail(TrainingClass trainingClass, LocalDate date) {
+    private TrainingClassFilterResponseDTO getTrainingClassDetail(TrainingClass trainingClass, LocalDate date) {
         var learnedDay = repository.countAllByDateBeforeAndTrainingClassId(date, trainingClass.getId()) + 1;
         var durationDay = learnedDay + "/" + trainingClass.getDay();
         var syllabusesList = trainingClass.getTrainingProgram().getListTrainingProgramSyllabuses()
@@ -151,6 +159,7 @@ public class ClassScheduleService implements IClassScheduleService {
                 .stream()
                 .map(trainingClassUnitInformation -> trainingClassUnitInformation.getTrainer().getFullName())
                 .collect(Collectors.toList());
+
         return trainingClassFilterMap.toTrainingClassFilterResponseDTO(
                 trainingClass,
                 trainerName,

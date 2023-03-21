@@ -6,11 +6,11 @@ import com.mockproject.dto.TrainingClassFilterRequestDTO;
 import com.mockproject.entity.TrainingProgram;
 import com.mockproject.exception.FileException;
 import com.mockproject.service.interfaces.IClassScheduleService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,17 +29,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/v1/classschedule")
+@RequiredArgsConstructor
+@RequestMapping("/api/classschedule")
 @Slf4j
 public class ClassScheduleController {
-    @Autowired
-    IClassScheduleService classScheduleService;
+
+    private final IClassScheduleService classScheduleService;
 
     @PostMapping("/day")
     public ResponseEntity getTrainingClassByDay(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO) {
         var trainingClass = classScheduleService.getTrainingClassByDay(filterRequestDTO);
         if (trainingClass.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
         } else {
             return ResponseEntity.ok(trainingClass);
         }
@@ -47,9 +48,10 @@ public class ClassScheduleController {
 
     @PostMapping("/week")
     public ResponseEntity getTrainingClassByWeek(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO) {
+
         var trainingClass = classScheduleService.getTrainingClassByWeek(filterRequestDTO);
         if (trainingClass.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
         } else {
             return ResponseEntity.ok(trainingClass);
         }
@@ -59,7 +61,7 @@ public class ClassScheduleController {
     public ResponseEntity searchTrainingClassInDay(@RequestBody SearchByDTO searchByDTO) {
         var trainingClass = classScheduleService.searchTrainingClassInDate(searchByDTO.getSearchText(), searchByDTO.getNowDate());
         if (trainingClass.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
         } else {
             return ResponseEntity.ok(trainingClass);
         }
@@ -69,7 +71,7 @@ public class ClassScheduleController {
     public ResponseEntity searchTrainingClassInWeek(@RequestBody SearchByDTO searchByDTO) {
         var trainingClass = classScheduleService.searchTrainingClassInWeek(searchByDTO.getSearchText(), searchByDTO.getStartDate(), searchByDTO.getEndDate());
         if (trainingClass.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Don't have any training class");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
         } else {
             return ResponseEntity.ok(trainingClass);
         }

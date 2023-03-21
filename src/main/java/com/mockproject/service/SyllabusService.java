@@ -1,6 +1,8 @@
 package com.mockproject.service;
 
+import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.Syllabus;
+import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.service.interfaces.ISyllabusService;
 import jakarta.transaction.Transactional;
@@ -12,10 +14,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SyllabusService implements ISyllabusService {
 
-    private final SyllabusRepository repository;
+    private final SyllabusRepository syllabusRepository;
 
-    public Syllabus getSyllabusById(long id){
-        return repository.getSyllabusById(id);
+    @Override
+    public SyllabusDTO getSyllabusById(Long id){
+        Syllabus syllabus = syllabusRepository.getSyllabusById(id);
+        return SyllabusMapper.INSTANCE.toDTO(syllabus);
     }
 
 }
