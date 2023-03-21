@@ -28,6 +28,8 @@ public class UserDTO implements Serializable {
         this.attendeeId = attendeeId;
     }
 
+
+
     private Long id;
     private String email;
     private String fullName;

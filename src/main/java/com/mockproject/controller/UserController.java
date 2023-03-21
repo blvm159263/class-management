@@ -5,6 +5,7 @@ import com.mockproject.Jwt.JwtTokenProvider;
 import com.mockproject.dto.*;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.RolePermissionScope;
+import com.mockproject.entity.User;
 import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.service.interfaces.*;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
@@ -31,7 +33,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.service.ResponseMessage;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +47,7 @@ import java.util.Optional;
 @Tag(name = "User API")
 @RequestMapping("/api/user")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 public class UserController {
 
     public static final String VIEW = "ROLE_View_User";
@@ -275,7 +281,7 @@ public class UserController {
         return ResponseEntity.ok("Successfull");
     }
 
-    @PostMapping("/searchByFilter")
+    @GetMapping("/searchByFilter")
     @Operation(summary = "Search User by filter and order")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity searchByFilter(@RequestParam(value = "Id", required = false) @Parameter(description = "User id") Long id,
@@ -419,12 +425,27 @@ public class UserController {
     @Operation(summary = "Download file UserCSVExample")
     public ResponseEntity<InputStreamResource> getFile() {
         String filename = "User_import.csv";
-        InputStreamResource file = new InputStreamResource(CSVUtils.getCSVUserFileExample());
+        InputStreamResource file = new InputStreamResource(userService.getCSVUserFileExample());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.parseMediaType("application/csv"))
                 .body(file);
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload csv file to import user")
+    public ResponseEntity uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+        String message = "";
+
+        if (CSVUtils.hasCSVFormat(file)) {
+                List<User> result = userService.csvToUsers(file.getInputStream());
+                message = "Uploaded the file successfully: " + file.getOriginalFilename() + "\nImport " + result +" user succesfull!" ;
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+
+        message = "Please upload a csv file!";
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 
 }
