@@ -6,11 +6,15 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
 
+import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
+
+    @ExceptionHandler(InvalidParameterException.class)
+    public String handleRowOfPage(InvalidParameterException ex) { return "Error Message : " + ex.getMessage(); }
 
     @ExceptionHandler(NotFoundException.class)
     public String handleNotFound(NotFoundException ex){

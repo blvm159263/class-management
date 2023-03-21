@@ -17,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +32,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.security.InvalidParameterException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +41,9 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class SyllabusService implements ISyllabusService {
+
+    private final SyllabusRepository syllabusRepo;
+
     private final OutputStandardRepository outputStandardRepo;
 
     private final UnitDetailRepository unitDetailRepo;
@@ -45,6 +53,9 @@ public class SyllabusService implements ISyllabusService {
     private final ISessionService sessionService;
 
     private final TrainingProgramSyllabusRepository trainingProgramSyllabusRepository;
+
+    private static final String TEMPLATE_FILE_PATH = "file-format\\syllabus-template.csv";
+
     @Override
     public List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId) {
         TrainingProgram tp = new TrainingProgram();
@@ -70,7 +81,65 @@ public class SyllabusService implements ISyllabusService {
         return syllabusDTOList;
     }
 
-    private boolean checkOsdBeLongSyllabus(Long syllabusId, String search) {
+    @Override
+    public Page<SyllabusDTO> getListSyllabus(boolean status, LocalDate fromDate, LocalDate toDate,
+                                             List<String> search, String[] sort, Optional<Integer> page, Optional<Integer> row) {
+        List<Sort.Order> order = new ArrayList<>();
+        if(row.orElse(10) < 1)  throw new InvalidParameterException("Page size must not be less than one!");
+        if(page.orElse(0) < 0)  throw new InvalidParameterException("Page number must not be less than zero!");
+        int skipCount = page.orElse(0) * row.orElse(10);
+        Set<String> sourceFieldList = getAllFields(new Syllabus().getClass());
+        if(sort[0].contains(",")){
+            for (String sortItem: sort) {
+                String[] subSort = sortItem.split(",");
+                if(ifPropertpresent(sourceFieldList, subSort[0])){
+                    order.add(new Sort.Order(getSortDirection(subSort[1]), transferProperty(subSort[0])));
+                } else {
+                    throw new NotFoundException(subSort[0] + " is not a propertied of Syllabus!");
+                }
+            }
+        } else {
+            if(sort.length == 1){
+                throw new ArrayIndexOutOfBoundsException("Sort direction(asc/desc) not found!");
+            }
+            if(ifPropertpresent(sourceFieldList, sort[0])){
+                order.add(new Sort.Order(getSortDirection(sort[1]), transferProperty(sort[0])));
+            } else {
+                throw new NotFoundException(sort[0] + " is not a propertied of Syllabus!");
+            }
+        }
+        List<Syllabus> pages = syllabusRepo.getListSyllabus(status, fromDate, toDate, search.size() > 0 ? search.get(0) : "", getListSyllabusIdByOSD(search.size() > 0 ? search.get(0) : ""), Sort.by(order));
+        if (search.size() > 1){
+            for (int i = 1; i < search.size(); i++) {
+                String subSearch = search.get(i).toUpperCase();
+                pages = pages.stream().filter(s
+                        -> s.getName().toUpperCase().contains(subSearch) ||
+                                s.getCode().toUpperCase().contains(subSearch) ||
+                                s.getCreator().getFullName().toUpperCase().contains(subSearch) ||
+                                checkOsdBelongSyllabus(s.getId(), subSearch))
+                        .collect(Collectors.toList());
+            }
+        }
+        if(pages.size() > 0){
+            return new PageImpl<>(
+                    pages.stream().skip(skipCount).limit(row.orElse(10)).map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    PageRequest.of(page.orElse(0), row.orElse(10), Sort.by(order)),
+                    pages.size());
+        } else {
+            throw new NotFoundException("Syllabus not found!");
+        }
+    }
+
+    private static String transferProperty(String property){
+        switch (property) {
+            case "creator":
+                return "creator.fullName";
+            default:
+                return property;
+        }
+    }
+
+    private boolean checkOsdBelongSyllabus(long syllabusId, String search) {
             if (getListSyllabusIdByOSD(search).contains(syllabusId)) {
                 return true;
             }
@@ -149,6 +218,7 @@ public class SyllabusService implements ISyllabusService {
         sessionService.createSession(newSyllabus.getId(), syllabus.getSessionDTOList(), user);
         return newSyllabus.getId();
     }
+
     @Override
     public Syllabus editSyllabus(SyllabusDTO syllabusDTO, boolean status) throws IOException{
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusDTO.getId(), status);
@@ -181,7 +251,7 @@ public class SyllabusService implements ISyllabusService {
 
         return syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabusDTO));
     }
-    private static final String TEMPLATE_FILE_PATH = "file-format\\syllabus-template.csv";
+
     @Override
     public boolean deleteSyllabus(Long syllabusId, boolean status){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusId, status);

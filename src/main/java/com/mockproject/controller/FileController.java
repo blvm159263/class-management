@@ -35,7 +35,8 @@ public class FileController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "When read successful and return object",
                     content = @Content(schema = @Schema(implementation = FileClassResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "When can't read the file - Check file  data!"),
+            @ApiResponse(responseCode = "400", description = "When can't read the file - Check file  data! or Date not match with format"),
+            @ApiResponse(responseCode = "404", description = "When data of entity can not be found - not exist!"),
             @ApiResponse(responseCode = "415", description = "When file doesn't match format - Required .csv file")
     })
     @Operation(summary = "Read create-class-format.csv then return FileResponse Object")
