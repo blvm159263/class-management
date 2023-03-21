@@ -32,7 +32,6 @@ public class UnitService implements IUnitService {
     private final TrainingClassRepository trainingClassRepository;
     private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
 
-
     @Override
     public List<UnitDTO> getAllUnitBySessionId(Long sessionId, boolean status){
         Optional<List<Unit>> listUnit = unitRepository.findUnitBySessionIdAndStatus(sessionId, status);
@@ -58,6 +57,7 @@ public class UnitService implements IUnitService {
         for (UnitDTO i: listUnit) {
             createUnit(sessionId, i, user);
         }
+
         return true;
     }
 
