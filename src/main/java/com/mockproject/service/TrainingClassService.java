@@ -1,7 +1,6 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.TrainingClassDTO;
-import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.mapper.TrainingClassMapper;
 import com.mockproject.repository.LocationRepository;
@@ -21,24 +20,11 @@ import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Field;
 import java.security.InvalidParameterException;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.Year;
-import java.util.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
