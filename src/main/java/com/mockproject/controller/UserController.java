@@ -435,18 +435,18 @@ public class UserController {
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Upload csv file to import user")
-    public ResponseEntity uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity uploadFile(@RequestParam("file") MultipartFile file,
+                                     @RequestParam("replace")Boolean replace,
+                                     @RequestParam("skip") Boolean skip) throws IOException {
         String message = "";
-
         if (CSVUtils.hasCSVFormat(file)) {
-                List<User> result = userService.csvToUsers(file.getInputStream());
-                message = "Uploaded the file successfully: " + file.getOriginalFilename() + "\nImport " + result +" user succesfull!" ;
-                return ResponseEntity.status(HttpStatus.OK).body(result);
+                List<User> result = userService.csvToUsers(file.getInputStream(), replace, skip);
+                userService.storeListUser(result);
+                message = "Uploaded the file successfully: " + file.getOriginalFilename()  ;
+                return ResponseEntity.status(HttpStatus.OK).body(message);
         }
-
         message = "Please upload a csv file!";
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
-
 }
 

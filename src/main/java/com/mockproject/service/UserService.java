@@ -284,7 +284,7 @@ public class UserService implements IUserService {
     public boolean editUser(UserDTO user) {
         Optional<User> user1 = userRepo.findById(user.getId());
         Optional<Level> level = levelRepository.getLevelById(user.getLevelId());
-        if (user1.isPresent()){
+        if (user1.isPresent()) {
             User u = user1.get();
             Level level1 = level.get();
             u.setFullName(user.getFullName());
@@ -329,7 +329,7 @@ public class UserService implements IUserService {
                         user.setGender(false);
                     }
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    user.setDob(LocalDate.parse(rowData[3],formatter));
+                    user.setDob(LocalDate.parse(rowData[3], formatter));
                     user.setPhone(rowData[4]);
                     user.setStatus(true);
                     userList.add(user);
@@ -386,10 +386,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<User> csvToUsers(InputStream is) {
-        boolean checkUserEmail = true;
-        boolean replace = true;
-        boolean skip = false;
+    public List<User> csvToUsers(InputStream is, Boolean replace, Boolean skip) {
         String[] headers = {"Email", "Full name", "Gender", "Date of birth", "Image link", "Password", "Phone", "State", "Attendee", "Level", "Role"};
 
         Long count = null;
@@ -406,17 +403,50 @@ public class UserService implements IUserService {
 
             for (CSVRecord csvRecord : csvRecords) {
                 String email = csvRecord.get("Email");
-                if (checkUserEmail && replace) {
+                    if (replace){
+                        if (result != null && !result.isEmpty()) {
+                            int index = -1;
+                            for (User u : result) {
+                                if (u != null && u.getEmail().equals(email)) index = result.indexOf(u);
+                            }
+                            if (index != -1)
+                                result.remove(index);
+                        }
+                    }
+
+
+
+
                     Long idUser = null;
                     if (userRepo.findByEmail(email).isPresent()) {
                         idUser = userRepo.findByEmail(email).get().getId();
                     }
+                    boolean noadd = false;
+                    if (skip){
+                        if (result != null && !result.isEmpty()) {
+                            int index = -1;
+                            for (User u : result) {
+                                if (u != null && u.getEmail().equals(email)) index = result.indexOf(u);
+                            }
+                            if (index != -1)
+                                noadd = true;
+                        }
+
+                        if (idUser != null){
+                                noadd = true;
+                        }
+
+                    }
+
+
+
+
                     String fullName = csvRecord.get("Full name");
                     String imgLink = csvRecord.get("Image link");
                     //check state
                     int state = getStateIdByStateName(csvRecord.get("State"));
                     if (state == -1)
-                        throw new NotFoundException("Import successfull " + count + " user\n" + "Record " + (count + 1) +
+                        throw new NotFoundException("Record " + (count + 1) +
                                 " (" + email + ")" + " is invalid state");
                     //check date of birth
                     LocalDate dob;
@@ -424,13 +454,13 @@ public class UserService implements IUserService {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
                         dob = LocalDate.parse(csvRecord.get("Date of birth"), formatter);
                     } catch (DateTimeParseException e) {
-                        throw new NotFoundException("Import successfull " + count + " user\n" + "Record " + (count + 1) +
+                        throw new NotFoundException("Record " + (count + 1) +
                                 " (" + email + ")" + " is invalid date");
                     }
                     //check phone number
                     String phone = csvRecord.get("Phone");
                     if (userRepo.findByPhone(phone).isPresent() && (idUser != userRepo.findByPhone(phone).get().getId()))
-                        throw new NotFoundException("Import successfull " + count + " user\n" + "Record " + (count + 1) +
+                        throw new NotFoundException("Record " + (count + 1) +
                                 " (" + email + ")" + " is invalid phone number (phone number is exits!!!)");
                     //check gender
                     boolean gender = false;
@@ -438,43 +468,57 @@ public class UserService implements IUserService {
                         gender = false;
                     } else if (csvRecord.get("Gender").equals("Male")) {
                         gender = true;
-                    }
+                    } else throw new NotFoundException("Record " + (count + 1) +
+                            " (" + email + ")" + " is invalid gender");
+
                     boolean status = true;
 
                     //check role
                     Long roleId = null;
                     if (roleRepository.getRoleByRoleName(csvRecord.get("Role")).isPresent()) {
                         roleId = roleRepository.getRoleByRoleName(csvRecord.get("Role")).get().getId();
+                    } else {
+                        throw new NotFoundException("Record " + (count + 1) +
+                                " (" + email + ")" + " is invalid Role");
                     }
                     //check level
                     Long levelId = null;
                     if (levelRepository.getLevelByLevelCode(csvRecord.get("Level")).isPresent()) {
                         levelId = levelRepository.getLevelByLevelCode(csvRecord.get("Level")).get().getId();
+                    } else {
+                        throw new NotFoundException("Record " + (count + 1) +
+                                " (" + email + ")" + " is invalid Level");
                     }
+
+
                     //check attendee
                     Long attendeeId = null;
                     if (attendeeRepository.findByAttendeeNameAndStatus(csvRecord.get("Attendee"), true).isPresent()) {
                         attendeeId = attendeeRepository.findByAttendeeNameAndStatus(csvRecord.get("Attendee"), true).get().getId();
+                    } else {
+                        throw new NotFoundException("Record " + (count + 1) +
+                                " (" + email + ")" + " is invalid Attendee");
                     }
 
                     UserDTO userDTO = new UserDTO(email, fullName, imgLink,
                             state, dob, phone, gender, status, roleId, levelId,
                             attendeeId);
 
-
                     User user = UserMapper.INSTANCE.toEntity(userDTO);
                     user.setPassword(passwordEncoder.encode(csvRecord.get("Password")));
                     if (idUser != null) user.setId(idUser);
 
-                    result.add(user);
+
+                    if (!noadd) {
+                        result.add(user);
+                    }
                     count++;
-                }
             }
 
             return result;
 
         } catch (IOException e) {
-            throw new NotFoundException("Import " + count + " user successfull\n" + "Record " + count + 1 + " is invalid!!!");
+            throw new NotFoundException("Record " + count + 1 + " is invalid!!!");
         }
     }
 
