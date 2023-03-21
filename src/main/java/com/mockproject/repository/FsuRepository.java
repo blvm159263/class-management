@@ -10,7 +10,11 @@ import java.util.Optional;
 @Repository
 public interface FsuRepository extends JpaRepository<Fsu, Long> {
 
-    Optional<Fsu> findByStatusAndId(boolean status, long id);
+    List<Fsu> findByStatus(boolean status);
+
+    Optional<Fsu> findByFsuNameAndStatus(String name, boolean status);
+
+    Optional<Fsu> findByStatusAndId(boolean status, Long id);
 
     List<Fsu> findAllByStatus(boolean status);
 }

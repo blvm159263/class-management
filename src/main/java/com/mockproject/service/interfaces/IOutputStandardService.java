@@ -6,5 +6,9 @@ import java.util.List;
 
 public interface IOutputStandardService {
 
-    List<OutputStandardDTO> getOsdBySyllabusId(boolean status, long id);
+    OutputStandardDTO getOutputStandardById(Long outputStandardId, boolean status);
+
+    List<OutputStandardDTO> getOutputStandard(boolean status);
+
+    List<OutputStandardDTO> getOsdBySyllabusId(boolean status, Long id);
 }

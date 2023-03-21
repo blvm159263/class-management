@@ -15,7 +15,9 @@ public interface TrainingProgramSyllabusMapper {
     TrainingProgramSyllabusMapper INSTANCE = Mappers.getMapper(TrainingProgramSyllabusMapper.class);
 
     @Mapping(target = "trainingProgramId", source = "trainingProgram.id")
+    @Mapping(target = "trainingProgramName", source = "trainingProgram.name")
     @Mapping(target = "syllabusId", source = "syllabus.id")
+    @Mapping(target = "syllabusName", source = "syllabus.name")
     TrainingProgramSyllabusDTO toDTO(TrainingProgramSyllabus trainingProgramSyllabus);
 
     @Mapping(target = "trainingProgram", source = "trainingProgramId", qualifiedByName = "mapTrainingProgram")

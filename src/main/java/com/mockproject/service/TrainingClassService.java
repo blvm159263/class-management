@@ -3,42 +3,136 @@ package com.mockproject.service;
 import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.mapper.TrainingClassMapper;
+import com.mockproject.repository.LocationRepository;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.repository.TrainingClassUnitInformationRepository;
+import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import java.lang.reflect.Field;
+import java.security.InvalidParameterException;
+import java.sql.Time;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class TrainingClassService implements ITrainingClassService{
+@Slf4j
+public class TrainingClassService implements ITrainingClassService {
 
     private final TrainingClassRepository classRepo;
 
+    private final LocationRepository locationRepository;
+
+    private final TrainingProgramRepository trainingProgramRepository;
+
     private final TrainingClassUnitInformationRepository classUnitRepo;
 
-    private static final int RESULTS_PER_PAGE = 10;
+    @Override
+    public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date) {
+        return classRepo.findAllByListClassSchedulesDate(date);
+    }
+
+    @Override
+    public List<TrainingClass> findAllBySpecification(Specification specification) {
+        return classRepo.findAll((Sort) specification);
+    }
+
+    @Override
+    public List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText, LocalDate date) {
+        return classRepo.findAllBySearchTextAndListClassSchedulesDate(searchText,date);
+    }
+
+    @Override
+    public List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate, LocalDate endDate) {
+        return classRepo.findAllBySearchTextAndListClassSchedulesWeek(searchText,startDate,endDate);
+    }
+
+    @Override
+    public TrainingClassDTO getAllDetails(Long id) {
+        TrainingClass details = classRepo.findByIdAndStatus(id, true).orElseThrow();
+        return TrainingClassMapper.INSTANCE.toDTO(details);
+    }
+
+
+    @Override
+    public Long create(TrainingClassDTO trainingClassDTO) {
+        trainingClassDTO.setClassCode(generateClassCode(trainingClassDTO));
+        trainingClassDTO.setPeriod(getPeriod(trainingClassDTO.getStartTime(),trainingClassDTO.getEndTime()));
+        TrainingClass entity = TrainingClassMapper.INSTANCE.toEntity(trainingClassDTO);
+        TrainingClass trainingClass = classRepo.save(entity);
+        if (trainingClass != null) {
+            return trainingClass.getId();
+        }
+        return null;
+    }
+
+    public String generateClassCode(TrainingClassDTO trainingClassDTO) {
+
+        final Map<Long, String> attendeeCode = new HashMap<>();
+        attendeeCode.put(1L,"FR");
+        attendeeCode.put(2L,"FR.F.ON");
+        attendeeCode.put(3L,"FR.F.OFF");
+        attendeeCode.put(4L,"IN");
+
+        String locationName = locationRepository.findById(trainingClassDTO.getLocationId()).orElseThrow().getLocationName();
+        String locationCode = locationName.chars()
+                .filter(Character::isUpperCase)
+                .mapToObj(c -> String.valueOf((char)c))
+                .collect(Collectors.joining());
+        String programName = trainingProgramRepository.findById(trainingClassDTO.getTrainingProgramId()).orElseThrow().getName();
+        String programCode = programName.split(" ", 2)[0];
+        Year yearCode = Year.now().minusYears(2000);
+        StringBuilder builder = new StringBuilder();
+        List<TrainingClass> listExisting = classRepo.findByClassNameContaining(trainingClassDTO.getClassName());
+        String versionCode = String.valueOf(listExisting.size() + 1);
+
+        builder.append(locationCode)
+                .append(yearCode)
+                .append("_")
+                .append(attendeeCode.get(trainingClassDTO.getAttendeeId()))
+                .append("_")
+                .append(programCode)
+                .append("_")
+                .append(versionCode);
+
+        return builder.toString();
+    }
+
+    public int getPeriod(Time startTime, Time endTime){
+        if(startTime.before(Time.valueOf("12:00:00"))){
+            return 0;
+        }
+        else if(startTime.after(Time.valueOf("17:00:00"))){
+            return 2;
+        }
+        return 1;
+    }
+
 
     @Override
     public Page<TrainingClassDTO> getListClass(boolean status,
                                                List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                                List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                               long fsu, long trainerId, List<String> search, String[] sort, Optional<Integer> page)
+                                               Long fsu, Long trainerId,  List<String> search, String[] sort, Optional<Integer> page, Optional<Integer> row)
     {
         List<Sort.Order> order = new ArrayList<>();
-        int skipCount = page.orElse(0) * RESULTS_PER_PAGE;
+        if(row.orElse(10) < 1)  throw new InvalidParameterException("Page size must not be less than one!");
+        if(page.orElse(0) < 0)  throw new InvalidParameterException("Page number must not be less than zero!");
+        int skipCount = page.orElse(0) * row.orElse(10);
         Set<String> sourceFieldList = getAllFields(new TrainingClass().getClass());
         if(sort[0].contains(",")){
             for (String sortItem: sort) {
@@ -81,8 +175,8 @@ public class TrainingClassService implements ITrainingClassService{
         }
         if(pages.size() > 0){
             return new PageImpl<>(
-                    pages.stream().skip(skipCount).limit(RESULTS_PER_PAGE).map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                    PageRequest.of(page.orElse(0), RESULTS_PER_PAGE, Sort.by(order)),
+                    pages.stream().skip(skipCount).limit(row.orElse(10)).map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    PageRequest.of(page.orElse(0), row.orElse(10), Sort.by(order)),
                     pages.size());
         }else {
             throw new NotFoundException("Training Class not found!");

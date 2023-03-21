@@ -38,8 +38,10 @@ public class Unit implements Serializable {
 
     @Column(
             name = "unit_number",
-            nullable = false
+            nullable = false,
+            unique = false
     )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int unitNumber;
 
     @Column(
@@ -51,12 +53,12 @@ public class Unit implements Serializable {
     private boolean status;
 
     @ManyToOne
-    @JsonManagedReference
+    @JsonManagedReference(value = "session_unit")
     @JoinColumn(name = "session_id")
     private Session session;
 
     @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonBackReference(value = "unit_unitdetail")
     private List<UnitDetail> listUnitDetail;
 
     @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY)

@@ -14,6 +14,7 @@ public interface TowerMapper {
     TowerMapper INSTANCE = Mappers.getMapper(TowerMapper.class);
 
     @Mapping(target = "locationId", source = "location.id")
+    @Mapping(target = "locationName", source = "location.locationName")
     TowerDTO toDTO(Tower tower);
 
     @Mapping(target = "location", source = "locationId", qualifiedByName = "mapLocation")

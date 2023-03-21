@@ -14,6 +14,7 @@ public interface UnitMapper {
     UnitMapper INSTANCE = Mappers.getMapper(UnitMapper.class);
 
     @Mapping(target = "sessionId", source = "session.id")
+    @Mapping(target = "sessionNumber", source = "session.sessionNumber")
     UnitDTO toDTO(Unit unit);
 
     @Mapping(target = "session", source = "sessionId", qualifiedByName = "mapSession")

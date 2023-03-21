@@ -16,8 +16,11 @@ public interface UnitDetailMapper {
     UnitDetailMapper INSTANCE = Mappers.getMapper(UnitDetailMapper.class);
 
     @Mapping(target = "unitId", source = "unit.id")
+    @Mapping(target = "unitTitle", source = "unit.unitTitle")
     @Mapping(target = "outputStandardId", source = "outputStandard.id")
+    @Mapping(target = "outputStandardName", source = "outputStandard.standardName")
     @Mapping(target = "deliveryTypeId", source = "deliveryType.id")
+    @Mapping(target = "deliveryTypeName", source = "deliveryType.typeName")
     UnitDetailDTO toDTO(UnitDetail unitDetail);
 
     @Mapping(target = "unit", source = "unitId", qualifiedByName = "mapUnit")

@@ -8,9 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
+
+    List<Syllabus> findByStatus(boolean status);
 
     @Query("SELECT s FROM Syllabus s " +
             "WHERE s.status = ?1 " +
@@ -20,5 +23,13 @@ public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
     List<Syllabus> getListSyllabus(boolean status,
                                    LocalDate fromDate, LocalDate toDate,
                                    String search, List<Long> syllabusIdList, Sort sort);
+    Optional<Syllabus> findByIdAndStatus(Long id, boolean status);
 
+    Optional<List<Syllabus>> findByStateAndStatus(boolean state, boolean status);
+
+    Optional<List<Syllabus>> findAllByStatus(boolean status);
+
+    Optional<Syllabus> findByIdAndStateAndStatus(Long syllabusId, boolean state, boolean status);
+
+    Syllabus getSyllabusById(Long id);
 }
