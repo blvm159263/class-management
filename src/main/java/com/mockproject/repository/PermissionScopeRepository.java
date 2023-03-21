@@ -4,8 +4,10 @@ import com.mockproject.entity.PermissionScope;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface PermissionScopeRepository extends JpaRepository<PermissionScope, Long> {
 
-    PermissionScope getPermissionScopeByScopeName(String name);
+    Optional<PermissionScope> getPermissionScopeByScopeName(String name);
 }

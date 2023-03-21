@@ -1,23 +1,26 @@
 package com.mockproject.utils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Base64;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 public class FileUtils {
-    public static byte[] compressFile(byte[] data) throws IOException {
+    public static byte[] compressFile(byte[] uncompressedData) throws IOException {
         Deflater deflater = new Deflater();
         deflater.setLevel(Deflater.BEST_COMPRESSION);
-        deflater.setInput(data);
+        deflater.setInput(uncompressedData);
         deflater.finish();
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(data.length);
-        byte[] tmp = new byte[10*1024];
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(uncompressedData.length);
+        byte[] bufferBytes = new byte[10*1024];
         while (!deflater.finished()){
-            int size = deflater.deflate(tmp);
-            byteArrayOutputStream.write(tmp,0,size);
+            int size = deflater.deflate(bufferBytes);
+            byteArrayOutputStream.write(bufferBytes,0,size);
         }
         byteArrayOutputStream.close();
         return byteArrayOutputStream.toByteArray();
@@ -34,5 +37,12 @@ public class FileUtils {
         }
         outputStream.close();
         return outputStream.toByteArray();
+    }
+
+    public static byte[] getFileBytes(String filePath) throws IOException {
+        File file = new File(filePath);
+        byte[] bytes = Files.readAllBytes(file.toPath());
+        Base64.getEncoder().encode(bytes);
+        return bytes;
     }
 }

@@ -1,6 +1,5 @@
 package com.mockproject.config;
 
-
 import com.mockproject.jwt.JwtAuthenticationFilter;
 import com.mockproject.service.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,7 +33,6 @@ public class SecurityConfig {
     @Autowired
     CustomUserDetailsService customUserDetailsService;
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         // Password encoder, để Spring Security sử dụng mã hóa mật khẩu người dùng
@@ -59,7 +57,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
-        http.authorizeHttpRequests().requestMatchers("/api/user/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+        http.authorizeHttpRequests().requestMatchers("/api/user/login", "/swagger-ui/**", "/v3/api-docs/**","/user/encodePassword").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore( jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
@@ -80,6 +78,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-
 }

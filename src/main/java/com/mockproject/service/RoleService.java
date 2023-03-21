@@ -62,4 +62,11 @@ public class RoleService implements IRoleService {
         return false;
     }
 
+    @Override
+    public Boolean checkDuplicatedByRoleIdAndRoleName(Long id, String name) {
+        if (repository.getRoleByIdIsNotAndRoleName(id, name).isPresent()){
+            return true;
+        } return false;
+    }
+
 }

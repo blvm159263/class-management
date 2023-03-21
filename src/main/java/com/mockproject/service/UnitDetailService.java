@@ -37,6 +37,11 @@ public class UnitDetailService implements IUnitDetailService {
     private final ITrainingMaterialService trainingMaterialService;
 
     @Override
+    public List<UnitDetail> getUnitDetailByUnitId(Long idUnit) {
+        return null;
+    }
+
+    @Override
     public List<UnitDetailDTO> getAllUnitDetailByUnitId(Long unitId, boolean status) {
         Optional<List<UnitDetail>> unitDetails = unitDetailRepository.findByUnitIdAndStatus(unitId, status);
         unitDetails.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
@@ -146,8 +151,8 @@ public class UnitDetailService implements IUnitDetailService {
     }
 
     @Override
-    public List<UnitDetail> getUnitDetailByUnitId(Long idUnit) {
-        return unitDetailRepository.getListUnitDetailByUnitId(idUnit);
+    public UnitDetail get(long id) {
+        return null;
     }
 
     @Override

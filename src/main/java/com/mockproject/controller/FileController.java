@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,7 +28,6 @@ import java.nio.file.Paths;
 @Tag(name = "File API")
 @RequestMapping("api/file-csv")
 @SecurityRequirement(name = "Authorization")
-@Slf4j
 public class FileController {
 
     private final IFileService service;
@@ -37,7 +35,8 @@ public class FileController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "When read successful and return object",
                     content = @Content(schema = @Schema(implementation = FileClassResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "When can't read the file - Check file  data!"),
+            @ApiResponse(responseCode = "400", description = "When can't read the file - Check file  data! or Date not match with format"),
+            @ApiResponse(responseCode = "404", description = "When data of entity can not be found - not exist!"),
             @ApiResponse(responseCode = "415", description = "When file doesn't match format - Required .csv file")
     })
     @Operation(summary = "Read create-class-format.csv then return FileResponse Object")

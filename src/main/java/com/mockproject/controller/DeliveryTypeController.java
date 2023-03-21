@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,21 +24,23 @@ import java.util.List;
 @RestController
 @Tag(name = "Delivery API")
 @RequestMapping(value = "/api/delivery")
-@RequiredArgsConstructor
+@Tag(name = "Delivery type", description = "API related delivery type")
 @SecurityRequirement(name = "Authorization")
-@Slf4j
+@RequiredArgsConstructor
 public class DeliveryTypeController {
 
     private final IDeliveryTypeService deliveryTypeService;
 
     @GetMapping("")
+    @Operation(summary = "Get all delivery type")
     public ResponseEntity<List<DeliveryTypeDTO>> getAll(){
         List<DeliveryTypeDTO> deliveryTypeDTOList = deliveryTypeService.getDeliveryTypes(true);
         return ResponseEntity.ok(deliveryTypeDTOList);
     }
 
     @GetMapping("/{deliveryTypeId}")
-    public ResponseEntity<DeliveryTypeDTO> getDeliveryTypeById(@PathVariable("deliveryTypeId") Long id){
+    @Operation(summary = "get Delivery type by delivery type id")
+    public ResponseEntity<DeliveryTypeDTO> getDeliveryTypeById(@PathVariable("deliveryTypeId") long id){
         DeliveryTypeDTO deliveryTypeDTO = deliveryTypeService.getDeliveryType(id, true);
         return ResponseEntity.ok(deliveryTypeDTO);
     }
@@ -59,7 +60,6 @@ public class DeliveryTypeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Delivery Type have ID = " + id);
         }
     }
-
 
     @Operation(summary = "Get all class's DeliveryTypes by TrainingClass id ")
     @ApiResponses(value = {

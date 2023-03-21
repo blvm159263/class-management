@@ -26,15 +26,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 class UnitDetailServiceTest {
 
-
     @MockBean
     private UnitDetailRepository unitDetailRepository;
+
     @MockBean
     private UnitRepository unitRepository;
+
     @MockBean
     private ITrainingMaterialService trainingMaterialService;
-
-
 
     @Autowired
     private UnitDetailService unitDetailService;

@@ -119,7 +119,6 @@ public class TrainingMaterialService implements ITrainingMaterialService {
         }
     }
 
-
     @Override
     public boolean deleteTrainingMaterial(Long trainingMaterialId, boolean status){
         try {
