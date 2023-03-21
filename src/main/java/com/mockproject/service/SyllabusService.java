@@ -331,6 +331,8 @@ public class SyllabusService implements ISyllabusService {
             syllabusDTO = SyllabusMapper.INSTANCE.toDTO(syllabus);
         }
 
+        syllabusDTO.setHour(BigDecimal.valueOf(0));
+
         // condition Name or code
         // 1 Name
         // 2 Code
