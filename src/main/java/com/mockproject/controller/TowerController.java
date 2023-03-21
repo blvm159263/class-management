@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
@@ -24,6 +25,7 @@ import java.util.List;
 @RestController
 @Tag(name = "Tower API")
 @RequestMapping("api/tower")
+@SecurityRequirement(name = "Authorization")
 public class TowerController {
 
     private final ITowerService service;
@@ -52,7 +54,7 @@ public class TowerController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TowerDTO.class)))
     })
     @GetMapping("/class-towers")
-    public ResponseEntity<?> getAllTowers(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+    public ResponseEntity<?> getAllTowers(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(service.getAllTowersByTrainingClassId(id));
         }catch (Exception e){
@@ -72,7 +74,7 @@ public class TowerController {
     })
     @GetMapping("/class-towers-for-a-date")
     public ResponseEntity<?> getAllTowersForADate(
-            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
+            @Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id,
             @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth
     ) {
         try{

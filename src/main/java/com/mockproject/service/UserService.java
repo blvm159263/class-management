@@ -1,7 +1,13 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.UserDTO;
-import com.mockproject.entity.*;
+import com.mockproject.dto.UserDTOCustom;
+import com.mockproject.entity.Level;
+import com.mockproject.entity.Role;
+import com.mockproject.entity.User;
+import com.mockproject.mapper.AttendeeMapper;
+import com.mockproject.mapper.LevelMapper;
+import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitService;
@@ -38,7 +44,6 @@ public class UserService implements IUserService {
     private final UserRepository userRepo;
     private final LevelRepository levelRepository;
     private final RoleRepository roleRepository;
-    private final UserRepository repository;
     private final TrainingClassRepository trainingClassRepository;
     private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
     private final TrainingClassAdminRepository trainingClassAdminRepository;
@@ -46,10 +51,11 @@ public class UserService implements IUserService {
     private final IUnitService unitService;
 
     @Override
-    public UserDTO getUserById(boolean status, long id) {
+    public UserDTO getUserById(boolean status, Long id) {
         User user = userRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Users not found with id: "+ id));
         return UserMapper.INSTANCE.toDTO(user);
     }
+
 
     @Override
     public List<UserDTO> listClassAdminTrue() {
@@ -75,15 +81,23 @@ public class UserService implements IUserService {
         return userRepo.findAllByStatus(status).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
+
+    @Override
+    public List<UserDTOCustom> getAllByPageAndRowPerPage(Long page, Long rowPerPage) {
+        List<User> listUser = userRepo.getAllByPageAndRowPerPage(page, rowPerPage);
+
+        List<UserDTOCustom> mlist = new ArrayList<>();
+        for (User u: listUser) {
+            UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), getState(u.getState()), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
+                    RoleMapper.INSTANCE.toDTO( u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()) );
+            mlist.add(userDTOCustom);
+        }
+        return mlist;
+    }
+
     @Override
     public List<UserDTO> getAll() {
         return userRepo.findAllBy().stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
-    }
-
-
-    @Override
-    public List<UserDTO> getAllByPageAndRowPerPage(long page, long rowPerPage) {
-        return userRepo.getAllByPageAndRowPerPage(page, rowPerPage).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -106,6 +120,14 @@ public class UserService implements IUserService {
         Page<User> pages;
         try {
             pages = userRepo.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, pageable);
+
+            List<UserDTOCustom> result = new ArrayList<>();
+            for (User u: pages) {
+                UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), getState(u.getState()), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
+                        RoleMapper.INSTANCE.toDTO( u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()) );
+                result.add(userDTOCustom);
+            }
+
         } catch (Exception e) {
             throw e;
         }
@@ -132,7 +154,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean updateStatus(long id) {
+    public boolean updateStatus(Long id) {
         boolean status = false;
         Optional<User> user = userRepo.findById(id);
         if (user.isPresent()) {
@@ -145,7 +167,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Integer updateStateToFalse(long id) {
+    public Integer updateStateToFalse(Long id) {
         Optional<User> user = userRepo.findById(id);
         int state = -1;
         if (user.isPresent()) {
@@ -158,7 +180,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Integer updateStateToTrue(long id) {
+    public Integer updateStateToTrue(Long id) {
         Optional<User> user = userRepo.findById(id);
         int state = -1;
         if (user.isPresent()) {
@@ -171,7 +193,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean changeRole(long id, long roleId) {
+    public boolean changeRole(Long id, Long roleId) {
         Optional<User> user = userRepo.findById(id);
         Optional<Role> role = roleRepository.getRoleById(roleId);
         if (user.isPresent() && role.isPresent()) {
@@ -185,7 +207,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean editName(long id, String name) {
+    public boolean editName(Long id, String name) {
         Optional<User> user = userRepo.findById(id);
         if (user.isPresent()) {
             User u = user.get();
@@ -197,7 +219,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean editDoB(long id, LocalDate date) {
+    public boolean editDoB(Long id, LocalDate date) {
         Optional<User> user = userRepo.findById(id);
         if (user.isPresent()) {
             User u = user.get();
@@ -209,7 +231,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean editGender(long id, boolean gender) {
+    public boolean editGender(Long id, boolean gender) {
         Optional<User> user = userRepo.findById(id);
         if (user.isPresent()) {
             User u = user.get();
@@ -221,7 +243,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean editLevel(long id, String levelCode) {
+    public boolean editLevel(Long id, String levelCode) {
         Optional<User> user = userRepo.findById(id);
         Optional<Level> level = levelRepository.getLevelByLevelCode(levelCode);
         if (user.isPresent() && level.isPresent()) {
@@ -298,35 +320,18 @@ public class UserService implements IUserService {
         return userList.toString();
     }
 
-    @Override
-    public List<UserDTO> getAllTrainersByTrainingClassId(long id) {
-        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        List<TrainingClassUnitInformation> list = trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc, true).orElseThrow();
-        List<User> listUser = list.stream().map(p -> userRepo.findByIdAndStatus(p.getTrainer().getId(), true).orElseThrow()).distinct().toList();
-        return listUser.stream().map(UserMapper.INSTANCE::toDTO).toList();
-    }
-
-    @Override
-    public List<UserDTO> getAllAdminsByTrainingClassId(long id) {
-        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        List<TrainingClassAdmin> list = trainingClassAdminRepository.findByTrainingClassAndStatus(tc, true);
-        List<User> admins = list.stream().map(p -> userRepo.findByIdAndStatus(p.getAdmin().getId(), true).orElseThrow()).toList();
-        return admins.stream().map(UserMapper.INSTANCE::toDTO).toList();
-    }
-
-    @Override
-    public UserDTO getCreatorByTrainingClassId(long id) {
-        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        User user = userRepo.findByIdAndStatus(tc.getCreator().getId(), true).orElseThrow();
-        return UserMapper.INSTANCE.toDTO(user);
-    }
-
-    @Override
-    public List<UserDTO> getAllTrainersForADateByTrainingClassId(long id, int dayNth) {
-        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        List<Unit> units = unitService.getListUnitsInASessionByTrainingClassId(id, dayNth);
-        List<TrainingClassUnitInformation> list = units.stream().map(p-> trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(p, tc, true).orElseThrow()).toList();
-        List<User> trainers = list.stream().map(p-> userRepo.findByIdAndStatus(p.getTrainer().getId(), true).orElseThrow()).toList();
-        return trainers.stream().map(UserMapper.INSTANCE::toDTO).toList();
+    private String getState(int id){
+        switch (id){
+            case 0:
+                return "Off class";
+            case 1:
+                return "Active";
+            case 3:
+                return "On class";
+            case 4:
+                return "On boaring";
+            default:
+                return "";
+        }
     }
 }

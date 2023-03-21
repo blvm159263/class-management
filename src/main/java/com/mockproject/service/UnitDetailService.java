@@ -36,8 +36,14 @@ public class UnitDetailService implements IUnitDetailService {
 
     private final ITrainingMaterialService trainingMaterialService;
 
+
     @Override
-    public List<UnitDetailDTO> getAllUnitDetailByUnitId(long unitId, boolean status) {
+    public List<UnitDetail> getUnitDetailByUnitId(Long idUnit) {
+        return null;
+    }
+
+    @Override
+    public List<UnitDetailDTO> getAllUnitDetailByUnitId(Long unitId, boolean status) {
         Optional<List<UnitDetail>> unitDetails = unitDetailRepository.findByUnitIdAndStatus(unitId, status);
         unitDetails.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         List<UnitDetailDTO> unitDetailDTOList = new ArrayList<>();
@@ -54,7 +60,7 @@ public class UnitDetailService implements IUnitDetailService {
     }
 
     @Override
-    public boolean createUnitDetail(long unitId, List<UnitDetailDTO> listUnitDetail, User user){
+    public boolean createUnitDetail(Long unitId, List<UnitDetailDTO> listUnitDetail, User user){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, true);
         unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         for (UnitDetailDTO i: listUnitDetail) {
@@ -64,7 +70,7 @@ public class UnitDetailService implements IUnitDetailService {
     }
 
     @Override
-    public boolean createUnitDetail(long unitId, UnitDetailDTO unitDetailDTO, User user){
+    public boolean createUnitDetail(Long unitId, UnitDetailDTO unitDetailDTO, User user){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, true);
         unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         BigDecimal duration = unit.get().getDuration();
@@ -81,7 +87,7 @@ public class UnitDetailService implements IUnitDetailService {
     }
 
     @Override
-    public UnitDetail getUnitDetailById(long id, boolean status){
+    public UnitDetail getUnitDetailById(Long id, boolean status){
         Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(id, status);
         unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         return unitDetail.get();
@@ -119,7 +125,7 @@ public class UnitDetailService implements IUnitDetailService {
     }
 
     @Override
-    public boolean deleteUnitDetail(long unitDetailId, boolean status){
+    public boolean deleteUnitDetail(Long unitDetailId, boolean status){
         Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(unitDetailId, status);
         unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "unitDetail "+ unitDetailId));
         unitDetail.get().setStatus(false);
@@ -130,7 +136,7 @@ public class UnitDetailService implements IUnitDetailService {
     }
 
     @Override
-    public boolean deleteUnitDetails(long unitId, boolean status){
+    public boolean deleteUnitDetails(Long unitId, boolean status){
         Optional<List<UnitDetail>> unitDetails = unitDetailRepository.findByUnitIdAndStatus(unitId, status);
         ListUtils.checkList(unitDetails);
         unitDetails.get().forEach((i) -> deleteUnitDetail(i.getId(), status));
@@ -138,22 +144,11 @@ public class UnitDetailService implements IUnitDetailService {
     }
 
     @Override
-    public boolean toggleUnitDetailType(long unitDetailId, boolean status){
+    public boolean toggleUnitDetailType(Long unitDetailId, boolean status){
         Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(unitDetailId, status);
         unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         unitDetail.get().setType(unitDetail.get().isType() == true ? false: true);
         return true;
     }
 
-    @Override
-    public List<UnitDetail> getUnitDetailByUnitId(long idUnit) {
-        return unitDetailRepository.getListUnitDetailByUnitId(idUnit);
-    }
-
-    @Override
-    public List<UnitDetailDTO> listByUnitIdTrue(Long id) {
-        Unit unit = new Unit();
-        unit.setId(id);
-        return unitDetailRepository.findByUnitAndStatus(unit,true).stream().map(UnitDetailMapper.INSTANCE::toDTO).toList();
-    }
 }

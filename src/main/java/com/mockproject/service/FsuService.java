@@ -29,14 +29,14 @@ public class FsuService implements IFsuService {
     }
 
     @Override
-    public FsuDTO getFsuByTrainingClassId(long id) {
+    public FsuDTO getFsuByTrainingClassId(Long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         if(tc.getFsu().isStatus()){return FsuMapper.INSTANCE.toDTO(tc.getFsu());}
         return null;
     }
 
     @Override
-    public FsuDTO getFsuById(boolean status, long id) {
+    public FsuDTO getFsuById(boolean status, Long id) {
         Fsu fsu = fsuRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Fsu not found with id: "+ id));
         return FsuMapper.INSTANCE.toDTO(fsu);
     }

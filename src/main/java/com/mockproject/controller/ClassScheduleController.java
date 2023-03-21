@@ -90,7 +90,7 @@ public class ClassScheduleController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = ClassScheduleDTO.class)))
     })
     @GetMapping("/in-class")
-    public ResponseEntity<?> getClassSchedule(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+    public ResponseEntity<?> getClassSchedule(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(classScheduleService.getClassScheduleByTrainingClassId(id));
         }catch (Exception e){

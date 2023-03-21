@@ -22,7 +22,7 @@ public class TrainingClassAdminService implements ITrainingClassAdminService {
     public boolean saveList(List<Long> adminId, Long tcId) {
         List<TrainingClassAdmin> list =
                 adminId.stream().map(p -> TrainingClassAdminMapper.INSTANCE.toEntity(
-                                        new TrainingClassAdminDTO(null, true, p, tcId))
+                                        new TrainingClassAdminDTO(null, true, p,null, tcId, null))
                                     ).toList();
         List<TrainingClassAdmin> result = repository.saveAll(list);
         return !result.isEmpty();

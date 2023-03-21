@@ -21,7 +21,7 @@ public class RoleService implements IRoleService {
     private final RoleRepository repository;
 
     @Override
-    public RoleDTO getRoleById(long id){
+    public RoleDTO getRoleById(Long id){
         Optional<Role> role = repository.getRoleById(id);
         if (role.isPresent()){
             return RoleMapper.INSTANCE.toDTO(role.get());
@@ -60,6 +60,13 @@ public class RoleService implements IRoleService {
             return true;
         } else
         return false;
+    }
+
+    @Override
+    public Boolean checkDuplicatedByRoleIdAndRoleName(Long id, String name) {
+        if (repository.getRoleByIdIsNotAndRoleName(id, name).isPresent()){
+            return true;
+        } return false;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.mockproject.repository;
 
+
 import com.mockproject.entity.TrainingClass;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface TrainingClassRepository extends JpaRepository<TrainingClass, Long> {
 
-    Optional<TrainingClass> findByIdAndStatus(long id, Boolean status);
+    Optional<TrainingClass> findByIdAndStatus(Long id, Boolean status);
 
     List<TrainingClass> findByClassNameContaining(String name);
 
@@ -32,7 +33,7 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "OR c.creator.fullName LIKE '%' + ?11 + '%')")
     List<TrainingClass> getListClass(boolean status, List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                      List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                     long fsu, List<Long> classId, String search, Sort sort);
+                                     Long fsu, List<Long> classId, String search, Sort sort);
 
     List<TrainingClass> findAllByStatus(boolean status);
 

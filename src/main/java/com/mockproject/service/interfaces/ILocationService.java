@@ -13,5 +13,5 @@ public interface ILocationService {
 
     List<LocationDTO> getAllLocation(boolean status);
 
-    LocationDTO getLocationById(boolean status, long id);
+    LocationDTO getLocationById(boolean status, Long id);
 }

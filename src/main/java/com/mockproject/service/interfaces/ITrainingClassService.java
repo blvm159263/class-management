@@ -22,15 +22,17 @@ public interface ITrainingClassService {
 
     Page<TrainingClassDTO> getListClass(boolean status,
                                         List<Long> locationId, LocalDate fromDate, LocalDate toDate,
-                                        List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                        long fsu, long trainerId, List<String> search, String[] sort, Optional<Integer> page);
+                                        List<Integer> period, String isOnline, String state, List<Long> attendeeId, Long fsu,
+                                        Long trainerId, List<String> search, String[] sort, Optional<Integer> page, Optional<Integer> row);
 
     List<TrainingClassDTO> getAllClass();
 
     Long create(TrainingClassDTO trainingClassDTO);
 
 
-    TrainingClassDTO getAllDetails(long id);
+    TrainingClassDTO getAllDetails(Long id);
+
+
 
 
 }

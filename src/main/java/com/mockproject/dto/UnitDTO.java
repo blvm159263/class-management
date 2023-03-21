@@ -20,5 +20,6 @@ public class UnitDTO implements Serializable {
     private BigDecimal duration;
     private boolean status;
     private Long sessionId;
+    private String sessionNumber;
     private List<UnitDetailDTO> unitDetailDTOList;
 }

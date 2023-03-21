@@ -8,5 +8,5 @@ public interface IContactService {
 
     List<ContactDTO> listAllTrue();
 
-    ContactDTO getContactByTrainingClassId(long id);
+    ContactDTO getContactByTrainingClassId(Long id);
 }

@@ -19,7 +19,7 @@ public class LevelService implements ILevelService {
     private final LevelRepository repository;
 
     @Override
-    public LevelDTO getLevelById(long id){
+    public LevelDTO getLevelById(Long id){
         Optional<Level> level = repository.getLevelById(id);
         if (level.isPresent()){
             return LevelMapper.INSTANCE.toDTO(level.get());
@@ -29,8 +29,8 @@ public class LevelService implements ILevelService {
     }
 
     @Override
-    public long getLevelByLevelCode(String levelCode) {
-        long levelId = repository.getLevelByLevelCode(levelCode).get().getId();
+    public Long getLevelByLevelCode(String levelCode) {
+        Long levelId = repository.getLevelByLevelCode(levelCode).get().getId();
         return levelId;
     }
 

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +26,10 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Unit API")
+@Tag(name = "Unit", description = "API realted Unit")
 @RequestMapping(value = "/api/unit")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 public class UnitController {
     public static final String VIEW = "ROLE_View_Syllabus";
     public static final String MODIFY = "ROLE_Modify_Syllabus";
@@ -37,35 +39,40 @@ public class UnitController {
     private final IUnitService unitService;
 
     @GetMapping("/{sessionId}")
+    @Operation(summary = "Get all unit by session id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<UnitDTO>> getAllUnitBySessionId(@PathVariable("sessionId") long sessionId){
+    public ResponseEntity<List<UnitDTO>> getAllUnitBySessionId(@PathVariable("sessionId") Long sessionId){
         List<UnitDTO> listUnit = unitService.getAllUnitBySessionId(sessionId, true);
         return ResponseEntity.ok(listUnit);
     }
 
     @PostMapping("/create/{id}")
+    @Operation(summary = "Create unit by session id")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> createUnit(@PathVariable("id") long sessionId,@RequestBody List<UnitDTO> listUnit){
+    public ResponseEntity<Boolean> createUnit(@PathVariable("id") @Parameter(description = "Session id") Long sessionId, @RequestBody List<UnitDTO> listUnit){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(unitService.createUnit(sessionId, listUnit, user.getUser()));
     }
 
     @PutMapping("/edit")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Operation(summary = "Edit unit by UnitDTO")
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Unit> editUnit(@RequestBody UnitDTO unitDTO)throws IOException {
         Unit updateUnit = unitService.editUnit(unitDTO, true);
         return ResponseEntity.ok(updateUnit);
     }
 
     @PutMapping("delete/{id}")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnit(@PathVariable("id") long unitId){
+    @Operation(summary = "Delete unit by unit id")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<Boolean> deleteUnit(@PathVariable("id") @Parameter(description = "Unit id") Long unitId){
         return ResponseEntity.ok(unitService.deleteUnit(unitId, true));
     }
 
     @PutMapping("multi-delete/{id}")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnits(@PathVariable("id") long sessionId) {
+    @Operation(summary = "Delete multi units by sessionId")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<Boolean> deleteUnits(@PathVariable("id") @Parameter(description = "Session id") Long sessionId){
         return ResponseEntity.ok(unitService.deleteUnits(sessionId, true));
     }
 
@@ -99,7 +106,7 @@ public class UnitController {
     })
     @GetMapping("/class-units-for-a-date")
     public ResponseEntity<?> getAllUnitsForADate(
-            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
+            @Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id,
             @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth
     ) {
         try{

@@ -4,6 +4,7 @@ import com.mockproject.dto.OutputStandardDTO;
 import com.mockproject.service.interfaces.IOutputStandardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +18,15 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Output Standard API")
-@RequestMapping("/api/osd")
+@Tag(name = "Output Standard", description = "API related Output standard")
+@RequestMapping(value = "/api/osd")
+@SecurityRequirement(name = "Authorization")
 public class OutputStandardController {
+
 
     private final IOutputStandardService outputStandardService;
 
-    @GetMapping("/{syllabusId}")
+    @GetMapping("/syllabus/{syllabusId}")
     @Operation(
             summary = "Get output standard by syllabus ID"
     )
@@ -36,12 +40,14 @@ public class OutputStandardController {
     }
 
     @GetMapping("/{outputStandardId}")
-    public ResponseEntity<OutputStandardDTO> getOutputStandardById(@PathVariable("outputStandardId") long id){
+    @Operation(summary = "Get output standard by output standard id")
+    public ResponseEntity<OutputStandardDTO> getOutputStandardById(@PathVariable("outputStandardId") Long id){
         OutputStandardDTO outputStandardDTO = outputStandardService.getOutputStandardById(id, true);
         return ResponseEntity.ok(outputStandardDTO);
     }
 
     @GetMapping("")
+    @Operation(summary = "Get all output standard")
     public ResponseEntity<List<OutputStandardDTO>> getAll(){
         List<OutputStandardDTO> outputStandardDTOList = outputStandardService.getOutputStandard(true);
         return ResponseEntity.ok(outputStandardDTOList);

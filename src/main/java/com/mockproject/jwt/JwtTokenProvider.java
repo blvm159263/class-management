@@ -1,4 +1,4 @@
-package com.mockproject.jwt;
+package com.mockproject.Jwt;
 
 import com.mockproject.entity.CustomUserDetails;
 import io.jsonwebtoken.*;
@@ -14,7 +14,7 @@ public class JwtTokenProvider {
 
     private final String JWT_SECRET = "LionelMessiIsTheGreatestOfAllTime";
 
-    private final long JWT_EXPIRATION = 8640000L;
+    private final Long JWT_EXPIRATION = 8640000L;
 
 
     public String generateToken(CustomUserDetails userDetails) {

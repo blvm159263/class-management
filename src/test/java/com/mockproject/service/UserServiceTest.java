@@ -3,9 +3,8 @@ package com.mockproject.service;
 import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.Role;
 import com.mockproject.entity.User;
-import com.mockproject.repository.LevelRepository;
-import com.mockproject.repository.RoleRepository;
-import com.mockproject.repository.UserRepository;
+import com.mockproject.repository.*;
+import com.mockproject.service.interfaces.IUnitService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +34,14 @@ class UserServiceTest {
     private LevelRepository levelRepository;
     @MockBean
     private PasswordEncoder passwordEncoder;
+    @MockBean
+    private TrainingClassRepository trainingClassRepository;
+    @MockBean
+    private TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
+    @MockBean
+    private TrainingClassAdminRepository trainingClassAdminRepository;
+    @MockBean
+    private IUnitService unitService;
 
 
     @Autowired

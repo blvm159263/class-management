@@ -44,7 +44,7 @@ public class SessionService implements ISessionService {
     }
 
     @Override
-    public List<SessionDTO> getAllSessionBySyllabusId(long syllabusId, boolean status) {
+    public List<SessionDTO> getAllSessionBySyllabusId(Long syllabusId, boolean status) {
         Optional<List<Session>> listSession = sessionRepository.findBySyllabusIdAndStatus(syllabusId, status);
         ListUtils.checkList(listSession);
         List<SessionDTO> sessionDTOList = new ArrayList<>();
@@ -59,7 +59,7 @@ public class SessionService implements ISessionService {
     }
 
     @Override
-    public boolean createSession(long syllabusId, List<SessionDTO> listSession, User user){
+    public boolean createSession(Long syllabusId, List<SessionDTO> listSession, User user){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true,true);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         syllabus.get().setDay(listSession.size());
@@ -72,7 +72,7 @@ public class SessionService implements ISessionService {
     }
 
     @Override
-    public boolean createSession(long syllabusId, SessionDTO sessionDTO, User user){
+    public boolean createSession(Long syllabusId, SessionDTO sessionDTO, User user){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true,true);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
 
@@ -120,18 +120,17 @@ public class SessionService implements ISessionService {
     }
 
     @Override
-    public boolean deleteSession(long sessionId, boolean status){
+    public boolean deleteSession(Long sessionId, boolean status){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, status);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         session.get().setStatus(false);
-        System.out.println("Sessioln: "+sessionId);
         unitService.deleteUnits(sessionId, status);
         sessionRepository.save(session.get());
         return true;
     }
 
     @Override
-    public boolean deleteSessions(long syllabusId, boolean status){
+    public boolean deleteSessions(Long syllabusId, boolean status){
         Optional<List<Session>> sessions = sessionRepository.findBySyllabusIdAndStatus(syllabusId, status);
         ListUtils.checkList(sessions);
         sessions.get().forEach((i) -> deleteSession(i.getId(), status));
@@ -139,7 +138,7 @@ public class SessionService implements ISessionService {
     }
 
     @Override
-    public List<Session> getSessionListBySyllabusId(long idSyllabus){
+    public List<Session> getSessionListBySyllabusId(Long idSyllabus){
         return sessionRepository.getSessionListBySyllabusId(idSyllabus);
     }
 

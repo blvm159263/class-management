@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface IFsuService {
 
-    FsuDTO getFsuById(boolean status, long id);
+    FsuDTO getFsuById(boolean status, Long id);
 
     List<FsuDTO> getAllFsu(boolean status);
 
     List<FsuDTO> listAllTrue();
 
-    FsuDTO getFsuByTrainingClassId(long id);
+    FsuDTO getFsuByTrainingClassId(Long id);
 }

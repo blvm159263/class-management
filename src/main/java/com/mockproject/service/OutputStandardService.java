@@ -33,7 +33,7 @@ public class OutputStandardService implements IOutputStandardService {
     private final UnitDetailRepository unitDetailRepo;
 
     @Override
-    public OutputStandardDTO getOutputStandardById(long outputStandardId, boolean status){
+    public OutputStandardDTO getOutputStandardById(Long outputStandardId, boolean status){
         Optional<OutputStandard> outputStandard = outputStandardRepository.findByIdAndStatus(outputStandardId, status);
         outputStandard.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
 
@@ -42,7 +42,7 @@ public class OutputStandardService implements IOutputStandardService {
     }
 
     @Override
-    public List<OutputStandardDTO> getOsdBySyllabusId(boolean status, long id) {
+    public List<OutputStandardDTO> getOsdBySyllabusId(boolean status, Long id) {
         List<OutputStandard> osd = unitDetailRepo.findUnitDetailBySyllabusId(status, id)
                 .stream().filter(distinctByKey(o -> o.getOutputStandard()))
                 .filter(g -> g.getOutputStandard().isStatus()== true)

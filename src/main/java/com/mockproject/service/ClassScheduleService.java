@@ -65,7 +65,7 @@ public class ClassScheduleService implements IClassScheduleService{
     }
 
     @Override
-    public List<ClassScheduleDTO> getClassScheduleByTrainingClassId(long id) {
+    public List<ClassScheduleDTO> getClassScheduleByTrainingClassId(Long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         List<ClassSchedule> schedules = repository.findByTrainingClassAndStatusOrderByDateAsc(tc, true).orElseThrow();
         return schedules.stream().map(ClassScheduleMapper.INSTANCE::toDTO).toList();

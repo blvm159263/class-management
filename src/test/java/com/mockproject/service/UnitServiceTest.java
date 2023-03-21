@@ -3,9 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Unit;
-import com.mockproject.repository.SessionRepository;
-import com.mockproject.repository.SyllabusRepository;
-import com.mockproject.repository.UnitRepository;
+import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitDetailService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +30,10 @@ class UnitServiceTest {
     private SessionRepository sessionRepository;
     @MockBean
     private SyllabusRepository syllabusRepository;
+    @MockBean
+    private TrainingClassRepository trainingClassRepository;
+    @MockBean
+    private TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
 
     @Autowired
     private UnitService unitService;

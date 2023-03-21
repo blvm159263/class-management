@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
@@ -23,18 +24,22 @@ import java.util.List;
 @RestController
 @Tag(name = "Delivery API")
 @RequestMapping(value = "/api/delivery")
+@Tag(name = "Delivery type", description = "API related delivery type")
+@SecurityRequirement(name = "Authorization")
 @RequiredArgsConstructor
 public class DeliveryTypeController {
 
     private final IDeliveryTypeService deliveryTypeService;
 
     @GetMapping("")
+    @Operation(summary = "Get all delivery type")
     public ResponseEntity<List<DeliveryTypeDTO>> getAll(){
         List<DeliveryTypeDTO> deliveryTypeDTOList = deliveryTypeService.getDeliveryTypes(true);
         return ResponseEntity.ok(deliveryTypeDTOList);
     }
 
     @GetMapping("/{deliveryTypeId}")
+    @Operation(summary = "get Delivery type by delivery type id")
     public ResponseEntity<DeliveryTypeDTO> getDeliveryTypeById(@PathVariable("deliveryTypeId") long id){
         DeliveryTypeDTO deliveryTypeDTO = deliveryTypeService.getDeliveryType(id, true);
         return ResponseEntity.ok(deliveryTypeDTO);
@@ -63,7 +68,7 @@ public class DeliveryTypeController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = DeliveryTypeDTO.class)))
     })
     @GetMapping("/class-delivery-types")
-    public ResponseEntity<?> getAllDeliveryTypes(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+    public ResponseEntity<?> getAllDeliveryTypes(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(deliveryTypeService.getAllDeliveryTypesByTrainingClassId(id));
         }catch (Exception e){

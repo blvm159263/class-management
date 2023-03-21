@@ -18,7 +18,7 @@ public interface ISyllabusService {
 
     Page<SyllabusDTO> getListSyllabus(boolean status,
                                       LocalDate fromDate, LocalDate toDate,
-                                      List<String> search, String[] sort, Optional<Integer> page);
+                                      List<String> search, String[] sort, Optional<Integer> page, Optional<Integer> row);
 
     List<Long> getListSyllabusIdByOSD(String osd);
 
@@ -26,13 +26,13 @@ public interface ISyllabusService {
 
     List<SyllabusDTO> getSyllabusList(boolean status);
 
-    SyllabusDTO getSyllabusById(long syllabusId,boolean state, boolean status);
+    SyllabusDTO getSyllabusById(Long syllabusId,boolean state, boolean status);
 
-    long create(SyllabusDTO syllabus, User user);
+    Long create(SyllabusDTO syllabus, User user);
 
     Syllabus editSyllabus(SyllabusDTO syllabusDTO, boolean status) throws IOException;
 
-    boolean deleteSyllabus(long syllabusId, boolean status);
+    boolean deleteSyllabus(Long syllabusId, boolean status);
 
-    Syllabus getSyllabusById(long id);
+    Syllabus getSyllabusById(Long id);
 }

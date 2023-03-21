@@ -12,5 +12,5 @@ public interface IRolePermissionScopeService {
 
      RolePermissionScope save(RolePermissionScopeDTO rolePermissionScopeDTO);
 
-     RolePermissionScopeDTO updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(String permissionName, long roleId, long scopeId);
+     RolePermissionScopeDTO updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(String permissionName, Long roleId, Long scopeId);
 }

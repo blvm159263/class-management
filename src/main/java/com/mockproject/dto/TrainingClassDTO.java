@@ -38,12 +38,21 @@ public class TrainingClassDTO implements Serializable {
     private int period;
     private boolean status;
     private Long locationId;
+    private String locationName;
     private Long attendeeId;
+    private String attendeeName;
     private Long trainingProgramId;
+    private String trainingProgramName;
     private Long fsuId;
+    private String fsuName;
     private Long contactId;
+    private String contactName;
     private Long creatorId;
+    private String creatorName;
     private Long lastModifierId;
+    private String lastModifierName;
     private Long reviewerId;
+    private String reviewerName;
     private Long approverId;
+    private String approverName;
 }

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import java.util.Optional;
 @Tag(name = "Training Class API")
 @RequestMapping("api/class")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 public class TrainingClassController {
 
     public static final String VIEW = "ROLE_View_Class";
@@ -43,15 +45,13 @@ public class TrainingClassController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TrainingClassDTO.class)))
     })
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAll(@Parameter(description = "TrainingClass id", example = "1") @PathVariable("id") long id) {
+    public ResponseEntity<?> getAll(@PathVariable("id") Long id) {
         try {
             return ResponseEntity.ok(trainingClassService.getAllDetails(id));
         }catch (Exception ex){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
         }
-
     }
-
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "When Training Class created successfully!"),
@@ -132,14 +132,14 @@ public class TrainingClassController {
             @RequestParam(defaultValue = "0")
             @Parameter(
                     description = "<b>FSU - Filter by FSU ID<b>",
-                    example = "0"
-            ) long fsu,
+                    example = "1"
+            ) Long fsu,
 
             @RequestParam(defaultValue = "0")
             @Parameter(
                     description = "<b>Trainer - Filter by trainer ID<b>",
                     example = "0"
-            ) long trainerId,
+            ) Long trainerId,
 
             @RequestParam(defaultValue = "")
             @Parameter(
@@ -162,10 +162,16 @@ public class TrainingClassController {
             @Parameter(
                     description = "<b>Insert page number (0 => first page)<b>",
                     example = "0"
-            ) Optional<Integer> page) {
+            ) Optional<Integer> page,
+
+            @RequestParam(defaultValue = "10")
+            @Parameter(
+                    description = "<b>Insert number of rows (10 => 10 rows per page)<b>",
+                    example = "10"
+            ) Optional<Integer> row) {
         return ResponseEntity
                 .ok(trainingClassService.getListClass(true, location, fromDate, toDate, period,
-                        isOnline? "Online" : "", state, attendee, fsu, trainerId, search, sort, page));
+                        isOnline? "Online" : "", state, attendee, fsu, trainerId, search, sort, page, row));
     }
 
 }

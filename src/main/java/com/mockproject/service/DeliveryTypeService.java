@@ -41,7 +41,7 @@ public class DeliveryTypeService implements IDeliveryTypeService {
     }
 
     @Override
-    public DeliveryTypeDTO getDeliveryType(long deliveryId, boolean status){
+    public DeliveryTypeDTO getDeliveryType(Long deliveryId, boolean status){
         Optional<DeliveryType> deliveryType = deliveryTypeRepository.findByIdAndStatus(deliveryId,status);
         deliveryType.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         DeliveryTypeDTO deliveryTypeDTO = DeliveryTypeMapper.INSTANCE.toDTO(deliveryType.get());
@@ -56,7 +56,7 @@ public class DeliveryTypeService implements IDeliveryTypeService {
     }
 
     @Override
-    public List<DeliveryTypeDTO> getAllDeliveryTypesByTrainingClassId(long id) {
+    public List<DeliveryTypeDTO> getAllDeliveryTypesByTrainingClassId(Long id) {
         List<Unit> units = service.getListUnitsByTrainingClassId(id);
         List<UnitDetail> list = unitDetailRepository.findByUnitInAndStatus(units, true).orElseThrow();
         List<DeliveryType> deliveryTypes = list.stream().map(p-> deliveryTypeRepository.findByIdAndStatus(p.getDeliveryType().getId(), true).orElseThrow()).distinct().toList();
