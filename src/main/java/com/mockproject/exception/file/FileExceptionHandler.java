@@ -23,7 +23,7 @@ public class FileExceptionHandler {
     }
 
     @ExceptionHandler(value = {FileFormatException.class})
-    public ResponseEntity<Object> handleFileFormatException(FileRequestException e) {
+    public ResponseEntity<Object> handleFileFormatException(FileFormatException e) {
         HttpStatus notSupportMediaType = HttpStatus.UNSUPPORTED_MEDIA_TYPE;
         FileException exception = new FileException(
                 e.getMessage(),
