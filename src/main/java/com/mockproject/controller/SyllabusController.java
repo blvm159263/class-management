@@ -153,6 +153,12 @@ public class SyllabusController {
             )
             Optional<Integer> page,
 
+            @RequestParam(defaultValue = "10")
+            @Parameter(
+                    description = "<b>Insert number of rows (10 => 10 rows per page)<b>",
+                    example = "10"
+            ) Optional<Integer> row,
+
             @RequestParam(defaultValue = "name,asc")
             @Parameter(
                     description = "<b>Sort by attribute descending/ascending"
@@ -162,6 +168,6 @@ public class SyllabusController {
             )
             String[] sort) {
         return ResponseEntity
-                .ok(syllabusService.getListSyllabus(true,  fromDate, toDate, search, sort, page));
+                .ok(syllabusService.getListSyllabus(true,  fromDate, toDate, search, sort, page, row));
     }
 }

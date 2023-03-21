@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import java.lang.reflect.Field;
+import java.security.InvalidParameterException;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.Year;
@@ -39,9 +40,6 @@ public class TrainingClassService implements ITrainingClassService {
     private final TrainingProgramRepository trainingProgramRepository;
 
     private final TrainingClassUnitInformationRepository classUnitRepo;
-
-    private static final int RESULTS_PER_PAGE = 10;
-
 
     @Override
     public List<TrainingClass> findAllByListClassSchedulesDate(LocalDate date) {
@@ -129,10 +127,12 @@ public class TrainingClassService implements ITrainingClassService {
     public Page<TrainingClassDTO> getListClass(boolean status,
                                                List<Long> locationId, LocalDate fromDate, LocalDate toDate,
                                                List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                               Long fsu, Long trainerId,  List<String> search, String[] sort, Optional<Integer> page)
+                                               Long fsu, Long trainerId,  List<String> search, String[] sort, Optional<Integer> page, Optional<Integer> row)
     {
         List<Sort.Order> order = new ArrayList<>();
-        int skipCount = page.orElse(0) * RESULTS_PER_PAGE;
+        if(row.orElse(10) < 1)  throw new InvalidParameterException("Page size must not be less than one!");
+        if(page.orElse(0) < 0)  throw new InvalidParameterException("Page number must not be less than zero!");
+        int skipCount = page.orElse(0) * row.orElse(10);
         Set<String> sourceFieldList = getAllFields(new TrainingClass().getClass());
         if(sort[0].contains(",")){
             for (String sortItem: sort) {
@@ -175,8 +175,8 @@ public class TrainingClassService implements ITrainingClassService {
         }
         if(pages.size() > 0){
             return new PageImpl<>(
-                    pages.stream().skip(skipCount).limit(RESULTS_PER_PAGE).map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                    PageRequest.of(page.orElse(0), RESULTS_PER_PAGE, Sort.by(order)),
+                    pages.stream().skip(skipCount).limit(row.orElse(10)).map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    PageRequest.of(page.orElse(0), row.orElse(10), Sort.by(order)),
                     pages.size());
         }else {
             throw new NotFoundException("Training Class not found!");

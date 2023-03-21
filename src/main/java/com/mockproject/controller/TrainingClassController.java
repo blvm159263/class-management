@@ -162,10 +162,16 @@ public class TrainingClassController {
             @Parameter(
                     description = "<b>Insert page number (0 => first page)<b>",
                     example = "0"
-            ) Optional<Integer> page) {
+            ) Optional<Integer> page,
+
+            @RequestParam(defaultValue = "10")
+            @Parameter(
+                    description = "<b>Insert number of rows (10 => 10 rows per page)<b>",
+                    example = "10"
+            ) Optional<Integer> row) {
         return ResponseEntity
                 .ok(trainingClassService.getListClass(true, location, fromDate, toDate, period,
-                        isOnline? "Online" : "", state, attendee, fsu, trainerId, search, sort, page));
+                        isOnline? "Online" : "", state, attendee, fsu, trainerId, search, sort, page, row));
     }
 
 }

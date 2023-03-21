@@ -1,5 +1,6 @@
 package com.mockproject.service;
 
+import com.fasterxml.jackson.core.io.NumberInput;
 import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.*;
@@ -26,6 +27,7 @@ import org.webjars.NotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,8 +48,6 @@ public class SyllabusService implements ISyllabusService {
     private final ISessionService sessionService;
 
     private final TrainingProgramSyllabusRepository trainingProgramSyllabusRepository;
-
-    private static final int RESULTS_PER_PAGE = 10;
 
     @Override
     public List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId) {
@@ -76,9 +76,11 @@ public class SyllabusService implements ISyllabusService {
 
     @Override
     public Page<SyllabusDTO> getListSyllabus(boolean status, LocalDate fromDate, LocalDate toDate,
-                                             List<String> search, String[] sort, Optional<Integer> page) {
+                                             List<String> search, String[] sort, Optional<Integer> page, Optional<Integer> row) {
         List<Sort.Order> order = new ArrayList<>();
-        int skipCount = page.orElse(0) * RESULTS_PER_PAGE;
+        if(row.orElse(10) < 1)  throw new InvalidParameterException("Page size must not be less than one!");
+        if(page.orElse(0) < 0)  throw new InvalidParameterException("Page number must not be less than zero!");
+        int skipCount = page.orElse(0) * row.orElse(10);
         Set<String> sourceFieldList = getAllFields(new Syllabus().getClass());
         if(sort[0].contains(",")){
             for (String sortItem: sort) {
@@ -113,8 +115,8 @@ public class SyllabusService implements ISyllabusService {
         }
         if(pages.size() > 0){
             return new PageImpl<>(
-                    pages.stream().skip(skipCount).limit(RESULTS_PER_PAGE).map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                    PageRequest.of(page.orElse(0), RESULTS_PER_PAGE, Sort.by(order)),
+                    pages.stream().skip(skipCount).limit(row.orElse(10)).map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    PageRequest.of(page.orElse(0), row.orElse(10), Sort.by(order)),
                     pages.size());
         } else {
             throw new NotFoundException("Syllabus not found!");
