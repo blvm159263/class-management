@@ -1,34 +1,26 @@
 package com.mockproject.utils;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.QuoteMode;
+import com.mockproject.dto.UserDTO;
+import com.mockproject.entity.User;
+import com.mockproject.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.csv.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class CSVUtils {
-    public static ByteArrayInputStream getCSVUserFileExample() {
-        final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.MINIMAL);
+    public static String TYPE = "text/csv";
 
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-             CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format);) {
+    public static boolean hasCSVFormat(MultipartFile file) {
 
-            List<String> header = Arrays.asList("Email","Gender","Date of birth","Image link","Password","Phone","State","Attendee","Level","Role");
-            List<String> data1 = Arrays.asList("example1@gmail.com","Male","2001-06-21","imagelink1","password1","01123456789","In class","Fresher","AA","Trainer");
-            List<String> data2 = Arrays.asList("example2@gmail.com","Female","2001-06-21","imagelink2","password2","01123456789","In class","Fresher","AA","Trainer");
-            csvPrinter.printRecord(header);
-            csvPrinter.printRecord(data1);
-            csvPrinter.printRecord(data2);
-            csvPrinter.flush();
-            return new ByteArrayInputStream(out.toByteArray());
-        } catch (IOException e) {
-            throw new RuntimeException("fail to import data to CSV file: " + e.getMessage());
+        if (!TYPE.equals(file.getContentType())) {
+            return false;
         }
+
+        return true;
     }
 }

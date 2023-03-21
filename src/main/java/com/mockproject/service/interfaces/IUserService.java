@@ -2,14 +2,17 @@ package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.UserDTO;
 import com.mockproject.dto.UserDTOCustom;
+import com.mockproject.entity.User;
 import org.springframework.data.domain.Page;
 
 import java.io.File;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
+    List<User> csvToUsers(InputStream is);
 
     String readCSVFile(File file);
 
@@ -47,4 +50,10 @@ public interface IUserService {
     void encodePassword();
 
     UserDTO getUserById(boolean status, Long id);
+
+    int getStateIdByStateName(String name);
+
+    InputStream getCSVUserFileExample();
+
+    void storeListUser(List<User> list);
 }
