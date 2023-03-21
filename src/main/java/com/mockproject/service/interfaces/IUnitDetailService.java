@@ -28,4 +28,7 @@ public interface IUnitDetailService {
 
     boolean toggleUnitDetailType(Long unitDetailId, boolean status);
 
+    UnitDetail get(long id);
+
+    List<UnitDetailDTO> listByUnitIdTrue(Long id);
 }
