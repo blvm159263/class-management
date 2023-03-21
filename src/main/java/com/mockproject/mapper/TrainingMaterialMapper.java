@@ -1,7 +1,6 @@
 package com.mockproject.mapper;
 
 import com.mockproject.dto.TrainingMaterialDTO;
-import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingMaterial;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.entity.User;
@@ -16,7 +15,9 @@ public interface TrainingMaterialMapper {
     TrainingMaterialMapper INSTANCE = Mappers.getMapper(TrainingMaterialMapper.class);
 
     @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "userName", source = "user.fullName")
     @Mapping(target = "unitDetailId", source = "unitDetail.id")
+    @Mapping(target = "unitDetailTitle", source = "unitDetail.title")
     TrainingMaterialDTO toDTO(TrainingMaterial trainingMaterial);
 
     @Mapping(target = "user", source = "userId", qualifiedByName = "mapUser")

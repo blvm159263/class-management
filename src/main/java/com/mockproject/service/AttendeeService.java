@@ -20,23 +20,34 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AttendeeService implements IAttendeeService {
 
-    private final AttendeeRepository repository;
-
+    private final AttendeeRepository attendeeRepo;
     private final TrainingClassRepository trainingClassRepository;
 
     @Override
-    public List<AttendeeDTO> listAll() {
-        return repository.findAll().stream().map(AttendeeMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    public List<AttendeeDTO> getAllAttendee(boolean status) {
+        return attendeeRepo.findAllByStatusIs(status).stream().map(AttendeeMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override
     public Attendee save(AttendeeDTO dto) {
-        return repository.save(AttendeeMapper.INSTANCE.toEntity(dto));
+        return attendeeRepo.save(AttendeeMapper.INSTANCE.toEntity(dto));
     }
 
     @Override
-    public AttendeeDTO getAttendeeById(long id){
-        TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        return AttendeeMapper.INSTANCE.toDTO(trainingClass.getAttendee());
+    public AttendeeDTO getAttendeeById(boolean status, Long id) {
+        Attendee attendee = attendeeRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Attendee not found with id: " + id));
+        return AttendeeMapper.INSTANCE.toDTO(attendee);
+    }
+
+    @Override
+    public List<AttendeeDTO> listAllTrue() {
+        return attendeeRepo.findByStatus(true).stream().map(AttendeeMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public AttendeeDTO getAttendeeByTrainingClassId(Long id) {
+        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        if (tc.getAttendee().isStatus()){return AttendeeMapper.INSTANCE.toDTO(tc.getAttendee());}
+        return null;
     }
 }

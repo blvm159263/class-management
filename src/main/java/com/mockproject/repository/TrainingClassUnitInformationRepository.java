@@ -11,8 +11,11 @@ import java.util.Optional;
 
 @Repository
 public interface TrainingClassUnitInformationRepository extends JpaRepository<TrainingClassUnitInformation, Long> {
+    Optional<List<TrainingClassUnitInformation>> findByTrainingClassAndStatus(TrainingClass trainingClass, Boolean status);
 
-    List<TrainingClassUnitInformation> findByStatusAndTrainerId(boolean status, long trainerId);
-    List<TrainingClassUnitInformation> findByTrainingClassAndStatus(TrainingClass trainingClass, boolean status);
-    Optional<TrainingClassUnitInformation> findByUnitAndTrainingClassAndStatus(Unit unit, TrainingClass trainingClass, boolean status);
+    Optional<TrainingClassUnitInformation> findByUnitAndTrainingClassAndStatus(Unit unit, TrainingClass trainingClass, Boolean status);
+
+    List<TrainingClassUnitInformation> findAllByTrainingClassId(Long Id);
+
+    List<TrainingClassUnitInformation> findByStatusAndTrainerId(boolean status, Long trainerId);
 }

@@ -1,5 +1,6 @@
 package com.mockproject.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +16,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainingClassDTO implements Serializable {
+    @Schema(hidden = true)
     private Long id;
     private String className;
+    @Schema(hidden = true)
     private String classCode;
     private LocalDate startDate;
     private Time startTime;
@@ -31,6 +34,7 @@ public class TrainingClassDTO implements Serializable {
     private LocalDate dateReviewed;
     private LocalDate dateApproved;
     private LocalDate lastDateModified;
+    @Schema(hidden = true)
     private int period;
     private boolean status;
     private Long locationId;
@@ -39,16 +43,16 @@ public class TrainingClassDTO implements Serializable {
     private String attendeeName;
     private Long trainingProgramId;
     private String trainingProgramName;
-    private long fsuId;
+    private Long fsuId;
     private String fsuName;
-    private long contactId;
+    private Long contactId;
     private String contactName;
-    private long creatorId;
+    private Long creatorId;
     private String creatorName;
-    private long lastModifierId;
+    private Long lastModifierId;
     private String lastModifierName;
-    private long reviewerId;
+    private Long reviewerId;
     private String reviewerName;
-    private long approverId;
+    private Long approverId;
     private String approverName;
 }

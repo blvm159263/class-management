@@ -12,6 +12,10 @@ public interface TrainingClassMapper {
 
     TrainingClassMapper INSTANCE = Mappers.getMapper(TrainingClassMapper.class);
 
+
+//    @BeanMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
+//    @Mapping(target = "startTime", source = "startTime", dateFormat = "HH:mm")
+//    @Mapping(target = "endTime", source = "endTime", dateFormat = "HH:mm")
     @Mapping(target = "trainingProgramId", source = "trainingProgram.id")
     @Mapping(target = "trainingProgramName", source = "trainingProgram.name")
     @Mapping(target = "reviewerId", source = "reviewer.id")
@@ -32,6 +36,9 @@ public interface TrainingClassMapper {
     @Mapping(target = "locationName", source = "location.locationName")
     TrainingClassDTO toDTO(TrainingClass trainingClass);
 
+
+//    @Mapping(target = "startTime", source = "startTime", qualifiedByName = "timeMap")
+//    @Mapping(target = "endTime", source = "endTime", qualifiedByName = "timeMap")
     @Mapping(target = "trainingProgram", source = "trainingProgramId", qualifiedByName = "mapTrainingProgram")
     @Mapping(target = "reviewer", source = "reviewerId", qualifiedByName = "mapReviewer")
     @Mapping(target = "lastModifier", source = "lastModifierId", qualifiedByName = "mapModifier")
@@ -42,6 +49,19 @@ public interface TrainingClassMapper {
     @Mapping(target = "approver", source = "approverId", qualifiedByName = "mapApprover")
     @Mapping(target = "location", source = "locationId", qualifiedByName = "mapLocation")
     TrainingClass toEntity(TrainingClassDTO dto);
+
+//    @Named("timeMap")
+//    default Time timeMap(String time_str){
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+//        return (Time) formatter.parse(time_str);
+//    }
+
+    @Named("mapLocation")
+    default Location mapLocation(Long id) {
+        Location location = new Location();
+        location.setId(id);
+        return location;
+    }
 
     @Named("mapTrainingProgram")
     default TrainingProgram mapTrainingProgram(Long id) {

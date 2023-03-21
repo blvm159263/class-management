@@ -5,5 +5,12 @@ import com.mockproject.dto.DeliveryTypeDTO;
 import java.util.List;
 
 public interface IDeliveryTypeService {
-    List<DeliveryTypeDTO> getListDeliveryTypeByClassId(long id);
+
+    DeliveryTypeDTO getByIdTrue(Long id);
+
+    List<DeliveryTypeDTO> getAllDeliveryTypesByTrainingClassId(Long id);
+
+    List<DeliveryTypeDTO> getDeliveryTypes(boolean status);
+
+    DeliveryTypeDTO getDeliveryType(Long deliveryId, boolean status);
 }

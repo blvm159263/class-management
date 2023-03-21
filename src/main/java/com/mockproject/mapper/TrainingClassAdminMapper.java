@@ -15,7 +15,9 @@ public interface TrainingClassAdminMapper {
     TrainingClassAdminMapper INSTANCE = Mappers.getMapper(TrainingClassAdminMapper.class);
 
     @Mapping(target = "trainingClassId", source = "trainingClass.id")
+    @Mapping(target = "trainingClassName", source = "trainingClass.className")
     @Mapping(target = "adminId", source = "admin.id")
+    @Mapping(target = "adminName", source = "admin.fullName")
     TrainingClassAdminDTO toDTO(TrainingClassAdmin trainingClassAdmin);
 
     @Mapping(target = "trainingClass", source = "trainingClassId", qualifiedByName = "mapTrainingClass")

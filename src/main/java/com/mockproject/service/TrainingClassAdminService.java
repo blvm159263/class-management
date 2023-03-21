@@ -1,5 +1,8 @@
 package com.mockproject.service;
 
+import com.mockproject.dto.TrainingClassAdminDTO;
+import com.mockproject.entity.TrainingClassAdmin;
+import com.mockproject.mapper.TrainingClassAdminMapper;
 import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingClassAdmin;
@@ -38,6 +41,16 @@ public class TrainingClassAdminService implements ITrainingClassAdminService {
                 .distinct()
                 .toList();
         return userList.stream().map(UserMapper.INSTANCE::toDTO).toList();
+    }
+
+    @Override
+    public boolean saveList(List<Long> adminId, Long tcId) {
+        List<TrainingClassAdmin> list =
+                adminId.stream().map(p -> TrainingClassAdminMapper.INSTANCE.toEntity(
+                                        new TrainingClassAdminDTO(null, true, p,null, tcId, null))
+                                    ).toList();
+        List<TrainingClassAdmin> result = repository.saveAll(list);
+        return !result.isEmpty();
     }
 
 }
