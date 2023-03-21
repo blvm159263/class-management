@@ -24,6 +24,7 @@ public interface IClassScheduleService {
 
 
     public List<TrainingClassFilterResponseDTO> searchTrainingClassInDate(List<String> textSearch, LocalDate date);
+
     public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(List<String> textSearch, LocalDate startDate, LocalDate endDate);
 
 }
