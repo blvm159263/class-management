@@ -55,7 +55,7 @@ public class SyllabusController {
     @GetMapping("/getSyllabusByTrainingProgram/{trainingProgramId}")
     @Operation(summary = "Get all syllabus by training program id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<TrainingProgramSyllabusDTO>> getAllTrainingProgramSyllabus(@PathVariable("trainingProgramId") long id){
+    public ResponseEntity<List<TrainingProgramSyllabusDTO>> getAllTrainingProgramSyllabus(@PathVariable("trainingProgramId") long id) {
         List<TrainingProgramSyllabusDTO> list = trainingProgramSyllabusService.getAllSyllabusByTrainingProgramId(id, true);
         return ResponseEntity.ok(list);
     }
@@ -63,7 +63,7 @@ public class SyllabusController {
     @GetMapping("/{syllabusId}")
     @Operation(summary = "Get syllabus by syllabus id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<SyllabusDTO> getSyllabus(@PathVariable("syllabusId") Long syllabusId){
+    public ResponseEntity<SyllabusDTO> getSyllabus(@PathVariable("syllabusId") Long syllabusId) {
         SyllabusDTO syllabus = syllabusService.getSyllabusById(syllabusId, true, true);
         return ResponseEntity.ok(syllabus);
     }
@@ -71,14 +71,14 @@ public class SyllabusController {
     @GetMapping("get-all")
     @Operation(summary = "Get all syllabus")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<SyllabusDTO>> getAllSyllabus(){
+    public ResponseEntity<List<SyllabusDTO>> getAllSyllabus() {
         return ResponseEntity.ok(syllabusService.getSyllabusList(true));
     }
 
     @PostMapping(value = "/create")
     @Operation(description = "Create Syllabus")
     @Secured({CREATE,FULL_ACCESS})
-    public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus){
+    public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus) {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long syllabusID = syllabusService.create(syllabus, user.getUser());
         return ResponseEntity.ok(syllabusID);
@@ -96,7 +96,7 @@ public class SyllabusController {
     @PutMapping("delete/{id}")
     @Operation(summary = "Delete syllabus by syllabusId")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id")@Parameter(description = "Syllabus id") long syllabusId){
+    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id")@Parameter(description = "Syllabus id") long syllabusId) {
         return ResponseEntity.ok(syllabusService.deleteSyllabus(syllabusId, true));
     }
 

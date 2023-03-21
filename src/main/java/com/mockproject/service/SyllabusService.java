@@ -76,7 +76,7 @@ public class SyllabusService implements ISyllabusService {
 
     @Override
     public Page<SyllabusDTO> getListSyllabus(boolean status, LocalDate fromDate, LocalDate toDate,
-                                             List<String> search, String[] sort, Optional<Integer> page){
+                                             List<String> search, String[] sort, Optional<Integer> page) {
         List<Sort.Order> order = new ArrayList<>();
         int skipCount = page.orElse(0) * RESULTS_PER_PAGE;
         Set<String> sourceFieldList = getAllFields(new Syllabus().getClass());
