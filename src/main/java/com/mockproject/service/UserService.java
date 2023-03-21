@@ -8,6 +8,7 @@ import com.mockproject.entity.User;
 import com.mockproject.mapper.AttendeeMapper;
 import com.mockproject.mapper.LevelMapper;
 import com.mockproject.mapper.RoleMapper;
+import com.mockproject.entity.*;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitService;
@@ -15,16 +16,20 @@ import com.mockproject.service.interfaces.IUserService;
 import com.opencsv.CSVReader;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.csv.*;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,12 +53,31 @@ public class UserService implements IUserService {
     private final TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
     private final TrainingClassAdminRepository trainingClassAdminRepository;
 
-    private final IUnitService unitService;
+    private final AttendeeRepository attendeeRepository;
 
     @Override
     public UserDTO getUserById(boolean status, Long id) {
-        User user = userRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Users not found with id: "+ id));
+        User user = userRepo.findByStatusAndId(status, id).orElseThrow(() -> new NotFoundException("Users not found with id: " + id));
         return UserMapper.INSTANCE.toDTO(user);
+    }
+
+    @Override
+    public int getStateIdByStateName(String name) {
+        switch (name) {
+            case "De-active":
+                return 0;
+            case "Active":
+                return 1;
+            case "In class":
+                return 2;
+            case "Off class":
+                return 3;
+            case "On boaring":
+                return 4;
+            default:
+                return -1;
+
+        }
     }
 
 
@@ -61,14 +85,14 @@ public class UserService implements IUserService {
     public List<UserDTO> listClassAdminTrue() {
         Role role = new Role();
         role.setId(CLASS_ADMIN);
-        return userRepo.findByRoleAndStatus(role,true).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
+        return userRepo.findByRoleAndStatus(role, true).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override
     public List<UserDTO> listTrainerTrue() {
         Role role = new Role();
         role.setId(TRAINER);
-        return userRepo.findByRoleAndStatus(role,true).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
+        return userRepo.findByRoleAndStatus(role, true).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -87,9 +111,9 @@ public class UserService implements IUserService {
         List<User> listUser = userRepo.getAllByPageAndRowPerPage(page, rowPerPage);
 
         List<UserDTOCustom> mlist = new ArrayList<>();
-        for (User u: listUser) {
+        for (User u : listUser) {
             UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), getState(u.getState()), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
-                    RoleMapper.INSTANCE.toDTO( u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()) );
+                    RoleMapper.INSTANCE.toDTO(u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()));
             mlist.add(userDTOCustom);
         }
         return mlist;
@@ -122,9 +146,9 @@ public class UserService implements IUserService {
             pages = userRepo.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, pageable);
 
             List<UserDTOCustom> result = new ArrayList<>();
-            for (User u: pages) {
+            for (User u : pages) {
                 UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), getState(u.getState()), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
-                        RoleMapper.INSTANCE.toDTO( u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()) );
+                        RoleMapper.INSTANCE.toDTO(u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()));
                 result.add(userDTOCustom);
             }
 
@@ -320,18 +344,139 @@ public class UserService implements IUserService {
         return userList.toString();
     }
 
-    private String getState(int id){
-        switch (id){
+    private String getState(int id) {
+        switch (id) {
             case 0:
-                return "Off class";
+                return "De-active";
             case 1:
                 return "Active";
+            case 2:
+                return "In class";
             case 3:
-                return "On class";
+                return "Off class";
             case 4:
                 return "On boaring";
             default:
                 return "";
         }
     }
+
+    @Override
+    public ByteArrayInputStream getCSVUserFileExample() {
+        final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.MINIMAL);
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out, true, StandardCharsets.UTF_8), format);) {
+            List<String> header = Arrays.asList("Email", "Full name", "Gender", "Date of birth", "Image link", "Password", "Phone", "State", "Attendee", "Level", "Role");
+            List<String> data1 = Arrays.asList("example1@gmail.com", "Nguyen Bao Long", "Male", "28/10/2002", "imagelink1", "password1", "01123456789", "In class", "Fresher", "AA", "Trainer");
+            List<String> data2 = Arrays.asList("example2@gmail.com", "Nguyễn Thị Minh Tâm", "Female", "28/11/2002", "imagelink2", "password2", "01123456789", "In class", "Fresher", "AA", "Trainer");
+            csvPrinter.printRecord(header);
+            csvPrinter.printRecord(data1);
+            csvPrinter.printRecord(data2);
+            csvPrinter.flush();
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException("fail to import data to CSV file: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void storeListUser(List<User> list) {
+        userRepo.saveAll(list);
+    }
+
+    @Override
+    public List<User> csvToUsers(InputStream is) {
+        boolean checkUserEmail = true;
+        boolean replace = true;
+        boolean skip = false;
+        String[] headers = {"Email", "Full name", "Gender", "Date of birth", "Image link", "Password", "Phone", "State", "Attendee", "Level", "Role"};
+
+        Long count = null;
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+             CSVParser csvParser = new CSVParser(fileReader,
+                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
+
+            List<User> result = new ArrayList<>();
+            Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+
+            count = 0L;
+
+            List<String> listEmail = new ArrayList<>();
+
+            for (CSVRecord csvRecord : csvRecords) {
+                String email = csvRecord.get("Email");
+                if (checkUserEmail && replace) {
+                    Long idUser = null;
+                    if (userRepo.findByEmail(email).isPresent()) {
+                        idUser = userRepo.findByEmail(email).get().getId();
+                    }
+                    String fullName = csvRecord.get("Full name");
+                    String imgLink = csvRecord.get("Image link");
+                    //check state
+                    int state = getStateIdByStateName(csvRecord.get("State"));
+                    if (state == -1)
+                        throw new NotFoundException("Import successfull " + count + " user\n" + "Record " + (count + 1) +
+                                " (" + email + ")" + " is invalid state");
+                    //check date of birth
+                    LocalDate dob;
+                    try {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
+                        dob = LocalDate.parse(csvRecord.get("Date of birth"), formatter);
+                    } catch (DateTimeParseException e) {
+                        throw new NotFoundException("Import successfull " + count + " user\n" + "Record " + (count + 1) +
+                                " (" + email + ")" + " is invalid date");
+                    }
+                    //check phone number
+                    String phone = csvRecord.get("Phone");
+                    if (userRepo.findByPhone(phone).isPresent() && (idUser != userRepo.findByPhone(phone).get().getId()))
+                        throw new NotFoundException("Import successfull " + count + " user\n" + "Record " + (count + 1) +
+                                " (" + email + ")" + " is invalid phone number (phone number is exits!!!)");
+                    //check gender
+                    boolean gender = false;
+                    if (csvRecord.get("Gender").equals("Female")) {
+                        gender = false;
+                    } else if (csvRecord.get("Gender").equals("Male")) {
+                        gender = true;
+                    }
+                    boolean status = true;
+
+                    //check role
+                    Long roleId = null;
+                    if (roleRepository.getRoleByRoleName(csvRecord.get("Role")).isPresent()) {
+                        roleId = roleRepository.getRoleByRoleName(csvRecord.get("Role")).get().getId();
+                    }
+                    //check level
+                    Long levelId = null;
+                    if (levelRepository.getLevelByLevelCode(csvRecord.get("Level")).isPresent()) {
+                        levelId = levelRepository.getLevelByLevelCode(csvRecord.get("Level")).get().getId();
+                    }
+                    //check attendee
+                    Long attendeeId = null;
+                    if (attendeeRepository.findByAttendeeNameAndStatus(csvRecord.get("Attendee"), true).isPresent()) {
+                        attendeeId = attendeeRepository.findByAttendeeNameAndStatus(csvRecord.get("Attendee"), true).get().getId();
+                    }
+
+                    UserDTO userDTO = new UserDTO(email, fullName, imgLink,
+                            state, dob, phone, gender, status, roleId, levelId,
+                            attendeeId);
+
+
+                    User user = UserMapper.INSTANCE.toEntity(userDTO);
+                    user.setPassword(passwordEncoder.encode(csvRecord.get("Password")));
+                    if (idUser != null) user.setId(idUser);
+
+                    result.add(user);
+                    count++;
+                }
+            }
+
+            return result;
+
+        } catch (IOException e) {
+            throw new NotFoundException("Import " + count + " user successfull\n" + "Record " + count + 1 + " is invalid!!!");
+        }
+    }
+
+
 }
