@@ -19,13 +19,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Output Standard API")
 @Tag(name = "Output Standard", description = "API related Output standard")
-@RequestMapping(value = "/api/outputStandard")
+@RequestMapping(value = "/api/osd")
 @SecurityRequirement(name = "Authorization")
 public class OutputStandardController {
 
     private final IOutputStandardService outputStandardService;
 
-    @GetMapping("/getBySyllabusId/{syllabusId}")
+    @GetMapping("/syllabus/{syllabusId}")
     @Operation(
             summary = "Get output standard by syllabus ID"
     )

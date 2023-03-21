@@ -1,6 +1,8 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.FileClassResponseDTO;
+import com.mockproject.exception.entity.DateNotValidExption;
+import com.mockproject.exception.entity.EntityNotFoundException;
 import com.mockproject.exception.file.FileRequestException;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IFileService;
@@ -18,7 +20,6 @@ import java.sql.Time;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,9 +41,9 @@ public class FileService implements IFileService {
                 "FSU", "Contact Email", "Training Program Name", "Attendee", "Admin Email (divine by / )"
         };
         CSVParser parser = CSVParser.parse(file.getInputStream(),
-                                            Charset.defaultCharset(),
-                                            CSVFormat.DEFAULT.builder().setHeader(HEADERS)
-                                            .setSkipHeaderRecord(true).build());
+                Charset.defaultCharset(),
+                CSVFormat.DEFAULT.builder().setHeader(HEADERS)
+                        .setSkipHeaderRecord(true).build());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         CSVRecord record = parser.getRecords().get(0);
@@ -62,7 +63,7 @@ public class FileService implements IFileService {
             startTime = Time.valueOf(record.get(2));
             endTime = Time.valueOf(record.get(3));
         } catch (DateTimeException dateTimeException) {
-            throw new DateTimeParseException("Date time doesn't match with format!", "yyyy/mm/dd", 0);
+            throw new DateNotValidExption("Date time doesn't match with format! (yyyy/mm/dd) / Time (hh/mm)");
         }
         try {
             className = record.get(0);
@@ -81,16 +82,21 @@ public class FileService implements IFileService {
         }
 
         String[] listAdminEmail = record.get(14).split("/");
-        Long locationId = locationRepository.findFirstByLocationNameAndStatus(locationName, true).orElseThrow().getId();
-        Long fsuId = fsuRepository.findByFsuNameAndStatus(fsuName, true).orElseThrow().getId();
-        Long contactId = contactRepository.findByContactEmailAndStatus(contactEmail, true).orElseThrow().getId();
-        Long trainingProgramId = trainingProgramRepository.findFirstByNameAndStatus(trainingProgramName, true).orElseThrow().getId();
-        Long attendeeId = attendeeRepository.findByAttendeeNameAndStatus(attendeeName, true).orElseThrow().getId();
+        Long locationId = locationRepository.findFirstByLocationNameAndStatus(locationName, true)
+                .orElseThrow(() -> new EntityNotFoundException("Location not found!")).getId();
+        Long fsuId = fsuRepository.findByFsuNameAndStatus(fsuName, true)
+                .orElseThrow(() -> new EntityNotFoundException("Fsu not found!")).getId();
+        Long contactId = contactRepository.findByContactEmailAndStatus(contactEmail, true)
+                .orElseThrow(()-> new EntityNotFoundException("Contact not found!")).getId();
+        Long trainingProgramId = trainingProgramRepository.findFirstByNameAndStatus(trainingProgramName, true)
+                .orElseThrow(()-> new EntityNotFoundException("Tranining class not found!")).getId();
+        Long attendeeId = attendeeRepository.findByAttendeeNameAndStatus(attendeeName, true)
+                .orElseThrow(() -> new EntityNotFoundException("Attendee not found!")).getId();
 
         List<Long> listAdminId = Arrays.stream(listAdminEmail)
                 .map(p ->
                         userRepository.findByEmailAndStatus(p, true)
-                                .orElseThrow().getId()
+                                .orElseThrow(() -> new EntityNotFoundException("User not found!")).getId()
                 ).toList();
 
         return new FileClassResponseDTO(className, startDate, startTime, endTime, hour,

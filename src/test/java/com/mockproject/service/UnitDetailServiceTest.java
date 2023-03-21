@@ -6,6 +6,8 @@ import com.mockproject.entity.OutputStandard;
 import com.mockproject.entity.Unit;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.repository.UnitDetailRepository;
+import com.mockproject.repository.UnitRepository;
+import com.mockproject.service.interfaces.ITrainingMaterialService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +26,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 class UnitDetailServiceTest {
 
-
     @MockBean
     private UnitDetailRepository unitDetailRepository;
+
+    @MockBean
+    private UnitRepository unitRepository;
+
+    @MockBean
+    private ITrainingMaterialService trainingMaterialService;
 
     @Autowired
     private UnitDetailService unitDetailService;

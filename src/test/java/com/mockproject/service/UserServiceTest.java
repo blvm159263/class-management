@@ -4,7 +4,6 @@ import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.Role;
 import com.mockproject.entity.User;
 import com.mockproject.repository.*;
-import com.mockproject.service.interfaces.IUnitService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +40,7 @@ class UserServiceTest {
     @MockBean
     private TrainingClassAdminRepository trainingClassAdminRepository;
     @MockBean
-    private IUnitService unitService;
-
+    private AttendeeRepository attendeeRepository;
 
     @Autowired
     private UserService userService;
