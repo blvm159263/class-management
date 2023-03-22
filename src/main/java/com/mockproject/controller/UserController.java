@@ -245,14 +245,13 @@ public class UserController {
             if (roleService.checkDuplicatedByRoleIdAndRoleName(fdto.getId(),fdto.getRoleName()))
                 return ResponseEntity.badRequest().body("Role " + fdto.getRoleName() + " is duplicated!");
             if (fdto.getSyllabusPermission().equals("Access denied")) { fdto.setLeaningMaterialPermission("Access denied"); }
-            if (fdto.getId() != 0) {
+            if (fdto.getId() != 0 &&  roleService.getRoleById(fdto.getId()) != null ) {
                 roleService.save(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getClassPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Class"));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getSyllabusPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Syllabus"));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getLeaningMaterialPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Learning material"));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getTraningProgramPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Training program"));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getUserPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("User"));
-
             }
         }
         return ResponseEntity.ok("Successfull");
