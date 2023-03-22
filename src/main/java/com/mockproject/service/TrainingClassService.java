@@ -52,12 +52,12 @@ public class TrainingClassService implements ITrainingClassService {
     }
 
     @Override
-    public List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText, LocalDate date) {
+    public List<TrainingClass> findAllBySearchTextAndDate(String searchText, LocalDate date) {
         return classRepo.findAllBySearchTextAndListClassSchedulesDate(searchText,date);
     }
 
     @Override
-    public List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate, LocalDate endDate) {
+    public List<TrainingClass> findAllBySearchTextAndWeek(String searchText, LocalDate startDate, LocalDate endDate) {
         return classRepo.findAllBySearchTextAndListClassSchedulesWeek(searchText,startDate,endDate);
     }
 

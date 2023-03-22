@@ -1,5 +1,6 @@
 package com.mockproject.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 public class SearchByDTO {
     private List<String> searchText;
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate nowDate;
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate startDate;
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate endDate;
 }

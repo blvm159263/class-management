@@ -3,7 +3,6 @@ package com.mockproject.controller;
 import com.mockproject.dto.ClassScheduleDTO;
 import com.mockproject.dto.SearchByDTO;
 import com.mockproject.dto.TrainingClassFilterRequestDTO;
-import com.mockproject.dto.TrainingClassFilterResponseDTO;
 import com.mockproject.service.interfaces.IClassScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,35 +33,59 @@ import java.util.List;
 @Slf4j
 public class ClassScheduleController {
 
+    private final IClassScheduleService classScheduleService;
     public static final String VIEW = "ROLE_View_Class";
     public static final String MODIFY = "ROLE_Modify_Class";
     public static final String CREATE = "ROLE_Create_Class";
     public static final String FULL_ACCESS = "ROLE_Full access_Class";
-    private final IClassScheduleService classScheduleService;
 
     @PostMapping("/day")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO) {
-        return classScheduleService.getTrainingClassByDay(filterRequestDTO);
+    @Operation(summary = "Get training class for the typical day")
+    public ResponseEntity getTrainingClassByDay(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO) {
+        var trainingClass = classScheduleService.getTrainingClassByDay(filterRequestDTO);
+        if (trainingClass.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
+        } else {
+            return ResponseEntity.ok(trainingClass);
+        }
     }
 
     @PostMapping("/week")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO) {
-        log.info(filterRequestDTO.toString());
-        return classScheduleService.getTrainingClassByWeek(filterRequestDTO);
+    @Operation(summary = "Get a class schedule for a week")
+    public ResponseEntity getTrainingClassByWeek(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO) {
+
+        var trainingClass = classScheduleService.getTrainingClassByWeek(filterRequestDTO);
+        if (trainingClass.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
+        } else {
+            return ResponseEntity.ok(trainingClass);
+        }
     }
 
     @PostMapping("/search/day")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public List<TrainingClassFilterResponseDTO> searchTrainingClassInDay(@RequestBody SearchByDTO searchByDTO) {
-        return classScheduleService.searchTrainingClassInDate(searchByDTO.getSearchText(), searchByDTO.getNowDate());
+    @Operation(summary = "Search training class in day by text")
+    public ResponseEntity searchTrainingClassInDay(@RequestBody SearchByDTO searchByDTO) {
+        var trainingClass = classScheduleService.searchTrainingClassInDate(searchByDTO.getSearchText(), searchByDTO.getNowDate());
+        if (trainingClass.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
+        } else {
+            return ResponseEntity.ok(trainingClass);
+        }
     }
 
     @PostMapping("/search/week")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(@RequestBody SearchByDTO searchByDTO) {
-        return classScheduleService.searchTrainingClassInWeek(searchByDTO.getSearchText(), searchByDTO.getStartDate(), searchByDTO.getEndDate());
+    @Operation(summary = "Search training class in week by text")
+    public ResponseEntity searchTrainingClassInWeek(@RequestBody SearchByDTO searchByDTO) {
+        var trainingClass = classScheduleService.searchTrainingClassInWeek(searchByDTO.getSearchText(), searchByDTO.getStartDate(), searchByDTO.getEndDate());
+        if (trainingClass.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
+        } else {
+            return ResponseEntity.ok(trainingClass);
+        }
     }
 
     @ApiResponses(value = {

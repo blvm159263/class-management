@@ -13,6 +13,8 @@ import java.util.Optional;
 @Repository
 public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
 
+    Syllabus getSyllabusById(Long id);
+
     List<Syllabus> findByStatus(boolean status);
 
     @Query("SELECT s FROM Syllabus s " +
@@ -32,6 +34,8 @@ public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
     Optional<Syllabus> findByIdAndStateAndStatus(Long syllabusId, boolean state, boolean status);
 
     Optional<List<Syllabus>> findByNameAndStatus(String name, boolean status);
+
     Optional<List<Syllabus>> findByCodeAndStatus(String code, boolean status);
+
     Optional<List<Syllabus>> findByNameAndCodeAndStatus(String name, String code, boolean status);
 }

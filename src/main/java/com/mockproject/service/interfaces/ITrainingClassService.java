@@ -15,10 +15,9 @@ public interface ITrainingClassService {
 
     List<TrainingClass> findAllBySpecification(Specification specification);
 
-    List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText,LocalDate date);
+    List<TrainingClass> findAllBySearchTextAndDate(String searchText,LocalDate date);
 
-    List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate,LocalDate endDate);
-
+    List<TrainingClass> findAllBySearchTextAndWeek(String searchText, LocalDate startDate,LocalDate endDate);
 
     Page<TrainingClassDTO> getListClass(boolean status,
                                         List<Long> locationId, LocalDate fromDate, LocalDate toDate,
@@ -29,10 +28,6 @@ public interface ITrainingClassService {
 
     Long create(TrainingClassDTO trainingClassDTO);
 
-
     TrainingClassDTO getAllDetails(Long id);
-
-
-
 
 }

@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
-    List<User> csvToUsers(InputStream is);
+    List<User> csvToUsers(InputStream is, Boolean replace, Boolean skip);
 
     String readCSVFile(File file);
 
     List<UserDTOCustom> getAllByPageAndRowPerPage(Long page, Long rowPerPage);
     List<UserDTO> getAll();
 
-    Page<UserDTO> searchByFilter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> role_id, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception;
+    Page<UserDTO> searchByFilter(List<String> search, LocalDate dob, Boolean gender,  List<Long> atendeeId, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception;
 
     boolean updateStatus(Long id);
 

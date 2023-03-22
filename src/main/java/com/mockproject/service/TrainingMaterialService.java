@@ -1,6 +1,7 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.TrainingMaterialDTO;
+import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.TrainingMaterial;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.entity.User;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 
 @Service
@@ -95,11 +97,6 @@ public class TrainingMaterialService implements ITrainingMaterialService {
     }
 
     @Override
-    public List<TrainingMaterial> getListTrainingMaterialByUnitDetailId(Long id){
-        return trainingMaterialRepository.getListTrainingMaterialByUnitDetailId(id);
-    }
-
-    @Override
     public List<TrainingMaterialDTO> getFiles(Long unitDetailId, boolean status){
         List<TrainingMaterialDTO> trainingMaterialDTOS = new ArrayList<>();
         Optional<List<TrainingMaterial>> trainingMaterials = trainingMaterialRepository.findAllByUnitDetailIdAndStatus(unitDetailId, status);
@@ -131,6 +128,20 @@ public class TrainingMaterialService implements ITrainingMaterialService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public  List<TrainingMaterialDTO> getListTrainingMaterial(List<UnitDetailDTO> listUnitDetail){
+        List<TrainingMaterialDTO> listTrainingMaterial = new ArrayList<>();
+        for(UnitDetailDTO u : listUnitDetail){
+            listTrainingMaterial.addAll(getListTrainingMaterialByUnitDetailId(u.getId()));
+        }
+        return listTrainingMaterial;
+    }
+
+    @Override
+    public List<TrainingMaterialDTO> getListTrainingMaterialByUnitDetailId(Long id){
+        return trainingMaterialRepository.getListTrainingMaterialByUnitDetailId(id).stream().map(TrainingMaterialMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override

@@ -11,7 +11,6 @@ import com.mockproject.service.interfaces.ISessionService;
 import com.mockproject.service.interfaces.IUnitService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class SessionService implements ISessionService {
 
     private final SessionRepository sessionRepository;
@@ -36,11 +34,16 @@ public class SessionService implements ISessionService {
     private final UnitRepository unitRepository;
 
     @Autowired
-    public SessionService(SessionRepository sessionRepository, UnitService unitService, SyllabusRepository syllabusRepository, UnitRepository unitRepository) {
+    public SessionService(SessionRepository sessionRepository, IUnitService unitService, SyllabusRepository syllabusRepository, UnitRepository unitRepository) {
         this.sessionRepository = sessionRepository;
         this.unitService = unitService;
         this.syllabusRepository = syllabusRepository;
         this.unitRepository = unitRepository;
+    }
+
+    @Override
+    public List<SessionDTO> getSessionListBySyllabusId(Long idSyllabus) {
+        return sessionRepository.getSessionListBySyllabusId(idSyllabus).stream().map(SessionMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -135,11 +138,6 @@ public class SessionService implements ISessionService {
         ListUtils.checkList(sessions);
         sessions.get().forEach((i) -> deleteSession(i.getId(), status));
         return true;
-    }
-
-    @Override
-    public List<Session> getSessionListBySyllabusId(Long idSyllabus){
-        return sessionRepository.getSessionListBySyllabusId(idSyllabus);
     }
 
     @Override

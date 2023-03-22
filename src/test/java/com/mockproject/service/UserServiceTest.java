@@ -100,5 +100,12 @@ class UserServiceTest {
         assertEquals(user2.getDob(), actualUser.getDob());
         verify(userRepository).findById((Long) any());
     }
+
+    @Test
+    void canSearchByFilter(){
+
+    }
+
+
 }
 

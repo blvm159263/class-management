@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -23,8 +24,8 @@ public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusS
     private final TrainingProgramSyllabusRepository repository;
 
     @Override
-    public List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(Long trainProgramID) {
-        return repository.getTrainingProgramSyllabusByTrainingProgramId(trainProgramID);
+    public List<TrainingProgramSyllabusDTO> getTrainingProgramSyllabusListById(Long trainProgramID) {
+        return repository.getTrainingProgramSyllabusByTrainingProgramId(trainProgramID).stream().map(TrainingProgramSyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -38,5 +39,9 @@ public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusS
             trainingProgramSyllabusDTOList.add(TrainingProgramSyllabusMapper.INSTANCE.toDTO(t));
         }
         return trainingProgramSyllabusDTOList;
+    }
+
+    public void addSyllabus(TrainingProgramSyllabus syllabus){
+        repository.save(syllabus);
     }
 }

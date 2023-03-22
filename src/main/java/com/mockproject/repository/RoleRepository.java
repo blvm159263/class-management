@@ -15,5 +15,5 @@ public interface  RoleRepository extends JpaRepository<Role, Long> {
     Optional<Role> getRoleById(Long id);
     Optional<Role> getRoleByRoleName(String roleName);
 
-    Optional<Role> getRoleByIdIsNotAndRoleName(Long id, String name);
+    List<Role> getRoleByIdIsNotAndRoleName(Long id, String name);
 }

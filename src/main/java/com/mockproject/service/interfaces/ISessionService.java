@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface ISessionService {
+    List<SessionDTO> getSessionListBySyllabusId(Long idSyllabus);
 
     List<SessionDTO> listBySyllabus(Long sid);
 
@@ -23,5 +24,4 @@ public interface ISessionService {
 
     boolean deleteSessions(Long syllabusId, boolean status);
 
-    List<Session> getSessionListBySyllabusId(Long idSyllabus);
 }

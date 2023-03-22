@@ -48,13 +48,6 @@ public class SyllabusController {
 
     private final ITrainingProgramSyllabusService trainingProgramSyllabusService;
 
-    @GetMapping()
-    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<SyllabusDTO>> getAll(){
-        List<SyllabusDTO> listSyllabus = syllabusService.getAll(true, true);
-        return ResponseEntity.ok(listSyllabus);
-    }
-
     @GetMapping("/getSyllabusByTrainingProgram/{trainingProgramId}")
     @Operation(summary = "Get all syllabus by training program id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
@@ -71,22 +64,15 @@ public class SyllabusController {
         return ResponseEntity.ok(syllabus);
     }
 
-    @GetMapping("get-all")
-    @Operation(summary = "Get all syllabus")
-    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<SyllabusDTO>> getAllSyllabus() {
-        return ResponseEntity.ok(syllabusService.getSyllabusList(true));
-    }
-
     @PostMapping(value = "/replace")
-    @Operation(description = "Replace Syllabus")
+    @Operation(summary = "Replace Syllabus")
     @Secured({CREATE,FULL_ACCESS})
     public ResponseEntity<Boolean> replace(@RequestBody SyllabusDTO syllabusDTO){
         return ResponseEntity.ok(syllabusService.replace(syllabusDTO, true));
     }
 
     @PostMapping(value = "/create")
-    @Operation(description = "Create Syllabus")
+    @Operation(summary = "Create Syllabus")
     @Secured({CREATE,FULL_ACCESS})
     public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus) {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -185,12 +171,14 @@ public class SyllabusController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Read file")
     public ResponseEntity<SyllabusDTO> readSyllabusCsv(@RequestPart("file")MultipartFile file,
-                                                       @Parameter(description = "1. Name\n" +
-                                                               "2. Code\n" +
-                                                               "3. Name and Code") int condition,
-                                                       @Parameter(description = "1. Allow\n" +
-                                                               "2. Replace\n" +
-                                                               "3. Skip") int handle) throws IOException {
+                                                       @Parameter(description = """
+                                                               1. Name
+                                                               2. Code
+                                                               3. Name and Code""") int condition,
+                                                       @Parameter(description = """
+                                                               1. Allow
+                                                               2. Replace
+                                                               3. Skip""") int handle) throws IOException {
 //        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(syllabusService.readFileCsv(file, condition, handle));
     }
@@ -205,8 +193,5 @@ public class SyllabusController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.parseMediaType("application/csv"))
                 .body(syllabusService.getTemplateCsvFile());
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.asMediaType(MimeType.valueOf("text/csv")))
-//                .body(service.getTemplateCsvFile());
     }
 }

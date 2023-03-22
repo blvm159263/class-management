@@ -1,5 +1,6 @@
 package com.mockproject.service;
 
+import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.*;
@@ -20,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -65,7 +67,7 @@ public class UnitService implements IUnitService {
     public boolean createUnit(Long sessionId, UnitDTO unitDTO, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
-        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(session.get().getSyllabus().getId(),true);
+        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(session.get().getSyllabus().getId(),true,true);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         BigDecimal duration = syllabus.get().getHour();
 
@@ -132,8 +134,8 @@ public class UnitService implements IUnitService {
     }
 
     @Override
-    public List<Unit> getUnitBySessionId(Long idSession){
-        return unitRepository.getListUnitBySessionId(idSession);
+    public List<UnitDTO> getUnitBySessionId(Long idSession){
+        return unitRepository.getListUnitBySessionId(idSession).stream().map(UnitMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -186,5 +188,14 @@ public class UnitService implements IUnitService {
     public List<Unit> getListUnitsInASessionByTrainingClassId(Long id, int dayNth){
         Session session = getSession(id, dayNth);
         return unitRepository.findBySessionAndStatusOrderByUnitNumber(session, true).orElseThrow();
+    }
+
+    @Override
+    public List<UnitDTO> getListUnit(List<SessionDTO> session){
+        List<UnitDTO> listUnit = new ArrayList<>();
+        for(SessionDTO s : session){
+            listUnit.addAll(getUnitBySessionId(s.getId()));
+        }
+        return listUnit;
     }
 }
