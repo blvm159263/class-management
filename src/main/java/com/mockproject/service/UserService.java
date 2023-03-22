@@ -122,9 +122,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Page<UserDTO> searchByFilter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> role_id, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception {
+    public Page<UserDTO> searchByFilter(List<String> search, LocalDate dob, Boolean gender, List<Long> atendeeId, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception {
         int page1 = 0;
         int size1 = 10;
+        String searchFirst = "";
         Pageable pageable;
         List<Sort.Order> order = new ArrayList<>();
         if (page.isPresent()) page1 = page.get() - 1;
@@ -141,12 +142,34 @@ public class UserService implements IUserService {
         Page<User> pages;
         List<UserDTO> result = new ArrayList<>();
         try {
-            pages = userRepo.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, pageable);
+            if (search != null){
+                if (search.isEmpty()){
+                    searchFirst = "";
+                } else {
+                    searchFirst = search.get(0);
+                }
+
+            }
+            pages = userRepo.searchByFilter( searchFirst, dob, gender, atendeeId, pageable);
             for (User u : pages.getContent()) {
                 UserDTO userDTOC = UserMapper.INSTANCE.toDTO(u);
                 userDTOC.setStateName(getState(u.getState()));
                 result.add(userDTOC);
             }
+
+            if ( search != null && search.size() > 1){
+                for (int i = 1; i < search.size(); i++) {
+                    String subSearch = search.get(i).toUpperCase();
+                    result = result.stream().filter(s
+                                    -> s.getEmail().toUpperCase().contains(subSearch) ||
+                                    s.getPhone().toUpperCase().contains(subSearch) ||
+                                    s.getFullName().toUpperCase().contains(subSearch))
+                            .collect(Collectors.toList());
+                }
+            }
+
+
+
         } catch (Exception e) {
             throw e;
         }

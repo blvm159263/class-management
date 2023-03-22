@@ -37,19 +37,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> getAllByPageAndRowPerPage(Long page, Long rowPerPage);
 
     @Query(value = "select u from User u "+
-            "where (:id is null or u.id = :id) " +
-            "and (:dob is null or u.dob = :dob)" +
-            "and (:email is null or u.email like '%'+:email+'%')" +
-            "and (:fullname is null or u.fullName like '%'+:fullname+'%')" +
+            "where " +
+            " (:dob is null or u.dob = :dob)" +
             "and (:gender is null or u.gender = :gender)" +
-            "and (:phone is null or u.phone like '%'+:phone+'%')" +
-            "and (:#{#state.size()} = 0 or u.state in :state)" +
             "and (:#{#attendeeId.size()} = 0 or u.attendee.id in :attendeeId)" +
-            "and (:#{#levelId.size()} = 0 or u.level.id in :levelId)" +
-            "and (:#{#roleId.size()} = 0 or u.role.id in :roleId)" +
-            "and u.status = true"
+            "and u.status = true " +
+            "and ( u.email like '%'+:search+'%' or u.fullName like '%'+:search+'%' or u.phone like '%'+:search+'%' or" +
+            " u.level.levelCode like '%'+:search+'%' or u.role.roleName like '%'+:search+'%')"
     )
-    Page<User> searchByFilter(Long id, LocalDate dob, String email, String fullname, Boolean gender, String phone, List<Integer> state, List<Long> attendeeId, List<Long> levelId, List<Long> roleId,Pageable pageable);
+    Page<User> searchByFilter(String search , LocalDate dob, Boolean gender, List<Long> attendeeId,Pageable pageable);
 
     List<User> findByRoleAndStatus(Role role, boolean status);
 

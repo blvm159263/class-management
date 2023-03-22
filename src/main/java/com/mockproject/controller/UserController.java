@@ -283,24 +283,18 @@ public class UserController {
     @GetMapping("/searchByFilter")
     @Operation(summary = "Search User by filter and order")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity searchByFilter(@RequestParam(value = "Id", required = false) @Parameter(description = "User id") Long id,
+    public ResponseEntity searchByFilter(@RequestParam(value = "search", required = false) @Parameter(description = "Search string") List<String> search,
                                          @RequestParam(value = "Dob", required = false) @Parameter(description = "Date of birth(yyyy/mm/dd)") LocalDate dob,
-                                         @RequestParam(value = "Email", required = false) String email,
-                                         @RequestParam(value = "FullName", required = false) String fullName,
                                          @RequestParam(value = "Gender", required = false) @Parameter(description = "true = Male, false = Female") Boolean gender,
-                                         @RequestParam(value = "Phone", required = false) String phone,
-                                         @RequestParam(value = "StateId", required = false, defaultValue = "") List<Integer> stateId,
                                          @RequestParam(value = "AtendeeId", required = false, defaultValue = "") List<Long> atendeeId,
-                                         @RequestParam(value = "LevelId", required = false, defaultValue = "") List<Long> levelId,
-                                         @RequestParam(value = "RoleId", required = false, defaultValue = "") List<Long> role_id,
                                          @RequestParam(value = "Page", required = false) Optional<Integer> page,
                                          @RequestParam(value = "Size", required = false) Optional<Integer> size,
-                                         @RequestParam(value = "Order", defaultValue = "fullName-asc") @Parameter(description = "Order by attribute", example = "Example: " + "id-asc\n" + "email-asc\n" + "fullname-asc\n" + "state-asc\n" + "dob-asc\n" + "phone-asc\n" + "attendee-asc\n" + "level-asc\n" + "role-asc\n" + "NOTE:::::::: asc = ascending; desc = descending") List<String> order
+                                         @RequestParam(value = "Order", defaultValue = "fullName-asc") @Parameter(description = "Order by attribute" + "\nExample: "  + "email-asc\n" + "fullName-asc\n" + "state-asc\n" + "dob-asc\n" + "phone-asc\n" + "attendee-asc\n" + "level-asc\n" + "role-asc\n" + "NOTE:::::::: asc = ascending; desc = descending") List<String> order
 
     ) {
         Page<UserDTO> result;
         try {
-            result = userService.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, page, size, order);
+            result = userService.searchByFilter(search, dob,gender, atendeeId, page, size, order);
         } catch (InvalidDataAccessApiUsageException e) {
             return ResponseEntity.badRequest().body("==============================================\nCOULD NOT FOUND ATTRIBUTE ORDER" + "\nExample: " + "id-asc\n" + "email-asc\n" + "fullname-asc\n" + "state-asc\n" + "dob-asc\n" + "phone-asc\n" + "attendee-asc\n" + "level-asc\n" + "role-asc\n" + "NOTE:::::::: asc = ascending; desc = descending");
         } catch (ArrayIndexOutOfBoundsException e) {
