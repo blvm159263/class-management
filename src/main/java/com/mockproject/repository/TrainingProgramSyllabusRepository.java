@@ -10,5 +10,8 @@ import java.util.List;
 @Repository
 public interface TrainingProgramSyllabusRepository extends JpaRepository<TrainingProgramSyllabus, Long> {
 
+<<<<<<< HEAD
     List<TrainingProgramSyllabus> getTrainingProgramSyllabusByTrainingProgramId(Long trainProgramID);
+=======
+>>>>>>> origin/g3_thanh_branch
 }

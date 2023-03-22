@@ -1,16 +1,11 @@
 package com.mockproject.controller;
 
+
 import com.mockproject.dto.ReadFileDto;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
 import com.mockproject.exception.FileException;
 import com.mockproject.service.interfaces.IFileService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.springframework.data.domain.PageImpl;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,6 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
@@ -29,11 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -207,4 +201,35 @@ public class TrainingProgramController {
         }
         return ResponseEntity.ok().body("Okeee");
     }
+
+
+    @PostMapping("/training-program/addTrainingProgram")
+    public String addTrain(@RequestParam("name") String trainingProgram, HttpSession session) {
+            session.setAttribute("trainingName", trainingProgram);
+            return "redirect:/saveTrainingProgram";
+    }
+
+    @PostMapping("/training-program/saveTrainingProgram")
+    public String saveTrain(@RequestParam("content") Long sylId, HttpSession session) {
+//        String name =(String) session.getAttribute("trainingName");
+//        Syllabus syllabus = new Syllabus();
+//        System.out.println(sylId);
+//        syllabus = service.getSyllabusById(sylId);
+//        TrainingProgram trainingProgram = new TrainingProgram();
+//        trainingProgram.setName(name);
+//        trainingProgram.setDateCreated(LocalDate.now());
+//        trainingProgram.setLastDateModified(LocalDate.now());
+//        trainingProgram.setDay(syllabus.getDay());
+//        trainingProgram.setHour(syllabus.getHour());
+//        trainingProgram.setStatus(true);
+//        TrainingProgramSyllabus programSyllabus = new TrainingProgramSyllabus();
+//        programSyllabus.setTrainingProgram(trainingProgram);
+//        programSyllabus.setStatus(true);
+//        programSyllabus.setSyllabus(syllabus);
+//        System.out.println(trainingProgram);
+//        trainingService.save(trainingProgram);
+//        syllabusService.addSyllabus(programSyllabus);
+        return "redirect:/addTrainingProgram";
+    }
 }
+
