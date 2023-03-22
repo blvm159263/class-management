@@ -105,10 +105,15 @@ public class SyllabusServiceTest {
 
         List<String> search = new ArrayList<>();
         search.add("");
+
         when(syllabusRepository.getListSyllabus(true, null, null, "", listId, Sort.by(Sort.Direction.ASC, "name"))).thenReturn(syllabusList);
+
         when(outputStandardRepo.findByStatusAndStandardCodeContainingIgnoreCase(true, "")).thenReturn(outputStandardList);
+
         when(unitDetailRepo.findByStatusAndOutputStandardIn(true, outputStandardList)).thenReturn(detailList);
+
         Page<SyllabusDTO> result = syllabusService.getListSyllabus(true, null, null, search, new String[] {"name","asc"}, Optional.of(0), Optional.of(10));
+
         assertEquals(3, result.getContent().size());
         search.add("Syllabus number 2");
         result = syllabusService.getListSyllabus(true, null, null, search, new String[] {"name","asc"}, Optional.of(0), Optional.of(10));

@@ -6,6 +6,7 @@ import com.mockproject.dto.*;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.entity.User;
+import com.mockproject.jwt.JwtTokenProvider;
 import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.service.interfaces.*;
@@ -245,7 +246,7 @@ public class UserController {
             if (roleService.checkDuplicatedByRoleIdAndRoleName(fdto.getId(),fdto.getRoleName()))
                 return ResponseEntity.badRequest().body("Role " + fdto.getRoleName() + " is duplicated!");
             if (fdto.getSyllabusPermission().equals("Access denied")) { fdto.setLeaningMaterialPermission("Access denied"); }
-            if (fdto.getId() != 0) {
+            if (fdto.getId() != 0 &&  roleService.getRoleById(fdto.getId()) != null ) {
                 roleService.save(new RoleDTO(fdto.getId(), fdto.getRoleName(), true));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getClassPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Class"));
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getSyllabusPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("Syllabus"));
@@ -283,7 +284,7 @@ public class UserController {
     @GetMapping("/searchByFilter")
     @Operation(summary = "Search User by filter and order")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity searchByFilter(@RequestParam(value = "Id", required = false) @Parameter(description = "User id") Long id,
+    public ResponseEntity searchByFilter(@RequestParam(value = "search", required = false) @Parameter(description = "Search string") List<String> search,
                                          @RequestParam(value = "Dob", required = false) @Parameter(description = "Date of birth(yyyy/mm/dd)") LocalDate dob,
                                          @RequestParam(value = "Email", required = false) String email,
                                          @RequestParam(value = "FullName", required = false) String fullName,
@@ -295,12 +296,12 @@ public class UserController {
                                          @RequestParam(value = "RoleId", required = false, defaultValue = "") List<Long> role_id,
                                          @RequestParam(value = "Page", required = false) Optional<Integer> page,
                                          @RequestParam(value = "Size", required = false) Optional<Integer> size,
-                                         @RequestParam(value = "Order", required = false) @Parameter(description = "Order by attribute", example = "Example: " + "id-asc\n" + "email-asc\n" + "fullname-asc\n" + "state-asc\n" + "dob-asc\n" + "phone-asc\n" + "attendee-asc\n" + "level-asc\n" + "role-asc\n" + "NOTE:::::::: asc = ascending; desc = descending") List<String> order
+                                         @RequestParam(value = "Order", defaultValue = "fullName-asc") @Parameter(description = "Order by attribute" + "\nExample: "  + "email-asc\n" + "fullName-asc\n" + "state-asc\n" + "dob-asc\n" + "phone-asc\n" + "attendee-asc\n" + "level-asc\n" + "role-asc\n" + "NOTE:::::::: asc = ascending; desc = descending") List<String> order
 
     ) {
         Page<UserDTO> result;
         try {
-            result = userService.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, page, size, order);
+            result = userService.searchByFilter(search, dob,gender, atendeeId, page, size, order);
         } catch (InvalidDataAccessApiUsageException e) {
             return ResponseEntity.badRequest().body("==============================================\nCOULD NOT FOUND ATTRIBUTE ORDER" + "\nExample: " + "id-asc\n" + "email-asc\n" + "fullname-asc\n" + "state-asc\n" + "dob-asc\n" + "phone-asc\n" + "attendee-asc\n" + "level-asc\n" + "role-asc\n" + "NOTE:::::::: asc = ascending; desc = descending");
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -313,19 +314,12 @@ public class UserController {
         else return ResponseEntity.badRequest().body("Not found user!");
     }
 
-    @PostMapping("/encodePassword")
-    @Operation(summary = "If the password in your Database is not encode,use this function is only 1 time!!!")
-    public ResponseEntity encodePassword() {
-        userService.encodePassword();
-        return ResponseEntity.ok("Encode sucessfully");
-    }
-
     @GetMapping("/getRoleByName")
     @Operation(summary = "Get roleDTO by role name")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getRoleByName(@RequestParam(value = "roleName") String rolename) {
-        long roleId = roleService.getRoleByRoleName(rolename);
-        return ResponseEntity.ok(roleId);
+        RoleDTO role = roleService.getRoleByRoleName(rolename);
+        return ResponseEntity.ok(role);
     }
 
     @GetMapping("/getLevel")
@@ -373,7 +367,7 @@ public class UserController {
         if (roleService.getRoleByRoleName(roleName) == null) {
             return ResponseEntity.badRequest().body("Role not found!");
         }
-        boolean change = userService.changeRole(id, roleService.getRoleByRoleName(roleName));
+        boolean change = userService.changeRole(id, roleService.getRoleByRoleName(roleName).getId());
         if (!change) return ResponseEntity.badRequest().body("Change failed");
         return ResponseEntity.ok(roleName);
     }

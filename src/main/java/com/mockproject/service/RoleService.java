@@ -30,10 +30,10 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    public Long getRoleByRoleName(String roleName) {
+    public RoleDTO getRoleByRoleName(String roleName) {
         Optional<Role> role = repository.getRoleByRoleName(roleName);
         if (role.isPresent()){
-            return repository.getRoleByRoleName(roleName).get().getId();
+            return RoleMapper.INSTANCE.toDTO(repository.getRoleByRoleName(roleName).get());
         }
         else return null;
     }
@@ -54,19 +54,11 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    public Boolean checkDuplicatedByRoleName(String name) {
-        System.out.println(repository.findAllByRoleName(name).size() + "===================================================================");
-        if (repository.findAllByRoleName(name).size() > 1){
-            return true;
-        } else
-        return false;
-    }
-
-    @Override
     public Boolean checkDuplicatedByRoleIdAndRoleName(Long id, String name) {
-        if (repository.getRoleByIdIsNotAndRoleName(id, name).isPresent()){
+        List<Role> role = repository.getRoleByIdIsNotAndRoleName(id, name);
+        if (!role.isEmpty()){
             return true;
-        } return false;
+        } else return false;
     }
 
 }
