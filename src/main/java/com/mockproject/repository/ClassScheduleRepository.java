@@ -19,4 +19,6 @@ public interface ClassScheduleRepository extends JpaRepository<ClassSchedule, Lo
 
     Long countAllByDateBeforeAndTrainingClassId(LocalDate date, Long id);
 
+    List<ClassSchedule> findByTrainingClassAndStatus(TrainingClass trainingClass, boolean status);
+
 }

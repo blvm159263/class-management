@@ -2,6 +2,7 @@ package com.mockproject.service;
 
 import com.mockproject.dto.FsuDTO;
 import com.mockproject.entity.Fsu;
+import com.mockproject.entity.TrainingClass;
 import com.mockproject.repository.FsuRepository;
 import com.mockproject.repository.TrainingClassRepository;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,9 +32,16 @@ class FsuServiceTest {
     @Autowired
     private FsuService fsuService;
 
+
     Fsu fsu1 = new Fsu(1L, "Fsu 1" , "Desc 1", true, null);
     Fsu fsu2 = new Fsu(2L, "Fsu 2" , "Desc 2", false, null);
     Fsu fsu3 = new Fsu(3L, "Fsu 3" , "Desc 3", true, null);
+
+    TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
+            null, null, 12, 30, 30, 25, "Planning", null,
+            null, null, null, 1, true, null, null,
+            null, fsu1, null, null, null, null, null,
+            null, null, null);
 
     /**
      * Method under test: {@link FsuService#listAllTrue()}
@@ -53,6 +62,27 @@ class FsuServiceTest {
         assertTrue(result.stream().filter(p-> !p.isStatus()).toList().isEmpty());
 
         verify(fsuRepository).findByStatus(anyBoolean());
+    }
+
+    /**
+     * Method under test: {@link FsuService#getFsuByTrainingClassId(Long)}
+     */
+    @Test
+    void canGetFsuByTrainingClassId() {
+        Long trainingClassId = 1L;
+        TrainingClass trainingClass = new TrainingClass();
+        trainingClass.setId(trainingClassId);
+        trainingClass.setFsu(fsu1);
+
+        when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
+                .thenReturn(Optional.of(trainingClass));
+
+        FsuDTO result = fsuService.getFsuByTrainingClassId(trainingClass.getId());
+        assertEquals(1L, result.getId());
+        assertEquals("Fsu 1", result.getFsuName());
+        assertEquals("Desc 1", result.getDescription());
+
+        verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
     }
 }
 

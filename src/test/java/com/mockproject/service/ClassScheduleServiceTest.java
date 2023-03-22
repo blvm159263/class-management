@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,9 +41,28 @@ class ClassScheduleServiceTest {
     @Autowired
     private ClassScheduleService classScheduleService;
 
-    ClassSchedule cs1 = new ClassSchedule(1L, LocalDate.now(), true, null);
-    ClassSchedule cs2 = new ClassSchedule(2L, LocalDate.now(), false, null);
-    ClassSchedule cs3 = new ClassSchedule(3L, LocalDate.now(), true, null);
+    TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
+            null, null, 12, 30, 30, 25, "Planning", null,
+            null, null, null, 1, true, null, null,
+            null, null, null, null, null, null, null,
+            null, null, null);
+
+    TrainingClass tc2 = new TrainingClass(2L, "Class Name 2", "TC2", null, null,
+            null, null, 10, 20, 20, 20, "Planning", null,
+            null, null, null, 1, true, null, null,
+            null, null, null, null, null, null, null,
+            null, null, null);
+
+    TrainingClass tc3 = new TrainingClass(3L, "Class Name 3", "TC3", null, null,
+            null, null, 10, 20, 20, 20, "Planning", null,
+            null, null, null, 1, true, null, null,
+            null, null, null, null, null, null, null,
+            null, null, null);
+
+    ClassSchedule cs1 = new ClassSchedule(1L, LocalDate.now(), true, tc1);
+    ClassSchedule cs2 = new ClassSchedule(2L, LocalDate.now(), false, tc2);
+    ClassSchedule cs3 = new ClassSchedule(3L, LocalDate.now(), true, tc3);
+
 
 
     /**
@@ -112,4 +132,36 @@ class ClassScheduleServiceTest {
         verify(classScheduleRepository).saveAll(listScheduleBefore);
     }
 
+    /**
+     * Method under test: {@link ClassScheduleService#getClassScheduleByTrainingClassId(Long)}
+     */
+    @Test
+    void canGetListClassScheduleByTrainingClassId() {
+
+        List<ClassSchedule> classSchedules = new ArrayList<>();
+        classSchedules.add(cs1);
+        classSchedules.add(cs2);
+        classSchedules.add(cs3);
+
+        Long id = 1L;
+        TrainingClass trainingClass = new TrainingClass();
+        trainingClass.setId(id);
+        trainingClass.setListClassSchedules(classSchedules);
+
+        when(trainingClassRepository.findByIdAndStatus(id, true))
+                .thenReturn(Optional.of(trainingClass));
+
+        when(classScheduleRepository.findByTrainingClassAndStatus(trainingClass, true))
+                .thenReturn(classSchedules.stream().filter(p -> p.isStatus() &&
+                        p.getTrainingClass().getId() == trainingClass.getId()).toList());
+
+        List<ClassScheduleDTO> result = classScheduleService.getClassScheduleByTrainingClassId(trainingClass.getId());
+
+        assertEquals(1L, result.get(0).getId());
+        assertEquals(LocalDate.now(), result.get(0).getDate());
+        assertEquals(1L, result.get(0).getTrainingClassId());
+
+        verify(trainingClassRepository).findByIdAndStatus(id, true);
+        verify(classScheduleRepository).findByTrainingClassAndStatus(trainingClass, true);
+    }
 }

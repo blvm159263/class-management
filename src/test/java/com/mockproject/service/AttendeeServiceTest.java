@@ -2,6 +2,7 @@ package com.mockproject.service;
 
 import com.mockproject.dto.AttendeeDTO;
 import com.mockproject.entity.Attendee;
+import com.mockproject.entity.TrainingClass;
 import com.mockproject.repository.AttendeeRepository;
 import com.mockproject.repository.TrainingClassRepository;
 import org.junit.jupiter.api.Test;
@@ -11,8 +12,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.sql.Time;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,7 +38,11 @@ class AttendeeServiceTest {
     Attendee a2 = new Attendee(2L, "Name 2", "Des 2" , false, null , null);
     Attendee a3 = new Attendee(3L, "Name 3", "Des 3" , true, null , null);
 
-
+    TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
+            null, null, 12, 30, 30, 25, "Planning", null,
+            null, null, null, 1, true, null, null,
+            null, null, null, null, null, null, null,
+            null, null, null);
 
     /**
      * Method under test: {@link AttendeeService#save(AttendeeDTO)}
@@ -69,6 +77,25 @@ class AttendeeServiceTest {
         assertEquals("Name 1", result.get(0).getAttendeeName());
         assertTrue(result.stream().filter(p-> !p.isStatus()).toList().isEmpty());
         verify(attendeeRepository).findByStatus(true);
+    }
+
+    /**
+     * Method under test: {@link AttendeeService#getAttendeeByTrainingClassId(Long)}
+     */
+    @Test
+    void canGetAttendeeByTrainingClassId() {
+        Long id = 1L;
+        TrainingClass trainingClass = new TrainingClass();
+        trainingClass.setId(id);
+        trainingClass.setAttendee(a1);
+
+        when(trainingClassRepository.findByIdAndStatus(id, true))
+                .thenReturn(Optional.of(trainingClass));
+        AttendeeDTO result = attendeeService.getAttendeeByTrainingClassId(trainingClass.getId());
+        assertEquals(1L, result.getId());
+        assertEquals("Name 1", result.getAttendeeName());
+        assertEquals("Des 1", result.getDescription());
+        verify(trainingClassRepository).findByIdAndStatus(id, true);
     }
 }
 
