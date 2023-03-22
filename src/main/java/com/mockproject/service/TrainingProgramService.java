@@ -51,8 +51,7 @@ public class TrainingProgramService implements ITrainingProgramService{
     }
     @Override
     public TrainingProgramDTO getTrainingProgramById(Long id) {
-        TrainingProgram trainingProgram = trainingProgramRepository.getTrainingProgramById(id);
-        return TrainingProgramMapper.INSTANCE.toDTO(trainingProgram);
+        return TrainingProgramMapper.INSTANCE.toDTO(trainingProgramRepository.getTrainingProgramById(id));
     }
     public void save(Long sylId, String name){
         SyllabusDTO syllabus = syllabusService.getSyllabusById(sylId);
