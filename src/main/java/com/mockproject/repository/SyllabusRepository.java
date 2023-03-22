@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
-    Syllabus getSyllabusById(long id);
+    Syllabus getSyllabusById(Long id);
 }

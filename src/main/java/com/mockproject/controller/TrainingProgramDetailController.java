@@ -4,6 +4,7 @@ import com.mockproject.dto.*;
 import com.mockproject.entity.*;
 import com.mockproject.service.*;
 import com.mockproject.service.interfaces.*;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/trainingprogramdetail")
+@RequestMapping("/api/training-program-detail")
 public class TrainingProgramDetailController {
     private final ITrainingProgramService trainingProgramService;
     private final ITrainingProgramSyllabusService trainingProgramSyllabusService;
@@ -24,6 +25,7 @@ public class TrainingProgramDetailController {
     private final ITrainingMaterialService trainingMaterialService;
 
     @GetMapping("/")
+    @Operation(summary = "Get training program by ID")
     public ResponseEntity getTrainingProgramById(@RequestParam Long id) {
         return ResponseEntity.ok(trainingProgramService.getTrainingProgramById(id));
     }
@@ -38,38 +40,39 @@ public class TrainingProgramDetailController {
         List<TrainingProgramSyllabusDTO> listTrainingProgramSyllabus = trainingProgramSyllabusService.getTrainingProgramSyllabusListById(idTrainingProgram);
         List<SyllabusDTO> list = new ArrayList<>();
         for (int i = 0; i < listTrainingProgramSyllabus.size(); i++) {
-            SyllabusDTO s = syllabusService.getSyllabusById(listTrainingProgramSyllabus.get(i).getId());
+            SyllabusDTO s = syllabusService.getSyllabusById(listTrainingProgramSyllabus.get(i).getSyllabusId());
             list.add(s);
         }
-        if (list.isEmpty()) {
+        if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any thing in list Syllabus");
         }
     }
 
-    @GetMapping("/syllabus/1/{idSyllabus}")
+    @GetMapping("/syllabus/session/{idSyllabus}")
+    @Operation(summary = "Get session list by syllabus ID")
     public ResponseEntity getSessionListBySyllabusId(@PathVariable("idSyllabus") Long idSyllabus) {
         return ResponseEntity.ok(sessionService.getSessionListBySyllabusId(idSyllabus));
     }
 
-    @GetMapping("/syllabus/2/{idSyllabus}")
-    public ResponseEntity getUnitListByIdSession(@PathVariable("idSyllabus") Long idSyllabus) {
+    @GetMapping("/syllabus/unit/{idSession}")
+    public ResponseEntity getUnitListByIdSession(@PathVariable("idSession") Long idSyllabus) {
         List<SessionDTO> listSession = sessionService.getSessionListBySyllabusId(idSyllabus);
         List<UnitDTO> listUnit = unitService.getListUnit(listSession);
-        if (listUnit.isEmpty()) {
+        if (!listUnit.isEmpty()) {
             return ResponseEntity.ok(listUnit);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any thing in list Unit");
         }
     }
 
-    @GetMapping("/syllabus/3/{idSyllabus}")
+    @GetMapping("/syllabus/unit-detail/{idSyllabus}")
     public ResponseEntity getUnitDetailListByUnitId(@PathVariable("idSyllabus") Long idSyllabus) {
         List<SessionDTO> listSession = sessionService.getSessionListBySyllabusId(idSyllabus);
         List<UnitDTO> listUnit = unitService.getListUnit(listSession);
         List<UnitDetailDTO> listUnitDetail = unitDetailService.getListUnitDetail(listUnit);
-        if (listUnitDetail.isEmpty()) {
+        if (!listUnitDetail.isEmpty()) {
             return ResponseEntity.ok(listUnitDetail);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any thing in list UnitDetail");
@@ -82,7 +85,7 @@ public class TrainingProgramDetailController {
         List<UnitDTO> listUnit = unitService.getListUnit(listSession);
         List<UnitDetailDTO> listUnitDetail = unitDetailService.getListUnitDetail(listUnit);
         List<TrainingMaterialDTO> listTrainingMaterial = trainingMaterialService.getListTrainingMaterial(listUnitDetail);
-        if (listTrainingMaterial.isEmpty()) {
+        if (!listTrainingMaterial.isEmpty()) {
             return ResponseEntity.ok(listTrainingMaterial);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any thing in list Training Material");
