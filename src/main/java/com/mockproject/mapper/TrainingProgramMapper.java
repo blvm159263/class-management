@@ -14,18 +14,18 @@ public interface TrainingProgramMapper {
     TrainingProgramMapper INSTANCE = Mappers.getMapper(TrainingProgramMapper.class);
 
     @Mapping(target = "lastModifierId", source = "lastModifier.id")
-    @Mapping(target = "creatorId", source = "creator.id")
+    @Mapping(target = "creatorName", source = "creator.fullName")
 //    @Mapping(target = "name", source = "name")
     TrainingProgramDTO toDTO(TrainingProgram trainingProgram);
 
     @Mapping(target = "lastModifier", source = "lastModifierId", qualifiedByName = "mapModifier")
-    @Mapping(target = "creator", source = "creatorId", qualifiedByName = "mapCreator")
+    @Mapping(target = "creator", source = "creatorName", qualifiedByName = "mapCreator")
     TrainingProgram toEntity(TrainingProgramDTO dto);
 
     @Named("mapCreator")
-    default User mapCreator(Long id) {
+    default User mapCreator(String name) {
         User user = new User();
-        user.setId(id);
+        user.setFullName(name);
         return user;
     }
 
