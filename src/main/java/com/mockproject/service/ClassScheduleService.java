@@ -11,10 +11,11 @@ import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.mapper.TrainingClassFilterMap;
 import com.mockproject.repository.ClassScheduleRepository;
+import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
 import com.mockproject.specification.TrainingClassSpecification;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -25,15 +26,19 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class ClassScheduleService implements IClassScheduleService {
 
     private final ClassScheduleRepository repository;
+
+    private final TrainingClassRepository trainingClassRepository;
+
     private final TrainingClassService trainingClassService;
 
     private final TrainingClassUnitInformationService trainingClassUnitInformationService;
-    private TrainingClassFilterMap trainingClassFilterMap;
+
+    private final TrainingClassFilterMap trainingClassFilterMap;
 
     @Override
     public List<ClassScheduleDTO> listAll() {
@@ -48,6 +53,23 @@ public class ClassScheduleService implements IClassScheduleService {
     @Override
     public ClassSchedule save(ClassScheduleDTO dto) {
         return repository.save(ClassScheduleMapper.INSTANCE.toEntity(dto));
+    }
+
+    @Override
+    public boolean saveClassScheduleForTrainingClass(List<LocalDate> listDate, Long tcId) {
+//        Long count = listDto.stream().map(p -> repository.save(ClassScheduleMapper.INSTANCE.toEntity(p))).filter(Objects::nonNull).count();
+        TrainingClass tc = new TrainingClass();
+        tc.setId(tcId);
+        List<ClassSchedule> list = listDate.stream().map(p-> new ClassSchedule(null, p, true,tc)).toList();
+        List<ClassSchedule> result = repository.saveAll(list);
+        return !result.isEmpty();
+    }
+
+    @Override
+    public List<ClassScheduleDTO> getClassScheduleByTrainingClassId(Long id) {
+        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        List<ClassSchedule> schedules = repository.findByTrainingClassAndStatusOrderByDateAsc(tc, true).orElseThrow();
+        return schedules.stream().map(ClassScheduleMapper.INSTANCE::toDTO).toList();
     }
 
     @Override
@@ -108,7 +130,6 @@ public class ClassScheduleService implements IClassScheduleService {
                     result.add(getTrainingClassDetail(trainingClass, classSchedule.getDate()));
             });
         });
-
         return result;
     }
 
@@ -131,7 +152,8 @@ public class ClassScheduleService implements IClassScheduleService {
         return trainingClasses;
     }
 
-    private TrainingClassFilterResponseDTO getTrainingClassDetail(TrainingClass trainingClass, LocalDate date) {
+    @Override
+    public TrainingClassFilterResponseDTO getTrainingClassDetail(TrainingClass trainingClass, LocalDate date) {
         var learnedDay = repository.countAllByDateBeforeAndTrainingClassId(date, trainingClass.getId()) + 1;
         var durationDay = learnedDay + "/" + trainingClass.getDay();
         var syllabusesList = trainingClass.getTrainingProgram().getListTrainingProgramSyllabuses()

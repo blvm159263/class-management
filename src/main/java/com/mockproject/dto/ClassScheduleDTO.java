@@ -17,4 +17,5 @@ public class ClassScheduleDTO implements Serializable {
     private LocalDate date;
     private boolean status;
     private Long trainingClassId;
+    private String trainingClassName;
 }

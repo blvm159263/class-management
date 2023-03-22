@@ -17,8 +17,11 @@ public interface RolePermissionScopeMapper {
 
 
     @Mapping(target = "roleId", source = "role.id")
+    @Mapping(target = "roleName", source = "role.roleName")
     @Mapping(target = "permissionScopeId", source = "permissionScope.id")
+    @Mapping(target = "permissionScopeName", source = "permissionScope.scopeName")
     @Mapping(target = "permissionId", source = "permission.id")
+    @Mapping(target = "permissionName", source = "permission.permissionName")
     RolePermissionScopeDTO toDTO(RolePermissionScope permissionScope);
 
 

@@ -1,7 +1,10 @@
 package com.mockproject.mapper;
 
 import com.mockproject.dto.UserDTO;
-import com.mockproject.entity.*;
+import com.mockproject.entity.Attendee;
+import com.mockproject.entity.Level;
+import com.mockproject.entity.Role;
+import com.mockproject.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -13,8 +16,11 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(target = "roleId", source = "role.id")
+    @Mapping(target = "roleName", source = "role.roleName")
     @Mapping(target = "levelId", source = "level.id")
+    @Mapping(target = "levelCode", source = "level.levelCode")
     @Mapping(target = "attendeeId", source = "attendee.id")
+    @Mapping(target = "attendeeName", source = "attendee.attendeeName")
     UserDTO toDTO(User user);
 
     @Mapping(target = "password", ignore = true)

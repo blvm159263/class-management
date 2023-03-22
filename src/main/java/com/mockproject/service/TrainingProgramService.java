@@ -1,5 +1,6 @@
 package com.mockproject.service;
 
+
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
@@ -16,18 +17,20 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class TrainingProgramService implements ITrainingProgramService{
+public class TrainingProgramService implements ITrainingProgramService {
 
     private final TrainingProgramRepository trainingProgramRepository;
-    private final SyllabusService syllabusService;
-    private final TrainingProgramSyllabusService trainingProgramSyllabusService;
 
-    public List<TrainingProgram> getAll(){
-        return trainingProgramRepository.findAll();
+    private final SyllabusService syllabusService;
+
+    @Override
+    public List<TrainingProgram> getByName(String keyword) {
+        return trainingProgramRepository.getTrainingProgramByNameContains(keyword);
     }
 
     @Override
@@ -38,10 +41,20 @@ public class TrainingProgramService implements ITrainingProgramService{
         return programDTOPage;
     }
 
+    @Override
     public Long countAll() {
         return trainingProgramRepository.count();
     }
 
+    @Override
+    public List<TrainingProgramDTO> getByCreatorFullname(String keyword) {
+        return trainingProgramRepository.getAllByCreatorFullNameContains(keyword).stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TrainingProgramDTO> searchByName(String name) {
+        return trainingProgramRepository.findByNameContainingAndStatus(name, true).stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
     @Override
     public Page<TrainingProgramDTO> getAll(Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo,pageSize);
@@ -49,10 +62,12 @@ public class TrainingProgramService implements ITrainingProgramService{
         Page<TrainingProgramDTO> programDTOPage = page.map(TrainingProgramMapper.INSTANCE::toDTO);
         return programDTOPage;
     }
+
     @Override
     public TrainingProgramDTO getTrainingProgramById(Long id) {
         return TrainingProgramMapper.INSTANCE.toDTO(trainingProgramRepository.getTrainingProgramById(id));
     }
+
     public void save(Long sylId, String name){
         SyllabusDTO syllabus = syllabusService.getSyllabusById(sylId);
         TrainingProgram trainingProgram = new TrainingProgram();
@@ -69,6 +84,5 @@ public class TrainingProgramService implements ITrainingProgramService{
         trainingProgramRepository.save(trainingProgram);
 //        trainingProgramSyllabusService.addSyllabus(programSyllabus);
     }
-
 
 }

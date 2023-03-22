@@ -178,4 +178,6 @@ public class TrainingClass implements Serializable {
     @OneToMany(mappedBy = "trainingClass", fetch = FetchType.LAZY)
     @JsonBackReference
     private List<TrainingClassAdmin> listTrainingClassAdmins;
+
+
 }
