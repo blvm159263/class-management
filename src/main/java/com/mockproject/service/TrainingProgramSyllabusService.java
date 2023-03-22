@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-
 import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.service.interfaces.ITrainingProgramSyllabusService;
@@ -16,6 +15,9 @@ import java.util.List;
 public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusService {
 
     private final TrainingProgramSyllabusRepository repository;
+    public void addSyllabus(TrainingProgramSyllabus syllabus){
+         repository.save(syllabus);
+    }
 
     @Override
     public List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(Long trainProgramID) {

@@ -1,18 +1,39 @@
 package com.mockproject.service;
 
-
 import com.mockproject.dto.TrainingProgramDTO;
+import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.TrainingProgram;
+import com.mockproject.entity.TrainingProgramSyllabus;
+import com.mockproject.entity.User;
+import com.mockproject.exception.file.FileRequestException;
 import com.mockproject.mapper.TrainingProgramMapper;
 import com.mockproject.repository.TrainingProgramRepository;
+import com.mockproject.repository.UserRepository;
 import com.mockproject.service.interfaces.ITrainingProgramService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.*;
+import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.sql.Time;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +42,79 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TrainingProgramService implements ITrainingProgramService {
     private final TrainingProgramRepository trainingProgramRepository;
+    private final TrainingProgramSyllabusService trainingProgramSyllabusService;
+    private final SyllabusService syllabusService;
+    private final UserRepository userRepository;
+    public void save(Long sylId, String name){
+        Syllabus syllabus = syllabusService.getSyllabusById(sylId);
+        TrainingProgram trainingProgram = new TrainingProgram();
+        trainingProgram.setName(name);
+        trainingProgram.setDateCreated(LocalDate.now());
+        trainingProgram.setLastDateModified(LocalDate.now());
+        trainingProgram.setDay(syllabus.getDay());
+        trainingProgram.setHour(syllabus.getHour());
+        trainingProgram.setStatus(true);
+        TrainingProgramSyllabus programSyllabus = new TrainingProgramSyllabus();
+        programSyllabus.setTrainingProgram(trainingProgram);
+        programSyllabus.setStatus(true);
+        programSyllabus.setSyllabus(syllabus);
+        trainingProgramRepository.save(trainingProgram);
+        trainingProgramSyllabusService.addSyllabus(programSyllabus);
+    }
+    public List<TrainingProgram> getAll(){
+        return trainingProgramRepository.findAll();
+    }
+
+    @Override
+    public void downloadCsvFile(PrintWriter printWriter, List<TrainingProgram> trainingPrograms) {
+        printWriter.write("ID, Program name, Created on(yyyy-mm-dd), Duration day, Duration time\n");
+        for (TrainingProgram trainingProgram: trainingPrograms){
+            printWriter.write(trainingProgram.getProgramId()+","+
+                    trainingProgram.getName()+","+trainingProgram.getDateCreated()+","+trainingProgram.getCreator().getFullName()+","+
+                    trainingProgram.getDay()+","+trainingProgram.getHour()+"\n");
+
+        }
+    }
+
+    @Override
+    public List<TrainingProgram> GetTrainingProgramDataFromCsv(InputStream fileInputStream)  throws IOException{
+        BufferedReader fileReader = new BufferedReader(new InputStreamReader(fileInputStream,"UTF-8"));
+        CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());
+        Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+        List<TrainingProgram> trainingPrograms = new ArrayList<>();
+        for(CSVRecord record: csvRecords){
+            TrainingProgram trainingProgram = new TrainingProgram();
+//            System.out.println(record.get("Created by"));
+            trainingProgram.setProgramId(Integer.parseInt(record.get("ID")));
+            trainingProgram.setName(record.get("Program name"));
+            trainingProgram.setDateCreated(LocalDate.parse(record.get("Created on(yyyy-mm-dd)")));
+//            User user = userRepository.findFirstByFullNameAndStatus(record.get("Created by"),true);
+//            trainingProgram.setCreator(user);
+            trainingProgram.setDay(Integer.parseInt(record.get("Duration day")));
+            trainingProgram.setHour(new BigDecimal(record.get("Duration time")));
+            trainingProgram.setLastDateModified(trainingProgram.getDateCreated());
+            User user = userRepository.findFirstByFullNameAndStatus("Lee Chong Wei", true);
+            trainingProgram.setCreator(user);
+            trainingProgram.setLastModifier(user);
+            trainingProgram.setLastDateModified(trainingProgram.getDateCreated());
+            trainingProgram.setStatus(true);
+//            trainingProgram.setLastModifier(user);
+            trainingPrograms.add(trainingProgram);
+        }
+        return trainingPrograms;
+    }
+
+    @Override
+    public void saveCsvFile(MultipartFile file) throws IOException {
+        List<TrainingProgram> trainingPrograms = GetTrainingProgramDataFromCsv(file.getInputStream());
+        for (TrainingProgram trainingProgram: trainingPrograms){
+            System.out.println(trainingProgram.getName());
+            System.out.println(trainingProgram.getHour());
+//            System.out.println(trainingProgram.getCreator().getFullName());
+        }
+        trainingProgramRepository.saveAll(trainingPrograms);
+    }
+
 
     @Override
     public TrainingProgram getTrainingProgramById(Long id) {

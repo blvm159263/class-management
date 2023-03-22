@@ -112,6 +112,11 @@
 			<artifactId>commons-csv</artifactId>
 			<version>1.9.0</version>
 		</dependency>
+		<dependency>
+			<groupId>net.sf.supercsv</groupId>
+			<artifactId>super-csv-parent</artifactId>
+			<version>2.4.0</version>
+		</dependency>
 
 	</dependencies>
 

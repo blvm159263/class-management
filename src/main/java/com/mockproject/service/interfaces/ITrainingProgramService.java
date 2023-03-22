@@ -2,7 +2,12 @@ package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.List;
 
 public interface ITrainingProgramService {
@@ -18,4 +23,9 @@ public interface ITrainingProgramService {
     Long countAll();
 
     List<TrainingProgram> getByCreatorFullname(String keyword);
+    void save(Long sylId, String name);
+    List<TrainingProgram> getAll();
+    void downloadCsvFile(PrintWriter printWriter,List<TrainingProgram> trainingPrograms);
+    List<TrainingProgram> GetTrainingProgramDataFromCsv(InputStream fileInputStream) throws IOException;
+    void saveCsvFile(MultipartFile file)throws IOException;
 }

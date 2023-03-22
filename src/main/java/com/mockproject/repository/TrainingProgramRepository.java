@@ -1,6 +1,5 @@
 package com.mockproject.repository;
 
-
 import com.mockproject.entity.TrainingProgram;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -20,5 +19,4 @@ public interface TrainingProgramRepository extends JpaRepository<TrainingProgram
     List<TrainingProgram> findByNameContainingAndStatus(String name, boolean status);
 
     Optional<TrainingProgram> findFirstByNameAndStatus(String name, boolean status);
-
 }

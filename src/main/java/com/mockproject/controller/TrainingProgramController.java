@@ -1,8 +1,12 @@
 package com.mockproject.controller;
 
+import com.mockproject.dto.FileClassResponseDTO;
 import com.mockproject.dto.TrainingProgramDTO;
+import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.TrainingProgram;
 import com.mockproject.service.interfaces.ITrainingProgramService;
+import com.opencsv.CSVWriter;
+import com.opencsv.ICSVWriter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,8 +25,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.http.HttpResponse;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,5 +107,42 @@ public class TrainingProgramController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
         }
+    }
+
+    @GetMapping("/training-program")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
+    public ResponseEntity<?> getAllTrain() {
+        return ResponseEntity.ok(trainingProgramService.getAll());
+    }
+    @PostMapping("/training-program/addTrainingProgram")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
+    public ResponseEntity<?> addTrain(@RequestParam("name") String trainingProgram, HttpSession session) {
+        session.setAttribute("trainingName", trainingProgram);
+        return ResponseEntity.ok(session);
+    }
+    @GetMapping("/training-program/download-csv")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
+    public void downloadCSV(HttpServletResponse response) throws IOException{
+            response.setContentType("text/csv");
+            String filename = "TrainingProgram.csv";
+            String headerkey = "Content-Disposition";
+            String headervalue = "attachment; filename="+filename;
+            response.setHeader(headerkey,headervalue);
+            trainingProgramService.downloadCsvFile(response.getWriter(), trainingProgramService.getAll());
+    }
+    @PostMapping("/training-program/import-csv")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
+    public void importCSV(@RequestParam("file")MultipartFile file) throws IOException{
+        trainingProgramService.saveCsvFile(file);
+    }
+    @PostMapping("/training-program/saveTrainingProgram")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
+    public ResponseEntity<?> saveTrain(@RequestParam("content") Long sylId, HttpSession session) {
+        String name = (String) session.getAttribute("trainingName");
+        if(sylId == null||name == null){
+            return ResponseEntity.ofNullable("Please enter training name and syllabus id");
+        }
+        trainingProgramService.save(sylId,name);
+        return ResponseEntity.ok("Add training program successfully");
     }
 }

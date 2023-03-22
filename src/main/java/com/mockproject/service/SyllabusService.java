@@ -5,6 +5,7 @@ import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.OutputStandardRepository;
+import com.mockproject.entity.Syllabus;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.repository.UnitDetailRepository;
@@ -12,6 +13,8 @@ import com.mockproject.service.interfaces.ISessionService;
 import com.mockproject.service.interfaces.ISyllabusService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,11 +33,13 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class SyllabusService implements ISyllabusService {
-
     private final SyllabusRepository syllabusRepo;
 
     private final OutputStandardRepository outputStandardRepo;

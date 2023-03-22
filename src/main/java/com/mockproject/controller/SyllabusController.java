@@ -3,6 +3,7 @@ package com.mockproject.controller;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Syllabus;
+import com.mockproject.entity.TrainingProgram;
 import com.mockproject.service.interfaces.ISyllabusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -147,4 +149,5 @@ public class SyllabusController {
         return ResponseEntity
                 .ok(syllabusService.getListSyllabus(true,  fromDate, toDate, search, sort, page));
     }
+
 }
