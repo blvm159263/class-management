@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusService {
+
     private final TrainingProgramSyllabusRepository trainingProgramSyllabusRepository;
 
     @Override
@@ -25,11 +26,11 @@ public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusS
         return trainingProgramSyllabusRepository.getTrainingProgramSyllabusByTrainingProgramId(trainingProgramID).stream().map(TrainingProgramSyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
-    public  List<TrainingProgramSyllabus> saveAll(List<TrainingProgramSyllabus> programSyllabusList){
+    public List<TrainingProgramSyllabus> saveAll(List<TrainingProgramSyllabus> programSyllabusList) {
         return trainingProgramSyllabusRepository.saveAll(programSyllabusList);
     }
-    public void addSyllabus(TrainingProgramSyllabus syllabus){
+
+    public void addSyllabus(TrainingProgramSyllabus syllabus) {
         trainingProgramSyllabusRepository.save(syllabus);
     }
-
 }
