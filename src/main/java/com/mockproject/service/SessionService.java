@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class SessionService implements ISessionService {
 
     private final SessionRepository sessionRepository;
@@ -36,7 +35,7 @@ public class SessionService implements ISessionService {
     private final UnitRepository unitRepository;
 
     @Autowired
-    public SessionService(SessionRepository sessionRepository, UnitService unitService, SyllabusRepository syllabusRepository, UnitRepository unitRepository) {
+    public SessionService(SessionRepository sessionRepository, IUnitService unitService, SyllabusRepository syllabusRepository, UnitRepository unitRepository) {
         this.sessionRepository = sessionRepository;
         this.unitService = unitService;
         this.syllabusRepository = syllabusRepository;

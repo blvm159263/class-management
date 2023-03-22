@@ -2,7 +2,10 @@ package com.mockproject.service;
 
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.Session;
+import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.Unit;
+import com.mockproject.entity.User;
+import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitDetailService;
 import org.junit.jupiter.api.Test;
@@ -13,8 +16,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -38,9 +43,17 @@ class UnitServiceTest {
     @Autowired
     private UnitService unitService;
 
+
+    // Create Syllabus
+    Syllabus syllabus1 = new Syllabus(1L, "Syllabus number 1", "SLB1", "1.0", "All level",
+            1, BigDecimal.TEN, 10,"Technical Requirements", "Course Objectives",
+            LocalDate.now(), LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN,
+            BigDecimal.TEN, "Training Description", "ReTest Description", "Marking Description",
+            "Waiver CriteriaDes", "Other Description", true, true, new User(), new User(),
+            null, null);
     // Create Session
-    Session s1 = new Session(1L, 1, true, null, null);
-    Session s2 = new Session(2L, 2, true, null, null);
+    Session s1 = new Session(1L, 1, true, syllabus1, null);
+    Session s2 = new Session(2L, 2, true, syllabus1, null);
 
     // Create Unit
     Unit unit1 = new Unit(1L, "Unit title 123", 1, BigDecimal.TEN, true, s1, null, null);
@@ -65,6 +78,39 @@ class UnitServiceTest {
         assertEquals(2, result.size());
         assertEquals("Unit title 123", result.get(0).getUnitTitle());
         verify(unitRepository).findBySession((Session) any());
+    }
+
+    @Test
+    void getAllUnitBySessionIdTest(){
+        List<Unit> list = new ArrayList<>();
+        list.add(unit1);
+        list.add(unit3);
+
+        when(unitRepository.findUnitBySessionIdAndStatus(s1.getId(), true)).thenReturn(Optional.of(list));
+
+        List<UnitDTO> result = unitService.getAllUnitBySessionId(s1.getId(), true);
+
+        assertEquals(2, result.size());
+
+        verify(unitRepository,times(1)).findUnitBySessionIdAndStatus(s1.getId(), true);
+    }
+
+    @Test
+    void createUnitTest(){
+        List<UnitDTO> list = new ArrayList<>();
+        list.add(UnitMapper.INSTANCE.toDTO(unit1));
+        list.add(UnitMapper.INSTANCE.toDTO(unit3));
+
+        when(sessionRepository.findByIdAndStatus(s1.getId(), true)).thenReturn(Optional.ofNullable(s1));
+        when(unitRepository.save(any())).thenReturn(unit1);
+        when(unitRepository.findByIdAndStatus(any(), eq(true))).thenReturn(Optional.ofNullable(unit1));
+        when(syllabusRepository.findByIdAndStateAndStatus(any(),eq(true),eq(true))).thenReturn(Optional.ofNullable(syllabus1));
+
+        boolean result = unitService.createUnit(s1.getId(), list, new User());
+
+        assertEquals(true, result);
+
+        verify(unitRepository,times(2)).save(any());
     }
 }
 

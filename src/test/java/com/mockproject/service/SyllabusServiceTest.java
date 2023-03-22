@@ -2,6 +2,7 @@ package com.mockproject.service;
 
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.*;
+import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.OutputStandardRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.TrainingProgramSyllabusRepository;
@@ -13,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -115,5 +118,24 @@ public class SyllabusServiceTest {
         assertEquals(1, result.getContent().size());
         assertEquals("SLB2", result.getContent().get(0).getCode());
         verify(syllabusRepository, times(2)).getListSyllabus(true, null, null, "", listId, Sort.by(Sort.Direction.ASC, "name"));
+    }
+
+    @Test
+    void deleteSyllabusTest(){
+        Syllabus afterSave = new Syllabus(1L, "Syllabus number 1", "SLB1", "1.0", "All level",
+                1, BigDecimal.TEN, 10,"Technical Requirements", "Course Objectives",
+                LocalDate.now(), LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN,
+                BigDecimal.TEN, "Training Description", "ReTest Description", "Marking Description",
+                "Waiver CriteriaDes", "Other Description", true, false, user, new User(),
+                null, null);
+
+        when(syllabusRepository.save(syllabus1)).thenReturn(afterSave);
+        when(syllabusRepository.findByIdAndStatus(syllabus1.getId(), true)).thenReturn(Optional.ofNullable(syllabus1));
+
+        boolean result = syllabusService.deleteSyllabus(syllabus1.getId(), true);
+
+        assertEquals(true, result);
+
+        verify(syllabusRepository, times(1)).save(syllabus1);
     }
 }
