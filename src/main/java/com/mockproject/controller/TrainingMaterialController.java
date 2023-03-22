@@ -43,7 +43,7 @@ public class TrainingMaterialController {
     @PostMapping("/upload-file/{unitDetailID}")
     @Operation(summary = "Upload file by unit detail id")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@PathVariable("unitDetailID") Long unitDetailID,@RequestBody List<TrainingMaterialDTO> trainingMaterialDTOList) throws IOException{
+    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@PathVariable("unitDetailID") Long unitDetailID,@RequestBody List<TrainingMaterialDTO> trainingMaterialDTOList){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return ResponseEntity.ok(trainingMaterialService.uploadFile(trainingMaterialDTOList,

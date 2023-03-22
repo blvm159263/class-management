@@ -23,10 +23,6 @@ public interface ISyllabusService {
 
     List<Long> getListSyllabusIdByOSD(String osd);
 
-    List<SyllabusDTO> getAll(boolean state, boolean status);
-
-    List<SyllabusDTO> getSyllabusList(boolean status);
-
     SyllabusDTO getSyllabusById(Long syllabusId,boolean state, boolean status);
 
     boolean replace(SyllabusDTO syllabusDTO, boolean status);

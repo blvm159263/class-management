@@ -122,14 +122,15 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Page<UserDTO> searchByFilter(Long id, LocalDate dob, String email, String fullName, Boolean gender, String phone, List<Integer> stateId, List<Long> atendeeId, List<Long> levelId, List<Long> role_id, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception {
+    public Page<UserDTO> searchByFilter(List<String> search, LocalDate dob, Boolean gender, List<Long> atendeeId, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception {
         int page1 = 0;
         int size1 = 10;
+        String searchFirst = "";
         Pageable pageable;
         List<Sort.Order> order = new ArrayList<>();
         if (page.isPresent()) page1 = page.get() - 1;
         if (size.isPresent()) size1 = size.get();
-        if (sort != null && !sort.isEmpty()) {
+        if (sort != null || !sort.isEmpty()) {
             for (String sortItem : sort) {
                 String[] subSort = sortItem.split("-");
                 order.add(new Sort.Order(getSortDirection(subSort[1]), subSort[0]));
@@ -139,21 +140,41 @@ public class UserService implements IUserService {
             pageable = PageRequest.of(page1, size1);
         }
         Page<User> pages;
+        List<UserDTO> result = new ArrayList<>();
         try {
-            pages = userRepo.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, pageable);
+            if (search != null){
+                if (search.isEmpty()){
+                    searchFirst = "";
+                } else {
+                    searchFirst = search.get(0);
+                }
 
-            List<UserDTOCustom> result = new ArrayList<>();
-            for (User u : pages) {
-                UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), getState(u.getState()), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
-                        RoleMapper.INSTANCE.toDTO(u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()));
-                result.add(userDTOCustom);
             }
+            pages = userRepo.searchByFilter( searchFirst, dob, gender, atendeeId, pageable);
+            for (User u : pages.getContent()) {
+                UserDTO userDTOC = UserMapper.INSTANCE.toDTO(u);
+                userDTOC.setStateName(getState(u.getState()));
+                result.add(userDTOC);
+            }
+
+            if ( search != null && search.size() > 1){
+                for (int i = 1; i < search.size(); i++) {
+                    String subSearch = search.get(i).toUpperCase();
+                    result = result.stream().filter(s
+                                    -> s.getEmail().toUpperCase().contains(subSearch) ||
+                                    s.getPhone().toUpperCase().contains(subSearch) ||
+                                    s.getFullName().toUpperCase().contains(subSearch))
+                            .collect(Collectors.toList());
+                }
+            }
+
+
 
         } catch (Exception e) {
             throw e;
         }
         return new PageImpl<>(
-                pages.stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                result,
                 pages.getPageable(),
                 pages.getTotalElements());
     }
@@ -281,7 +302,7 @@ public class UserService implements IUserService {
     public boolean editUser(UserDTO user) {
         Optional<User> user1 = userRepo.findById(user.getId());
         Optional<Level> level = levelRepository.getLevelById(user.getLevelId());
-        if (user1.isPresent()){
+        if (user1.isPresent()) {
             User u = user1.get();
             Level level1 = level.get();
             u.setFullName(user.getFullName());
@@ -326,7 +347,7 @@ public class UserService implements IUserService {
                         user.setGender(false);
                     }
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    user.setDob(LocalDate.parse(rowData[3],formatter));
+                    user.setDob(LocalDate.parse(rowData[3], formatter));
                     user.setPhone(rowData[4]);
                     user.setStatus(true);
                     userList.add(user);
@@ -383,10 +404,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<User> csvToUsers(InputStream is) {
-        boolean checkUserEmail = true;
-        boolean replace = true;
-        boolean skip = false;
+    public List<User> csvToUsers(InputStream is, Boolean replace, Boolean skip) {
         String[] headers = {"Email", "Full name", "Gender", "Date of birth", "Image link", "Password", "Phone", "State", "Attendee", "Level", "Role"};
 
         Long count = null;
@@ -403,17 +421,50 @@ public class UserService implements IUserService {
 
             for (CSVRecord csvRecord : csvRecords) {
                 String email = csvRecord.get("Email");
-                if (checkUserEmail && replace) {
+                    if (replace){
+                        if (result != null && !result.isEmpty()) {
+                            int index = -1;
+                            for (User u : result) {
+                                if (u != null && u.getEmail().equals(email)) index = result.indexOf(u);
+                            }
+                            if (index != -1)
+                                result.remove(index);
+                        }
+                    }
+
+
+
+
                     Long idUser = null;
                     if (userRepo.findByEmail(email).isPresent()) {
                         idUser = userRepo.findByEmail(email).get().getId();
                     }
+                    boolean noadd = false;
+                    if (skip){
+                        if (result != null && !result.isEmpty()) {
+                            int index = -1;
+                            for (User u : result) {
+                                if (u != null && u.getEmail().equals(email)) index = result.indexOf(u);
+                            }
+                            if (index != -1)
+                                noadd = true;
+                        }
+
+                        if (idUser != null){
+                                noadd = true;
+                        }
+
+                    }
+
+
+
+
                     String fullName = csvRecord.get("Full name");
                     String imgLink = csvRecord.get("Image link");
                     //check state
                     int state = getStateIdByStateName(csvRecord.get("State"));
                     if (state == -1)
-                        throw new NotFoundException("Import successfull " + count + " user\n" + "Record " + (count + 1) +
+                        throw new NotFoundException("Record " + (count + 1) +
                                 " (" + email + ")" + " is invalid state");
                     //check date of birth
                     LocalDate dob;
@@ -421,13 +472,13 @@ public class UserService implements IUserService {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
                         dob = LocalDate.parse(csvRecord.get("Date of birth"), formatter);
                     } catch (DateTimeParseException e) {
-                        throw new NotFoundException("Import successfull " + count + " user\n" + "Record " + (count + 1) +
+                        throw new NotFoundException("Record " + (count + 1) +
                                 " (" + email + ")" + " is invalid date");
                     }
                     //check phone number
                     String phone = csvRecord.get("Phone");
                     if (userRepo.findByPhone(phone).isPresent() && (idUser != userRepo.findByPhone(phone).get().getId()))
-                        throw new NotFoundException("Import successfull " + count + " user\n" + "Record " + (count + 1) +
+                        throw new NotFoundException("Record " + (count + 1) +
                                 " (" + email + ")" + " is invalid phone number (phone number is exits!!!)");
                     //check gender
                     boolean gender = false;
@@ -435,43 +486,57 @@ public class UserService implements IUserService {
                         gender = false;
                     } else if (csvRecord.get("Gender").equals("Male")) {
                         gender = true;
-                    }
+                    } else throw new NotFoundException("Record " + (count + 1) +
+                            " (" + email + ")" + " is invalid gender");
+
                     boolean status = true;
 
                     //check role
                     Long roleId = null;
                     if (roleRepository.getRoleByRoleName(csvRecord.get("Role")).isPresent()) {
                         roleId = roleRepository.getRoleByRoleName(csvRecord.get("Role")).get().getId();
+                    } else {
+                        throw new NotFoundException("Record " + (count + 1) +
+                                " (" + email + ")" + " is invalid Role");
                     }
                     //check level
                     Long levelId = null;
                     if (levelRepository.getLevelByLevelCode(csvRecord.get("Level")).isPresent()) {
                         levelId = levelRepository.getLevelByLevelCode(csvRecord.get("Level")).get().getId();
+                    } else {
+                        throw new NotFoundException("Record " + (count + 1) +
+                                " (" + email + ")" + " is invalid Level");
                     }
+
+
                     //check attendee
                     Long attendeeId = null;
                     if (attendeeRepository.findByAttendeeNameAndStatus(csvRecord.get("Attendee"), true).isPresent()) {
                         attendeeId = attendeeRepository.findByAttendeeNameAndStatus(csvRecord.get("Attendee"), true).get().getId();
+                    } else {
+                        throw new NotFoundException("Record " + (count + 1) +
+                                " (" + email + ")" + " is invalid Attendee");
                     }
 
                     UserDTO userDTO = new UserDTO(email, fullName, imgLink,
                             state, dob, phone, gender, status, roleId, levelId,
                             attendeeId);
 
-
                     User user = UserMapper.INSTANCE.toEntity(userDTO);
                     user.setPassword(passwordEncoder.encode(csvRecord.get("Password")));
                     if (idUser != null) user.setId(idUser);
 
-                    result.add(user);
+
+                    if (!noadd) {
+                        result.add(user);
+                    }
                     count++;
-                }
             }
 
             return result;
 
         } catch (IOException e) {
-            throw new NotFoundException("Import " + count + " user successfull\n" + "Record " + count + 1 + " is invalid!!!");
+            throw new NotFoundException("Record " + count + 1 + " is invalid!!!");
         }
     }
 

@@ -67,7 +67,7 @@ public class UnitService implements IUnitService {
     public boolean createUnit(Long sessionId, UnitDTO unitDTO, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
-        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(session.get().getSyllabus().getId(),true);
+        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(session.get().getSyllabus().getId(),true,true);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         BigDecimal duration = syllabus.get().getHour();
 

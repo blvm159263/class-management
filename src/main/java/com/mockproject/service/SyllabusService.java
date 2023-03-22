@@ -11,7 +11,6 @@ import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.service.interfaces.ISessionService;
 import com.mockproject.service.interfaces.ISyllabusService;
 import com.mockproject.utils.FileUtils;
-import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVFormat;
@@ -62,23 +61,9 @@ public class SyllabusService implements ISyllabusService {
         tp.setId(trainingProgramId);
         List<TrainingProgramSyllabus> listTPS = trainingProgramSyllabusRepository.findByTrainingProgramAndStatus(tp, true);
         List<Syllabus> listSyllabus = new ArrayList<>();
-//        listTPS.forEach(p -> listSyllabus.add(syllabusRepository.findById(p.getSyllabus())));
-//        if(listTPS.isEmpty()){
-//            return null;
-//        }
+
         listTPS.forEach(p -> listSyllabus.add(p.getSyllabus()));
         return listSyllabus.stream().map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
-    }
-    // List syllabus for user
-    @Override
-    public List<SyllabusDTO> getAll(boolean state, boolean status) {
-        Optional<List<Syllabus>> syllabusList = syllabusRepository.findByStateAndStatus(state, status);
-        ListUtils.checkList(syllabusList);
-        List<SyllabusDTO> syllabusDTOList = new ArrayList<>();
-        for (Syllabus s : syllabusList.get()){
-            syllabusDTOList.add(SyllabusMapper.INSTANCE.toDTO(s));
-        }
-        return syllabusDTOList;
     }
 
     @Override
@@ -190,18 +175,6 @@ public class SyllabusService implements ISyllabusService {
             return Sort.Direction.DESC;
         }
         return Sort.Direction.ASC;
-    }
-
-    @Override
-    public List<SyllabusDTO> getSyllabusList(boolean status){
-        Optional<List<Syllabus>> syllabusList = syllabusRepository.findAllByStatus(status);
-        ListUtils.checkList(syllabusList);
-        List<SyllabusDTO> syllabusDTOList = new ArrayList<>();
-
-        for (Syllabus s: syllabusList.get()) {
-            syllabusDTOList.add(SyllabusMapper.INSTANCE.toDTO(s));
-        }
-        return syllabusDTOList;
     }
 
     @Override
@@ -343,6 +316,8 @@ public class SyllabusService implements ISyllabusService {
             syllabusDTO = SyllabusMapper.INSTANCE.toDTO(syllabus);
         }
 
+        syllabusDTO.setHour(BigDecimal.valueOf(0));
+
         // condition Name or code
         // 1 Name
         // 2 Code
@@ -353,7 +328,7 @@ public class SyllabusService implements ISyllabusService {
         // 2 Replace
         // 3 Skip
         if(condition == 3){
-            if(handle == 1){
+            if (handle == 1){
                 return syllabusDTO;
             }
             else if (handle == 2) {
