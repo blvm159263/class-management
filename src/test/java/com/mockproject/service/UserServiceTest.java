@@ -1,6 +1,5 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.RoleDTO;
 import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.Role;
 import com.mockproject.entity.User;
