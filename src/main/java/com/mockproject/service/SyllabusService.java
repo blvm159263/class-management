@@ -10,12 +10,20 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class SyllabusService implements ISyllabusService {
 
     private final SyllabusRepository syllabusRepository;
+
+    @Override
+    public List<Syllabus> getAllSyllabusEntityById(List<Long> sId) {
+        List<Syllabus> syllabus = syllabusRepository.getAllSyllabusByIdInAndStatus(sId,true);
+        return syllabus;
+    }
 
     @Override
     public SyllabusDTO getSyllabusById(Long id){

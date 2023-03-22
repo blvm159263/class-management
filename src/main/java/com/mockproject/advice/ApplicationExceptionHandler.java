@@ -1,6 +1,7 @@
 package com.mockproject.advice;
 
 import com.mockproject.exception.FileException;
+import com.mockproject.exception.SyllabusException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -37,6 +38,11 @@ public class ApplicationExceptionHandler {
     }
     @ExceptionHandler(FileException.class)
     public ResponseEntity handleFileException(FileException e){
-        return ResponseEntity.badRequest().body(e.getMessage());
+        return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
+    }
+
+    @ExceptionHandler(SyllabusException.class)
+    public ResponseEntity handleSyllabusException(SyllabusException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }
