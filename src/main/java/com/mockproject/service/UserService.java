@@ -129,7 +129,7 @@ public class UserService implements IUserService {
         List<Sort.Order> order = new ArrayList<>();
         if (page.isPresent()) page1 = page.get() - 1;
         if (size.isPresent()) size1 = size.get();
-        if (sort != null && !sort.isEmpty()) {
+        if (sort != null || !sort.isEmpty()) {
             for (String sortItem : sort) {
                 String[] subSort = sortItem.split("-");
                 order.add(new Sort.Order(getSortDirection(subSort[1]), subSort[0]));
@@ -139,21 +139,19 @@ public class UserService implements IUserService {
             pageable = PageRequest.of(page1, size1);
         }
         Page<User> pages;
+        List<UserDTO> result = new ArrayList<>();
         try {
             pages = userRepo.searchByFilter(id, dob, email, fullName, gender, phone, stateId, atendeeId, levelId, role_id, pageable);
-
-            List<UserDTOCustom> result = new ArrayList<>();
-            for (User u : pages) {
-                UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), getState(u.getState()), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
-                        RoleMapper.INSTANCE.toDTO(u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()));
-                result.add(userDTOCustom);
+            for (User u : pages.getContent()) {
+                UserDTO userDTOC = UserMapper.INSTANCE.toDTO(u);
+                userDTOC.setStateName(getState(u.getState()));
+                result.add(userDTOC);
             }
-
         } catch (Exception e) {
             throw e;
         }
         return new PageImpl<>(
-                pages.stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                result,
                 pages.getPageable(),
                 pages.getTotalElements());
     }

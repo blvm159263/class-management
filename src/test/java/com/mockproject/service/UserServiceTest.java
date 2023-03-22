@@ -102,6 +102,11 @@ class UserServiceTest {
         verify(userRepository).findById((Long) any());
     }
 
+    @Test
+    void canSearchByFilter(){
+
+    }
+
 
 }
 
