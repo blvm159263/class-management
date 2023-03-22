@@ -1,6 +1,6 @@
 package com.mockproject.jwt;
 
-import com.mockproject.Jwt.JwtTokenProvider;
+import com.mockproject.jwt.JwtTokenProvider;
 import com.mockproject.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

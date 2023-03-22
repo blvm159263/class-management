@@ -1,11 +1,11 @@
 package com.mockproject.controller;
 
 
-import com.mockproject.Jwt.JwtTokenProvider;
 import com.mockproject.dto.*;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.entity.User;
+import com.mockproject.jwt.JwtTokenProvider;
 import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.service.interfaces.*;
@@ -313,19 +313,12 @@ public class UserController {
         else return ResponseEntity.badRequest().body("Not found user!");
     }
 
-    @PostMapping("/encodePassword")
-    @Operation(summary = "If the password in your Database is not encode,use this function is only 1 time!!!")
-    public ResponseEntity encodePassword() {
-        userService.encodePassword();
-        return ResponseEntity.ok("Encode sucessfully");
-    }
-
     @GetMapping("/getRoleByName")
     @Operation(summary = "Get roleDTO by role name")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity getRoleByName(@RequestParam(value = "roleName") String rolename) {
-        long roleId = roleService.getRoleByRoleName(rolename);
-        return ResponseEntity.ok(roleId);
+        RoleDTO role = roleService.getRoleByRoleName(rolename);
+        return ResponseEntity.ok(role);
     }
 
     @GetMapping("/getLevel")
@@ -373,7 +366,7 @@ public class UserController {
         if (roleService.getRoleByRoleName(roleName) == null) {
             return ResponseEntity.badRequest().body("Role not found!");
         }
-        boolean change = userService.changeRole(id, roleService.getRoleByRoleName(roleName));
+        boolean change = userService.changeRole(id, roleService.getRoleByRoleName(roleName).getId());
         if (!change) return ResponseEntity.badRequest().body("Change failed");
         return ResponseEntity.ok(roleName);
     }
