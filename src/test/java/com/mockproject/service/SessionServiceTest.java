@@ -1,4 +1,5 @@
 package com.mockproject.service;
+
 import com.mockproject.dto.SessionDTO;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
@@ -15,7 +16,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
