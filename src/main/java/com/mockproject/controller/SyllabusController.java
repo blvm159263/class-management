@@ -4,7 +4,6 @@ import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.User;
 import com.mockproject.service.interfaces.ISyllabusService;
 import com.mockproject.service.interfaces.ITrainingProgramSyllabusService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,13 +48,6 @@ public class SyllabusController {
 
     private final ITrainingProgramSyllabusService trainingProgramSyllabusService;
 
-    @GetMapping()
-    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<SyllabusDTO>> getAll(){
-        List<SyllabusDTO> listSyllabus = syllabusService.getAll(true, true);
-        return ResponseEntity.ok(listSyllabus);
-    }
-
     @GetMapping("/getSyllabusByTrainingProgram/{trainingProgramId}")
     @Operation(summary = "Get all syllabus by training program id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
@@ -70,13 +62,6 @@ public class SyllabusController {
     public ResponseEntity<SyllabusDTO> getSyllabus(@PathVariable("syllabusId") Long syllabusId) {
         SyllabusDTO syllabus = syllabusService.getSyllabusById(syllabusId, true, true);
         return ResponseEntity.ok(syllabus);
-    }
-
-    @GetMapping("get-all")
-    @Operation(summary = "Get all syllabus")
-    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<SyllabusDTO>> getAllSyllabus() {
-        return ResponseEntity.ok(syllabusService.getSyllabusList(true));
     }
 
     @PostMapping(value = "/replace")
