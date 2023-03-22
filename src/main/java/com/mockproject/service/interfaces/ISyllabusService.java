@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.mockproject.dto.SyllabusDTO;
+
 public interface ISyllabusService {
 
     List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId);
@@ -37,7 +39,7 @@ public interface ISyllabusService {
 
     boolean deleteSyllabus(Long syllabusId, boolean status);
 
-    Syllabus getSyllabusById(Long id);
+    SyllabusDTO getSyllabusById(Long id);
 
     SyllabusDTO readFileCsv(MultipartFile file, int condition, int handle) throws IOException;
 

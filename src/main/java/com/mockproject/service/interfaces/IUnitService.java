@@ -7,7 +7,13 @@ import com.mockproject.entity.User;
 import java.io.IOException;
 import java.util.List;
 
+import com.mockproject.dto.SessionDTO;
+import com.mockproject.dto.UnitDTO;
+
+import java.util.List;
+
 public interface IUnitService {
+    List<UnitDTO> getListUnit(List<SessionDTO> session);
 
     List<UnitDTO> listBySessionId(Long sid);
 

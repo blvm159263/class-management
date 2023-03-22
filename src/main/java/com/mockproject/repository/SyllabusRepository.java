@@ -6,12 +6,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
+
+    Syllabus getSyllabusById(Long id);
 
     List<Syllabus> findByStatus(boolean status);
 
@@ -32,6 +36,8 @@ public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
     Optional<Syllabus> findByIdAndStateAndStatus(Long syllabusId, boolean state, boolean status);
 
     Optional<List<Syllabus>> findByNameAndStatus(String name, boolean status);
+
     Optional<List<Syllabus>> findByCodeAndStatus(String code, boolean status);
+
     Optional<List<Syllabus>> findByNameAndCodeAndStatus(String name, String code, boolean status);
 }

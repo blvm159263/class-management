@@ -1,6 +1,10 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.SessionDTO;
+
+import java.util.List;
+
+import com.mockproject.dto.SessionDTO;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.User;
 
@@ -8,6 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface ISessionService {
+    List<SessionDTO> getSessionListBySyllabusId(Long idSyllabus);
 
     List<SessionDTO> listBySyllabus(Long sid);
 

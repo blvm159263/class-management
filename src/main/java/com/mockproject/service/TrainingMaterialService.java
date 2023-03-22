@@ -1,9 +1,12 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.TrainingMaterialDTO;
+import com.mockproject.dto.TrainingMaterialDTO;
+import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.TrainingMaterial;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.entity.User;
+import com.mockproject.mapper.TrainingMaterialMapper;
 import com.mockproject.mapper.TrainingMaterialMapper;
 import com.mockproject.repository.TrainingMaterialRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
@@ -16,10 +19,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.zip.DataFormatException;
 
@@ -131,6 +136,18 @@ public class TrainingMaterialService implements ITrainingMaterialService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public  List<TrainingMaterialDTO> getListTrainingMaterial(List<UnitDetailDTO> listUnitDetail){
+        List<TrainingMaterialDTO> listTrainingMaterial = new ArrayList<>();
+        for(UnitDetailDTO u : listUnitDetail){
+            listTrainingMaterial.addAll(getListTrainingMaterialByUnitDetailId(u.getId()));
+        }
+        return listTrainingMaterial;
+    }
+    public List<TrainingMaterialDTO> getListTrainingMaterialByUnitDetailId(Long id){
+        return trainingMaterialRepository.getListTrainingMaterialByUnitDetailId(id).stream().map(TrainingMaterialMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override

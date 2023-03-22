@@ -4,8 +4,11 @@ import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Unit;
+import com.mockproject.dto.UnitDTO;
+import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.entity.User;
+import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.repository.UnitRepository;
@@ -19,10 +22,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Optional;
 
 @Service
@@ -102,7 +107,6 @@ public class UnitDetailService implements IUnitDetailService {
         BigDecimal duration = unit.get().getDuration();
 
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         duration = duration.add(unitDetailDTO.getDuration().divide(BigDecimal.valueOf(60)));
         if(unitDetailDTO.isStatus() == true){
             for (TrainingMaterialDTO t: unitDetailDTO.getTrainingMaterialDTOList()){
@@ -160,5 +164,18 @@ public class UnitDetailService implements IUnitDetailService {
         Unit unit = new Unit();
         unit.setId(id);
         return unitDetailRepository.findByUnitAndStatus(unit,true).stream().map(UnitDetailMapper.INSTANCE::toDTO).toList();
+    }
+
+    public List<UnitDetailDTO> getUnitDetailByUnitId(long idUnit) {
+        return unitDetailRepository.getListUnitDetailByUnitId(idUnit).stream().map(UnitDetailMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UnitDetailDTO> getListUnitDetail(List<UnitDTO> listUnit){
+        List<UnitDetailDTO> listUnitDetail = new ArrayList<>();
+        for(UnitDTO u: listUnit){
+            listUnitDetail.addAll(getUnitDetailByUnitId(u.getId()));
+        }
+        return listUnitDetail;
     }
 }

@@ -4,6 +4,8 @@ import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.SessionMapper;
+import com.mockproject.dto.SessionDTO;
+import com.mockproject.mapper.SessionMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitRepository;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -41,6 +44,11 @@ public class SessionService implements ISessionService {
         this.unitService = unitService;
         this.syllabusRepository = syllabusRepository;
         this.unitRepository = unitRepository;
+    }
+
+    @Override
+    public List<SessionDTO> getSessionListBySyllabusId(Long idSyllabus) {
+        return sessionRepository.getSessionListBySyllabusId(idSyllabus).stream().map(SessionMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override
