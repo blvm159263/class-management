@@ -5,7 +5,6 @@ import com.mockproject.dto.TrainingClassFilterRequestDTO;
 import com.mockproject.dto.TrainingClassFilterResponseDTO;
 import com.mockproject.entity.ClassSchedule;
 import com.mockproject.entity.TrainingClass;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.util.List;

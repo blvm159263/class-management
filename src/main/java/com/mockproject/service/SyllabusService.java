@@ -280,11 +280,6 @@ public class SyllabusService implements ISyllabusService {
     }
 
     @Override
-    public Syllabus getSyllabusById(Long id) {
-        return syllabusRepository.findByIdAndStatus(id, true).get();
-    }
-
-    @Override
     public SyllabusDTO readFileCsv(MultipartFile file, int condition, int handle) throws IOException {
 
         final String[] HEADERS = {"Syllabus Name","Syllabus Code","Syllabus Version","Syllabus Level","Attendee Amount","Technical Requirements","Course Objectives","Quiz","Assignment","Final","Final Theory","Final Practice","GPA","Training Description","Retest Description","Marking Description","Waiver Criteria Description","Other Description","State","Status"};

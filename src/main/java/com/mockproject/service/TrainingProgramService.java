@@ -1,11 +1,9 @@
 package com.mockproject.service;
 
 
-import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
-import com.mockproject.mapper.TrainingProgramMapper;
 import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.mapper.TrainingProgramMapper;
 import com.mockproject.repository.TrainingProgramRepository;
@@ -30,20 +28,6 @@ public class TrainingProgramService implements ITrainingProgramService {
 
     private final SyllabusService syllabusService;
 
-    private final TrainingProgramSyllabusService trainingProgramSyllabusService;
-
-    @Override
-    public TrainingProgram getTrainingProgramById(Long id) {
-        return trainingProgramRepository.getTrainingProgramById(id);
-    }
-
-    @Override
-    public List<TrainingProgram> getAll(Integer pageNo, Integer pageSize) {
-        Pageable paging = PageRequest.of(pageNo, pageSize);
-        Page<TrainingProgram> result = trainingProgramRepository.findAll(paging);
-        return result.getContent();
-    }
-
     @Override
     public List<TrainingProgram> getByName(String keyword) {
         return trainingProgramRepository.getTrainingProgramByNameContains(keyword);
@@ -63,8 +47,8 @@ public class TrainingProgramService implements ITrainingProgramService {
     }
 
     @Override
-    public List<TrainingProgram> getByCreatorFullname(String keyword) {
-        return trainingProgramRepository.getAllByCreatorFullNameContains(keyword);
+    public List<TrainingProgramDTO> getByCreatorFullname(String keyword) {
+        return trainingProgramRepository.getAllByCreatorFullNameContains(keyword).stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override

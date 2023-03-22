@@ -1,10 +1,6 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.SessionDTO;
-
-import java.util.List;
-
-import com.mockproject.dto.SessionDTO;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.User;
 
@@ -28,5 +24,4 @@ public interface ISessionService {
 
     boolean deleteSessions(Long syllabusId, boolean status);
 
-    List<Session> getSessionListBySyllabusId(Long idSyllabus);
 }

@@ -4,8 +4,6 @@ import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.SessionMapper;
-import com.mockproject.dto.SessionDTO;
-import com.mockproject.mapper.SessionMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitRepository;
@@ -25,7 +23,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
 @Service
@@ -143,11 +140,6 @@ public class SessionService implements ISessionService {
         ListUtils.checkList(sessions);
         sessions.get().forEach((i) -> deleteSession(i.getId(), status));
         return true;
-    }
-
-    @Override
-    public List<Session> getSessionListBySyllabusId(Long idSyllabus){
-        return sessionRepository.getSessionListBySyllabusId(idSyllabus);
     }
 
     @Override

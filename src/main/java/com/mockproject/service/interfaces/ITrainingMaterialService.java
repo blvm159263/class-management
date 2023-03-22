@@ -1,6 +1,7 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.TrainingMaterialDTO;
+import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.TrainingMaterial;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.entity.User;
@@ -8,11 +9,6 @@ import com.mockproject.entity.User;
 import java.io.IOException;
 import java.util.List;
 import java.util.zip.DataFormatException;
-
-import com.mockproject.dto.TrainingMaterialDTO;
-import com.mockproject.dto.UnitDetailDTO;
-
-import java.util.List;
 
 public interface ITrainingMaterialService {
 
@@ -32,5 +28,5 @@ public interface ITrainingMaterialService {
 
     boolean deleteTrainingMaterials(Long unitDetailId, boolean status);
 
-    List<TrainingMaterial> getListTrainingMaterialByUnitDetailId(Long id);
+    List<TrainingMaterialDTO> getListTrainingMaterialByUnitDetailId(Long id);
 }

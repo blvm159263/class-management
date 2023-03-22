@@ -11,8 +11,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import com.mockproject.dto.SyllabusDTO;
-
 public interface ISyllabusService {
 
     List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId);

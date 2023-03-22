@@ -1,7 +1,7 @@
 package com.mockproject.controller;
 
 
-import com.mockproject.Jwt.JwtTokenProvider;
+import com.mockproject.jwt.JwtTokenProvider;
 import com.mockproject.dto.*;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.RolePermissionScope;

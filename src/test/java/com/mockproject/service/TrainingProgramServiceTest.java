@@ -24,6 +24,9 @@ class TrainingProgramServiceTest {
     @MockBean
     private TrainingProgramRepository trainingProgramRepository;
 
+    @MockBean
+    private SyllabusService syllabusService;
+
     @Autowired
     private TrainingProgramService trainingProgramService;
 

@@ -1,17 +1,14 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.*;
-import com.mockproject.entity.*;
-import com.mockproject.service.*;
 import com.mockproject.service.interfaces.*;
 import io.swagger.v3.oas.annotations.Operation;
-import com.mockproject.service.interfaces.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 

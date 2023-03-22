@@ -1,6 +1,5 @@
 package com.mockproject.repository;
 
-import com.mockproject.dto.SessionDTO;
 import com.mockproject.entity.Session;
 import com.mockproject.entity.Syllabus;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,15 +1,11 @@
 package com.mockproject.service.interfaces;
 
+import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.Unit;
 import com.mockproject.entity.User;
 
 import java.io.IOException;
-import java.util.List;
-
-import com.mockproject.dto.SessionDTO;
-import com.mockproject.dto.UnitDTO;
-
 import java.util.List;
 
 public interface IUnitService {
@@ -23,7 +19,7 @@ public interface IUnitService {
 
     List<Unit> getListUnitsInASessionByTrainingClassId(Long id, int dayNth);
 
-    List<Unit> getUnitBySessionId(Long idSession);
+    List<UnitDTO> getUnitBySessionId(Long idSession);
 
     List<UnitDTO> getAllUnitBySessionId(Long sessionId, boolean status);
 

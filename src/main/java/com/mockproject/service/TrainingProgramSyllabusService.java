@@ -2,9 +2,6 @@ package com.mockproject.service;
 
 
 import com.mockproject.dto.TrainingProgramSyllabusDTO;
-import com.mockproject.dto.TrainingProgramSyllabusDTO;
-import com.mockproject.mapper.TrainingProgramSyllabusMapper;
-import com.mockproject.entity.Syllabus;
 import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.mapper.TrainingProgramSyllabusMapper;
 import com.mockproject.repository.TrainingProgramSyllabusRepository;
@@ -27,8 +24,8 @@ public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusS
     private final TrainingProgramSyllabusRepository repository;
 
     @Override
-    public List<TrainingProgramSyllabus> getTrainingProgramSyllabusListById(Long trainProgramID) {
-        return repository.getTrainingProgramSyllabusByTrainingProgramId(trainProgramID);
+    public List<TrainingProgramSyllabusDTO> getTrainingProgramSyllabusListById(Long trainProgramID) {
+        return repository.getTrainingProgramSyllabusByTrainingProgramId(trainProgramID).stream().map(TrainingProgramSyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override

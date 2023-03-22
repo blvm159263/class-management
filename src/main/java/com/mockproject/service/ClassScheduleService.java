@@ -14,7 +14,6 @@ import com.mockproject.repository.ClassScheduleRepository;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.service.interfaces.IClassScheduleService;
 import com.mockproject.specification.TrainingClassSpecification;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

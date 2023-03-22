@@ -1,16 +1,12 @@
 package com.mockproject.service;
 
+import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitDetailService;
-import com.mockproject.dto.SessionDTO;
-import com.mockproject.dto.UnitDTO;
-import com.mockproject.entity.Unit;
-import com.mockproject.mapper.UnitMapper;
-import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.IUnitService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
@@ -22,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

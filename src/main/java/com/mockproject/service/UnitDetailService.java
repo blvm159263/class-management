@@ -1,14 +1,12 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.TrainingMaterialDTO;
+import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Unit;
-import com.mockproject.dto.UnitDTO;
-import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.entity.User;
-import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.repository.UnitRepository;
@@ -22,13 +20,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -42,7 +39,7 @@ public class UnitDetailService implements IUnitDetailService {
     private final ITrainingMaterialService trainingMaterialService;
 
     @Override
-    public List<UnitDetail> getUnitDetailByUnitId(Long idUnit) {
+    public List<UnitDetailDTO> getUnitDetailByUnitId(Long idUnit) {
         return null;
     }
 

@@ -1,11 +1,6 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.TrainingProgramSyllabusDTO;
-import com.mockproject.entity.TrainingProgramSyllabus;
-
-import java.util.List;
-
-import com.mockproject.dto.TrainingProgramSyllabusDTO;
 
 import java.util.List;
 
