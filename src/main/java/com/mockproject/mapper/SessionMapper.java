@@ -21,7 +21,7 @@ public interface SessionMapper {
 
 
     @Named("mapSyllabus")
-    default Syllabus mapSyllabus(long id) {
+    default Syllabus mapSyllabus(Long id) {
         Syllabus syllabus = new Syllabus();
         syllabus.setId(id);
         return syllabus;

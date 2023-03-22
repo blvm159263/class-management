@@ -28,7 +28,7 @@ public class TrainingClass implements Serializable {
             name = "id",
             updatable = false
     )
-    private long id;
+    private Long id;
 
     @Nationalized
     @Column(
@@ -113,6 +113,11 @@ public class TrainingClass implements Serializable {
             name = "last_date_modified"
     )
     private LocalDate lastDateModified;
+
+    @Column(
+            name = "period"
+    )
+    private int period;
 
     @Column(name = "status")
     private boolean status;

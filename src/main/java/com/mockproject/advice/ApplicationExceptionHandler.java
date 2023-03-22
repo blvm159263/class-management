@@ -1,5 +1,6 @@
 package com.mockproject.advice;
 
+import com.mockproject.exception.FileException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -33,5 +34,9 @@ public class ApplicationExceptionHandler {
         }else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    @ExceptionHandler(FileException.class)
+    public ResponseEntity handleFileException(FileException e){
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }

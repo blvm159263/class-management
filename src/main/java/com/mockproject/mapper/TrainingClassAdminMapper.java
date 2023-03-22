@@ -23,14 +23,14 @@ public interface TrainingClassAdminMapper {
     TrainingClassAdmin toEntity(TrainingClassAdminDTO dto);
 
     @Named("mapTrainingClass")
-    default TrainingClass mapTrainingClass(long id) {
+    default TrainingClass mapTrainingClass(Long id) {
         TrainingClass trainingClass = new TrainingClass();
         trainingClass.setId(id);
         return trainingClass;
     }
 
     @Named("mapAdmin")
-    default User mapAdmin(long id) {
+    default User mapAdmin(Long id) {
         User user = new User();
         user.setId(id);
         return user;
