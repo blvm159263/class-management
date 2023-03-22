@@ -61,70 +61,12 @@ public class TrainingProgramController {
     public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search")
                                               @RequestParam(name="name",required = false) String name,
                                               @RequestParam(defaultValue = "0") Integer pageNo,
-                                              @RequestParam(defaultValue = "10") Integer pageSize,
-                                              HttpServletRequest request) throws IOException {
-
-
-        HttpSession session=request.getSession();
-
-        //==================== get list search keyword from session
-        List<String> listName=(List<String>) session.getAttribute("LIST_NAME");
-        //========================================================================
-        //
-        //==================== no keyword and empty list, return all training program
-        if(listName==null && name==null) {
-            Page<TrainingProgramDTO> list =service.getAll(pageNo, pageSize);
-            return ResponseEntity.ok(list);
-        }
-        if (listName==null){
-            listName=new ArrayList<>();
-        }
-        //===================== check duplicate search keyword in the list
-        boolean check=false;
-        for (String s:listName){
-            if(s.equals(name))
-                check=true;
-        }
-        if (check==false)
-            listName.add(name);
-        //==================================================================
-        //================== save list keyword to session
-        session.setAttribute("LIST_NAME",listName);
-        //==================================================================
-
-        List<TrainingProgramDTO> list = new ArrayList<>();
-        //================================= load search result from database
-        for(String key:listName){
-            for (TrainingProgramDTO dto:service.findByNameContaining(pageNo, pageSize, key, key)){
-                list.add(dto);
-            }
-        }
-        //==================================================================
-        Page<TrainingProgramDTO> result=new PageImpl<>(list);
-        if (!list.isEmpty()) {
+                                              @RequestParam(defaultValue = "10") Integer pageSize){
+        Page<TrainingProgramDTO> result = service.findByNameContaining(pageNo,pageSize,name,name);
+        if (!result.isEmpty()) {
             return ResponseEntity.ok(result);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
         }
-    }
-    @GetMapping("delete-searchkey")
-    public ResponseEntity<?> deleteSearchKey(HttpServletRequest request,
-                                             HttpServletResponse response,
-                                             @RequestParam(name="name",required = false) String name)
-    {
-        HttpSession session = request.getSession();
-        List<String> listName=(List<String>) session.getAttribute("LIST_NAME");
-        if(listName==null && name==null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any keywords to delete!");
-        }
-        if (listName==null){
-            listName=new ArrayList<>();
-        }
-        listName.remove(name);
-        if(listName.isEmpty()){
-            session.removeAttribute("LIST_NAME");
-        }
-        session.setAttribute("LIST_NAME", listName);
-        return ResponseEntity.ok().body("detele successfully");
     }
 }
