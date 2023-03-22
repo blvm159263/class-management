@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.webjars.NotFoundException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -76,7 +77,8 @@ public class OutputStandardServiceTest {
         List<OutputStandardDTO> result = outputStandardService.getOsdBySyllabusId(true, 1L);
         assertEquals(3, result.size());
 
-        result = outputStandardService.getOsdBySyllabusId(true, 2L);
+        NotFoundException thrown = assertThrows(NotFoundException.class, () -> outputStandardService.getOsdBySyllabusId(true, 2L), "No Exception");
+        assertTrue(thrown.getMessage().equals("Output standard not found with syllabus id: 2"));
 
         verify(unitDetailRepo, times(1)).findUnitDetailBySyllabusId(true, 1L);
     }
