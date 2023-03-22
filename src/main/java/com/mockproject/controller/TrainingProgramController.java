@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/training-program")
 public class TrainingProgramController {
 
-    private final ITrainingProgramService service;
+    private final ITrainingProgramService trainingProgramService;
     private final IFileService fileService;
 
     @ApiResponses(value = {
@@ -53,7 +53,7 @@ public class TrainingProgramController {
     @GetMapping("list")
     public ResponseEntity<?> getAllTrainingProgram(@RequestParam(defaultValue = "0") Integer pageNo,
                                                    @RequestParam(defaultValue = "10") Integer pageSize) {
-        Page<TrainingProgramDTO> list = service.getAll(pageNo, pageSize);
+        Page<TrainingProgramDTO> list = trainingProgramService.getAll(pageNo, pageSize);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
@@ -83,7 +83,7 @@ public class TrainingProgramController {
         //
         //==================== no keyword and empty list, return all training program
         if (listName == null && name == null) {
-            Page<TrainingProgramDTO> list = service.getAll(pageNo, pageSize);
+            Page<TrainingProgramDTO> list = trainingProgramService.getAll(pageNo, pageSize);
             return ResponseEntity.ok(list);
         }
         if (listName == null) {
@@ -105,7 +105,7 @@ public class TrainingProgramController {
         List<TrainingProgramDTO> list = new ArrayList<>();
         //================================= load search result from database
         for (String key : listName) {
-            for (TrainingProgramDTO dto : service.findByNameContaining(pageNo, pageSize, key, key)) {
+            for (TrainingProgramDTO dto : trainingProgramService.findByNameContaining(pageNo, pageSize, key, key)) {
                 list.add(dto);
             }
         }
@@ -137,43 +137,44 @@ public class TrainingProgramController {
         session.setAttribute("LIST_NAME", listName);
         return ResponseEntity.ok().body("Delete successfully");
     }
+
     @PostMapping("/uploadCsv")
-    public ResponseEntity readFileCsv(@ModelAttribute ReadFileDto readFileDto){
+    public ResponseEntity readFileCsv(@ModelAttribute ReadFileDto readFileDto) {
         MultipartFile file = readFileDto.getFile();
-        List<TrainingProgram> trainingProgramList= new ArrayList<>();
-        if(file.isEmpty()){
+        List<TrainingProgram> trainingProgramList = new ArrayList<>();
+        if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("File is empty");
-        }else{
-            String fileName= file.getOriginalFilename();
-            try{
-                if(!fileName.split("\\.")[1].equals("csv")){
+        } else {
+            String fileName = file.getOriginalFilename();
+            try {
+                if (!fileName.split("\\.")[1].equals("csv")) {
                     return ResponseEntity.badRequest().body("File is not csv");
-                }else{
+                } else {
                     //CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                    Long creatorId,lastModifierId;
+                    Long creatorId, lastModifierId;
                     int programId;
                     LocalDate dateCreated, lastDateModified;
                     String name;
                     BigDecimal hour;
                     int day;
                     boolean status;
-                    List<Long> listTrainingClassesId,listTrainingProgramSyllabusesId;
-                   // BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+                    List<Long> listTrainingClassesId, listTrainingProgramSyllabusesId;
+                    // BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
 
 //                    CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.builder().setSkipHeaderRecord(true).build());
 
-                    CSVParser parser= fileService.readFile(file,readFileDto.getEncodingType());
+                    CSVParser parser = fileService.readFile(file, readFileDto.getEncodingType());
                     // skip header of csv file
                     parser.iterator().next();
                     DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    for (CSVRecord record : parser.getRecords()){
-                        try{
-                            dateCreated= LocalDate.parse(record.get(2),dateFormat);
-                            lastDateModified = LocalDate.parse(record.get(3),dateFormat);
-                        }catch (DateTimeException e){
+                    for (CSVRecord record : parser.getRecords()) {
+                        try {
+                            dateCreated = LocalDate.parse(record.get(2), dateFormat);
+                            lastDateModified = LocalDate.parse(record.get(3), dateFormat);
+                        } catch (DateTimeException e) {
                             throw new FileException("Date time is wrong( format: yyyy-MM-dd)", HttpStatus.BAD_REQUEST.value());
                         }
-                        try{
+                        try {
                             programId = Integer.parseInt(record.get(0));
                             name = record.get(1);
                             hour = new BigDecimal(record.get(4));
@@ -182,15 +183,15 @@ public class TrainingProgramController {
                             creatorId = Long.parseLong(record.get(7));
                             lastModifierId = Long.parseLong(record.get(8));
                             listTrainingClassesId = Arrays.stream(record.get(9).split("/"))
-                                    .map(classId-> Long.parseLong(classId))
+                                    .map(classId -> Long.parseLong(classId))
                                     .collect(Collectors.toList());
                             listTrainingProgramSyllabusesId = Arrays.stream(record.get(10).split("/"))
-                                    .map(classId-> Long.parseLong(classId))
+                                    .map(classId -> Long.parseLong(classId))
                                     .collect(Collectors.toList());
-                        }catch (Exception e){
-                            throw new FileException (e.getMessage(),HttpStatus.BAD_REQUEST.value());
+                        } catch (Exception e) {
+                            throw new FileException(e.getMessage(), HttpStatus.BAD_REQUEST.value());
                         }
-                        var trainingProgram = new TrainingProgram(null,programId,name,dateCreated,lastDateModified,hour,day,status,null,null,null,null);
+                        var trainingProgram = new TrainingProgram(null, programId, name, dateCreated, lastDateModified, hour, day, status, null, null, null, null);
 //                        System.out.println(trainingProgram.toString());
 //                        System.out.println(creatorId+" "+lastModifierId+" " +listTrainingClassesId+" "+listTrainingProgramSyllabusesId);
                     }
@@ -203,33 +204,23 @@ public class TrainingProgramController {
     }
 
 
-    @PostMapping("/training-program/addTrainingProgram")
-    public String addTrain(@RequestParam("name") String trainingProgram, HttpSession session) {
-            session.setAttribute("trainingName", trainingProgram);
-            return "redirect:/saveTrainingProgram";
-    }
+//    @PostMapping("/training-program/addTrainingProgram")
+//    public ResponseEntity<?> addTrain(@RequestParam("name") String trainingProgram, HttpSession session) {
+//        session.setAttribute("trainingName", trainingProgram);
+//        return ResponseEntity.ok(session);
+//    }
+
 
     @PostMapping("/training-program/saveTrainingProgram")
-    public String saveTrain(@RequestParam("content") Long sylId, HttpSession session) {
-//        String name =(String) session.getAttribute("trainingName");
-//        Syllabus syllabus = new Syllabus();
-//        System.out.println(sylId);
-//        syllabus = service.getSyllabusById(sylId);
-//        TrainingProgram trainingProgram = new TrainingProgram();
-//        trainingProgram.setName(name);
-//        trainingProgram.setDateCreated(LocalDate.now());
-//        trainingProgram.setLastDateModified(LocalDate.now());
-//        trainingProgram.setDay(syllabus.getDay());
-//        trainingProgram.setHour(syllabus.getHour());
-//        trainingProgram.setStatus(true);
-//        TrainingProgramSyllabus programSyllabus = new TrainingProgramSyllabus();
-//        programSyllabus.setTrainingProgram(trainingProgram);
-//        programSyllabus.setStatus(true);
-//        programSyllabus.setSyllabus(syllabus);
-//        System.out.println(trainingProgram);
-//        trainingService.save(trainingProgram);
-//        syllabusService.addSyllabus(programSyllabus);
-        return "redirect:/addTrainingProgram";
+    public ResponseEntity<?> saveTrain(@RequestParam("content") Long sylId, HttpSession session) {
+        String name = (String) session.getAttribute("trainingName");
+        if(sylId == null||name == null){
+            return ResponseEntity.ofNullable("Please enter training name and syllabus id");
+        }
+        trainingProgramService.save(sylId,name);
+        return ResponseEntity.ok("Add training program successfully");
     }
+
+
 }
 

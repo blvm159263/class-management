@@ -15,4 +15,5 @@ public interface ITrainingProgramService {
     Long countAll();
     Page<TrainingProgramDTO> getAll(Integer pageNo, Integer pageSize);
     TrainingProgramDTO getTrainingProgramById(Long id);
+    void save(Long sylId, String name);
 }

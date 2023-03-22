@@ -1,76 +1,75 @@
 package com.mockproject.service;
 
-<<<<<<< HEAD
+import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
+import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.mapper.TrainingProgramMapper;
-=======
-import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.TrainingProgram;
->>>>>>> origin/g3_thanh_branch
 import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.service.interfaces.ITrainingProgramService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-<<<<<<< HEAD
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-=======
-import org.springframework.beans.factory.annotation.Autowired;
-import lombok.RequiredArgsConstructor;
->>>>>>> origin/g3_thanh_branch
 import org.springframework.stereotype.Service;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
 
-
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class TrainingProgramService implements ITrainingProgramService{
-<<<<<<< HEAD
 
-=======
-    @Autowired
->>>>>>> origin/g3_thanh_branch
-    private final TrainingProgramRepository repository;
-    public void save(TrainingProgram trainingProgram){
-        repository.save(trainingProgram);
-    }
+    private final TrainingProgramRepository trainingProgramRepository;
+    private final SyllabusService syllabusService;
+    private final TrainingProgramSyllabusService trainingProgramSyllabusService;
+
     public List<TrainingProgram> getAll(){
-        return repository.findAll();
+        return trainingProgramRepository.findAll();
     }
 
     @Override
     public Page<TrainingProgramDTO> findByNameContaining(Integer pageNo, Integer pageSize, String name, String name2) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<TrainingProgram> page = repository.findAllByNameContainingOrCreatorFullNameContaining(pageable, name,name2);
+        Page<TrainingProgram> page = trainingProgramRepository.findAllByNameContainingOrCreatorFullNameContaining(pageable, name,name2);
         Page<TrainingProgramDTO> programDTOPage = page.map(TrainingProgramMapper.INSTANCE::toDTO);
         return programDTOPage;
     }
 
     public Long countAll() {
-        return repository.count();
+        return trainingProgramRepository.count();
     }
 
     @Override
     public Page<TrainingProgramDTO> getAll(Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo,pageSize);
-        Page<TrainingProgram> page = repository.findAll(pageable);
+        Page<TrainingProgram> page = trainingProgramRepository.findAll(pageable);
         Page<TrainingProgramDTO> programDTOPage = page.map(TrainingProgramMapper.INSTANCE::toDTO);
         return programDTOPage;
     }
     @Override
     public TrainingProgramDTO getTrainingProgramById(Long id) {
-        TrainingProgram trainingProgram = repository.getTrainingProgramById(id);
+        TrainingProgram trainingProgram = trainingProgramRepository.getTrainingProgramById(id);
         return TrainingProgramMapper.INSTANCE.toDTO(trainingProgram);
     }
+    public void save(Long sylId, String name){
+        SyllabusDTO syllabus = syllabusService.getSyllabusById(sylId);
+        TrainingProgram trainingProgram = new TrainingProgram();
+        trainingProgram.setName(name);
+        trainingProgram.setDateCreated(LocalDate.now());
+        trainingProgram.setLastDateModified(LocalDate.now());
+        trainingProgram.setDay(syllabus.getDay());
+        trainingProgram.setHour(syllabus.getHour());
+        trainingProgram.setStatus(true);
+        TrainingProgramSyllabus programSyllabus = new TrainingProgramSyllabus();
+        programSyllabus.setTrainingProgram(trainingProgram);
+        programSyllabus.setStatus(true);
+//        programSyllabus.setSyllabus(syllabus);
+        trainingProgramRepository.save(trainingProgram);
+//        trainingProgramSyllabusService.addSyllabus(programSyllabus);
+    }
+
 
 }
