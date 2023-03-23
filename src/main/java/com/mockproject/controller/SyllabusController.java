@@ -6,6 +6,7 @@ import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.service.interfaces.ISyllabusService;
 import com.mockproject.service.interfaces.ITrainingProgramSyllabusService;
+import com.mockproject.utils.CSVUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -170,7 +171,7 @@ public class SyllabusController {
     @PostMapping(path = "read-file",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Read file")
-    public ResponseEntity<SyllabusDTO> readSyllabusCsv(@RequestPart("file")MultipartFile file,
+    public ResponseEntity readSyllabusCsv(@RequestPart("file")MultipartFile file,
                                                        @Parameter(description = """
                                                                1. Name
                                                                2. Code
@@ -179,8 +180,11 @@ public class SyllabusController {
                                                                1. Allow
                                                                2. Replace
                                                                3. Skip""") int handle) throws IOException {
-//        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(syllabusService.readFileCsv(file, condition, handle));
+
+        if(CSVUtils.hasCSVFormat(file)){
+            return ResponseEntity.ok(syllabusService.readFileCsv(file, condition, handle));
+        }
+        return ResponseEntity.badRequest().body("Please upload a csv file");
     }
 
     @GetMapping("get-template-file")
