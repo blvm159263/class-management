@@ -40,7 +40,7 @@ class AttendeeServiceTest {
 
     TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
             null, null, 12, 30, 30, 25, "Planning", null,
-            null, null, null, 1, true, null, null,
+            null, null, null, 1, true, a1, null,
             null, null, null, null, null, null, null,
             null, null, null);
 
@@ -84,18 +84,15 @@ class AttendeeServiceTest {
      */
     @Test
     void canGetAttendeeByTrainingClassId() {
-        Long id = 1L;
-        TrainingClass trainingClass = new TrainingClass();
-        trainingClass.setId(id);
-        trainingClass.setAttendee(a1);
+        when(trainingClassRepository.findByIdAndStatus(tc1.getId(), true))
+                .thenReturn(Optional.of(tc1));
 
-        when(trainingClassRepository.findByIdAndStatus(id, true))
-                .thenReturn(Optional.of(trainingClass));
-        AttendeeDTO result = attendeeService.getAttendeeByTrainingClassId(trainingClass.getId());
+        AttendeeDTO result = attendeeService.getAttendeeByTrainingClassId(tc1.getId());
         assertEquals(1L, result.getId());
         assertEquals("Name 1", result.getAttendeeName());
         assertEquals("Des 1", result.getDescription());
-        verify(trainingClassRepository).findByIdAndStatus(id, true);
+
+        verify(trainingClassRepository).findByIdAndStatus(tc1.getId(), true);
     }
 }
 

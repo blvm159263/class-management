@@ -1,10 +1,7 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.UserDTO;
-import com.mockproject.entity.Role;
-import com.mockproject.entity.TrainingClass;
-import com.mockproject.entity.TrainingClassAdmin;
-import com.mockproject.entity.User;
+import com.mockproject.entity.*;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitService;
 import org.junit.jupiter.api.Test;
@@ -51,28 +48,32 @@ class UserServiceTest {
 
     Role role1 = new Role(1L, "Super Admin", true, null, null);
     Role role2 = new Role(2L, "Class Admin", true, null, null);
+    Role role3 = new Role(3L, "Trainer", true, null, null);
 
     User user1 = new User(1L, "user1@gmail.com", "123", "Tui la user 1", "user1.png",
-            1, LocalDate.now(), "0123456789", true, true, role2, null, null,
-            null, null, null, null, null, null,
-            null, null, null, null, null);
-    User user2 = new User(2L, "user2@gmail.com", "123", "Tui la user 2", "user1.png",
             1, LocalDate.now(), "0123456789", true, true, role1, null, null,
             null, null, null, null, null, null,
             null, null, null, null, null);
-    User user3 = new User(3L, "user3@gmail.com", "123", "Tui la user 3", "user1.png",
+    User user2 = new User(2L, "user2@gmail.com", "123", "Tui la user 2", "user1.png",
             1, LocalDate.now(), "0123456789", true, true, role2, null, null,
+            null, null, null, null, null, null,
+            null, null, null, null, null);
+    User user3 = new User(3L, "user3@gmail.com", "123", "Tui la user 3", "user1.png",
+            1, LocalDate.now(), "0123456789", true, true, role3, null, null,
             null, null, null, null, null, null,
             null, null, null, null, null);
 
     TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
             null, null, 12, 30, 30, 25, "Planning", null,
             null, null, null, 1, true, null, null,
-            null, null, null, null, null, null, null,
+            null, null, null, user2, null, user1, user1,
             null, null, null);
 
     TrainingClassAdmin admin1 = new TrainingClassAdmin(1L, true, user1, tc1);
     TrainingClassAdmin admin2 = new TrainingClassAdmin(2L, true, user2, tc1);
+
+    TrainingClassUnitInformation ui1 = new TrainingClassUnitInformation(1L, true, user3, null, tc1, null);
+
     /**
      * Method under test: {@link UserService#listClassAdminTrue()}
      */
@@ -136,6 +137,81 @@ class UserServiceTest {
         assertEquals("Tui la user 1", admin.get(0).getFullName());
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
+    }
+
+    /**
+     * Method under test: {@link UserService#getTrainerByClassId(Long)}
+     */
+    @Test
+    void canGetTrainerByClassId() {
+        List<TrainingClassUnitInformation> trainingClassUnitInformations =
+                new ArrayList<>();
+        trainingClassUnitInformations.add(ui1);
+
+        Long trainingClassId = 1L;
+        TrainingClass trainingClass = new TrainingClass();
+        trainingClass.setId(trainingClassId);
+        trainingClass.setListTrainingClassUnitInformations(trainingClassUnitInformations);
+
+        when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
+                .thenReturn(Optional.of(trainingClass));
+
+        List<UserDTO> trainersList = userService.getTrainerByClassId(trainingClass.getId());
+        assertEquals(3L, trainersList.get(0).getId());
+        assertEquals("user3@gmail.com", trainersList.get(0).getEmail());
+
+        verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
+    }
+
+    /**
+     * Method under test: {@link UserService#getCreatorByClassId(Long)}
+     */
+    @Test
+    void canGetCreatorByClassId() {
+        Long trainingClassId = 1L;
+        tc1.setId(trainingClassId);
+
+        when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
+                .thenReturn(Optional.of(tc1));
+
+        UserDTO creator = userService.getCreatorByClassId(tc1.getId());
+        assertEquals(2L, creator.getId());
+        assertEquals("user2@gmail.com", creator.getEmail());
+        assertEquals("Tui la user 2", creator.getFullName());
+
+        verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
+    }
+
+    /**
+     * Method under test: {@link UserService#getReviewerByClassId(Long)}
+     */
+    @Test
+    void canGetReviewerByClassId() {
+        when(trainingClassRepository.findByIdAndStatus(tc1.getId(), true))
+                .thenReturn(Optional.of(tc1));
+
+        UserDTO reviewer = userService.getReviewerByClassId(tc1.getId());
+        assertEquals(1L, reviewer.getId());
+        assertEquals("user1@gmail.com", reviewer.getEmail());
+        assertEquals("Tui la user 1", reviewer.getFullName());
+
+        verify(trainingClassRepository).findByIdAndStatus(tc1.getId(), true);
+    }
+
+    /**
+     * Method under test: {@link UserService#getApproverByClassId(Long)}
+     */
+    @Test
+    void canGetApproverByClassId() {
+        when(trainingClassRepository.findByIdAndStatus(tc1.getId(), true))
+                .thenReturn(Optional.of(tc1));
+
+        UserDTO approver = userService.getApproverByClassId(tc1.getId());
+        assertEquals(1L, approver.getId());
+        assertEquals("user1@gmail.com", approver.getEmail());
+        assertEquals("Tui la user 1", approver.getFullName());
+
+        verify(trainingClassRepository).findByIdAndStatus(tc1.getId(), true);
     }
 }
 

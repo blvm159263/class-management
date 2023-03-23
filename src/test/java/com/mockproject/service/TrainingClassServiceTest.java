@@ -45,17 +45,17 @@ class TrainingClassServiceTest {
     @Autowired
     private TrainingClassService trainingClassService;
 
-    Attendee attendee = new Attendee(1L, "", "", true, null, null);
+    Attendee attendee = new Attendee(1L, "Fresher", "Hello", true, null, null);
     TrainingProgram trainingProgram = new TrainingProgram(1L, 1, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
             30, true, null, null, null, null);
     Location location = new Location(1L, "Ha Noi", "123 Le Loi", true, null, null);
-    Fsu fsu = new Fsu(1L, "", "", true, null);
-    Contact contact = new Contact(1L, "", "", true, null);
-    User user = new User(1L, "", "", "", "", 1, LocalDate.now(), "", true,
+    Fsu fsu = new Fsu(1L, "FHM", "STS", true, null);
+    Contact contact = new Contact(1L, "contact@gmail.com", "Contact email trainer", true, null);
+    User user = new User(1L, "user@gmail.com", "1", "user1", "", 1, LocalDate.now(), "", true,
             true, null, null, null, null, null, null,
             null, null, null, null, null,
             null, null, null);
-    TrainingClass tc = new TrainingClass(1L, "Class Name 1", " Code113", LocalDate.now(),
+    TrainingClass trainingClass = new TrainingClass(1L, "Class Name 1", "Code113", LocalDate.now(),
                 Time.valueOf("09:00:00"), Time.valueOf("11:00:00"), BigDecimal.ONE, 10, 4, 5, 6, "1", LocalDate.now(),
                 LocalDate.now(), LocalDate.now(), LocalDate.now(),0 , true, attendee, trainingProgram, location, fsu,
                 contact, user, user, user, user, null, null, null);
@@ -109,7 +109,6 @@ class TrainingClassServiceTest {
     @Test
     void canGetTrainingClassByClassId() {
         Long trainingClassId = 1L;
-        TrainingClass trainingClass = new TrainingClass();
         trainingClass.setId(trainingClassId);
 
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
@@ -118,7 +117,7 @@ class TrainingClassServiceTest {
         TrainingClassDTO result = trainingClassService.getTrainingClassByClassId(trainingClass.getId());
         assertEquals(1L, result.getId());
         assertEquals("Class Name 1", result.getClassName());
-        assertEquals("TC1", result.getClassCode());
+        assertEquals("Code113", result.getClassCode());
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
 

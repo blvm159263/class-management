@@ -1,7 +1,9 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.TrainingProgramDTO;
+import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingProgram;
+import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.repository.TrainingProgramRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -24,12 +27,21 @@ class TrainingProgramServiceTest {
     @MockBean
     private TrainingProgramRepository trainingProgramRepository;
 
+    @MockBean
+    private TrainingClassRepository trainingClassRepository;
+
     @Autowired
     private TrainingProgramService trainingProgramService;
 
     TrainingProgram tp1 = new TrainingProgram(1L,1, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, null, null, null, null);
     TrainingProgram tp2 = new TrainingProgram(2L,2, "Java for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, null, null, null, null);
     TrainingProgram tp3 = new TrainingProgram(3L,3, "Java for junior", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, false, null, null, null, null);
+
+    TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
+            null, null, 12, 30, 30, 25, "Planning", null,
+            null, null, null, 1, true, null, tp1,
+            null, null, null, null, null, null, null,
+            null, null, null);
 
     /**
      * Method under test: {@link TrainingProgramService#searchByName(String)}
@@ -51,6 +63,21 @@ class TrainingProgramServiceTest {
         assertEquals(1, result.size());
         assertEquals("Java for beginner", result.get(0).getName());
         verify(trainingProgramRepository).findByNameContainingAndStatus((String) any(), anyBoolean());
+    }
+
+    /**
+     * Method under test: {@link TrainingProgramService#getTrainingProgramByClassId(Long)}
+     */
+    @Test
+    void getTrainingProgramByClassId() {
+        when(trainingClassRepository.findByIdAndStatus(tc1.getId(), true))
+                .thenReturn(Optional.of(tc1));
+
+        TrainingProgramDTO result = trainingProgramService.getTrainingProgramByClassId(tc1.getId());
+        assertEquals(1L, result.getId());
+        assertEquals("C# for beginner", result.getName());
+
+        verify(trainingClassRepository).findByIdAndStatus(tc1.getId(), true);
     }
 }
 
