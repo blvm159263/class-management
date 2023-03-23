@@ -120,6 +120,32 @@ public class UserController {
         }
     }
 
+    //Get the training class admin by training class id
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "When don't find any Training Class"),
+            @ApiResponse(responseCode = "200", description = "When we have found the training class",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
+    @Operation(
+            summary = "Get all the admin of the training class by training class ID",
+            description = "<b>List all the admin of the training class</b>"
+    )
+    @GetMapping("adminTrainingClass/{id}")
+    public ResponseEntity<?> getAdminByClassId(
+            @PathVariable("id")
+            @Parameter(
+                    description = "<b>Insert Training Class ID</b>",
+                    example = "1"
+            )
+            long id) {
+        try {
+            return ResponseEntity.ok(userService.getAdminByClassId(id));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Can't find any admin with training class Id is " + id);
+        }
+    }
+
     //Get the creator by training class ID
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any Training Class"),

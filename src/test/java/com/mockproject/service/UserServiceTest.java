@@ -2,6 +2,8 @@ package com.mockproject.service;
 
 import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.Role;
+import com.mockproject.entity.TrainingClass;
+import com.mockproject.entity.TrainingClassAdmin;
 import com.mockproject.entity.User;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitService;
@@ -63,6 +65,14 @@ class UserServiceTest {
             null, null, null, null, null, null,
             null, null, null, null, null);
 
+    TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
+            null, null, 12, 30, 30, 25, "Planning", null,
+            null, null, null, 1, true, null, null,
+            null, null, null, null, null, null, null,
+            null, null, null);
+
+    TrainingClassAdmin admin1 = new TrainingClassAdmin(1L, true, user1, tc1);
+    TrainingClassAdmin admin2 = new TrainingClassAdmin(2L, true, user2, tc1);
     /**
      * Method under test: {@link UserService#listClassAdminTrue()}
      */
@@ -101,6 +111,31 @@ class UserServiceTest {
         assertEquals(user2.getEmail(), actualUser.getEmail());
         assertEquals(user2.getDob(), actualUser.getDob());
         verify(userRepository).findById((Long) any());
+    }
+
+    /**
+     * Method under test: {@link UserService#getAdminByClassId(long)}
+     */
+    @Test
+    void canGetAdminByTrainingClassId() {
+        List<TrainingClassAdmin> adminList = new ArrayList<>();
+        adminList.add(admin1);
+        adminList.add(admin2);
+
+        Long trainingClassId = 1L;
+        TrainingClass trainingClass = new TrainingClass();
+        trainingClass.setId(trainingClassId);
+        trainingClass.setListTrainingClassAdmins(adminList);
+
+        when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
+                .thenReturn(Optional.of(trainingClass));
+
+        List<UserDTO> admin = userService.getAdminByClassId(trainingClass.getId());
+        assertEquals(1L, admin.get(0).getId());
+        assertEquals("user1@gmail.com", admin.get(0).getEmail());
+        assertEquals("Tui la user 1", admin.get(0).getFullName());
+
+        verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
     }
 }
 

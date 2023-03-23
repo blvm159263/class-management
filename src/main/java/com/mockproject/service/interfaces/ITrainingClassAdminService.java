@@ -7,6 +7,4 @@ import java.util.List;
 public interface ITrainingClassAdminService {
 
     boolean saveList(List<Long> adminId, Long tcId);
-
-    List<UserDTO> getAdminByClassId(long id);
 }

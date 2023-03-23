@@ -78,6 +78,20 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public List<UserDTO> getAdminByClassId(long id) {
+        TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
+        List<TrainingClassAdmin> trainingClassAdmins = tc.getListTrainingClassAdmins()
+                .stream()
+                .filter(TrainingClassAdmin :: isStatus)
+                .toList();
+        List<User> userList = trainingClassAdmins.stream().map(TrainingClassAdmin::getAdmin)
+                .filter(User::isStatus)
+                .distinct()
+                .toList();
+        return userList.stream().map(UserMapper.INSTANCE::toDTO).toList();
+    }
+
+    @Override
     public UserDTO getCreatorByClassId(Long id) {
         TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
         return UserMapper.INSTANCE.toDTO(trainingClass.getCreator());

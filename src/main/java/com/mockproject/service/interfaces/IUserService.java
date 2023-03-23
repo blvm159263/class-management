@@ -20,6 +20,9 @@ public interface IUserService {
     UserDTO getReviewerByClassId(Long id);
 
     UserDTO getApproverByClassId(Long id);
+
+    List<UserDTO> getAdminByClassId(long id);
+
     String readCSVFile(File file);
 
     List<UserDTOCustom> getAllByPageAndRowPerPage(Long page, Long rowPerPage);

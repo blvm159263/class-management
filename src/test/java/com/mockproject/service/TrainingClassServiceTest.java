@@ -6,7 +6,9 @@ import com.mockproject.entity.*;
 import com.mockproject.mapper.TrainingClassMapper;
 import com.mockproject.repository.LocationRepository;
 import com.mockproject.repository.TrainingClassRepository;
+import com.mockproject.repository.TrainingClassUnitInformationRepository;
 import com.mockproject.repository.TrainingProgramRepository;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -14,7 +16,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.time.LocalDate;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {TrainingClassService.class})
 @ExtendWith(SpringExtension.class)
@@ -31,6 +39,9 @@ class TrainingClassServiceTest {
     @MockBean
     private TrainingClassMapper trainingClassMapper;
 
+    @MockBean
+    private TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
+
     @Autowired
     private TrainingClassService trainingClassService;
 
@@ -44,11 +55,15 @@ class TrainingClassServiceTest {
             true, null, null, null, null, null, null,
             null, null, null, null, null,
             null, null, null);
+    TrainingClass tc = new TrainingClass(1L, "Class Name 1", " Code113", LocalDate.now(),
+                Time.valueOf("09:00:00"), Time.valueOf("11:00:00"), BigDecimal.ONE, 10, 4, 5, 6, "1", LocalDate.now(),
+                LocalDate.now(), LocalDate.now(), LocalDate.now(),0 , true, attendee, trainingProgram, location, fsu,
+                contact, user, user, user, user, null, null, null);
 
 
-    /**
-     * Method under test: {@link TrainingClassService#create(TrainingClassDTO)}
-     */
+//    /**
+//     * Method under test: {@link TrainingClassService#create(TrainingClassDTO)}
+//     */
 //    @Test
 //    @Disabled
 //    void canCreateNewTrainingClass() {
@@ -88,7 +103,26 @@ class TrainingClassServiceTest {
 //        verify(trainingClassRepository).save(any());
 //    }
 
+    /**
+     * Method under test: {@link TrainingClassService#getTrainingClassByClassId(Long)}
+     */
+    @Test
+    void canGetTrainingClassByClassId() {
+        Long trainingClassId = 1L;
+        TrainingClass trainingClass = new TrainingClass();
+        trainingClass.setId(trainingClassId);
 
+        when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
+                .thenReturn(Optional.of(trainingClass));
+
+        TrainingClassDTO result = trainingClassService.getTrainingClassByClassId(trainingClass.getId());
+        assertEquals(1L, result.getId());
+        assertEquals("Class Name 1", result.getClassName());
+        assertEquals("TC1", result.getClassCode());
+
+        verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
+
+    }
 
 }
 
