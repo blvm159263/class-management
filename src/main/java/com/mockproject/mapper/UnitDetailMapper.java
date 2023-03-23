@@ -18,6 +18,7 @@ public interface UnitDetailMapper {
     @Mapping(target = "unitId", source = "unit.id")
     @Mapping(target = "unitTitle", source = "unit.unitTitle")
     @Mapping(target = "outputStandardId", source = "outputStandard.id")
+    @Mapping(target = "outputStandardCode", source = "outputStandard.standardCode")
     @Mapping(target = "outputStandardName", source = "outputStandard.standardName")
     @Mapping(target = "deliveryTypeId", source = "deliveryType.id")
     @Mapping(target = "deliveryTypeName", source = "deliveryType.typeName")

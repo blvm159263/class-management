@@ -25,5 +25,6 @@ public class UnitDetailDTO implements Serializable {
     private String deliveryTypeName;
     private Long outputStandardId;
     private String outputStandardName;
+    private String outputStandardCode;
     private List<TrainingMaterialDTO> trainingMaterialDTOList;
 }
