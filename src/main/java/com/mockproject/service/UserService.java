@@ -1,13 +1,9 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.UserDTO;
-import com.mockproject.dto.UserDTOCustom;
 import com.mockproject.entity.Level;
 import com.mockproject.entity.Role;
 import com.mockproject.entity.User;
-import com.mockproject.mapper.AttendeeMapper;
-import com.mockproject.mapper.LevelMapper;
-import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUserService;
@@ -157,7 +153,6 @@ public class UserService implements IUserService {
                             .collect(Collectors.toList());
                 }
             }
-
 
         } catch (Exception e) {
             throw e;
