@@ -62,6 +62,8 @@ public class UserController {
 
     private final IRoleService roleService;
 
+    private final IAttendeeService attendeeService;
+
     private final IRolePermissionScopeService rolePermissionScopeService;
 
     private final IPermissionService permissionService;
@@ -93,30 +95,6 @@ public class UserController {
             return ResponseEntity.badRequest().body("Invalid email or password");
         }
     }
-
-    @GetMapping("/getAll")
-    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getAll() {
-        List<UserDTO> userDTOList = userService.getAll();
-        if (userDTOList.isEmpty()) {
-            return ResponseEntity.badRequest().body("List is empty");
-        } else {
-            return ResponseEntity.ok(userDTOList);
-        }
-    }
-
-    @GetMapping("/getListUser")
-    @Operation(summary = "Get user list by page and rows per page")
-    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity getListUser(@RequestParam(value = "page", required = false, defaultValue = "1") @Parameter(description = "page number to display") Long page, @RequestParam(value = "rowsPerPage", required = false, defaultValue = "10")@Parameter(description = "number of row per page to display") Long rowsPerPage) {
-        List<UserDTOCustom> userDTOList = userService.getAllByPageAndRowPerPage(page, rowsPerPage);
-        if (userDTOList.isEmpty()) {
-            return ResponseEntity.badRequest().body("List is empty");
-        } else {
-            return ResponseEntity.ok(userDTOList);
-        }
-    }
-
 
     @GetMapping("/getAllPermissionName")
     @Operation(summary = "Get all permission name of system")
@@ -217,14 +195,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/list")
-    @Operation(
-            summary = "Get user list"
-    )
-    public ResponseEntity<?> getAllUser() {
-        return ResponseEntity.ok(userService.getAllUser(true));
-    }
-
     @GetMapping("/getRoleById")
     @Operation(summary = "Get a role by role id")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
@@ -235,7 +205,6 @@ public class UserController {
         }
         return ResponseEntity.badRequest().body("Role ot found!");
     }
-
     @PutMapping("/updateRole")
     @Operation(summary = "Update role by list FormRoleDTO")
     @Secured({MODIFY, FULL_ACCESS})
@@ -283,7 +252,7 @@ public class UserController {
     @Operation(summary = "Search User by filter and order")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     public ResponseEntity searchByFilter(@RequestParam(value = "search", required = false) @Parameter(description = "Search string") List<String> search,
-                                         @RequestParam(value = "Dob", required = false) @Parameter(description = "Date of birth(yyyy/mm/dd)") LocalDate dob,
+                                         @RequestParam(value = "Dob", required = false) @Parameter(description = "Date of birth(dd/MM/yyyy)") String dob,
                                          @RequestParam(value = "Gender", required = false) @Parameter(description = "true = Male, false = Female") Boolean gender,
                                          @RequestParam(value = "AtendeeId", required = false, defaultValue = "") List<Long> atendeeId,
                                          @RequestParam(value = "Page", required = false) Optional<Integer> page,
@@ -327,7 +296,7 @@ public class UserController {
 
     @PutMapping("/de-activateUser")
     @Operation(summary = "De-activate user by user id", description = "set state as de-active")
-    @Secured({MODIFY, FULL_ACCESS, CREATE})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity deactivateUser(@RequestParam(value = "id") @Parameter(description = "User id") long id) {
         int state = userService.updateStateToFalse(id);
         if (state == 0) return ResponseEntity.ok("De-activate user successfully");
@@ -336,7 +305,7 @@ public class UserController {
 
     @PutMapping("/activateUser")
     @Operation(summary = "Activate user by user id", description = "Set state as active")
-    @Secured({MODIFY, FULL_ACCESS, CREATE})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity activateUser(@RequestParam(value = "id") @Parameter(description = "User id") long id) {
         int state = userService.updateStateToTrue(id);
         if (state == 1) return ResponseEntity.ok("Activate user successfully");
@@ -345,7 +314,7 @@ public class UserController {
 
     @PutMapping("/deleteUser")
     @Operation(summary = "Delete user")
-    @Secured({MODIFY, FULL_ACCESS, CREATE})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity deleteUser(@RequestParam(value = "id") @Parameter(description = "User id") long id) {
         boolean delete = userService.updateStatus(id);
         if (!delete) return ResponseEntity.badRequest().body("Delete failed");
@@ -354,7 +323,7 @@ public class UserController {
 
     @PutMapping("/changeRole")
     @Operation(summary = "Edit user role by user id and role name")
-    @Secured({MODIFY, FULL_ACCESS, CREATE})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity changeRole(@RequestParam(value = "id") @Parameter(description = "User id") long id, @RequestParam(value = "roleName") String roleName) {
         if (roleService.getRoleByRoleName(roleName) == null) {
             return ResponseEntity.badRequest().body("Role not found!");
@@ -364,41 +333,9 @@ public class UserController {
         return ResponseEntity.ok(roleName);
     }
 
-    @PutMapping("/editName")
-    @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editFullName(@RequestParam(value = "id") long id, @RequestParam(value = "fullname") String fullname) {
-        boolean editName = userService.editName(id, fullname);
-        if (editName)
-            return ResponseEntity.ok("Successfully");
-        else return ResponseEntity.badRequest().body("Could not change!");
-    }
-
-    @PutMapping("/editDoB")
-    @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editDoB(@RequestParam(value = "id") long id, @RequestParam(value = "dob") LocalDate date) {
-        boolean editDoB = userService.editDoB(id, date);
-        if (editDoB)
-            return ResponseEntity.ok("Successfully");
-        else return ResponseEntity.badRequest().body("Could not change!");
-    }
-
-    @PutMapping("/editGender")
-    @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editGender(@RequestParam(value = "id") long id, @RequestParam(value = "gender") boolean gender) {
-        boolean editGender = userService.editGender(id, gender);
-        return ResponseEntity.ok(editGender);
-    }
-
-    @PutMapping("/editLevel")
-    @Secured({MODIFY, FULL_ACCESS, CREATE})
-    public ResponseEntity editLevel(@RequestParam(value = "id") long id, @RequestParam(value = "levelCode") String levelCode) {
-        boolean editLevel = userService.editLevel(id, levelCode);
-        return ResponseEntity.ok(editLevel);
-    }
-
     @PutMapping("/editUser")
     @Operation(summary = "Edit user by UserDTO")
-    @Secured({MODIFY, FULL_ACCESS, CREATE})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity editUser(@RequestBody UserDTO user) {
         boolean editUser = userService.editUser(user);
         if (editUser)
@@ -408,6 +345,7 @@ public class UserController {
 
     @GetMapping("/downloadCSVUser")
     @Operation(summary = "Download file UserCSVExample")
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity<InputStreamResource> getFile() {
         String filename = "User_import.csv";
         InputStreamResource file = new InputStreamResource(userService.getCSVUserFileExample());
@@ -420,6 +358,7 @@ public class UserController {
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Upload csv file to import user")
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity uploadFile(@RequestParam("file") MultipartFile file,
                                      @RequestParam("replace")Boolean replace,
                                      @RequestParam("skip") Boolean skip) throws IOException {
@@ -432,6 +371,17 @@ public class UserController {
         }
         message = "Please upload a csv file!";
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+    }
+
+    @GetMapping(value = "/getListAttendee")
+    @Operation(summary = "Get list attendee for filter")
+    public ResponseEntity getListAttendee(){
+        List<AttendeeDTO> list = attendeeService.listAllTrue();
+        if (!list.isEmpty()) {
+            return ResponseEntity.ok(attendeeService.listAllTrue());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any attendee");
+        }
     }
 }
 
