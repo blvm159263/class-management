@@ -45,7 +45,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "and ( u.email like '%'+:search+'%' or u.fullName like '%'+:search+'%' or u.phone like '%'+:search+'%' or" +
             " u.level.levelCode like '%'+:search+'%' or u.role.roleName like '%'+:search+'%')"
     )
-    Page<User> searchByFilter(String search , LocalDate dob, Boolean gender, List<Long> attendeeId,Pageable pageable);
+    List<User> searchByFilter(String search , LocalDate dob, Boolean gender, List<Long> attendeeId);
 
     List<User> findByRoleAndStatus(Role role, boolean status);
 
