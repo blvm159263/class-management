@@ -41,7 +41,7 @@ public class UnitDetailService implements IUnitDetailService {
 
     @Override
     public List<UnitDetailDTO> getUnitDetailByUnitId(Long idUnit) {
-        return null;
+        return unitDetailRepository.getListUnitDetailByUnitId(idUnit).stream().map(UnitDetailMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
     @Override

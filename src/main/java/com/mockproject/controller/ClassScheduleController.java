@@ -95,13 +95,13 @@ public class ClassScheduleController {
     @Operation(summary = "Save list of ClassSchedule by given Training Class")
     @PostMapping("list/traing-class/{tcId}")
     public ResponseEntity<?> createListSchedule(@io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                                content = @Content(examples = @ExampleObject(value = "[\"2023-03-14\",\"2023-03-15\"]")))
+            content = @Content(examples = @ExampleObject(value = "[\"2023-03-14\",\"2023-03-15\"]")))
                                                 @Valid @RequestBody List<LocalDate> listDate,
                                                 @Parameter(description = "Training Class ID when call create Training Class API return")
-                                                @PathVariable("tcId") Long tcId){
-        if(classScheduleService.saveClassScheduleForTrainingClass(listDate, tcId)){
+                                                @PathVariable("tcId") Long tcId) {
+        if (classScheduleService.saveClassScheduleForTrainingClass(listDate, tcId)) {
             return new ResponseEntity<>("List of Date have been saved!", HttpStatus.CREATED);
-        }else{
+        } else {
             return new ResponseEntity<>("Saving Fail!", HttpStatus.BAD_REQUEST);
         }
     }
@@ -114,9 +114,9 @@ public class ClassScheduleController {
     })
     @GetMapping("/in-class")
     public ResponseEntity<?> getClassSchedule(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
-        try{
+        try {
             return ResponseEntity.ok(classScheduleService.getClassScheduleByTrainingClassId(id));
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
         }
     }
