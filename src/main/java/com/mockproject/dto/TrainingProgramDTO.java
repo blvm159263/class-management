@@ -26,9 +26,6 @@ public class TrainingProgramDTO implements Serializable {
     private Long creatorId;
     private String creatorName;
     private Long lastModifierId;
-<<<<<<< HEAD
-    private String lastModifierName;
-=======
     private List<Long> syllabusIdList;
->>>>>>> g3_branch
+    private String lastModifierName;
 }

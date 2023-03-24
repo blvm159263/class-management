@@ -49,7 +49,6 @@ public class FileService implements IFileService {
     private final String SEMICOLON = "semicolon";
 
     @Override
-<<<<<<< HEAD
     public FileClassResponseDTO readFileCsv(MultipartFile file) throws IOException {
         String[] HEADERS = {"Class Name", "Start Date (yyyy-mm-dd)", "Start Time (hh:mm:ss)", "End Time (hh:mm:ss)",
                 "Duration Hour", "Duration Day", "Planned amount", "Accepted amount", "Actual amount", "Location",
@@ -120,10 +119,7 @@ public class FileService implements IFileService {
     }
 
     @Override
-    public CSVParser readFile(MultipartFile file, String encodingType) {
-=======
     public CSVParser readFile(MultipartFile file, String encodingType,String separator) {
->>>>>>> 3615389 (update add trainingprogram and read csv)
         encodingType = encodingType.trim().toLowerCase();
         separator= separator.trim().toLowerCase();
         InputStreamReader inputStreamReader = null;
@@ -150,24 +146,25 @@ public class FileService implements IFileService {
             throw new FileException("Encoding type is wrong ", HttpStatus.BAD_REQUEST.value());
         }
 
-            switch (separator) {
-                case COMMA:
-                    separator=",";
-                    break;
-                case SEMICOLON:
-                    separator=";";
-                    break;
-                case PIPE:
-                    separator="|";
-                    break;
-                case SPACE:
-                    separator=" ";
-                    break;
-                default:
-                    throw new FileException("separator type is wrong ", HttpStatus.BAD_REQUEST.value());
-            }
+        switch (separator) {
+            case COMMA:
+                separator=",";
+                break;
+            case SEMICOLON:
+                separator=";";
+                break;
+            case PIPE:
+                separator="|";
+                break;
+            case SPACE:
+                separator=" ";
+                break;
+            default:
+                throw new FileException("separator type is wrong ", HttpStatus.BAD_REQUEST.value());
+        }
 
         try {
+            System.out.println(separator);
             reader = new BufferedReader(inputStreamReader);
             parser = new CSVParser(reader, CSVFormat.DEFAULT.builder().setSkipHeaderRecord(true).build().withDelimiter(separator.charAt(0)));
         } catch (IOException e) {
