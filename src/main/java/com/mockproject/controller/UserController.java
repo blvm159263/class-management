@@ -274,13 +274,6 @@ public class UserController {
         else return ResponseEntity.badRequest().body("Not found user!");
     }
 
-    @PostMapping("/encodePassword")
-    @Operation(summary = "If the password in your Database is not encode,use this function is only 1 time!!!")
-    public ResponseEntity encodePassword() {
-        userService.encodePassword();
-        return ResponseEntity.ok("Encode sucessfully");
-    }
-
     @GetMapping("/getRoleByName")
     @Operation(summary = "Get roleDTO by role name")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
