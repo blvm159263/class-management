@@ -47,4 +47,8 @@ public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusS
     public void addSyllabus(TrainingProgramSyllabus syllabus) {
         trainingProgramSyllabusRepository.save(syllabus);
     }
+
+    public void removeByTrainingProgramID(Long id){
+        trainingProgramSyllabusRepository.deleteByTrainingProgramId(id);
+    }
 }

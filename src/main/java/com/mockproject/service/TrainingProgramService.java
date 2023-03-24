@@ -163,6 +163,18 @@ public class TrainingProgramService implements ITrainingProgramService {
                         trainingProgramHashMap.remove(trainingProgram);
                     });
                 } else if (dupHandle.equals(REPLACE)) {
+                        var a = trainingProgramRepository.findTopByProgramIdOrderByIdDesc(1001);
+                    trainingProgramFilter.stream().forEach(trainingProgram ->
+                    {
+                        var trainProgramInDatabase= trainingProgramRepository.findTopByProgramIdOrderByIdDesc(trainingProgram.getProgramId());
+                        trainProgramInDatabase.setName(trainingProgram.getName());
+                        trainProgramInDatabase.setDateCreated(trainingProgram.getDateCreated());
+                        trainProgramInDatabase.setLastDateModified(trainingProgram.getLastDateModified());
+                        trainProgramInDatabase.setStatus(trainingProgram.isStatus());
+                        List<Long> syllabusIdList= trainingProgramHashMap.get(trainingProgram);
+                        trainingProgramHashMap.remove(trainingProgram);
+                        trainingProgramHashMap.put(trainProgramInDatabase,syllabusIdList);
+                    });
 
                 } else {
                     throw new FileException("Duplicate handle was wrong type", HttpStatus.BAD_REQUEST.value());
@@ -181,22 +193,31 @@ public class TrainingProgramService implements ITrainingProgramService {
                 }
                 // set syllabus and key to
                 for (TrainingProgram key : trainingProgramSyllabusHashMap.keySet()) {
+                    System.out.println(key.getId());
                     var syllabusList = trainingProgramSyllabusHashMap.get(key);
+                    if(key.getId() == null ){
 
-                    int day = getDay(syllabusList);
-                    BigDecimal hour = getHour(syllabusList);
+                        int day = getDay(syllabusList);
+                        BigDecimal hour = getHour(syllabusList);
 
-//                    int lastTrainingProgramId = trainingProgramRepository.findTopByOrderByIdDesc().getId().intValue() + 1;
-                    key.setDay(day);
-                    key.setHour(hour);
-                    key.setCreator(user);
-                    key.setLastModifier(user);
-                    List<TrainingProgramSyllabus> programSyllabus = syllabusList.stream()
-                            .map(syllabus -> new TrainingProgramSyllabus(null, true, syllabus, key))
-                            .collect(Collectors.toList());
+                        key.setDay(day);
+                        key.setHour(hour);
+                        key.setCreator(user);
+                        key.setLastModifier(user);
+                        List<TrainingProgramSyllabus> programSyllabus = syllabusList.stream()
+                                .map(syllabus -> new TrainingProgramSyllabus(null, true, syllabus, key))
+                                .collect(Collectors.toList());
 
                     trainingProgramRepository.save(key);
                     trainingProgramSyllabusService.saveAll(programSyllabus);
+                    }else{
+                        List<TrainingProgramSyllabus> programSyllabus = syllabusList.stream()
+                                .map(syllabus -> new TrainingProgramSyllabus(null, true, syllabus, key))
+                                .collect(Collectors.toList());
+                        trainingProgramSyllabusService.removeByTrainingProgramID(key.getId());
+                        trainingProgramRepository.save(key);
+                        trainingProgramSyllabusService.saveAll(programSyllabus);
+                    }
                 }
             }
         }

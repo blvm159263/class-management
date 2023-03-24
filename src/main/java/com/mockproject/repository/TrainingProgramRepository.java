@@ -29,5 +29,5 @@ public interface TrainingProgramRepository extends JpaRepository<TrainingProgram
     List<TrainingProgram> getAllByCreatorFullNameContains(String name);
 
     List<TrainingProgram> findByNameContainingAndStatus(String name, boolean status);
-
+    TrainingProgram findTopByProgramIdOrderByIdDesc(int programId);
 }
