@@ -6,15 +6,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-<<<<<<< HEAD
-public interface IFileService {
+public interface   IFileService {
+    public CSVParser readFile(MultipartFile file, String encodingType,String separator);
 
     FileClassResponseDTO readFileCsv(MultipartFile file) throws IOException;
 
-    public CSVParser readFile(MultipartFile file, String encodingType);
-=======
-public interface   IFileService {
-    public CSVParser readFile(MultipartFile file, String encodingType,String separator);
->>>>>>> g3_branch
 
 }

@@ -43,6 +43,10 @@ public class FileService implements IFileService {
     private final String UTF_16 = "utf-16";
     private final String ISO_8859_1 = "iso_8859_1";
     private final String US_ASCII = "us_ascii";
+    private final String COMMA = "comma";
+    private final String PIPE = "pipe";
+    private final String SPACE = " ";
+    private final String SEMICOLON = "semicolon";
 
     @Override
     public FileClassResponseDTO readFileCsv(MultipartFile file) throws IOException {
@@ -115,8 +119,9 @@ public class FileService implements IFileService {
     }
 
     @Override
-    public CSVParser readFile(MultipartFile file, String encodingType) {
+    public CSVParser readFile(MultipartFile file, String encodingType,String separator) {
         encodingType = encodingType.trim().toLowerCase();
+        separator= separator.trim().toLowerCase();
         InputStreamReader inputStreamReader = null;
         BufferedReader reader;
         CSVParser parser;
@@ -140,10 +145,28 @@ public class FileService implements IFileService {
         } catch (IOException e) {
             throw new FileException("Encoding type is wrong ", HttpStatus.BAD_REQUEST.value());
         }
+
+        switch (separator) {
+            case COMMA:
+                separator=",";
+                break;
+            case SEMICOLON:
+                separator=";";
+                break;
+            case PIPE:
+                separator="|";
+                break;
+            case SPACE:
+                separator=" ";
+                break;
+            default:
+                throw new FileException("separator type is wrong ", HttpStatus.BAD_REQUEST.value());
+        }
+
         try {
-            System.out.println(inputStreamReader.getEncoding());
+            System.out.println(separator);
             reader = new BufferedReader(inputStreamReader);
-            parser = new CSVParser(reader, CSVFormat.DEFAULT.builder().setSkipHeaderRecord(true).build());
+            parser = new CSVParser(reader, CSVFormat.DEFAULT.builder().setSkipHeaderRecord(true).build().withDelimiter(separator.charAt(0)));
         } catch (IOException e) {
             throw new FileException("Content is wrong",HttpStatus.BAD_REQUEST.value());
         }

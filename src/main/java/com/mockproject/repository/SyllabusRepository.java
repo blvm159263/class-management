@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
 
     Syllabus getSyllabusById(Long id);
-<<<<<<< HEAD
+    List<Syllabus> getAllSyllabusByIdInAndStatus(List<Long> id,boolean status);
 
     List<Syllabus> findByStatus(boolean status);
 
@@ -39,8 +39,4 @@ public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
     Optional<List<Syllabus>> findByCodeAndStatus(String code, boolean status);
 
     Optional<List<Syllabus>> findByNameAndCodeAndStatus(String name, String code, boolean status);
-=======
-    List<Syllabus> getAllSyllabusByIdInAndStatus(List<Long> id,boolean status);
-
->>>>>>> g3_branch
 }

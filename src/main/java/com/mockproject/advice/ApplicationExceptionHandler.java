@@ -7,32 +7,22 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-<<<<<<< HEAD
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.server.ResponseStatusException;
-import org.webjars.NotFoundException;
-=======
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.bind.support.WebExchangeBindException;
->>>>>>> g3_branch
 
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
 import java.security.InvalidParameterException;
 import java.time.format.DateTimeParseException;
-<<<<<<< HEAD
+
+import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.Map;
-=======
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
->>>>>>> g3_branch
 
 @RestControllerAdvice
 @Slf4j
@@ -116,4 +106,3 @@ public class ApplicationExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }
-

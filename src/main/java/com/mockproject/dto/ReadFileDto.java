@@ -25,17 +25,7 @@ public class ReadFileDto {
     String separator;
     @NotNull(message = "scanning is null")
     List<String> scanning;
-<<<<<<< HEAD
-<<<<<<< HEAD
-    int dupplicated;
-=======
     @NotNull(message = "separator is null")
     @NotEmpty(message = "separator is empty")
     String duplicateHandle;
->>>>>>> 3615389 (update add trainingprogram and read csv)
-=======
-    @NotNull(message = "separator is null")
-    @NotEmpty(message = "separator is empty")
-    String duplicateHandle;
->>>>>>> 5c2910803ced0440a1104aa24a08ca296229be41
 }
