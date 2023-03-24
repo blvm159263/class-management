@@ -1,6 +1,7 @@
 package com.mockproject.repository;
 
 import com.mockproject.entity.Syllabus;
+
 import com.mockproject.entity.TrainingProgram;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,5 +22,12 @@ public interface TrainingProgramRepository extends JpaRepository<TrainingProgram
     boolean existsByProgramId(int id);
     boolean existsByName(String name);
     TrainingProgram findTopByOrderByIdDesc();
+
+
+    List<TrainingProgram> getTrainingProgramByNameContains(String name);
+
+    List<TrainingProgram> getAllByCreatorFullNameContains(String name);
+
+    List<TrainingProgram> findByNameContainingAndStatus(String name, boolean status);
 
 }

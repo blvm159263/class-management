@@ -1,7 +1,6 @@
 package com.mockproject.mapper;
 
 import com.mockproject.dto.ClassScheduleDTO;
-import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.ClassSchedule;
 import com.mockproject.entity.TrainingClass;
 import org.mapstruct.Mapper;
@@ -15,6 +14,7 @@ public interface ClassScheduleMapper {
     ClassScheduleMapper INSTANCE = Mappers.getMapper(ClassScheduleMapper.class);
 
     @Mapping(target = "trainingClassId", source = "trainingClass.id")
+    @Mapping(target = "trainingClassName", source = "trainingClass.className")
     ClassScheduleDTO toDTO(ClassSchedule classSchedule);
 
     @Mapping(source = "trainingClassId", target = "trainingClass", qualifiedByName = "mapTrainingClass")

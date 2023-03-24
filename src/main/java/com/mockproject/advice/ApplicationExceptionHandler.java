@@ -13,16 +13,48 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.bind.support.WebExchangeBindException;
 
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
+import java.security.InvalidParameterException;
 import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Optional;
+
 import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
 public class ApplicationExceptionHandler {
+
+    @ExceptionHandler(InvalidParameterException.class)
+    public String handleRowOfPage(InvalidParameterException ex) { return "Error Message : " + ex.getMessage(); }
+
+    @ExceptionHandler(NotFoundException.class)
+    public String handleNotFound(NotFoundException ex){
+        return "Error Message : " + ex.getMessage();
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public Map<String, String> handleBadRequest(MethodArgumentTypeMismatchException ex){
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("Error Paramater", ex.getParameter().toString());
+        errorMap.put("Error Property Name", ex.getPropertyName());
+        errorMap.put("Error Message", ex.getMessage());
+        return errorMap;
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public String handleNoContent(ResponseStatusException ex){
+        return "Error Message : " + ex.getMessage();
+    }
+
+    @ExceptionHandler(ArrayIndexOutOfBoundsException.class)
+    public String handleOutOfIndex(ArrayIndexOutOfBoundsException ex) {
+        return "Error Message : " + ex.getMessage();
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         Throwable mostSpecificCause = ex.getMostSpecificCause();
@@ -42,6 +74,7 @@ public class ApplicationExceptionHandler {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
     @ExceptionHandler(FileException.class)
     public ResponseEntity handleFileException(FileException e){
         return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());

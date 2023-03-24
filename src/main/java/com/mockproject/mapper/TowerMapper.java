@@ -3,7 +3,6 @@ package com.mockproject.mapper;
 import com.mockproject.dto.TowerDTO;
 import com.mockproject.entity.Location;
 import com.mockproject.entity.Tower;
-import com.mockproject.entity.TrainingClass;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -15,6 +14,7 @@ public interface TowerMapper {
     TowerMapper INSTANCE = Mappers.getMapper(TowerMapper.class);
 
     @Mapping(target = "locationId", source = "location.id")
+    @Mapping(target = "locationName", source = "location.locationName")
     TowerDTO toDTO(Tower tower);
 
     @Mapping(target = "location", source = "locationId", qualifiedByName = "mapLocation")
