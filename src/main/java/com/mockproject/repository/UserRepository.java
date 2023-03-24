@@ -2,6 +2,7 @@ package com.mockproject.repository;
 
 import com.mockproject.entity.Role;
 import com.mockproject.entity.User;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -43,7 +44,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "and ( u.email like '%'+:search+'%' or u.fullName like '%'+:search+'%' or u.phone like '%'+:search+'%' or" +
             " u.level.levelCode like '%'+:search+'%' or u.role.roleName like '%'+:search+'%')"
     )
-    List<User> searchByFilter(String search , LocalDate dob, Boolean gender, List<Long> attendeeId);
+    List<User> searchByFilter(String search , LocalDate dob, Boolean gender, List<Long> attendeeId, Sort sort);
 
     List<User> findByRoleAndStatus(Role role, boolean status);
 
