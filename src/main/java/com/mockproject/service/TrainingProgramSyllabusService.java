@@ -2,8 +2,14 @@ package com.mockproject.service;
 
 
 import com.mockproject.dto.TrainingProgramSyllabusDTO;
+<<<<<<< HEAD
 import com.mockproject.entity.TrainingProgramSyllabus;
 import com.mockproject.mapper.TrainingProgramSyllabusMapper;
+=======
+import com.mockproject.mapper.TrainingProgramSyllabusMapper;
+import com.mockproject.entity.Syllabus;
+import com.mockproject.entity.TrainingProgramSyllabus;
+>>>>>>> g3_branch
 import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.service.interfaces.ITrainingProgramSyllabusService;
 import com.mockproject.utils.ListUtils;
@@ -21,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusService {
 
+<<<<<<< HEAD
     private final TrainingProgramSyllabusRepository repository;
 
     @Override
@@ -43,5 +50,20 @@ public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusS
 
     public void addSyllabus(TrainingProgramSyllabus syllabus){
         repository.save(syllabus);
+=======
+    private final TrainingProgramSyllabusRepository trainingProgramSyllabusRepository;
+
+    @Override
+    public List<TrainingProgramSyllabusDTO> getTrainingProgramSyllabusListById(Long trainingProgramID) {
+        return trainingProgramSyllabusRepository.getTrainingProgramSyllabusByTrainingProgramId(trainingProgramID).stream().map(TrainingProgramSyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    public List<TrainingProgramSyllabus> saveAll(List<TrainingProgramSyllabus> programSyllabusList) {
+        return trainingProgramSyllabusRepository.saveAll(programSyllabusList);
+    }
+
+    public void addSyllabus(TrainingProgramSyllabus syllabus) {
+        trainingProgramSyllabusRepository.save(syllabus);
+>>>>>>> g3_branch
     }
 }

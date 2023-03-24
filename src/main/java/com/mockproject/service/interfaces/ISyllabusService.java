@@ -2,6 +2,7 @@ package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.Syllabus;
+<<<<<<< HEAD
 import com.mockproject.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +34,13 @@ public interface ISyllabusService {
 
     boolean deleteSyllabus(Long syllabusId, boolean status);
 
+=======
+
+import java.util.List;
+
+public interface ISyllabusService {
+    List<Syllabus> getAllSyllabusEntityById(List<Long> id);
+>>>>>>> g3_branch
     SyllabusDTO getSyllabusById(Long id);
 
     SyllabusDTO readFileCsv(MultipartFile file, int condition, int handle) throws IOException;
