@@ -32,11 +32,12 @@ class FsuServiceTest {
     @Autowired
     private FsuService fsuService;
 
-
+    //Create FSU
     Fsu fsu1 = new Fsu(1L, "Fsu 1" , "Desc 1", true, null);
     Fsu fsu2 = new Fsu(2L, "Fsu 2" , "Desc 2", false, null);
     Fsu fsu3 = new Fsu(3L, "Fsu 3" , "Desc 3", true, null);
 
+    //Create Training Class
     TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
             null, null, 12, 30, 30, 25, "Planning", null,
             null, null, null, 1, true, null, null,

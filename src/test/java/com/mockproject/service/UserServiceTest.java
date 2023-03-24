@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +47,12 @@ class UserServiceTest {
     @Autowired
     private UserService userService;
 
+    //Create Role
     Role role1 = new Role(1L, "Super Admin", true, null, null);
     Role role2 = new Role(2L, "Class Admin", true, null, null);
     Role role3 = new Role(3L, "Trainer", true, null, null);
 
+    //Create User
     User user1 = new User(1L, "user1@gmail.com", "123", "Tui la user 1", "user1.png",
             1, LocalDate.now(), "0123456789", true, true, role1, null, null,
             null, null, null, null, null, null,
@@ -63,16 +66,24 @@ class UserServiceTest {
             null, null, null, null, null, null,
             null, null, null, null, null);
 
+    //Create training class
     TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
             null, null, 12, 30, 30, 25, "Planning", null,
             null, null, null, 1, true, null, null,
             null, null, null, user2, null, user1, user1,
             null, null, null);
 
+    //Create training class admin
     TrainingClassAdmin admin1 = new TrainingClassAdmin(1L, true, user1, tc1);
     TrainingClassAdmin admin2 = new TrainingClassAdmin(2L, true, user2, tc1);
 
-    TrainingClassUnitInformation ui1 = new TrainingClassUnitInformation(1L, true, user3, null, tc1, null);
+    // Create Unit
+    Unit unit1 = new Unit(1L, "Unit title 123", 1, BigDecimal.TEN, true, null, null, null);
+    Unit unit2 = new Unit(2L, "Unit title 234", 2, BigDecimal.TEN, true, null, null, null);
+
+    //Create training class unit information
+    TrainingClassUnitInformation ui1 = new TrainingClassUnitInformation(1L, true, user3, unit1, tc1, null);
+    TrainingClassUnitInformation ui2 = new TrainingClassUnitInformation(2L, true, user3, unit2, tc1, null);
 
     /**
      * Method under test: {@link UserService#listClassAdminTrue()}
@@ -162,6 +173,38 @@ class UserServiceTest {
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
     }
+
+    /**
+     * Method under test: {@link UserService#getTrainerOnThisDayById(Long, int)}
+     */
+    @Test
+    void canGetTrainerOnThisDayById() {
+        Long trainingClassId = 1L;
+        int dayNth = 1;
+
+        List<Unit> unitList = new ArrayList<>();
+        unitList.add(unit1);
+        unitList.add(unit2);
+
+        when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
+                .thenReturn(Optional.of(tc1));
+        when(unitService.getListUnitsInASessionByTrainingClassId(trainingClassId, dayNth))
+                .thenReturn(unitList);
+        when(trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(unit1, tc1, true))
+                .thenReturn(Optional.of(ui1));
+        when(trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(unit2, tc1, true))
+                .thenReturn(Optional.of(ui2));
+
+        List<UserDTO> trainerOnDay = userService.getTrainerOnThisDayById(trainingClassId, dayNth);
+        assertEquals(3L, trainerOnDay.get(0).getId());
+        assertEquals("user3@gmail.com", trainerOnDay.get(0).getEmail());
+        assertEquals("Tui la user 3", trainerOnDay.get(0).getFullName());
+
+        verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
+        verify(unitService).getListUnitsInASessionByTrainingClassId(trainingClassId, dayNth);
+        verify(trainingClassUnitInformationRepository).findByUnitAndTrainingClassAndStatus(unit1, tc1, true);
+        verify(trainingClassUnitInformationRepository).findByUnitAndTrainingClassAndStatus(unit2, tc1, true);
+}
 
     /**
      * Method under test: {@link UserService#getCreatorByClassId(Long)}

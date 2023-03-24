@@ -45,16 +45,29 @@ class TrainingClassServiceTest {
     @Autowired
     private TrainingClassService trainingClassService;
 
+    //Create Attendee
     Attendee attendee = new Attendee(1L, "Fresher", "Hello", true, null, null);
+
+    //Create Training Program
     TrainingProgram trainingProgram = new TrainingProgram(1L, 1, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
             30, true, null, null, null, null);
+
+    //Create Location
     Location location = new Location(1L, "Ha Noi", "123 Le Loi", true, null, null);
+
+    //Create FSU
     Fsu fsu = new Fsu(1L, "FHM", "STS", true, null);
+
+    //Create Contact
     Contact contact = new Contact(1L, "contact@gmail.com", "Contact email trainer", true, null);
+
+    //Create User
     User user = new User(1L, "user@gmail.com", "1", "user1", "", 1, LocalDate.now(), "", true,
             true, null, null, null, null, null, null,
             null, null, null, null, null,
             null, null, null);
+
+    //Create Training Class
     TrainingClass trainingClass = new TrainingClass(1L, "Class Name 1", "Code113", LocalDate.now(),
                 Time.valueOf("09:00:00"), Time.valueOf("11:00:00"), BigDecimal.ONE, 10, 4, 5, 6, "1", LocalDate.now(),
                 LocalDate.now(), LocalDate.now(), LocalDate.now(),0 , true, attendee, trainingProgram, location, fsu,

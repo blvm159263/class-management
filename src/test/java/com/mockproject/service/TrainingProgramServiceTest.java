@@ -33,10 +33,12 @@ class TrainingProgramServiceTest {
     @Autowired
     private TrainingProgramService trainingProgramService;
 
+    //Create Training Program
     TrainingProgram tp1 = new TrainingProgram(1L,1, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, null, null, null, null);
     TrainingProgram tp2 = new TrainingProgram(2L,2, "Java for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, null, null, null, null);
     TrainingProgram tp3 = new TrainingProgram(3L,3, "Java for junior", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, false, null, null, null, null);
 
+    //Create Training Class
     TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
             null, null, 12, 30, 30, 25, "Planning", null,
             null, null, null, 1, true, null, tp1,

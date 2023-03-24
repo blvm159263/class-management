@@ -2,6 +2,8 @@ package com.mockproject.service;
 
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.Session;
+import com.mockproject.entity.TrainingClass;
+import com.mockproject.entity.TrainingClassUnitInformation;
 import com.mockproject.entity.Unit;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitDetailService;
@@ -15,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -47,6 +50,17 @@ class UnitServiceTest {
     Unit unit2 = new Unit(2L, "Unit title 234", 2, BigDecimal.TEN, true, s2, null, null);
     Unit unit3 = new Unit(3L, "Unit title 345", 3, BigDecimal.TEN, true, s1, null, null);
 
+    //Create Training Class
+    TrainingClass trainingClass1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
+            null, null, 12, 30, 30, 25, "Planning", null,
+            null, null, null, 1, true, null, null,
+            null, null, null, null, null, null, null,
+            null, null, null);
+
+    //Create Training Class Unit Information
+    TrainingClassUnitInformation ui1 = new TrainingClassUnitInformation(1L, true, null, unit1, trainingClass1, null);
+    TrainingClassUnitInformation ui2 = new TrainingClassUnitInformation(2L, true, null, unit2, trainingClass1, null);
+
     /**
      * Method under test: {@link UnitService#listBySessionId(Long)}
      */
@@ -65,6 +79,31 @@ class UnitServiceTest {
         assertEquals(2, result.size());
         assertEquals("Unit title 123", result.get(0).getUnitTitle());
         verify(unitRepository).findBySession((Session) any());
+    }
+
+    /**
+     * Method under test: {@link UnitService#getListUnitsByTrainingClassId(Long)}
+     */
+    @Test
+    void getGetListUnitsByTrainingClassId() {
+        Long trainingClassId = 1L;
+
+        List<TrainingClassUnitInformation> classUnitInformations = new ArrayList<>();
+        classUnitInformations.add(ui1);
+        classUnitInformations.add(ui2);
+
+        when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
+                .thenReturn(Optional.of(trainingClass1));
+        when(trainingClassUnitInformationRepository.findByTrainingClassAndStatus(trainingClass1, true))
+                .thenReturn(Optional.of(classUnitInformations));
+
+        List<Unit> unitList = unitService.getListUnitsByTrainingClassId(trainingClassId);
+        assertEquals(2, unitList.size());
+        assertEquals(1L, unitList.get(0).getId());
+        assertEquals("Unit title 123", unitList.get(0).getUnitTitle());
+
+        verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
+        verify(trainingClassUnitInformationRepository).findByTrainingClassAndStatus(trainingClass1, true);
     }
 }
 

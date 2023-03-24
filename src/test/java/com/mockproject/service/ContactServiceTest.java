@@ -34,10 +34,12 @@ class ContactServiceTest {
     private ContactService contactService;
 
 
+    //Create Contact
     Contact contact1 = new Contact(1L, "contacmail1@gmail.com", "Des 1", true, null);
     Contact contact2 = new Contact(2L, "contacmail2@gmail.com", "Des 2", false, null);
     Contact contact3 = new Contact(3L, "contacmail3@gmail.com", "Des 3", true, null);
 
+    //Create Training Class
     TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
             null, null, 12, 30, 30, 25, "Planning", null,
             null, null, null, 1, true, null, null,

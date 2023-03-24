@@ -33,11 +33,12 @@ class AttendeeServiceTest {
     private AttendeeService attendeeService;
 
 
-
+    //Create Attendee
     Attendee a1 = new Attendee(1L, "Name 1", "Des 1" , true, null , null);
     Attendee a2 = new Attendee(2L, "Name 2", "Des 2" , false, null , null);
     Attendee a3 = new Attendee(3L, "Name 3", "Des 3" , true, null , null);
 
+    //Create Training Class
     TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
             null, null, 12, 30, 30, 25, "Planning", null,
             null, null, null, 1, true, a1, null,

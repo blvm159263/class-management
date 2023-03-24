@@ -41,6 +41,7 @@ class ClassScheduleServiceTest {
     @Autowired
     private ClassScheduleService classScheduleService;
 
+    //Create Training Class
     TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
             null, null, 12, 30, 30, 25, "Planning", null,
             null, null, null, 1, true, null, null,
@@ -59,6 +60,7 @@ class ClassScheduleServiceTest {
             null, null, null, null, null, null, null,
             null, null, null);
 
+    //Create Class Schedule
     ClassSchedule cs1 = new ClassSchedule(1L, LocalDate.now(), true, tc1);
     ClassSchedule cs2 = new ClassSchedule(2L, LocalDate.now(), false, tc2);
     ClassSchedule cs3 = new ClassSchedule(3L, LocalDate.now(), true, tc3);
