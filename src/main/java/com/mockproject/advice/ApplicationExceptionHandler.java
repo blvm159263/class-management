@@ -56,9 +56,9 @@ public class ApplicationExceptionHandler {
                     .body("Invalid date format: " + mostSpecificCause.getMessage().substring(startIndex,endIndex));
         } else if(mostSpecificCause instanceof IllegalArgumentException){
 //            if (mostSpecificCause.getMessage().contains("java.sql.Time")){
-                return ResponseEntity
-                        .badRequest()
-                        .body("Invalid Time Format !");
+            return ResponseEntity
+                    .badRequest()
+                    .body("Invalid Time Format !");
 
         }else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -70,3 +70,4 @@ public class ApplicationExceptionHandler {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
+
