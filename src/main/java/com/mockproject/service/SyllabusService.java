@@ -36,6 +36,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -129,6 +131,12 @@ public class SyllabusService implements ISyllabusService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<Syllabus> getAllSyllabusEntityById(List<Long> sId) {
+        List<Syllabus> syllabus = syllabusRepository.getAllSyllabusByIdInAndStatus(sId,true);
+        return syllabus;
     }
 
     @Override

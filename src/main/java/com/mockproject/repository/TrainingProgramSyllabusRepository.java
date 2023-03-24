@@ -14,6 +14,9 @@ public interface TrainingProgramSyllabusRepository extends JpaRepository<Trainin
     Optional<List<TrainingProgramSyllabus>> findByTrainingProgramIdAndStatus(long trainProgramID, boolean status);
 
     List<TrainingProgramSyllabus> getTrainingProgramSyllabusByTrainingProgramId(Long trainProgramID);
+<<<<<<< HEAD
 
     List<TrainingProgramSyllabus> findByTrainingProgramAndStatus(TrainingProgram trainingProgram, boolean status);
+=======
+>>>>>>> g3_branch
 }
