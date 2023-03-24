@@ -17,10 +17,9 @@ public interface TrainingProgramRepository extends JpaRepository<TrainingProgram
     Optional<TrainingProgram> findFirstByNameAndStatus(String name, boolean status);
 
     TrainingProgram getTrainingProgramById(Long id);
-    TrainingProgram getTrainingProgramByIdOrName(int id,String name);
-    TrainingProgram getTrainingProgramById(int id);
-    TrainingProgram findByName(String name);
+    boolean existsByProgramIdOrName(int id,String name);
+    boolean existsByProgramId(int id);
+    boolean existsByName(String name);
     TrainingProgram findTopByOrderByIdDesc();
-
 
 }

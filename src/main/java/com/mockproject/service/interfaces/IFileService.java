@@ -13,6 +13,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public interface   IFileService {
-    public CSVParser readFile(MultipartFile file, String encodingType);
+    public CSVParser readFile(MultipartFile file, String encodingType,String separator);
 
 }

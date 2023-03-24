@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -141,77 +142,29 @@ public class TrainingProgramController {
     }
 
     @PostMapping("/uploadCsv")
-    public ResponseEntity readFileCsv(@ModelAttribute ReadFileDto readFileDto) {
+    public ResponseEntity readFileCsv(@Valid @ModelAttribute ReadFileDto readFileDto) {
         MultipartFile file = readFileDto.getFile();
         List<TrainingProgram> trainingProgramList = new ArrayList<>();
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("File is empty");
         } else {
             String fileName = file.getOriginalFilename();
-                if (!fileName.split("\\.")[1].equals("csv")) {
-                    return ResponseEntity.badRequest().body("File is not csv");
-                } else {
-                    trainingProgramService.addFromFileCsv(file,readFileDto);
-                }
-                    //CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//                    Long creatorId, lastModifierId;
-//                    int programId;
-//                    LocalDate dateCreated, lastDateModified;
-//                    String name;
-//                    BigDecimal hour;
-//                    int day;
-//                    boolean status;
-//                    List<Long> listTrainingClassesId, listTrainingProgramSyllabusesId;
-//
-//
-//                    CSVParser parser = fileService.readFile(file, readFileDto.getEncodingType());
-//                    // skip header of csv file
-//                    parser.iterator().next();
-//                    DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//                    HashMap<TrainingProgram,List<Long>> trainingProgramHashMap = new HashMap<>();
-//                    for (CSVRecord record : parser.getRecords()) {
-//                        try {
-//                            dateCreated = LocalDate.parse(record.get(2), dateFormat);
-//                            lastDateModified = LocalDate.parse(record.get(3), dateFormat);
-//                        } catch (DateTimeException e) {
-//                            throw new FileException("Date time is wrong( format: yyyy-MM-dd)", HttpStatus.BAD_REQUEST.value());
-//                        }
-//                        try {
-//                            programId = Integer.parseInt(record.get(0));
-//                            name = record.get(1);
-//                            status = Boolean.parseBoolean(record.get(4));
-//                            listTrainingProgramSyllabusesId = Arrays.stream(record.get(5).split("/"))
-//                                    .map(syllabusesId -> Long.parseLong(syllabusesId))
-//                                    .collect(Collectors.toList());
-//                        } catch (Exception e) {
-//                            throw new FileException(e.getMessage(), HttpStatus.BAD_REQUEST.value());
-//                        }
-//                        var trainingProgram = new TrainingProgram(null, programId, name, dateCreated, lastDateModified, null, 0, status, null, null, null, null);
-//                        trainingProgramHashMap.put(trainingProgram,listTrainingProgramSyllabusesId);
-//
-//                    }
-////                    for(TrainingProgram trainingProgram1: trainingProgramHashMap.keySet()){
-//////                        System.out.println(trainingProgram1+" "+trainingProgramHashMap.get(trainingProgram1));
-////                    }
-//                }
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-        return ResponseEntity.ok().body("Okeee");
-    }
+            if (!fileName.split("\\.")[1].equals("csv")) {
+                return ResponseEntity.badRequest().body("File is not csv");
+            } else {
+                trainingProgramService.addFromFileCsv(file, readFileDto);
+            }
 
+        }
+        return ResponseEntity.ok().body("uploadFile Success");
 
-//    @PostMapping("/training-program/addTrainingProgram")
-//    public ResponseEntity<?> addTrain(@RequestParam("name") String trainingProgram, HttpSession session) {
-//        session.setAttribute("trainingName", trainingProgram);
-//        return ResponseEntity.ok(session);
     }
 
 
     @PostMapping("/saveTrainingProgram")
-    public ResponseEntity<?> saveTrain(@RequestBody TrainingProgramAddDto trainingProgramDTO) {
+    public ResponseEntity<?> saveTrain(@Valid @RequestBody TrainingProgramAddDto trainingProgramDTO) {
 
-        trainingProgramService.save(trainingProgramDTO,null,null);
+        trainingProgramService.save(trainingProgramDTO, null, null);
         return ResponseEntity.ok("Add training program successfully");
     }
 
