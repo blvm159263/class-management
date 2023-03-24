@@ -28,7 +28,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Class Schedule API")
-@RequestMapping("/api/classschedule")
+@RequestMapping("/api/class-schedule")
 @SecurityRequirement(name = "Authorization")
 @Slf4j
 public class ClassScheduleController {
