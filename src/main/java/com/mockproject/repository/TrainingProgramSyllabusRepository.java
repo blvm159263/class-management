@@ -17,4 +17,5 @@ public interface TrainingProgramSyllabusRepository extends JpaRepository<Trainin
 
 
     List<TrainingProgramSyllabus> findByTrainingProgramAndStatus(TrainingProgram trainingProgram, boolean status);
+    void deleteByTrainingProgramId(Long id);
 }
