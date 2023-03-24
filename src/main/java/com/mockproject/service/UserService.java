@@ -136,7 +136,7 @@ public class UserService implements IUserService {
                 }
 
             }
-            pages = userRepo.searchByFilter(searchFirst, dob, gender, atendeeId);
+            pages = userRepo.searchByFilter(searchFirst, dob, gender, atendeeId, Sort.by(order));
             for (User u : pages) {
                 UserDTO userDTOC = UserMapper.INSTANCE.toDTO(u);
                 userDTOC.setStateName(getState(u.getState()));
