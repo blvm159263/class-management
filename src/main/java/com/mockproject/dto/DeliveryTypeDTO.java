@@ -16,5 +16,4 @@ public class DeliveryTypeDTO implements Serializable {
     private String typeName;
     private boolean status;
 
-
 }

@@ -1,8 +1,10 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.UserDTO;
+import com.mockproject.entity.Level;
 import com.mockproject.entity.Role;
 import com.mockproject.entity.User;
+import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,6 +64,8 @@ class UserServiceTest {
             null, null, null, null, null, null,
             null, null, null, null, null);
 
+    Level level1 = new Level(1l, "AA","hihi", true, null);
+
     /**
      * Method under test: {@link UserService#listClassAdminTrue()}
      */
@@ -102,8 +107,92 @@ class UserServiceTest {
     }
 
     @Test
-    void canSearchByFilter(){
+    void canUpdateStatus(){
+        //updatestatus to false to delete user
 
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(userRepository.save(user1)).thenReturn(user1);
+
+        Boolean result = userService.updateStatus(1L);
+        assertEquals(true, result);
+        assertEquals(user1.isStatus(), false);
+
+        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).save(user1);
+    }
+
+    @Test
+    void canUpdateStateToFalse(){
+        //update state to 0 to De-active user
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(userRepository.save(user1)).thenReturn(user1);
+
+        int result = userService.updateStateToFalse(1L);
+        assertEquals(0, result);
+        assertEquals(user1.getState(), 0);
+
+        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).save(user1);
+    }
+
+    @Test
+    void canUpdateStateToTrue(){
+        //update state to 1 to Active user
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(userRepository.save(user1)).thenReturn(user1);
+
+        int result = userService.updateStateToTrue(1L);
+        assertEquals(1, result);
+        assertEquals(user1.getState(), 1);
+
+        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).save(user1);
+    }
+
+    @Test
+    void canChangeRole(){
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(roleRepository.getRoleById(1l)).thenReturn(Optional.of(role1));
+        when(userRepository.save(user1)).thenReturn(user1);
+
+        boolean result = userService.changeRole(1l, 1l);
+
+        assertEquals(true, result );
+        assertEquals(role1, user1.getRole());
+
+        verify(userRepository, times(1)).findById(1l);
+        verify(userRepository, times(1)).save(user1);
+        verify(roleRepository,times(1)).getRoleById(1l);
+    }
+
+    @Test
+    void canEditUser(){
+        when(userRepository.findById(1l)).thenReturn(Optional.of(user1));
+        when(levelRepository.getLevelById(1l)).thenReturn(Optional.of(level1));
+        when(userRepository.save(user1)).thenReturn(user1);
+
+        UserDTO userDTO = UserMapper.INSTANCE.toDTO(user1);
+        userDTO.setFullName("Test");
+        userDTO.setLevelId(1l);
+        userDTO.setGender(true);
+        LocalDate dob;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
+        dob = LocalDate.parse("28/10/2002", formatter);
+
+        userDTO.setDob(dob);
+
+        boolean result = userService.editUser(userDTO);
+
+        assertEquals(true, result);
+        assertEquals("Test", user1.getFullName());
+        assertEquals(dob, user1.getDob());
+        assertEquals(true, user1.isGender());
+
+        verify(userRepository, times(1)).findById(1l);
+        verify(levelRepository,times(1)).getLevelById(1l);
+        verify(userRepository, times(1)).save(user1);
     }
 
 

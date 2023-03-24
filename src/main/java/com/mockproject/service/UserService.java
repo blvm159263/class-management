@@ -1,13 +1,9 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.UserDTO;
-import com.mockproject.dto.UserDTOCustom;
 import com.mockproject.entity.Level;
 import com.mockproject.entity.Role;
 import com.mockproject.entity.User;
-import com.mockproject.mapper.AttendeeMapper;
-import com.mockproject.mapper.LevelMapper;
-import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUserService;
@@ -22,6 +18,7 @@ import org.webjars.NotFoundException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -98,38 +95,20 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserDTO> getAllUser(boolean status) {
-        return userRepo.findAllByStatus(status).stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
-    }
-
-
-    @Override
-    public List<UserDTOCustom> getAllByPageAndRowPerPage(Long page, Long rowPerPage) {
-        List<User> listUser = userRepo.getAllByPageAndRowPerPage(page, rowPerPage);
-
-        List<UserDTOCustom> mlist = new ArrayList<>();
-        for (User u : listUser) {
-            UserDTOCustom userDTOCustom = new UserDTOCustom(u.getId(), u.getEmail(), u.getFullName(), u.getImage(), getState(u.getState()), u.getDob(), u.getPhone(), u.isGender(), u.isStatus(),
-                    RoleMapper.INSTANCE.toDTO(u.getRole()), LevelMapper.INSTANCE.toDTO(u.getLevel()), AttendeeMapper.INSTANCE.toDTO(u.getAttendee()));
-            mlist.add(userDTOCustom);
-        }
-        return mlist;
-    }
-
-    @Override
-    public List<UserDTO> getAll() {
-        return userRepo.findAllBy().stream().map(UserMapper.INSTANCE::toDTO).collect(Collectors.toList());
-    }
-
-    @Override
-    public Page<UserDTO> searchByFilter(List<String> search, LocalDate dob, Boolean gender, List<Long> atendeeId, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception {
+    public Page<UserDTO> searchByFilter(List<String> search, String dobString, Boolean gender, List<Long> atendeeId, Optional<Integer> page, Optional<Integer> size, List<String> sort) throws Exception {
         int page1 = 0;
         int size1 = 10;
         String searchFirst = "";
         Pageable pageable;
         List<Sort.Order> order = new ArrayList<>();
-        if (page.isPresent()) page1 = page.get() - 1;
-        if (size.isPresent()) size1 = size.get();
+        if (page.isPresent()) {
+            if (page.get() < 1) throw new InvalidParameterException("Page size must not be less than one!");
+            page1 = page.get() - 1;
+        }
+        if (size.isPresent()) {
+            if (size.get() < 0) throw new InvalidParameterException("Page number must not be less than zero!");
+            size1 = size.get();
+        }
         if (sort != null || !sort.isEmpty()) {
             for (String sortItem : sort) {
                 String[] subSort = sortItem.split("-");
@@ -139,25 +118,32 @@ public class UserService implements IUserService {
         } else {
             pageable = PageRequest.of(page1, size1);
         }
-        Page<User> pages;
+        LocalDate dob;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
+            dob = LocalDate.parse(dobString, formatter);
+        } catch (DateTimeParseException e) {
+            throw new NotFoundException("Date format Error");
+        }
+        List<User> pages;
         List<UserDTO> result = new ArrayList<>();
         try {
-            if (search != null){
-                if (search.isEmpty()){
+            if (search != null) {
+                if (search.isEmpty()) {
                     searchFirst = "";
                 } else {
                     searchFirst = search.get(0);
                 }
 
             }
-            pages = userRepo.searchByFilter( searchFirst, dob, gender, atendeeId, pageable);
-            for (User u : pages.getContent()) {
+            pages = userRepo.searchByFilter(searchFirst, dob, gender, atendeeId, Sort.by(order));
+            for (User u : pages) {
                 UserDTO userDTOC = UserMapper.INSTANCE.toDTO(u);
                 userDTOC.setStateName(getState(u.getState()));
                 result.add(userDTOC);
             }
 
-            if ( search != null && search.size() > 1){
+            if (search != null && search.size() > 1) {
                 for (int i = 1; i < search.size(); i++) {
                     String subSearch = search.get(i).toUpperCase();
                     result = result.stream().filter(s
@@ -168,15 +154,13 @@ public class UserService implements IUserService {
                 }
             }
 
-
-
         } catch (Exception e) {
             throw e;
         }
-        return new PageImpl<>(
-                result,
-                pages.getPageable(),
-                pages.getTotalElements());
+        int skipCount = page1 * size1;
+        Page<UserDTO> pageResult = new PageImpl<>(result.stream().skip(skipCount).limit(size1).collect(Collectors.toList())
+                , pageable, result.size());
+        return pageResult;
     }
 
     public void encodePassword() {
@@ -242,56 +226,6 @@ public class UserService implements IUserService {
             User user1 = user.get();
             Role role1 = role.get();
             user1.setRole(role1);
-            userRepo.save(user1);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean editName(Long id, String name) {
-        Optional<User> user = userRepo.findById(id);
-        if (user.isPresent()) {
-            User u = user.get();
-            u.setFullName(name);
-            userRepo.save(u);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean editDoB(Long id, LocalDate date) {
-        Optional<User> user = userRepo.findById(id);
-        if (user.isPresent()) {
-            User u = user.get();
-            u.setDob(date);
-            userRepo.save(u);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean editGender(Long id, boolean gender) {
-        Optional<User> user = userRepo.findById(id);
-        if (user.isPresent()) {
-            User u = user.get();
-            u.setGender(gender);
-            userRepo.save(u);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean editLevel(Long id, String levelCode) {
-        Optional<User> user = userRepo.findById(id);
-        Optional<Level> level = levelRepository.getLevelByLevelCode(levelCode);
-        if (user.isPresent() && level.isPresent()) {
-            User user1 = user.get();
-            Level level1 = level.get();
-            user1.setLevel(level1);
             userRepo.save(user1);
             return true;
         }
@@ -421,116 +355,112 @@ public class UserService implements IUserService {
 
             for (CSVRecord csvRecord : csvRecords) {
                 String email = csvRecord.get("Email");
-                    if (replace){
-                        if (result != null && !result.isEmpty()) {
-                            int index = -1;
-                            for (User u : result) {
-                                if (u != null && u.getEmail().equals(email)) index = result.indexOf(u);
-                            }
-                            if (index != -1)
-                                result.remove(index);
+                if (replace) {
+                    if (result != null && !result.isEmpty()) {
+                        int index = -1;
+                        for (User u : result) {
+                            if (u != null && u.getEmail().equals(email)) index = result.indexOf(u);
                         }
+                        if (index != -1)
+                            result.remove(index);
                     }
+                }
 
 
-
-
-                    Long idUser = null;
-                    if (userRepo.findByEmail(email).isPresent()) {
-                        idUser = userRepo.findByEmail(email).get().getId();
-                    }
-                    boolean noadd = false;
-                    if (skip){
-                        if (result != null && !result.isEmpty()) {
-                            int index = -1;
-                            for (User u : result) {
-                                if (u != null && u.getEmail().equals(email)) index = result.indexOf(u);
-                            }
-                            if (index != -1)
-                                noadd = true;
+                Long idUser = null;
+                if (userRepo.findByEmail(email).isPresent()) {
+                    idUser = userRepo.findByEmail(email).get().getId();
+                }
+                boolean noadd = false;
+                if (skip) {
+                    if (result != null && !result.isEmpty()) {
+                        int index = -1;
+                        for (User u : result) {
+                            if (u != null && u.getEmail().equals(email)) index = result.indexOf(u);
                         }
-
-                        if (idUser != null){
-                                noadd = true;
-                        }
-
+                        if (index != -1)
+                            noadd = true;
                     }
 
-
-
-
-                    String fullName = csvRecord.get("Full name");
-                    String imgLink = csvRecord.get("Image link");
-                    //check state
-                    int state = getStateIdByStateName(csvRecord.get("State"));
-                    if (state == -1)
-                        throw new NotFoundException("Record " + (count + 1) +
-                                " (" + email + ")" + " is invalid state");
-                    //check date of birth
-                    LocalDate dob;
-                    try {
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
-                        dob = LocalDate.parse(csvRecord.get("Date of birth"), formatter);
-                    } catch (DateTimeParseException e) {
-                        throw new NotFoundException("Record " + (count + 1) +
-                                " (" + email + ")" + " is invalid date");
-                    }
-                    //check phone number
-                    String phone = csvRecord.get("Phone");
-                    if (userRepo.findByPhone(phone).isPresent() && (idUser != userRepo.findByPhone(phone).get().getId()))
-                        throw new NotFoundException("Record " + (count + 1) +
-                                " (" + email + ")" + " is invalid phone number (phone number is exits!!!)");
-                    //check gender
-                    boolean gender = false;
-                    if (csvRecord.get("Gender").equals("Female")) {
-                        gender = false;
-                    } else if (csvRecord.get("Gender").equals("Male")) {
-                        gender = true;
-                    } else throw new NotFoundException("Record " + (count + 1) +
-                            " (" + email + ")" + " is invalid gender");
-
-                    boolean status = true;
-
-                    //check role
-                    Long roleId = null;
-                    if (roleRepository.getRoleByRoleName(csvRecord.get("Role")).isPresent()) {
-                        roleId = roleRepository.getRoleByRoleName(csvRecord.get("Role")).get().getId();
-                    } else {
-                        throw new NotFoundException("Record " + (count + 1) +
-                                " (" + email + ")" + " is invalid Role");
-                    }
-                    //check level
-                    Long levelId = null;
-                    if (levelRepository.getLevelByLevelCode(csvRecord.get("Level")).isPresent()) {
-                        levelId = levelRepository.getLevelByLevelCode(csvRecord.get("Level")).get().getId();
-                    } else {
-                        throw new NotFoundException("Record " + (count + 1) +
-                                " (" + email + ")" + " is invalid Level");
+                    if (idUser != null) {
+                        noadd = true;
                     }
 
-
-                    //check attendee
-                    Long attendeeId = null;
-                    if (attendeeRepository.findByAttendeeNameAndStatus(csvRecord.get("Attendee"), true).isPresent()) {
-                        attendeeId = attendeeRepository.findByAttendeeNameAndStatus(csvRecord.get("Attendee"), true).get().getId();
-                    } else {
-                        throw new NotFoundException("Record " + (count + 1) +
-                                " (" + email + ")" + " is invalid Attendee");
-                    }
-
-                    UserDTO userDTO = new UserDTO(email, fullName, imgLink,
-                            state, dob, phone, gender, status, roleId, levelId,
-                            attendeeId);
-
-                    User user = UserMapper.INSTANCE.toEntity(userDTO);
-                    user.setPassword(passwordEncoder.encode(csvRecord.get("Password")));
-                    if (idUser != null) user.setId(idUser);
+                }
 
 
-                    if (!noadd) {
-                        result.add(user);
-                    }
-                    count++;
+                String fullName = csvRecord.get("Full name");
+                String imgLink = csvRecord.get("Image link");
+                //check state
+                int state = getStateIdByStateName(csvRecord.get("State"));
+                if (state == -1)
+                    throw new NotFoundException("Record " + (count + 1) +
+                            " (" + email + ")" + " is invalid state");
+                //check date of birth
+                LocalDate dob;
+                try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
+                    dob = LocalDate.parse(csvRecord.get("Date of birth"), formatter);
+                } catch (DateTimeParseException e) {
+                    throw new NotFoundException("Record " + (count + 1) +
+                            " (" + email + ")" + " is invalid date");
+                }
+                //check phone number
+                String phone = csvRecord.get("Phone");
+                if (userRepo.findByPhone(phone).isPresent() && (idUser != userRepo.findByPhone(phone).get().getId()))
+                    throw new NotFoundException("Record " + (count + 1) +
+                            " (" + email + ")" + " is invalid phone number (phone number is exits!!!)");
+                //check gender
+                boolean gender = false;
+                if (csvRecord.get("Gender").equals("Female")) {
+                    gender = false;
+                } else if (csvRecord.get("Gender").equals("Male")) {
+                    gender = true;
+                } else throw new NotFoundException("Record " + (count + 1) +
+                        " (" + email + ")" + " is invalid gender");
+
+                boolean status = true;
+
+                //check role
+                Long roleId = null;
+                if (roleRepository.getRoleByRoleName(csvRecord.get("Role")).isPresent()) {
+                    roleId = roleRepository.getRoleByRoleName(csvRecord.get("Role")).get().getId();
+                } else {
+                    throw new NotFoundException("Record " + (count + 1) +
+                            " (" + email + ")" + " is invalid Role");
+                }
+                //check level
+                Long levelId = null;
+                if (levelRepository.getLevelByLevelCode(csvRecord.get("Level")).isPresent()) {
+                    levelId = levelRepository.getLevelByLevelCode(csvRecord.get("Level")).get().getId();
+                } else {
+                    throw new NotFoundException("Record " + (count + 1) +
+                            " (" + email + ")" + " is invalid Level");
+                }
+
+
+                //check attendee
+                Long attendeeId = null;
+                if (attendeeRepository.findByAttendeeNameAndStatus(csvRecord.get("Attendee"), true).isPresent()) {
+                    attendeeId = attendeeRepository.findByAttendeeNameAndStatus(csvRecord.get("Attendee"), true).get().getId();
+                } else {
+                    throw new NotFoundException("Record " + (count + 1) +
+                            " (" + email + ")" + " is invalid Attendee");
+                }
+
+                UserDTO userDTO = new UserDTO(email, fullName, imgLink,
+                        state, dob, phone, gender, status, roleId, levelId,
+                        attendeeId);
+
+                User user = UserMapper.INSTANCE.toEntity(userDTO);
+                user.setPassword(passwordEncoder.encode(csvRecord.get("Password")));
+                if (idUser != null) user.setId(idUser);
+
+
+                if (!noadd) {
+                    result.add(user);
+                }
+                count++;
             }
 
             return result;
