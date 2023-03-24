@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Training Program Detail API")
-@RequestMapping("/api/trainingprogramdetail")
+@RequestMapping("/api/training-program-detail")
 @SecurityRequirement(name = "Authorization")
 @Slf4j
 public class TrainingProgramDetailController {
@@ -38,7 +38,7 @@ public class TrainingProgramDetailController {
 
     @GetMapping("/")
     @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
-    @Operation(summary = "Get training program by ID")
+    @Operation(summary = "Get all training programs by ID")
     public ResponseEntity getTrainingProgramById(@RequestParam Long id) {
         return ResponseEntity.ok(trainingProgramService.getTrainingProgramById(id));
     }
@@ -83,6 +83,7 @@ public class TrainingProgramDetailController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any thing in list Unit");
         }
     }
+
 
     @GetMapping("/syllabus/unit-detail/{idSyllabus}")
     @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})

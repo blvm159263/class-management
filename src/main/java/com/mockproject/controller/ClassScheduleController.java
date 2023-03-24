@@ -93,7 +93,7 @@ public class ClassScheduleController {
             @ApiResponse(responseCode = "400", description = "When Saving fail!")
     })
     @Operation(summary = "Save list of ClassSchedule by given Training Class")
-    @PostMapping("list/traing-class/{tcId}")
+    @PostMapping("list/training-class/{tcId}")
     public ResponseEntity<?> createListSchedule(@io.swagger.v3.oas.annotations.parameters.RequestBody(
                                                 content = @Content(examples = @ExampleObject(value = "[\"2023-03-14\",\"2023-03-15\"]")))
                                                 @Valid @RequestBody List<LocalDate> listDate,
