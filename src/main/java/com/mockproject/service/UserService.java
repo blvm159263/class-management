@@ -122,10 +122,12 @@ public class UserService implements IUserService {
         } else {
             pageable = PageRequest.of(page1, size1);
         }
-        LocalDate dob;
+        LocalDate dob = null;
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
-            dob = LocalDate.parse(dobString, formatter);
+            if (dobString != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
+                dob = LocalDate.parse(dobString, formatter);
+            }
         } catch (DateTimeParseException e) {
             throw new NotFoundException("Date format Error");
         }
