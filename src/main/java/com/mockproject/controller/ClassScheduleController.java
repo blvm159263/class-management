@@ -55,11 +55,11 @@ public class ClassScheduleController {
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     @Operation(summary = "Get a class schedule for a week")
     public ResponseEntity getTrainingClassByWeek(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO) {
-
         var trainingClass = classScheduleService.getTrainingClassByWeek(filterRequestDTO);
         if (trainingClass.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
         } else {
+            System.out.println(trainingClass);
             return ResponseEntity.ok(trainingClass);
         }
     }
@@ -67,7 +67,7 @@ public class ClassScheduleController {
     @PostMapping("/search/day")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     @Operation(summary = "Search training class in day by text")
-    public ResponseEntity searchTrainingClassInDay(@RequestBody SearchByDTO searchByDTO) {
+    public ResponseEntity searchTrainingClassInDay(@RequestBody @Valid SearchByDTO searchByDTO) {
         var trainingClass = classScheduleService.searchTrainingClassInDate(searchByDTO.getSearchText(), searchByDTO.getNowDate());
         if (trainingClass.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");
@@ -79,7 +79,9 @@ public class ClassScheduleController {
     @PostMapping("/search/week")
     @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
     @Operation(summary = "Search training class in week by text")
-    public ResponseEntity searchTrainingClassInWeek(@RequestBody SearchByDTO searchByDTO) {
+    public ResponseEntity searchTrainingClassInWeek(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = @ExampleObject(value = "[\"2023-03-14\",\"2023-03-15\"]"))
+    ) @Valid SearchByDTO searchByDTO) {
         var trainingClass = classScheduleService.searchTrainingClassInWeek(searchByDTO.getSearchText(), searchByDTO.getStartDate(), searchByDTO.getEndDate());
         if (trainingClass.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");

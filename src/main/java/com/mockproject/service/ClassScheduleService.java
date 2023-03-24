@@ -60,7 +60,7 @@ public class ClassScheduleService implements IClassScheduleService {
 //        Long count = listDto.stream().map(p -> repository.save(ClassScheduleMapper.INSTANCE.toEntity(p))).filter(Objects::nonNull).count();
         TrainingClass tc = new TrainingClass();
         tc.setId(tcId);
-        List<ClassSchedule> list = listDate.stream().map(p-> new ClassSchedule(null, p, true,tc)).toList();
+        List<ClassSchedule> list = listDate.stream().map(p -> new ClassSchedule(null, p, true, tc)).toList();
         List<ClassSchedule> result = repository.saveAll(list);
         return !result.isEmpty();
     }
@@ -85,7 +85,6 @@ public class ClassScheduleService implements IClassScheduleService {
 
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(TrainingClassFilterRequestDTO filterRequestDTO) {
-
         var trainingClassFiltered = trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterWeek(filterRequestDTO));
         List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
         trainingClassFiltered.stream().distinct().forEach(trainingClass -> {
