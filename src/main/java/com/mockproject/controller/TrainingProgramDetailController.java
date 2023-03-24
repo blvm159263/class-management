@@ -59,7 +59,7 @@ public class TrainingProgramDetailController {
             list.add(s);
         }
         if (!list.isEmpty()) {
-            return ResponseEntity.ok(list);
+            return ResponseEntity.ok(list); 
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any thing in list Syllabus");
         }
