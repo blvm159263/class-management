@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByRoleAndStatus(Role role, boolean status);
-    User findFirstByFullNameAndStatus(String name, boolean status);
+    User findFirstByIdAndStatus(Long userId, boolean status);
 
     Optional<User> findByEmailAndStatus(String email, boolean status);
 

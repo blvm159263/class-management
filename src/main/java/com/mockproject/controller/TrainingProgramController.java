@@ -114,12 +114,6 @@ public class TrainingProgramController {
     public ResponseEntity<?> getAllTrain() {
         return ResponseEntity.ok(trainingProgramService.getAll());
     }
-    @PostMapping("/training-program/addTrainingProgram")
-    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
-    public ResponseEntity<?> addTrain(@RequestParam("name") String trainingProgram, HttpSession session) {
-        session.setAttribute("trainingName", trainingProgram);
-        return ResponseEntity.ok(session);
-    }
     @GetMapping("/training-program/download-csv")
     @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
     public void downloadCSV(HttpServletResponse response) throws IOException{
@@ -130,15 +124,25 @@ public class TrainingProgramController {
             response.setHeader(headerkey,headervalue);
             trainingProgramService.downloadCsvFile(response.getWriter(), trainingProgramService.getAll());
     }
-    @PostMapping("/training-program/import-csv")
+    @PostMapping("/training-program/allow-csv")
     @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
-    public void importCSV(@RequestParam("file")MultipartFile file) throws IOException{
-        trainingProgramService.saveCsvFile(file);
+    public void allowCSV(@RequestParam("file")MultipartFile file,@RequestParam("UserID") Long userId,
+                          @RequestParam("Check") String check) throws IOException{
+        trainingProgramService.allowCsvFile(file, userId, check);
+    }@PostMapping("/training-program/replace-csv")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
+    public void replaceCSV(@RequestParam("file")MultipartFile file,@RequestParam("UserID") Long userId,
+                          @RequestParam("Check") String check) throws IOException{
+        trainingProgramService.replaceCsvFile(file, userId, check);
+    }@PostMapping("/training-program/skip-csv")
+    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
+    public void skipCSV(@RequestParam("file")MultipartFile file,@RequestParam("UserID") Long userId,
+                          @RequestParam("Check") String check) throws IOException{
+        trainingProgramService.skipCsvFile(file, userId, check);
     }
     @PostMapping("/training-program/saveTrainingProgram")
     @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
-    public ResponseEntity<?> saveTrain(@RequestParam("content") Long sylId, HttpSession session) {
-        String name = (String) session.getAttribute("trainingName");
+    public ResponseEntity<?> saveTrain(@RequestParam("content") Long sylId, String name) {
         if(sylId == null||name == null){
             return ResponseEntity.ofNullable("Please enter training name and syllabus id");
         }

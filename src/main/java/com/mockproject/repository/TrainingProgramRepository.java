@@ -19,4 +19,9 @@ public interface TrainingProgramRepository extends JpaRepository<TrainingProgram
     List<TrainingProgram> findByNameContainingAndStatus(String name, boolean status);
 
     Optional<TrainingProgram> findFirstByNameAndStatus(String name, boolean status);
+    boolean existsByName(String name);
+    boolean existsByProgramId(int id);
+    List<TrainingProgram> getTrainingProgramByProgramId(int id);
+    List<TrainingProgram> getTrainingProgramByName(String name);
+    List<TrainingProgram> getTrainingProgramByNameAndProgramId(String name,int id);
 }
