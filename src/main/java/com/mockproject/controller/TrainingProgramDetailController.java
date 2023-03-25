@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Training Program Detail API")
-@RequestMapping("/api/trainingprogramdetail")
+@RequestMapping("/api/training-program-detail")
 @SecurityRequirement(name = "Authorization")
 @Slf4j
 public class TrainingProgramDetailController {
