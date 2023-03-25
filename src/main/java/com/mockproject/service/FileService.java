@@ -11,13 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -116,6 +115,12 @@ public class FileService implements IFileService {
         return new FileClassResponseDTO(className, startDate, startTime, endTime, hour,
                 day, planned, accepted, actual, locationId, fsuId,
                 contactId, trainingProgramId, attendeeId, listAdminId);
+    }
+
+    @Override
+    public byte[] getCsvFile(File file) throws IOException {
+        InputStream is = new FileInputStream(file);
+        return IOUtils.toByteArray(is);
     }
 
     @Override

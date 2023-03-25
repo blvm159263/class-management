@@ -16,11 +16,18 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +46,7 @@ public class TrainingProgramController {
 
     private final ITrainingProgramService trainingProgramService;
     private final IFileService fileService;
+    private final ResourceLoader resourceLoader;
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any Training Program"),
@@ -90,7 +98,20 @@ public class TrainingProgramController {
         return ResponseEntity.ok().body("uploadFile Success");
 
     }
+    @GetMapping("/downloadFile/csv")
+    public ResponseEntity<byte[]> downLoadFileExample(){
+        try {
+            Resource resource = resourceLoader.getResource("classpath:CSVFile/trainingProgram.csv");
+            byte[] csvFileContent = fileService.getCsvFile(resource.getFile());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("text/csv"));
+            headers.setContentDispositionFormData("attachment", "file.csv");
+            return new ResponseEntity<>(csvFileContent,headers,HttpStatus.OK);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
+    }
 
     @PostMapping("/saveTrainingProgram")
     public ResponseEntity<?> saveTrain(@Valid @RequestBody TrainingProgramAddDto trainingProgramDTO) {

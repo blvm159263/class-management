@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
+
+import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.time.format.DateTimeParseException;
 
@@ -35,7 +37,10 @@ public class ApplicationExceptionHandler {
     public String handleNotFound(NotFoundException ex){
         return "Error Message : " + ex.getMessage();
     }
-
+    @ExceptionHandler(IOException.class)
+    public String handleIOException(IOException ex){
+        return "Error Message : " + ex.getMessage();
+    }
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public Map<String, String> handleBadRequest(MethodArgumentTypeMismatchException ex){
         Map<String, String> errorMap = new HashMap<>();
