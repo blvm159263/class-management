@@ -121,7 +121,7 @@ public class TrainingClassController {
                             + "<li>Openning</li>"
                             + "<li>Closed</li></u><b>",
                     example = ""
-            ) String state,
+            ) List<String> state,
 
             @RequestParam(defaultValue = "")
             @Parameter(
