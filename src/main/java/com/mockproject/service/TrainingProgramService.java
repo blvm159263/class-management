@@ -1,7 +1,6 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.ReadFileDto;
-import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.dto.TrainingProgramAddDto;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.*;
@@ -20,9 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +28,9 @@ import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
