@@ -48,7 +48,7 @@ public class TrainingClassService implements ITrainingClassService {
 
     @Override
     public List<TrainingClass> findAllBySpecification(Specification specification) {
-        return classRepo.findAll((Sort) specification);
+        return classRepo.findAll(specification);
     }
 
     @Override

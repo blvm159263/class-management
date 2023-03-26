@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.List;
 
 public interface ISyllabusService {
+    List<Syllabus> getAllSyllabusEntityById(List<Long> id);
 
     List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId);
 
