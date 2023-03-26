@@ -22,7 +22,7 @@ public class ApplicationExceptionHandler {
     public String handleRowOfPage(InvalidParameterException ex) { return "Error Message : " + ex.getMessage(); }
 
     @ExceptionHandler(NotFoundException.class)
-    public String handleNotFound(NotFoundException ex){
+    public String handleNotFound(NotFoundException ex) {
         return "Error Message : " + ex.getMessage();
     }
 
@@ -36,7 +36,7 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    public String handleNoContent(ResponseStatusException ex){
+    public String handleNoContent(ResponseStatusException ex) {
         return "Error Message : " + ex.getMessage();
     }
 
