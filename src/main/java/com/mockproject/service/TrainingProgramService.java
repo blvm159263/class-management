@@ -34,6 +34,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,36 +69,30 @@ public class TrainingProgramService implements ITrainingProgramService {
 
     @Override
     public void downloadCsvFile(PrintWriter printWriter, List<TrainingProgram> trainingPrograms) {
-        printWriter.write("ID, Program name, Created on(yyyy-mm-dd), Duration day, Duration time\n");
-        for (TrainingProgram trainingProgram: trainingPrograms){
-            printWriter.write(trainingProgram.getProgramId()+","+
-                    trainingProgram.getName()+","+trainingProgram.getDateCreated()+","+trainingProgram.getCreator().getFullName()+","+
-                    trainingProgram.getDay()+","+trainingProgram.getHour()+"\n");
-
-        }
+        printWriter.write("program_id,name,dateCreated,lastDateModified,status,listSyllabusesId\n");
     }
 
     @Override
-    public List<TrainingProgram> GetTrainingProgramDataFromCsv(InputStream fileInputStream, Long userId)  throws IOException{
+    public List<TrainingProgramDTO> GetTrainingProgramDataFromCsv(InputStream fileInputStream)  throws IOException{
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(fileInputStream,"UTF-8"));
         CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());
         Iterable<CSVRecord> csvRecords = csvParser.getRecords();
-        List<TrainingProgram> trainingPrograms = new ArrayList<>();
+        List<TrainingProgramDTO> trainingPrograms = new ArrayList<>();
         for(CSVRecord record: csvRecords){
-            TrainingProgram trainingProgram = new TrainingProgram();
+            TrainingProgramDTO trainingProgram = new TrainingProgramDTO();
 //            System.out.println(record.get("Created by"));
-            trainingProgram.setProgramId(Integer.parseInt(record.get("ID")));
-            trainingProgram.setName(record.get("Program name"));
-            trainingProgram.setDateCreated(LocalDate.parse(record.get("Created on(yyyy-mm-dd)")));
+            trainingProgram.setProgramId(Integer.parseInt(record.get("program_id")));
+            trainingProgram.setName(record.get("name"));
+            trainingProgram.setDateCreated(LocalDate.parse(record.get("dateCreated")));
 //            trainingProgram.setCreator(user);
-            trainingProgram.setDay(Integer.parseInt(record.get("Duration day")));
-            trainingProgram.setHour(new BigDecimal(record.get("Duration time")));
-            trainingProgram.setLastDateModified(trainingProgram.getDateCreated());
-            User user = userRepository.findFirstByIdAndStatus(userId, true);
-            trainingProgram.setCreator(user);
-            trainingProgram.setLastModifier(user);
-            trainingProgram.setLastDateModified(trainingProgram.getDateCreated());
-            trainingProgram.setStatus(true);
+            trainingProgram.setDay(0);
+            trainingProgram.setHour(new BigDecimal(0));
+            trainingProgram.setLastDateModified(LocalDate.parse(record.get("lastDateModified")));
+            trainingProgram.setStatus(Boolean.parseBoolean(record.get("status")));
+            String[] splitted = record.get("listSyllabusesId").split("/");
+            for(Iterator<String> iterator = Arrays.stream(splitted).iterator(); iterator.hasNext();){
+                trainingProgram.setSyllabusID(Long.parseLong(iterator.next()));
+            }
 //            trainingProgram.setLastModifier(user);
             trainingPrograms.add(trainingProgram);
         }
@@ -106,16 +101,40 @@ public class TrainingProgramService implements ITrainingProgramService {
 
     @Override
     public void allowCsvFile(MultipartFile file, Long userId, String check) throws IOException {
-        List<TrainingProgram> trainingPrograms = GetTrainingProgramDataFromCsv(file.getInputStream(), userId);
-        for(Iterator<TrainingProgram> trainingProgram = trainingPrograms.iterator(); trainingProgram.hasNext();) {
-            TrainingProgram program = trainingProgram.next();
+        List<TrainingProgramDTO> trainingPrograms = GetTrainingProgramDataFromCsv(file.getInputStream());
+        User user = userRepository.findFirstByIdAndStatus(userId, true);
+//        for(TrainingProgramDTO trainingProgram : trainingPrograms){
+//            System.out.println(trainingProgram.getProgramId());
+//            System.out.println(trainingProgram.getName());
+//        }
+        for(Iterator<TrainingProgramDTO> trainingProgram = trainingPrograms.iterator(); trainingProgram.hasNext();) {
+            TrainingProgramDTO trainingProgramDTO = trainingProgram.next();
+            TrainingProgram program = new TrainingProgram();
+            program.setProgramId(trainingProgramDTO.getProgramId());
+            program.setCreator(user);
+            program.setLastModifier(user);
+            program.setName(trainingProgramDTO.getName());
+            program.setHour(trainingProgramDTO.getHour());
+            program.setDay(trainingProgramDTO.getDay());
+            program.setStatus(trainingProgramDTO.isStatus());
+            program.setLastDateModified(trainingProgramDTO.getLastDateModified());
+            program.setDateCreated(trainingProgramDTO.getDateCreated());
+            System.out.println(program.getProgramId());
+            System.out.println(trainingProgramRepository.existsByName(program.getName()));
+            System.out.println(trainingProgramRepository.existsByProgramId(program.getProgramId()));
             if ("Program ID".equals(check) && trainingProgramRepository.existsByName(program.getName())) {
                 System.out.println(program.getName());
             } else if ("Program name".equals(check) && trainingProgramRepository.existsByProgramId(program.getProgramId())) {
                 System.out.println(program.getProgramId());
             }
             else{
+                Syllabus syllabus = syllabusService.getSyllabusById(trainingProgramDTO.getSyllabusID());
+                TrainingProgramSyllabus programSyllabus = new TrainingProgramSyllabus();
+                programSyllabus.setTrainingProgram(program);
+                programSyllabus.setSyllabus(syllabus);
+                programSyllabus.setStatus(false);
                 trainingProgramRepository.save(program);
+                trainingProgramSyllabusService.addSyllabus(programSyllabus);
             }
 
         }
@@ -123,9 +142,21 @@ public class TrainingProgramService implements ITrainingProgramService {
 
     @Override
     public void replaceCsvFile(MultipartFile file, Long userId, String check) throws IOException {
-        List<TrainingProgram> trainingPrograms = GetTrainingProgramDataFromCsv(file.getInputStream(), userId);
-        for(Iterator<TrainingProgram> trainingProgram = trainingPrograms.iterator(); trainingProgram.hasNext();){
-            TrainingProgram program = trainingProgram.next();
+        List<TrainingProgramDTO> trainingPrograms = GetTrainingProgramDataFromCsv(file.getInputStream());
+        User user = userRepository.findFirstByIdAndStatus(userId, true);
+        for(Iterator<TrainingProgramDTO> trainingProgram = trainingPrograms.iterator(); trainingProgram.hasNext();){
+            TrainingProgramDTO trainingProgramDTO = trainingProgram.next();
+            TrainingProgram program = new TrainingProgram();
+            program.setProgramId(trainingProgramDTO.getProgramId());
+            program.setCreator(user);
+            program.setLastModifier(user);
+            program.setName(trainingProgramDTO.getName());
+            program.setHour(trainingProgramDTO.getHour());
+            program.setDay(trainingProgramDTO.getDay());
+            program.setStatus(trainingProgramDTO.isStatus());
+            program.setLastDateModified(trainingProgramDTO.getLastDateModified());
+            program.setDateCreated(trainingProgramDTO.getDateCreated());
+            System.out.println(program.getProgramId());
             if("Program ID".equals(check) && trainingProgramRepository.existsByProgramId(program.getProgramId())){
                 List<TrainingProgram> programs = trainingProgramRepository.getTrainingProgramByProgramId(program.getProgramId());
                 for(Iterator<TrainingProgram> trainingProgramIterator = programs.iterator(); trainingProgramIterator.hasNext();){
@@ -148,15 +179,34 @@ public class TrainingProgramService implements ITrainingProgramService {
                     if(trainingProgram1.getName().equals(program.getName())) program.setId(trainingProgram1.getId());
                     trainingProgramRepository.save(program);
                 }
-            } else trainingProgramRepository.save(program);
+            } else {
+                Syllabus syllabus = syllabusService.getSyllabusById(trainingProgramDTO.getSyllabusID());
+                TrainingProgramSyllabus programSyllabus = new TrainingProgramSyllabus();
+                programSyllabus.setTrainingProgram(program);
+                programSyllabus.setSyllabus(syllabus);
+                programSyllabus.setStatus(false);
+                trainingProgramSyllabusService.addSyllabus(programSyllabus);
+                trainingProgramRepository.save(program);
+            }
         }
     }
 
     @Override
     public void skipCsvFile(MultipartFile file, Long userId, String check) throws IOException {
-        List<TrainingProgram> trainingPrograms = GetTrainingProgramDataFromCsv(file.getInputStream(), userId);
-        for(Iterator<TrainingProgram> trainingProgram = trainingPrograms.iterator(); trainingProgram.hasNext();) {
-            TrainingProgram program = trainingProgram.next();
+        List<TrainingProgramDTO> trainingPrograms = GetTrainingProgramDataFromCsv(file.getInputStream());
+        User user = userRepository.findFirstByIdAndStatus(userId, true);
+        for(Iterator<TrainingProgramDTO> trainingProgram = trainingPrograms.iterator(); trainingProgram.hasNext();) {
+            TrainingProgramDTO trainingProgramDTO = trainingProgram.next();
+            TrainingProgram program = new TrainingProgram();
+            program.setProgramId(trainingProgramDTO.getProgramId());
+            program.setCreator(user);
+            program.setLastModifier(user);
+            program.setName(trainingProgramDTO.getName());
+            program.setHour(trainingProgramDTO.getHour());
+            program.setDay(trainingProgramDTO.getDay());
+            program.setStatus(trainingProgramDTO.isStatus());
+            program.setLastDateModified(trainingProgramDTO.getLastDateModified());
+            program.setDateCreated(trainingProgramDTO.getDateCreated());
             if ("Program ID".equals(check) && trainingProgramRepository.existsByProgramId(program.getProgramId())) {
                 System.out.println(program.getProgramId());
             } else if ("Program name".equals(check) && trainingProgramRepository.existsByName(program.getName())) {
@@ -165,7 +215,13 @@ public class TrainingProgramService implements ITrainingProgramService {
                     trainingProgramRepository.existsByName(program.getName())) {
                 System.out.println(program.getName()+program.getProgramId());
             } else{
+                Syllabus syllabus = syllabusService.getSyllabusById(trainingProgramDTO.getSyllabusID());
+                TrainingProgramSyllabus programSyllabus = new TrainingProgramSyllabus();
+                programSyllabus.setTrainingProgram(program);
+                programSyllabus.setSyllabus(syllabus);
+                programSyllabus.setStatus(false);
                 trainingProgramRepository.save(program);
+                trainingProgramSyllabusService.addSyllabus(programSyllabus);
             }
         }
     }

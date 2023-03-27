@@ -26,7 +26,7 @@ public interface ITrainingProgramService {
     void save(Long sylId, String name);
     List<TrainingProgram> getAll();
     void downloadCsvFile(PrintWriter printWriter,List<TrainingProgram> trainingPrograms);
-    List<TrainingProgram> GetTrainingProgramDataFromCsv(InputStream fileInputStream, Long userId) throws IOException;
+    List<TrainingProgramDTO> GetTrainingProgramDataFromCsv(InputStream fileInputStream) throws IOException;
     void allowCsvFile(MultipartFile file, Long userId, String check)throws IOException;
     void replaceCsvFile(MultipartFile file, Long userId, String check)throws IOException;
     void skipCsvFile(MultipartFile file, Long userId, String check)throws IOException;
