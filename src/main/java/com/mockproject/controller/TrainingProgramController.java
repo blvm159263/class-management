@@ -24,6 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,6 +56,7 @@ public class TrainingProgramController {
     })
     @Operation(summary = "Get all Training Program")
     @GetMapping("list")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getAllTrainingProgram(@RequestParam(defaultValue = "0") Integer pageNo,
                                                    @RequestParam(defaultValue = "10") Integer pageSize) {
         Page<TrainingProgramDTO> list = trainingProgramService.getAll(pageNo, pageSize);
@@ -72,6 +74,7 @@ public class TrainingProgramController {
     })
     @Operation(summary = "Get Training Program by searching name or creator")
     @PostMapping("search-name")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> searchByName(@RequestBody SearchTPDTO search) {
 //        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
         List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(search);
@@ -83,6 +86,7 @@ public class TrainingProgramController {
     }
 
     @PostMapping("/uploadCsv")
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity readFileCsv(@Valid @ModelAttribute ReadFileDto readFileDto) {
         MultipartFile file = readFileDto.getFile();
         List<TrainingProgram> trainingProgramList = new ArrayList<>();
@@ -101,6 +105,7 @@ public class TrainingProgramController {
 
     }
     @GetMapping("/downloadFile/csv")
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity<byte[]> downLoadFileExample(){
         try {
             Resource resource = resourceLoader.getResource("classpath:CSVFile/trainingProgram.csv");
@@ -116,6 +121,7 @@ public class TrainingProgramController {
     }
 
     @PostMapping("/saveTrainingProgram")
+    @Secured({MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> saveTrain(@Valid @RequestBody TrainingProgramAddDto trainingProgramDTO) {
         trainingProgramService.save(trainingProgramDTO, null, null);
         return ResponseEntity.ok("Add training program successfully");

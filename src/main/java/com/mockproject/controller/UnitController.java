@@ -62,21 +62,19 @@ public class UnitController {
         return ResponseEntity.ok(updateUnit);
     }
 
-    @PutMapping("delete/{id}")
+    @PutMapping("/delete/{id}")
     @Operation(summary = "Delete unit by unit id")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteUnit(@PathVariable("id") @Parameter(description = "Unit id") Long unitId){
         return ResponseEntity.ok(unitService.deleteUnit(unitId, true));
     }
 
-    @PutMapping("multi-delete/{id}")
+    @PutMapping("/multi-delete/{id}")
     @Operation(summary = "Delete multi units by sessionId")
     @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteUnits(@PathVariable("id") @Parameter(description = "Session id") Long sessionId){
         return ResponseEntity.ok(unitService.deleteUnits(sessionId, true));
     }
-
-    private final IUnitService service;
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any Unit"),
@@ -84,9 +82,10 @@ public class UnitController {
             content = @Content(schema = @Schema(implementation = UnitDTO.class)))
     })
     @Operation(summary = "Get All Unit by given Session ID")
-    @GetMapping("list-by-session/{sid}")
+    @GetMapping("/list-by-session/{sid}")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> listBySessionId(@Parameter(description = "Session ID") @PathVariable("sid") Long sid) {
-        List<UnitDTO> list = service.listBySessionId(sid);
+        List<UnitDTO> list = unitService.listBySessionId(sid);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
@@ -103,12 +102,13 @@ public class UnitController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UnitDTO.class)))
     })
     @GetMapping("/class-units-for-a-date")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getAllUnitsForADate(
             @Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id,
             @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth
     ) {
         try{
-            return ResponseEntity.ok(service.getAllUnitsForADateByTrainingClassId(id, dayNth));
+            return ResponseEntity.ok(unitService.getAllUnitsForADateByTrainingClassId(id, dayNth));
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Day [" + dayNth + "] of Training class id[" + id + "] not found!!!");
         }
