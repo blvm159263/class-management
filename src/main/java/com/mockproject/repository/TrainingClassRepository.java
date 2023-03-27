@@ -3,6 +3,7 @@ package com.mockproject.repository;
 import com.mockproject.entity.TrainingClass;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 
 @Repository
-public interface TrainingClassRepository extends JpaRepository<TrainingClass, Long> {
+public interface TrainingClassRepository extends JpaRepository<TrainingClass, Long>, JpaSpecificationExecutor<TrainingClass> {
 
     Optional<TrainingClass> findByIdAndStatus(Long id, Boolean status);
 

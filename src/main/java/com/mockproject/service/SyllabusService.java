@@ -132,6 +132,12 @@ public class SyllabusService implements ISyllabusService {
     }
 
     @Override
+    public List<Syllabus> getAllSyllabusEntityById(List<Long> sId) {
+        List<Syllabus> syllabus = syllabusRepository.getAllSyllabusByIdInAndStatus(sId,true);
+        return syllabus;
+    }
+
+    @Override
     public SyllabusDTO getSyllabusById(Long id){
         Syllabus syllabus = syllabusRepository.getSyllabusById(id);
         return SyllabusMapper.INSTANCE.toDTO(syllabus);

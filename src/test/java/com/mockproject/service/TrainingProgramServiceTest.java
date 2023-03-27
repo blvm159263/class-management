@@ -3,6 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
 import com.mockproject.repository.TrainingProgramRepository;
+import com.mockproject.service.interfaces.IFileService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,12 @@ class TrainingProgramServiceTest {
 
     @MockBean
     private SyllabusService syllabusService;
+
+    @MockBean
+    private TrainingProgramSyllabusService trainingProgramSyllabusService;
+
+    @MockBean
+    private IFileService fileService;
 
     @Autowired
     private TrainingProgramService trainingProgramService;
