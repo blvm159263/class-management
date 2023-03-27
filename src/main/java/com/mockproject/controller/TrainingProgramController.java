@@ -124,21 +124,18 @@ public class TrainingProgramController {
             response.setHeader(headerkey,headervalue);
             trainingProgramService.downloadCsvFile(response.getWriter(), trainingProgramService.getAll());
     }
-    @PostMapping("/training-program/allow-csv")
+    @PostMapping("/training-program/add-from-csv")
     @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
     public void allowCSV(@RequestParam("file")MultipartFile file,@RequestParam("UserID") Long userId,
-                          @RequestParam("Check") String check) throws IOException{
-        trainingProgramService.allowCsvFile(file, userId, check);
-    }@PostMapping("/training-program/replace-csv")
-    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
-    public void replaceCSV(@RequestParam("file")MultipartFile file,@RequestParam("UserID") Long userId,
-                          @RequestParam("Check") String check) throws IOException{
-        trainingProgramService.replaceCsvFile(file, userId, check);
-    }@PostMapping("/training-program/skip-csv")
-    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
-    public void skipCSV(@RequestParam("file")MultipartFile file,@RequestParam("UserID") Long userId,
-                          @RequestParam("Check") String check) throws IOException{
-        trainingProgramService.skipCsvFile(file, userId, check);
+                          @RequestParam("Check") String check,@RequestParam("choose")String choose) throws IOException{
+        if("Allow".equals(choose)){
+            trainingProgramService.allowCsvFile(file, userId, check);
+        } else if ("Replace".equals(choose)) {
+            trainingProgramService.replaceCsvFile(file,userId,check);
+        }else {
+            trainingProgramService.skipCsvFile(file,userId,check);
+        }
+
     }
     @PostMapping("/training-program/saveTrainingProgram")
     @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
