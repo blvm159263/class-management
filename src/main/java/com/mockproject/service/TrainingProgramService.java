@@ -133,7 +133,7 @@ public class TrainingProgramService implements ITrainingProgramService {
 
     @Override
     public TrainingProgramDTO getTrainingProgramById(Long id) {
-        return TrainingProgramMapper.INSTANCE.toDTO(trainingProgramRepository.getTrainingProgramById(id));
+        return TrainingProgramMapper.INSTANCE.toDTO(trainingProgramRepository.getTrainingProgramByIdAndStatus(id, true));
     }
 
     @Override
