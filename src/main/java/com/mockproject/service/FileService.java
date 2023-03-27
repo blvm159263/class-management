@@ -151,22 +151,22 @@ public class FileService implements IFileService {
             throw new FileException("Encoding type is wrong ", HttpStatus.BAD_REQUEST.value());
         }
 
-            switch (separator) {
-                case COMMA:
-                    separator=",";
-                    break;
-                case SEMICOLON:
-                    separator=";";
-                    break;
-                case PIPE:
-                    separator="|";
-                    break;
-                case SPACE:
-                    separator=" ";
-                    break;
-                default:
-                    throw new FileException("separator type is wrong ", HttpStatus.BAD_REQUEST.value());
-            }
+        switch (separator) {
+            case COMMA:
+                separator=",";
+                break;
+            case SEMICOLON:
+                separator=";";
+                break;
+            case PIPE:
+                separator="|";
+                break;
+            case SPACE:
+                separator=" ";
+                break;
+            default:
+                throw new FileException("separator type is wrong ", HttpStatus.BAD_REQUEST.value());
+        }
 
         try {
             System.out.println(separator);
