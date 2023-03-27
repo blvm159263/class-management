@@ -1,6 +1,7 @@
 package com.mockproject.service.interfaces;
 
 import com.mockproject.dto.ReadFileDto;
+import com.mockproject.dto.SearchTPDTO;
 import com.mockproject.dto.TrainingProgramAddDto;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
@@ -22,4 +23,6 @@ public interface ITrainingProgramService {
     void save(TrainingProgramAddDto trainingProgramDTO, HashMap<TrainingProgram, List<Long>> trainingProgramHashMap, ReadFileDto readFileDto);
     String addFromFileCsv( MultipartFile file, ReadFileDto readFileDto);
     List<TrainingProgramDTO> getByCreatorFullname(String keyword);
+
+    List<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList);
 }

@@ -151,7 +151,9 @@ public class UserService implements IUserService {
                     result = result.stream().filter(s
                                     -> s.getEmail().toUpperCase().contains(subSearch) ||
                                     s.getPhone().toUpperCase().contains(subSearch) ||
-                                    s.getFullName().toUpperCase().contains(subSearch))
+                                    s.getFullName().toUpperCase().contains(subSearch) ||
+                                    s.getRoleName().toUpperCase().contains(subSearch) ||
+                                    s.getLevelCode().toUpperCase().contains(subSearch))
                             .collect(Collectors.toList());
                 }
             }

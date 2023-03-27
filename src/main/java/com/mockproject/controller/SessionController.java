@@ -25,8 +25,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Session API")
-@Tag(name = "Session", description = "API realted session")
+@Tag(name = "Session", description = "API related session")
 @RequestMapping(value = "/api/session")
 @SecurityRequirement(name = "Authorization")
 @Slf4j

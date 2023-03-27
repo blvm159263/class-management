@@ -1,13 +1,13 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.ReadFileDto;
+import com.mockproject.dto.SearchTPDTO;
 import com.mockproject.dto.TrainingProgramAddDto;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
 import com.mockproject.service.interfaces.IFileService;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -70,10 +70,11 @@ public class TrainingProgramController {
             @ApiResponse(responseCode = "200", description = "When find training program and return list program",
                     content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
     })
-    @Operation(summary = "Get Training Program by searching name")
-    @GetMapping("search-name")
-    public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search") @RequestParam(defaultValue = "") String name) {
-        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
+    @Operation(summary = "Get Training Program by searching name or creator")
+    @PostMapping("search-name")
+    public ResponseEntity<?> searchByName(@RequestBody SearchTPDTO search) {
+//        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
+        List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(search);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {

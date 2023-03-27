@@ -33,10 +33,12 @@ public class ApplicationExceptionHandler {
     public String handleNotFound(NotFoundException ex) {
         return "Error Message : " + ex.getMessage();
     }
+
     @ExceptionHandler(IOException.class)
     public String handleIOException(IOException ex){
         return "Error Message : " + ex.getMessage();
     }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public Map<String, String> handleBadRequest(MethodArgumentTypeMismatchException ex) {
         Map<String, String> errorMap = new HashMap<>();
@@ -67,9 +69,9 @@ public class ApplicationExceptionHandler {
                     .body("Invalid date format: " + mostSpecificCause.getMessage().substring(startIndex,endIndex));
         } else if(mostSpecificCause instanceof IllegalArgumentException){
 //            if (mostSpecificCause.getMessage().contains("java.sql.Time")){
-                return ResponseEntity
-                        .badRequest()
-                        .body("Invalid Time Format !");
+            return ResponseEntity
+                    .badRequest()
+                    .body("Invalid Time Format !");
 
         }else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
