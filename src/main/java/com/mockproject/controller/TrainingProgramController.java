@@ -67,9 +67,9 @@ public class TrainingProgramController {
     })
     @Operation(summary = "Get Training Program by searching name")
     @PostMapping("search-name")
-    public ResponseEntity<?> searchByName(@RequestBody SearchTPDTO search) {
-//        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
-        List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(search);
+    public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search") @RequestParam(defaultValue = "") String name) {
+        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
+//        List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(search);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
