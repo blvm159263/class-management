@@ -1,6 +1,7 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.ReadFileDto;
+import com.mockproject.dto.SearchTPDTO;
 import com.mockproject.dto.TrainingProgramAddDto;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
@@ -70,9 +71,10 @@ public class TrainingProgramController {
                     content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
     })
     @Operation(summary = "Get Training Program by searching name")
-    @GetMapping("search-name")
-    public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search") @RequestParam(defaultValue = "") String name) {
-        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
+    @PostMapping("search-name")
+    public ResponseEntity<?> searchByName(@RequestBody SearchTPDTO search) {
+//        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
+        List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(search);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
