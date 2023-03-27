@@ -33,10 +33,12 @@ public class ApplicationExceptionHandler {
     public String handleNotFound(NotFoundException ex) {
         return "Error Message : " + ex.getMessage();
     }
+
     @ExceptionHandler(IOException.class)
     public String handleIOException(IOException ex){
         return "Error Message : " + ex.getMessage();
     }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public Map<String, String> handleBadRequest(MethodArgumentTypeMismatchException ex) {
         Map<String, String> errorMap = new HashMap<>();
