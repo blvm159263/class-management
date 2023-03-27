@@ -8,7 +8,6 @@ import com.mockproject.entity.TrainingProgram;
 import com.mockproject.service.interfaces.IFileService;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
