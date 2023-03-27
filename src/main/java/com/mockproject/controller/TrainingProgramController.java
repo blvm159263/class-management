@@ -70,7 +70,7 @@ public class TrainingProgramController {
             @ApiResponse(responseCode = "200", description = "When find training program and return list program",
                     content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
     })
-    @Operation(summary = "Get Training Program by searching name")
+    @Operation(summary = "Get Training Program by searching name or creator")
     @PostMapping("search-name")
     public ResponseEntity<?> searchByName(@RequestBody SearchTPDTO search) {
 //        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
