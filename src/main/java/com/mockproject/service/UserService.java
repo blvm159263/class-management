@@ -162,7 +162,6 @@ public class UserService implements IUserService {
                 }
             }
 
-
         } catch (Exception e) {
             throw e;
         }
