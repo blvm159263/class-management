@@ -21,27 +21,35 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TrainingProgramSyllabusService implements ITrainingProgramSyllabusService {
 
-    private final TrainingProgramSyllabusRepository repository;
+    private final TrainingProgramSyllabusRepository trainingProgramSyllabusRepository;
 
     @Override
-    public List<TrainingProgramSyllabusDTO> getTrainingProgramSyllabusListById(Long trainProgramID) {
-        return repository.getTrainingProgramSyllabusByTrainingProgramId(trainProgramID).stream().map(TrainingProgramSyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    public List<TrainingProgramSyllabusDTO> getTrainingProgramSyllabusListById(Long trainingProgramID) {
+        return trainingProgramSyllabusRepository.getTrainingProgramSyllabusByTrainingProgramId(trainingProgramID).stream().map(TrainingProgramSyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    public List<TrainingProgramSyllabus> saveAll(List<TrainingProgramSyllabus> programSyllabusList) {
+        return trainingProgramSyllabusRepository.saveAll(programSyllabusList);
     }
 
     @Override
     public List<TrainingProgramSyllabusDTO> getAllSyllabusByTrainingProgramId(long trainProgramID,
                                                                               boolean status) {
-        Optional<List<TrainingProgramSyllabus>> list = repository.findByTrainingProgramIdAndStatus(trainProgramID, status);
+        Optional<List<TrainingProgramSyllabus>> list = trainingProgramSyllabusRepository.findByTrainingProgramIdAndStatus(trainProgramID, status);
         ListUtils.checkList(list);
 
         List<TrainingProgramSyllabusDTO> trainingProgramSyllabusDTOList = new ArrayList<>();
-        for (TrainingProgramSyllabus t: list.get()){
+        for (TrainingProgramSyllabus t : list.get()) {
             trainingProgramSyllabusDTOList.add(TrainingProgramSyllabusMapper.INSTANCE.toDTO(t));
         }
         return trainingProgramSyllabusDTOList;
     }
 
-    public void addSyllabus(TrainingProgramSyllabus syllabus){
-        repository.save(syllabus);
+    public void addSyllabus(TrainingProgramSyllabus syllabus) {
+        trainingProgramSyllabusRepository.save(syllabus);
+    }
+
+    public void removeByTrainingProgramID(Long id){
+        trainingProgramSyllabusRepository.deleteByTrainingProgramId(id);
     }
 }

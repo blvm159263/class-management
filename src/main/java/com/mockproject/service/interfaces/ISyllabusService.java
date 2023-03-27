@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ISyllabusService {
+    List<Syllabus> getAllSyllabusEntityById(List<Long> id);
 
     List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId);
 

@@ -48,7 +48,7 @@ public class TrainingClassService implements ITrainingClassService {
 
     @Override
     public List<TrainingClass> findAllBySpecification(Specification specification) {
-        return classRepo.findAll((Sort) specification);
+        return classRepo.findAll(specification);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class TrainingClassService implements ITrainingClassService {
     @Override
     public Page<TrainingClassDTO> getListClass(boolean status,
                                                List<Long> locationId, LocalDate fromDate, LocalDate toDate,
-                                               List<Integer> period, String isOnline, String state, List<Long> attendeeId,
+                                               List<Integer> period, String isOnline, List<String> state, List<Long> attendeeId,
                                                Long fsu, Long trainerId,  List<String> search, String[] sort, Optional<Integer> page, Optional<Integer> row)
     {
         List<Sort.Order> order = new ArrayList<>();

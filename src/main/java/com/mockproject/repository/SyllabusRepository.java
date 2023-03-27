@@ -14,6 +14,7 @@ import java.util.Optional;
 public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
 
     Syllabus getSyllabusById(Long id);
+    List<Syllabus> getAllSyllabusByIdInAndStatus(List<Long> id,boolean status);
 
     List<Syllabus> findByStatus(boolean status);
 

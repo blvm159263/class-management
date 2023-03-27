@@ -12,11 +12,13 @@ import java.util.List;
 @AllArgsConstructor
 public class TrainingClassFilterRequestDTO {
     List<String> locations;
-    @JsonFormat(pattern = "dd-MM-yyyy")
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate startDate;
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate endDate;
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+
     LocalDate nowDate;
     List<TimeRangeDTO> TimeRanges;
     List<String> statuses;

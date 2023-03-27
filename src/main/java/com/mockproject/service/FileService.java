@@ -11,13 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -43,6 +42,10 @@ public class FileService implements IFileService {
     private final String UTF_16 = "utf-16";
     private final String ISO_8859_1 = "iso_8859_1";
     private final String US_ASCII = "us_ascii";
+    private final String COMMA = "comma";
+    private final String PIPE = "pipe";
+    private final String SPACE = " ";
+    private final String SEMICOLON = "semicolon";
 
     @Override
     public FileClassResponseDTO readFileCsv(MultipartFile file) throws IOException {
@@ -115,8 +118,15 @@ public class FileService implements IFileService {
     }
 
     @Override
-    public CSVParser readFile(MultipartFile file, String encodingType) {
+    public byte[] getCsvFile(File file) throws IOException {
+        InputStream is = new FileInputStream(file);
+        return IOUtils.toByteArray(is);
+    }
+
+    @Override
+    public CSVParser readFile(MultipartFile file, String encodingType,String separator) {
         encodingType = encodingType.trim().toLowerCase();
+        separator= separator.trim().toLowerCase();
         InputStreamReader inputStreamReader = null;
         BufferedReader reader;
         CSVParser parser;
@@ -140,10 +150,28 @@ public class FileService implements IFileService {
         } catch (IOException e) {
             throw new FileException("Encoding type is wrong ", HttpStatus.BAD_REQUEST.value());
         }
+
+            switch (separator) {
+                case COMMA:
+                    separator=",";
+                    break;
+                case SEMICOLON:
+                    separator=";";
+                    break;
+                case PIPE:
+                    separator="|";
+                    break;
+                case SPACE:
+                    separator=" ";
+                    break;
+                default:
+                    throw new FileException("separator type is wrong ", HttpStatus.BAD_REQUEST.value());
+            }
+
         try {
-            System.out.println(inputStreamReader.getEncoding());
+            System.out.println(separator);
             reader = new BufferedReader(inputStreamReader);
-            parser = new CSVParser(reader, CSVFormat.DEFAULT.builder().setSkipHeaderRecord(true).build());
+            parser = new CSVParser(reader, CSVFormat.DEFAULT.builder().setSkipHeaderRecord(true).build().withDelimiter(separator.charAt(0)));
         } catch (IOException e) {
             throw new FileException("Content is wrong",HttpStatus.BAD_REQUEST.value());
         }
