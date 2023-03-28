@@ -355,7 +355,7 @@ public class UserService implements IUserService {
 
             count = 0L;
 
-            List<String> listEmail = new ArrayList<>();
+           // List<String> listEmail = new ArrayList<>();
 
             for (CSVRecord csvRecord : csvRecords) {
                 String email = csvRecord.get("Email");
@@ -411,7 +411,13 @@ public class UserService implements IUserService {
                 }
                 //check phone number
                 String phone = csvRecord.get("Phone");
-                if (userRepo.findByPhone(phone).isPresent() && (idUser != userRepo.findByPhone(phone).get().getId()))
+                int index = -1;
+                for (User u : result) {
+                    if (u != null && u.getPhone().equals(phone)){
+                        index = result.indexOf(u);
+                    }
+                }
+                if (  (userRepo.findByPhone(phone).isPresent() && (idUser != userRepo.findByPhone(phone).get().getId()))  || index != -1 )
                     throw new NotFoundException("Record " + (count + 1) +
                             " (" + email + ")" + " is invalid phone number (phone number is exits!!!)");
                 //check gender
@@ -466,7 +472,6 @@ public class UserService implements IUserService {
                 }
                 count++;
             }
-
             return result;
 
         } catch (IOException e) {
