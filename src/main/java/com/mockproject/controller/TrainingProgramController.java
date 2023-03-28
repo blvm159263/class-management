@@ -8,13 +8,14 @@ import com.mockproject.entity.TrainingProgram;
 import com.mockproject.service.interfaces.IFileService;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -132,6 +133,12 @@ public class TrainingProgramController {
     @Operation(summary = "Get training program by ID")
     public ResponseEntity getTrainingProgramById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(trainingProgramService.getTrainingProgramById(id));
+    }
+
+    @PutMapping("/de-active-training-program/{trainingProgramID}")
+    public ResponseEntity deactiveTraningProgramByID(@PathVariable Long trainingProgramID) {
+        trainingProgramService.deactiveTrainingProgram(trainingProgramID);
+        return ResponseEntity.ok("De-active training program successfully.");
     }
 
 }
