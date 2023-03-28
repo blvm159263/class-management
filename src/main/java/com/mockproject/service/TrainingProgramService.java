@@ -105,6 +105,15 @@ public class TrainingProgramService implements ITrainingProgramService {
         return result.stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
+    @Override
+    public void deactiveTrainingProgram(Long trainingProgramID) {
+        trainingProgramRepository.findById(trainingProgramID)
+                .map(trainingProgram -> {
+                    trainingProgram.setStatus(false);
+                    return trainingProgramRepository.save(trainingProgram);
+                });
+    }
+
     private List<TrainingProgram> doSearch(List<TrainingProgram> trainingPrograms, List<String> searchList) {
         List<TrainingProgram> result = trainingPrograms.stream()
                 .filter(trainingProgram1 -> trainingProgram1.getCreator() != null

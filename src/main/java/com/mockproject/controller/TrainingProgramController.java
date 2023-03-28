@@ -1,7 +1,6 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.ReadFileDto;
-import com.mockproject.dto.SearchTPDTO;
 import com.mockproject.dto.TrainingProgramAddDto;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
@@ -13,9 +12,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -27,6 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,5 +121,10 @@ public class TrainingProgramController {
         return ResponseEntity.ok("Add training program successfully");
     }
 
+    @PutMapping("/de-active-training-program/{trainingProgramID}")
+    public ResponseEntity deactiveTraningProgramByID(@PathVariable Long trainingProgramID) {
+        trainingProgramService.deactiveTrainingProgram(trainingProgramID);
+        return ResponseEntity.ok("De-active training program successfully.");
+    }
 
 }

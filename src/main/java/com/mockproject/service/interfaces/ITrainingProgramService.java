@@ -25,4 +25,6 @@ public interface ITrainingProgramService {
     List<TrainingProgramDTO> getByCreatorFullname(String keyword);
 
     List<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList);
+
+    void deactiveTrainingProgram(Long trainingProgramID);
 }
