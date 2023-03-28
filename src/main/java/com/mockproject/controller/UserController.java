@@ -1,7 +1,6 @@
 package com.mockproject.controller;
 
 
-import com.mockproject.jwt.JwtTokenProvider;
 import com.mockproject.dto.*;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.RolePermissionScope;
@@ -37,7 +36,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -155,6 +153,7 @@ public class UserController {
     })
     @Operation(summary = "Get all User have role CLASS_ADMIN")
     @GetMapping("/class-admin")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> listClassAdmin() {
         List<UserDTO> list = userService.listClassAdminTrue();
         if (!list.isEmpty()) {
@@ -171,6 +170,7 @@ public class UserController {
     })
     @Operation(summary = "Get all User have role TRAINER")
     @GetMapping("/trainer")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> listTrainer() {
         List<UserDTO> list = userService.listTrainerTrue();
         if (!list.isEmpty()) {
@@ -187,6 +187,7 @@ public class UserController {
     })
     @Operation(summary = "Get User by given {ID}")
     @GetMapping("/{id}")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getUserById(@Parameter(description = "User's ID") @PathVariable("id") Long id) {
         UserDTO user = userService.getUserById(id);
         if (user != null) {
@@ -208,7 +209,7 @@ public class UserController {
     }
     @PutMapping("/updateRole")
     @Operation(summary = "Update role by list FormRoleDTO")
-    @Secured({MODIFY, FULL_ACCESS})
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity updateAllRole(@RequestBody List<FormRoleDTO> formRoleDTOList) {
 
         for (FormRoleDTO fdto : formRoleDTOList) {
@@ -229,7 +230,7 @@ public class UserController {
 
     @PostMapping("/createRole")
     @Operation(summary = "Create Roles by list FormRoleDTO", description = "Set id of new Role = 0 to create")
-    @Secured({FULL_ACCESS, CREATE})
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity cretaeRole(@RequestBody List<FormRoleDTO> formRoleDTOList) {
         for (FormRoleDTO fdto : formRoleDTOList) {
             if (roleService.checkDuplicatedByRoleIdAndRoleName(fdto.getId(), fdto.getRoleName())) return ResponseEntity.badRequest().body("Role name: "+ fdto.getRoleName() +"is exits!");
@@ -251,7 +252,7 @@ public class UserController {
 
     @GetMapping("/searchByFilter")
     @Operation(summary = "Search User by filter and order")
-    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity searchByFilter(@RequestParam(value = "search", required = false) @Parameter(description = "Search string") List<String> search,
                                          @RequestParam(value = "Dob", required = false) @Parameter(description = "Date of birth(dd/MM/yyyy)") String dob,
                                          @RequestParam(value = "Gender", required = false) @Parameter(description = "true = Male, false = Female") Boolean gender,
@@ -278,7 +279,7 @@ public class UserController {
 
     @GetMapping("/getRoleByName")
     @Operation(summary = "Get roleDTO by role name")
-    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity getRoleByName(@RequestParam(value = "roleName") String rolename) {
         RoleDTO role = roleService.getRoleByRoleName(rolename);
         return ResponseEntity.ok(role);
@@ -286,7 +287,7 @@ public class UserController {
 
     @GetMapping("/getLevel")
     @Operation(summary = "Get level by level_id")
-    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity getLevelById(@RequestParam(value = "id") @Parameter(description = "Level id") long id) {
         LevelDTO level = levelService.getLevelById(id);
         if (level != null) {
@@ -376,6 +377,7 @@ public class UserController {
 
     @GetMapping(value = "/getListAttendee")
     @Operation(summary = "Get list attendee for filter")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity getListAttendee(){
         List<AttendeeDTO> list = attendeeService.listAllTrue();
         if (!list.isEmpty()) {

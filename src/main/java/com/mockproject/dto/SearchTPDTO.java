@@ -5,15 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeliveryTypeDTO implements Serializable {
-    private Long id;
-    private String typeName;
-    private boolean status;
-
+public class SearchTPDTO {
+    List<String> search;
 }

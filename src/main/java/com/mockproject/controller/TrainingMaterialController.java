@@ -42,7 +42,7 @@ public class TrainingMaterialController {
 
     @PostMapping("/upload-file/{unitDetailID}")
     @Operation(summary = "Upload file by unit detail id")
-    @Secured({CREATE, FULL_ACCESS})
+    @Secured({MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@PathVariable("unitDetailID") Long unitDetailID,@RequestBody List<TrainingMaterialDTO> trainingMaterialDTOList){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -73,14 +73,14 @@ public class TrainingMaterialController {
 
     @PutMapping("/delete/{id}")
     @Operation(summary = "Delete file by training material id")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteFile(@PathVariable("id")@Parameter(description = "Training material id") Long trainingMaterialId){
         return ResponseEntity.ok(trainingMaterialService.deleteTrainingMaterial(trainingMaterialId, true));
     }
 
     @PutMapping("/multi-delete/{id}")
     @Operation(summary = "Delete file by Unit detail id")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteFiles(@PathVariable("id")@Parameter(description = "Unit detail id") Long unitDetailId){
         return ResponseEntity.ok(trainingMaterialService.deleteTrainingMaterials(unitDetailId, true));
     }

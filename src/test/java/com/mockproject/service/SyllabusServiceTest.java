@@ -84,7 +84,7 @@ public class SyllabusServiceTest {
     UnitDetail detail3 = new UnitDetail(1L, "Detail 3", BigDecimal.valueOf(30), true, true, uni3, null, osd1, null);
 
     @Test
-    void getAllSyllabusByStatus() {
+    void getAllSyllabus() {
         List<Syllabus> syllabusList = new ArrayList<>();
         syllabusList.add(syllabus1);
         syllabusList.add(syllabus2);

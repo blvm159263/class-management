@@ -103,6 +103,7 @@ public class SyllabusController {
     })
     @Operation(summary = "Get all Syllabus by given Training Program ID")
     @GetMapping("/list-by-training-program/{id}")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> listSyllabusByTrainingProgramId(@Parameter(description = "Training Class's ID that want to get Syllabus")
                                                              @PathVariable("id") Long id) {
         List<SyllabusDTO> list = syllabusService.listByTrainingProgramIdTrue(id);
@@ -118,6 +119,7 @@ public class SyllabusController {
             summary = "Get syllabus list",
             description = "<b>List of syllabus according to search, sort, filter, and pages<b>"
     )
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getListSyllabus(
             @RequestParam(defaultValue = "")
             @Parameter(
@@ -171,6 +173,7 @@ public class SyllabusController {
     @PostMapping(path = "read-file",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Read file")
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity readSyllabusCsv(@RequestPart("file")MultipartFile file,
                                                        @Parameter(description = """
                                                                1. Name
@@ -189,6 +192,7 @@ public class SyllabusController {
 
     @GetMapping("get-template-file")
     @Operation(summary = "Download file")
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity<byte[]> getTemplateFile() throws IOException {
 
         String filename = "Syllabus_import.csv";

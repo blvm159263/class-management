@@ -42,6 +42,11 @@ public class SessionService implements ISessionService {
     }
 
     @Override
+    public List<SessionDTO> getSessionListBySyllabusId(Long idSyllabus) {
+        return sessionRepository.getSessionListBySyllabusId(idSyllabus).stream().map(SessionMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
     public List<SessionDTO> getAllSessionBySyllabusId(Long syllabusId, boolean status) {
         Optional<List<Session>> listSession = sessionRepository.findBySyllabusIdAndStatus(syllabusId, status);
         ListUtils.checkList(listSession);
@@ -133,11 +138,6 @@ public class SessionService implements ISessionService {
         ListUtils.checkList(sessions);
         sessions.get().forEach((i) -> deleteSession(i.getId(), status));
         return true;
-    }
-
-    @Override
-    public List<Session> getSessionListBySyllabusId(Long idSyllabus){
-        return sessionRepository.getSessionListBySyllabusId(idSyllabus);
     }
 
     @Override

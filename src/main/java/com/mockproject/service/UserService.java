@@ -1,13 +1,9 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.UserDTO;
-import com.mockproject.dto.UserDTOCustom;
 import com.mockproject.entity.Level;
 import com.mockproject.entity.Role;
 import com.mockproject.entity.User;
-import com.mockproject.mapper.AttendeeMapper;
-import com.mockproject.mapper.LevelMapper;
-import com.mockproject.mapper.RoleMapper;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUserService;
@@ -122,10 +118,12 @@ public class UserService implements IUserService {
         } else {
             pageable = PageRequest.of(page1, size1);
         }
-        LocalDate dob;
+        LocalDate dob = null;
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
-            dob = LocalDate.parse(dobString, formatter);
+            if (dobString != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
+                dob = LocalDate.parse(dobString, formatter);
+            }
         } catch (DateTimeParseException e) {
             throw new NotFoundException("Date format Error");
         }
@@ -140,7 +138,7 @@ public class UserService implements IUserService {
                 }
 
             }
-            pages = userRepo.searchByFilter(searchFirst, dob, gender, atendeeId);
+            pages = userRepo.searchByFilter(searchFirst, dob, gender, atendeeId, Sort.by(order));
             for (User u : pages) {
                 UserDTO userDTOC = UserMapper.INSTANCE.toDTO(u);
                 userDTOC.setStateName(getState(u.getState()));
@@ -153,11 +151,12 @@ public class UserService implements IUserService {
                     result = result.stream().filter(s
                                     -> s.getEmail().toUpperCase().contains(subSearch) ||
                                     s.getPhone().toUpperCase().contains(subSearch) ||
-                                    s.getFullName().toUpperCase().contains(subSearch))
+                                    s.getFullName().toUpperCase().contains(subSearch) ||
+                                    s.getRoleName().toUpperCase().contains(subSearch) ||
+                                    s.getLevelCode().toUpperCase().contains(subSearch))
                             .collect(Collectors.toList());
                 }
             }
-
 
         } catch (Exception e) {
             throw e;

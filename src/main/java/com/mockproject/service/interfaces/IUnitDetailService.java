@@ -1,5 +1,6 @@
 package com.mockproject.service.interfaces;
 
+import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.entity.User;
@@ -9,8 +10,9 @@ import java.util.List;
 
 public interface IUnitDetailService {
 
+    List<UnitDetailDTO> getListUnitDetail(List<UnitDTO> listUnit);
 
-    List<UnitDetail> getUnitDetailByUnitId(Long idUnit);
+    List<UnitDetailDTO> getUnitDetailByUnitId(Long idUnit);
 
     List<UnitDetailDTO> getAllUnitDetailByUnitId(Long unitId, boolean status);
 

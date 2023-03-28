@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,11 @@ import java.util.List;
 @SecurityRequirement(name = "Authorization")
 public class ContactController {
 
+    public static final String VIEW = "ROLE_View_Class";
+    public static final String MODIFY = "ROLE_Modify_Class";
+    public static final String CREATE = "ROLE_Create_Class";
+    public static final String FULL_ACCESS = "ROLE_Full access_Class";
+
     private final IContactService service;
 
     @ApiResponses(value = {
@@ -36,6 +42,7 @@ public class ContactController {
     })
     @Operation(summary = "Get all Contact have status = True")
     @GetMapping("")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> listAll(){
         List<ContactDTO> list = service.listAllTrue();
         if(!list.isEmpty()){
@@ -53,6 +60,7 @@ public class ContactController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = ContactDTO.class)))
     })
     @GetMapping("/class-contact")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getClassContact(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(service.getContactByTrainingClassId(id));

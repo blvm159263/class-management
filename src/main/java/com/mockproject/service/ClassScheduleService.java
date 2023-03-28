@@ -28,9 +28,10 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-public class ClassScheduleService implements IClassScheduleService{
+public class ClassScheduleService implements IClassScheduleService {
 
     private final ClassScheduleRepository repository;
+
     private final TrainingClassRepository trainingClassRepository;
 
     private final TrainingClassService trainingClassService;
@@ -59,7 +60,7 @@ public class ClassScheduleService implements IClassScheduleService{
 //        Long count = listDto.stream().map(p -> repository.save(ClassScheduleMapper.INSTANCE.toEntity(p))).filter(Objects::nonNull).count();
         TrainingClass tc = new TrainingClass();
         tc.setId(tcId);
-        List<ClassSchedule> list = listDate.stream().map(p-> new ClassSchedule(null, p, true,tc)).toList();
+        List<ClassSchedule> list = listDate.stream().map(p -> new ClassSchedule(null, p, true, tc)).toList();
         List<ClassSchedule> result = repository.saveAll(list);
         return !result.isEmpty();
     }
@@ -76,7 +77,6 @@ public class ClassScheduleService implements IClassScheduleService{
         return repository.countAllByDateBeforeAndTrainingClassId(date, id);
     }
 
-
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByDay(TrainingClassFilterRequestDTO filterRequestDTO) {
         return trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterDate(filterRequestDTO))
@@ -85,7 +85,6 @@ public class ClassScheduleService implements IClassScheduleService{
 
     @Override
     public List<TrainingClassFilterResponseDTO> getTrainingClassByWeek(TrainingClassFilterRequestDTO filterRequestDTO) {
-
         var trainingClassFiltered = trainingClassService.findAllBySpecification(TrainingClassSpecification.findByFilterWeek(filterRequestDTO));
         List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
         trainingClassFiltered.stream().distinct().forEach(trainingClass -> {
@@ -98,24 +97,58 @@ public class ClassScheduleService implements IClassScheduleService{
     }
 
     @Override
-    public List<TrainingClassFilterResponseDTO> searchTrainingClassInDate(List<String> textSearch, LocalDate date) {
-        return trainingClassService.findAllBySearchTextAndDate(textSearch, date)
-                .stream().map(trainingClass -> getTrainingClassDetail(trainingClass, date))
-                .collect(Collectors.toList());
+    public List<TrainingClassFilterResponseDTO> searchTrainingClassInDate(List<String> searchText, LocalDate date) {
+        var checkSize = searchText.isEmpty();
+
+        var Result = trainingClassService.findAllBySearchTextAndDate("%" + (checkSize ? "" : searchText.get(0)) + "%", date);
+        if (!checkSize) {
+            List<String> lowerCaseSearchTerms = searchText.stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+            Result = searchByText(Result, lowerCaseSearchTerms);
+        }
+
+        return Result.stream().map(trainingClass -> getTrainingClassDetail(trainingClass, date)).collect(Collectors.toList());
     }
 
     @Override
-    public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(List<String> textSearch, LocalDate startDate, LocalDate endDate) {
-        var trainingClassWeek = trainingClassService.findAllBySearchTextAndWeek(textSearch, startDate, endDate);
-        log.info(String.valueOf(trainingClassWeek.size()) + textSearch);
+    public List<TrainingClassFilterResponseDTO> searchTrainingClassInWeek(List<String> searchText, LocalDate startDate, LocalDate endDate) {
+        var checkSize = searchText.isEmpty();
         List<TrainingClassFilterResponseDTO> result = new ArrayList<>();
-        trainingClassWeek.stream().distinct().forEach(trainingClass -> {
+        var trainingClassByWeek = trainingClassService.findAllBySearchTextAndWeek("%" + (checkSize ? "" : searchText.get(0)) + "%", startDate, endDate);
+
+        if (!checkSize) {
+            List<String> lowerCaseSearchTerms = searchText.stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+            trainingClassByWeek = searchByText(trainingClassByWeek, lowerCaseSearchTerms);
+        }
+        trainingClassByWeek.stream().forEach(trainingClass -> {
             trainingClass.getListClassSchedules().stream().forEach(classSchedule -> {
                 if (classSchedule.getDate().isAfter(startDate.minusDays(2)) && classSchedule.getDate().isBefore(endDate.plusDays(1)))
                     result.add(getTrainingClassDetail(trainingClass, classSchedule.getDate()));
             });
         });
         return result;
+    }
+
+    private List<TrainingClass> searchByText(List<TrainingClass> trainingClasses, List<String> searchText) {
+        var filteredResult = new ArrayList<TrainingClass>();
+        for (var text : searchText) {
+            trainingClasses.stream()
+                    .filter(Class -> Class.getClassCode().toLowerCase().contains(text)
+                            || Class.getFsu().getFsuName().toLowerCase().contains(text)
+                            || Class.getListTrainingClassAdmins().stream().anyMatch(trainingClassAdmin ->
+                            trainingClassAdmin.getAdmin().getFullName().toLowerCase().contains(text))
+                            || Class.getAttendee().getAttendeeName().toLowerCase().contains(text)
+                            || Class.getListTrainingClassUnitInformations().stream().anyMatch(unit ->
+                            unit.getTrainer().getFullName().toLowerCase().contains(text))
+                            || Class.getLocation().getLocationName().toLowerCase().contains(text))
+                    .forEach(filteredResult::add);
+            trainingClasses = filteredResult;
+            filteredResult = new ArrayList<>();
+        }
+        return trainingClasses;
     }
 
     @Override
@@ -147,6 +180,7 @@ public class ClassScheduleService implements IClassScheduleService{
                 .stream()
                 .map(trainingClassUnitInformation -> trainingClassUnitInformation.getTrainer().getFullName())
                 .collect(Collectors.toList());
+
         return trainingClassFilterMap.toTrainingClassFilterResponseDTO(
                 trainingClass,
                 trainerName,

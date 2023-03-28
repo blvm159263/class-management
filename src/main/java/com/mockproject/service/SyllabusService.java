@@ -125,11 +125,34 @@ public class SyllabusService implements ISyllabusService {
     }
 
     private boolean checkOsdBelongSyllabus(long syllabusId, String search) {
-            if (getListSyllabusIdByOSD(search).contains(syllabusId)) {
-                return true;
-            }
+        if (getListSyllabusIdByOSD(search).contains(syllabusId)) {
+            return true;
+        }
         return false;
     }
+
+    @Override
+    public List<Syllabus> getAllSyllabusEntityById(List<Long> sId) {
+        List<Syllabus> syllabus = syllabusRepository.getAllSyllabusByIdInAndStatus(sId,true);
+        return syllabus;
+    }
+
+    @Override
+    public SyllabusDTO getSyllabusById(Long id){
+        Syllabus syllabus = syllabusRepository.getSyllabusById(id);
+        return SyllabusMapper.INSTANCE.toDTO(syllabus);
+    }
+
+//    @Autowired
+//    private final SyllabusRepository repository;
+//    public Syllabus getSyllabusById(Long id){
+//         Optional<Syllabus> syllabusOptional = repository.findById(id);
+//         if(syllabusOptional.isPresent()){
+//             return syllabusOptional.get();
+//         }else {
+//             return new Syllabus();
+//         }
+//    }
 
     private static boolean ifPropertpresent(final Set<String> properties, final String propertyName) {
         if (properties.contains(propertyName)) {
@@ -233,11 +256,6 @@ public class SyllabusService implements ISyllabusService {
         sessionService.deleteSessions(syllabusId, status);
         syllabusRepository.save(syllabus.get());
         return true;
-    }
-
-    @Override
-    public Syllabus getSyllabusById(Long id) {
-        return syllabusRepository.findByIdAndStatus(id, true).get();
     }
 
     @Override
