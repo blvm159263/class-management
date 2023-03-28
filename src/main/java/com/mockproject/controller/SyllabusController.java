@@ -1,9 +1,12 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.SyllabusDTO;
+import com.mockproject.dto.TrainingProgramSyllabusDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Syllabus;
 import com.mockproject.service.interfaces.ISyllabusService;
+import com.mockproject.service.interfaces.ITrainingProgramSyllabusService;
+import com.mockproject.utils.CSVUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,12 +16,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -30,6 +37,7 @@ import java.util.Optional;
 @Tag(name = "Syllabus API")
 @RequestMapping(value = "/api/syllabus")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 public class SyllabusController {
 
     public static final String VIEW = "ROLE_View_Syllabus";
@@ -39,45 +47,52 @@ public class SyllabusController {
 
     private final ISyllabusService syllabusService;
 
-    @GetMapping()
+    private final ITrainingProgramSyllabusService trainingProgramSyllabusService;
+
+    @GetMapping("/getSyllabusByTrainingProgram/{trainingProgramId}")
+    @Operation(summary = "Get all syllabus by training program id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<SyllabusDTO>> getAll(){
-        List<SyllabusDTO> listSyllabus = syllabusService.getAll(true, true);
-        return ResponseEntity.ok(listSyllabus);
+    public ResponseEntity<List<TrainingProgramSyllabusDTO>> getAllTrainingProgramSyllabus(@PathVariable("trainingProgramId") long id) {
+        List<TrainingProgramSyllabusDTO> list = trainingProgramSyllabusService.getAllSyllabusByTrainingProgramId(id, true);
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{syllabusId}")
+    @Operation(summary = "Get syllabus by syllabus id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<SyllabusDTO> getSyllabus(@PathVariable("syllabusId") long syllabusId){
+    public ResponseEntity<SyllabusDTO> getSyllabus(@PathVariable("syllabusId") Long syllabusId) {
         SyllabusDTO syllabus = syllabusService.getSyllabusById(syllabusId, true, true);
         return ResponseEntity.ok(syllabus);
     }
 
-    @GetMapping("get-all")
-    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<SyllabusDTO>> getAllSyllabus(){
-        return ResponseEntity.ok(syllabusService.getSyllabusList(true));
+    @PostMapping(value = "/replace")
+    @Operation(summary = "Replace Syllabus")
+    @Secured({CREATE,FULL_ACCESS})
+    public ResponseEntity<Boolean> replace(@RequestBody SyllabusDTO syllabusDTO){
+        return ResponseEntity.ok(syllabusService.replace(syllabusDTO, true));
     }
 
     @PostMapping(value = "/create")
+    @Operation(summary = "Create Syllabus")
     @Secured({CREATE,FULL_ACCESS})
-    public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus){
+    public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus) {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        long syllabusID = syllabusService.create(syllabus, user.getUser());
+        Long syllabusID = syllabusService.create(syllabus, user.getUser());
         return ResponseEntity.ok(syllabusID);
     }
 
     @PutMapping("edit")
-    @Secured({MODIFY,CREATE, FULL_ACCESS})
+    @Operation(summary = "Edit syllabus by SyllabusDTO")
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Syllabus> editSyllabus(@RequestBody SyllabusDTO syllabusDTO)throws IOException {
         Syllabus editsyllabus = syllabusService.editSyllabus(syllabusDTO, true);
         return ResponseEntity.ok(editsyllabus);
     }
 
-
     @PutMapping("delete/{id}")
-    @Secured({MODIFY,CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id") long syllabusId){
+    @Operation(summary = "Delete syllabus by syllabusId")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id")@Parameter(description = "Syllabus id") long syllabusId) {
         return ResponseEntity.ok(syllabusService.deleteSyllabus(syllabusId, true));
     }
 
@@ -88,6 +103,7 @@ public class SyllabusController {
     })
     @Operation(summary = "Get all Syllabus by given Training Program ID")
     @GetMapping("/list-by-training-program/{id}")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> listSyllabusByTrainingProgramId(@Parameter(description = "Training Class's ID that want to get Syllabus")
                                                              @PathVariable("id") Long id) {
         List<SyllabusDTO> list = syllabusService.listByTrainingProgramIdTrue(id);
@@ -103,6 +119,7 @@ public class SyllabusController {
             summary = "Get syllabus list",
             description = "<b>List of syllabus according to search, sort, filter, and pages<b>"
     )
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getListSyllabus(
             @RequestParam(defaultValue = "")
             @Parameter(
@@ -123,9 +140,9 @@ public class SyllabusController {
             @RequestParam(defaultValue = "")
             @Parameter(
                     description = "<b>Search by syllabus name, code, creator's name, or output standard<b>",
-                    example = "C#"
+                    example = ""
             )
-            String search,
+            List<String> search,
 
             @RequestParam(defaultValue = "0")
             @Parameter(
@@ -134,13 +151,55 @@ public class SyllabusController {
             )
             Optional<Integer> page,
 
-            @RequestParam(defaultValue = "dateCreated,asc")
+            @RequestParam(defaultValue = "10")
             @Parameter(
-                    description = "<b>Sort by attribute descending/ascending (dateCreated,asc => sort by dateCreated ascending)<b>",
-                    example = "dateCreated,asc"
+                    description = "<b>Insert number of rows (10 => 10 rows per page)<b>",
+                    example = "10"
+            ) Optional<Integer> row,
+
+            @RequestParam(defaultValue = "name,asc")
+            @Parameter(
+                    description = "<b>Sort by attribute descending/ascending"
+                            + "<li>dateCreated,asc => sort by dateCreated ascending</li>"
+                            + "<li>creator,desc => sort by creator's name descending</li></u><b>",
+                    example = "name,asc"
             )
             String[] sort) {
         return ResponseEntity
-                .ok(syllabusService.getListSyllabus(true,  fromDate, toDate, search, sort, page));
+                .ok(syllabusService.getListSyllabus(true,  fromDate, toDate, search, sort, page, row));
+    }
+
+
+    @PostMapping(path = "read-file",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Read file")
+    @Secured({CREATE, FULL_ACCESS})
+    public ResponseEntity readSyllabusCsv(@RequestPart("file")MultipartFile file,
+                                                       @Parameter(description = """
+                                                               1. Name
+                                                               2. Code
+                                                               3. Name and Code""") int condition,
+                                                       @Parameter(description = """
+                                                               1. Allow
+                                                               2. Replace
+                                                               3. Skip""") int handle) throws IOException {
+
+        if(CSVUtils.hasCSVFormat(file)){
+            return ResponseEntity.ok(syllabusService.readFileCsv(file, condition, handle));
+        }
+        return ResponseEntity.badRequest().body("Please upload a csv file");
+    }
+
+    @GetMapping("get-template-file")
+    @Operation(summary = "Download file")
+    @Secured({CREATE, FULL_ACCESS})
+    public ResponseEntity<byte[]> getTemplateFile() throws IOException {
+
+        String filename = "Syllabus_import.csv";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/csv"))
+                .body(syllabusService.getTemplateCsvFile());
     }
 }

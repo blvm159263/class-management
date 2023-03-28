@@ -14,7 +14,9 @@ public interface SyllabusMapper {
     SyllabusMapper INSTANCE = Mappers.getMapper(SyllabusMapper.class);
 
     @Mapping(target = "lastModifierId", source = "lastModifier.id")
+    @Mapping(target = "lastModifierName", source = "lastModifier.fullName")
     @Mapping(target = "creatorId", source = "creator.id")
+    @Mapping(target = "creatorName", source = "creator.fullName")
     SyllabusDTO toDTO(Syllabus syllabus);
 
     @Mapping(target = "lastModifier", source = "lastModifierId", qualifiedByName="mapLastModifier")

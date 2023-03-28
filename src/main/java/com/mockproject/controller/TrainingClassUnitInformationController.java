@@ -1,3 +1,4 @@
+
 package com.mockproject.controller;
 
 import com.mockproject.dto.TrainingClassUnitInformationDTO;
@@ -9,8 +10,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +26,13 @@ import java.util.List;
 @Tag(name = "Training Class Unit Information API")
 @RequestMapping("api/training-class-unit-information")
 @SecurityRequirement(name = "Authorization")
+@Slf4j
 public class TrainingClassUnitInformationController {
+
+    public static final String VIEW = "ROLE_View_Class";
+    public static final String MODIFY = "ROLE_Modify_Class";
+    public static final String CREATE = "ROLE_Create_Class";
+    public static final String FULL_ACCESS = "ROLE_Full access_Class";
 
     private final ITrainingClassUnitInformationService service;
 
@@ -33,8 +42,9 @@ public class TrainingClassUnitInformationController {
     })
     @Operation(summary = "Save list of Unit Information when creating Class")
 
-    @PostMapping("list")
-    public ResponseEntity<?> createListOfInformation(@Valid @RequestBody List<TrainingClassUnitInformationDTO> listDto){
+    @PostMapping("/list")
+    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    public ResponseEntity<?> createListOfInformation(@Valid @RequestBody List<TrainingClassUnitInformationDTO> listDto) {
         if(service.saveList(listDto)){
             return new ResponseEntity<>("List of Unit Information have been save!", HttpStatus.CREATED);
         }else{

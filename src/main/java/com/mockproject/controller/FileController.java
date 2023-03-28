@@ -15,6 +15,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,16 +31,23 @@ import java.nio.file.Paths;
 @SecurityRequirement(name = "Authorization")
 public class FileController {
 
+    public static final String VIEW = "ROLE_View_Class";
+    public static final String MODIFY = "ROLE_Modify_Class";
+    public static final String CREATE = "ROLE_Create_Class";
+    public static final String FULL_ACCESS = "ROLE_Full access_Class";
+
     private final IFileService service;
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "When read successful and return object",
                     content = @Content(schema = @Schema(implementation = FileClassResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "When can't read the file - Check file  data!"),
+            @ApiResponse(responseCode = "400", description = "When can't read the file - Check file  data! or Date not match with format"),
+            @ApiResponse(responseCode = "404", description = "When data of entity can not be found - not exist!"),
             @ApiResponse(responseCode = "415", description = "When file doesn't match format - Required .csv file")
     })
     @Operation(summary = "Read create-class-format.csv then return FileResponse Object")
     @PostMapping("")
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity<?> readFile(@RequestParam("file") MultipartFile file) throws IOException {
         String fileName = file.getOriginalFilename();
         String fileFormat = fileName.split(".")[1];
@@ -51,6 +59,7 @@ public class FileController {
 
     @Operation(summary = "A API like a link when access will download Create class Format File")
     @GetMapping("/download/class-format")
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity<?> downClassFormatFile() throws IOException {
         Path path = Paths.get("file-format", "create-class-format.csv");
         byte[] buffer = Files.readAllBytes(path);

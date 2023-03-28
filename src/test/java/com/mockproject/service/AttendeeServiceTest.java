@@ -3,6 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.AttendeeDTO;
 import com.mockproject.entity.Attendee;
 import com.mockproject.repository.AttendeeRepository;
+import com.mockproject.repository.TrainingClassRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,12 @@ import static org.mockito.Mockito.*;
 class AttendeeServiceTest {
     @MockBean
     private AttendeeRepository attendeeRepository;
+    @MockBean
+    private TrainingClassRepository trainingClassRepository;
 
     @Autowired
     private AttendeeService attendeeService;
+
 
 
     Attendee a1 = new Attendee(1L, "Name 1", "Des 1" , true, null , null);

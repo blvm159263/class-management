@@ -14,6 +14,7 @@ public interface SessionMapper {
     SessionMapper INSTANCE = Mappers.getMapper(SessionMapper.class);
 
     @Mapping(target = "syllabusId", source = "syllabus.id")
+    @Mapping(target = "syllabusName", source = "syllabus.name")
     SessionDTO toDTO(Session session);
 
     @Mapping(target = "syllabus", source = "syllabusId", qualifiedByName="mapSyllabus" )

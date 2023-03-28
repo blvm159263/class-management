@@ -10,5 +10,4 @@ class MockProjectApplicationTests {
 	void contextLoads() {
 
 	}
-
 }

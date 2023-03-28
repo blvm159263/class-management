@@ -15,5 +15,7 @@ public class TrainingProgramSyllabusDTO implements Serializable {
     private Long id;
     private boolean status;
     private Long syllabusId;
+    private String syllabusName;
     private Long trainingProgramId;
+    private String trainingProgramName;
 }

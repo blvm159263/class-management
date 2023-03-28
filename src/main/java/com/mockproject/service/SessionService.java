@@ -11,7 +11,6 @@ import com.mockproject.service.interfaces.ISessionService;
 import com.mockproject.service.interfaces.IUnitService;
 import com.mockproject.utils.ListUtils;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class SessionService implements ISessionService {
 
     private final SessionRepository sessionRepository;
@@ -36,7 +34,7 @@ public class SessionService implements ISessionService {
     private final UnitRepository unitRepository;
 
     @Autowired
-    public SessionService(SessionRepository sessionRepository, UnitService unitService, SyllabusRepository syllabusRepository, UnitRepository unitRepository) {
+    public SessionService(SessionRepository sessionRepository, IUnitService unitService, SyllabusRepository syllabusRepository, UnitRepository unitRepository) {
         this.sessionRepository = sessionRepository;
         this.unitService = unitService;
         this.syllabusRepository = syllabusRepository;
@@ -44,7 +42,12 @@ public class SessionService implements ISessionService {
     }
 
     @Override
-    public List<SessionDTO> getAllSessionBySyllabusId(long syllabusId, boolean status) {
+    public List<SessionDTO> getSessionListBySyllabusId(Long idSyllabus) {
+        return sessionRepository.getSessionListBySyllabusId(idSyllabus).stream().map(SessionMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SessionDTO> getAllSessionBySyllabusId(Long syllabusId, boolean status) {
         Optional<List<Session>> listSession = sessionRepository.findBySyllabusIdAndStatus(syllabusId, status);
         ListUtils.checkList(listSession);
         List<SessionDTO> sessionDTOList = new ArrayList<>();
@@ -59,7 +62,7 @@ public class SessionService implements ISessionService {
     }
 
     @Override
-    public boolean createSession(long syllabusId, List<SessionDTO> listSession, User user){
+    public boolean createSession(Long syllabusId, List<SessionDTO> listSession, User user){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true,true);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         syllabus.get().setDay(listSession.size());
@@ -72,7 +75,7 @@ public class SessionService implements ISessionService {
     }
 
     @Override
-    public boolean createSession(long syllabusId, SessionDTO sessionDTO, User user){
+    public boolean createSession(Long syllabusId, SessionDTO sessionDTO, User user){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true,true);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
 
@@ -120,27 +123,21 @@ public class SessionService implements ISessionService {
     }
 
     @Override
-    public boolean deleteSession(long sessionId, boolean status){
+    public boolean deleteSession(Long sessionId, boolean status){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, status);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         session.get().setStatus(false);
-        System.out.println("Sessioln: "+sessionId);
         unitService.deleteUnits(sessionId, status);
         sessionRepository.save(session.get());
         return true;
     }
 
     @Override
-    public boolean deleteSessions(long syllabusId, boolean status){
+    public boolean deleteSessions(Long syllabusId, boolean status){
         Optional<List<Session>> sessions = sessionRepository.findBySyllabusIdAndStatus(syllabusId, status);
         ListUtils.checkList(sessions);
         sessions.get().forEach((i) -> deleteSession(i.getId(), status));
         return true;
-    }
-
-    @Override
-    public List<Session> getSessionListBySyllabusId(long idSyllabus){
-        return sessionRepository.getSessionListBySyllabusId(idSyllabus);
     }
 
     @Override

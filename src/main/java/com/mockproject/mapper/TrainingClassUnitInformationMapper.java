@@ -14,9 +14,13 @@ public interface TrainingClassUnitInformationMapper {
 
 
     @Mapping(target = "unitId", source = "unit.id")
+    @Mapping(target = "unitTitle", source = "unit.unitTitle")
     @Mapping(target = "trainingClassId", source = "trainingClass.id")
+    @Mapping(target = "trainingClassName", source = "trainingClass.className")
     @Mapping(target = "trainerId", source = "trainer.id")
+    @Mapping(target = "trainerName", source = "trainer.fullName")
     @Mapping(target = "towerId", source = "tower.id")
+    @Mapping(target = "towerName", source = "tower.towerName")
     TrainingClassUnitInformationDTO toDTO(TrainingClassUnitInformation trainingClassUnitInformation);
 
     @Mapping(target = "unit", source = "unitId", qualifiedByName = "mapUnit")

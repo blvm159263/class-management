@@ -3,6 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.ContactDTO;
 import com.mockproject.entity.Contact;
 import com.mockproject.repository.ContactRepository;
+import com.mockproject.repository.TrainingClassRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ import static org.mockito.Mockito.when;
 class ContactServiceTest {
     @MockBean
     private ContactRepository contactRepository;
+    @MockBean
+    private TrainingClassRepository trainingClassRepository;
+
 
     @Autowired
     private ContactService contactService;

@@ -1,10 +1,8 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.UnitDetailDTO;
-import com.mockproject.entity.DeliveryType;
-import com.mockproject.entity.OutputStandard;
-import com.mockproject.entity.Unit;
-import com.mockproject.entity.UnitDetail;
+import com.mockproject.entity.*;
+import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
@@ -18,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -26,15 +25,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 class UnitDetailServiceTest {
 
-
     @MockBean
     private UnitDetailRepository unitDetailRepository;
+
     @MockBean
     private UnitRepository unitRepository;
+
     @MockBean
     private ITrainingMaterialService trainingMaterialService;
-
-
 
     @Autowired
     private UnitDetailService unitDetailService;
@@ -78,5 +76,84 @@ class UnitDetailServiceTest {
 
         verify(unitDetailRepository).findByUnitAndStatus((Unit) any(), anyBoolean());
     }
+
+    @Test
+    void getAllUnitDetailByUnitID(){
+        List<UnitDetail> list = new ArrayList<>();
+        list.add(unitDetail1);
+        list.add(unitDetail2);
+        list.add(unitDetail3);
+
+        when(unitDetailRepository.findByUnitIdAndStatus(unit1.getId(), true)).thenReturn(Optional.of(list));
+
+        List<UnitDetailDTO> result = unitDetailService.getAllUnitDetailByUnitId(unit1.getId(), true);
+
+        assertEquals(3, result.size());
+
+        verify(unitDetailRepository,times(1)).findByUnitIdAndStatus(unit1.getId(), true);
+    }
+
+    @Test
+    void createUnitDetailTest(){
+        List<UnitDetailDTO> list = new ArrayList<>();
+        list.add(UnitDetailMapper.INSTANCE.toDTO(unitDetail1));
+        list.add(UnitDetailMapper.INSTANCE.toDTO(unitDetail2));
+        list.add(UnitDetailMapper.INSTANCE.toDTO(unitDetail3));
+
+        when(unitRepository.findByIdAndStatus(unit1.getId(), true)).thenReturn(Optional.ofNullable(unit1));
+        when(unitDetailRepository.save((any()))).thenReturn(unitDetail1);
+        when(unitRepository.save(unit1)).thenReturn(unit1);
+
+        boolean result = unitDetailService.createUnitDetail(unit1.getId(), list, new User());
+
+        assertEquals(true, result);
+
+        verify(unitDetailRepository,times(3)).save(any());
+    }
+
+    @Test
+    void getUnitDetailByIdTest(){
+
+        when(unitDetailRepository.findByIdAndStatus(unitDetail1.getId(), true)).thenReturn(Optional.ofNullable(unitDetail1));
+
+        UnitDetail result = unitDetailService.getUnitDetailById(unitDetail1.getId(), true);
+
+        assertEquals("Unit Detail 1", result.getTitle());
+
+        verify(unitDetailRepository,times(1)).findByIdAndStatus(unitDetail1.getId(), true);
+    }
+
+    @Test
+    void deleteUnitDetailTest(){
+        List<UnitDetail> list = new ArrayList<>();
+        list.add((unitDetail1));
+        list.add((unitDetail2));
+        list.add((unitDetail3));
+
+        when(unitDetailRepository.findByUnitIdAndStatus(unit1.getId(), true)).thenReturn(Optional.of(list));
+        when(unitDetailRepository.findByIdAndStatus(any(), eq(true))).thenReturn(Optional.ofNullable(unitDetail1));
+        when(unitDetailRepository.save(any())).thenReturn(unitDetail1);
+
+        boolean result = unitDetailService.deleteUnitDetails(unit1.getId(), true);
+
+        assertEquals(true, result);
+
+        verify(unitDetailRepository,times(3)).save(any());
+    }
+
+    @Test
+    void toggleUnitDetailTypeTest(){
+
+        when(unitDetailRepository.findByIdAndStatus(unitDetail1.getId(), true)).thenReturn(Optional.ofNullable(unitDetail1));
+        when(unitDetailRepository.save(any())).thenReturn(unitDetail1);
+
+        boolean result = unitDetailService.toggleUnitDetailType(unitDetail1.getId(), true);
+
+        assertEquals(true, result);
+
+        verify(unitDetailRepository,times(1)).save(any());
+    }
+
+
 }
 

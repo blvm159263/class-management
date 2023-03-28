@@ -1,24 +1,29 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.*;
-import com.mockproject.entity.*;
-import com.mockproject.mapper.*;
-import com.mockproject.repository.*;
+import com.mockproject.dto.TrainingClassDTO;
+import com.mockproject.entity.TrainingClass;
+import com.mockproject.mapper.TrainingClassMapper;
+import com.mockproject.repository.LocationRepository;
+import com.mockproject.repository.TrainingClassRepository;
+import com.mockproject.repository.TrainingClassUnitInformationRepository;
+import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.service.interfaces.ITrainingClassService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import java.lang.reflect.Field;
+import java.security.InvalidParameterException;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.HashMap;
-import java.util.Map;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,8 +34,11 @@ import java.util.stream.Collectors;
 public class TrainingClassService implements ITrainingClassService {
 
     private final TrainingClassRepository classRepo;
+
     private final LocationRepository locationRepository;
+
     private final TrainingProgramRepository trainingProgramRepository;
+
     private final TrainingClassUnitInformationRepository classUnitRepo;
 
     @Override
@@ -40,21 +48,21 @@ public class TrainingClassService implements ITrainingClassService {
 
     @Override
     public List<TrainingClass> findAllBySpecification(Specification specification) {
-        return classRepo.findAll((Sort) specification);
+        return classRepo.findAll(specification);
     }
 
     @Override
-    public List<TrainingClass> findAllBySearchTextAndDate(List<String> searchText, LocalDate date) {
+    public List<TrainingClass> findAllBySearchTextAndDate(String searchText, LocalDate date) {
         return classRepo.findAllBySearchTextAndListClassSchedulesDate(searchText,date);
     }
 
     @Override
-    public List<TrainingClass> findAllBySearchTextAndWeek(List<String> searchText, LocalDate startDate, LocalDate endDate) {
+    public List<TrainingClass> findAllBySearchTextAndWeek(String searchText, LocalDate startDate, LocalDate endDate) {
         return classRepo.findAllBySearchTextAndListClassSchedulesWeek(searchText,startDate,endDate);
     }
 
     @Override
-    public TrainingClassDTO getAllDetails(long id) {
+    public TrainingClassDTO getAllDetails(Long id) {
         TrainingClass details = classRepo.findByIdAndStatus(id, true).orElseThrow();
         return TrainingClassMapper.INSTANCE.toDTO(details);
     }
@@ -118,17 +126,32 @@ public class TrainingClassService implements ITrainingClassService {
     @Override
     public Page<TrainingClassDTO> getListClass(boolean status,
                                                List<Long> locationId, LocalDate fromDate, LocalDate toDate,
-                                               List<Integer> period, String isOnline, String state, List<Long> attendeeId,
-                                               long fsu, long trainerId, String search, String[] sort, Optional<Integer> page)
+                                               List<Integer> period, String isOnline, List<String> state, List<Long> attendeeId,
+                                               Long fsu, Long trainerId,  List<String> search, String[] sort, Optional<Integer> page, Optional<Integer> row)
     {
         List<Sort.Order> order = new ArrayList<>();
+        if(row.orElse(10) < 1)  throw new InvalidParameterException("Page size must not be less than one!");
+        if(page.orElse(0) < 0)  throw new InvalidParameterException("Page number must not be less than zero!");
+        int skipCount = page.orElse(0) * row.orElse(10);
+        Set<String> sourceFieldList = getAllFields(new TrainingClass().getClass());
         if(sort[0].contains(",")){
             for (String sortItem: sort) {
                 String[] subSort = sortItem.split(",");
-                order.add(new Sort.Order(getSortDirection(subSort[1]),subSort[0]));
+                if(ifPropertpresent(sourceFieldList, sort[0])) {
+                    order.add(new Sort.Order(getSortDirection(subSort[1]), transferProperty(subSort[0])));
+                } else {
+                    throw new NotFoundException(subSort[0] + " is not a propertied of Training CLass!");
+                }
             }
-        }else{
-            order.add(new Sort.Order(getSortDirection(sort[1]),sort[0]));
+        } else {
+            if(sort.length == 1){
+                throw new ArrayIndexOutOfBoundsException("Sort direction(asc/desc) not found!");
+            }
+            if(ifPropertpresent(sourceFieldList, sort[0])) {
+                order.add(new Sort.Order(getSortDirection(sort[1]), transferProperty(sort[0])));
+            } else {
+                throw new NotFoundException(sort[0] + " is not a propertied of Training CLass!");
+            }
         }
         List<Long> classId = new ArrayList<>();
         if(trainerId!=0){
@@ -138,17 +161,61 @@ public class TrainingClassService implements ITrainingClassService {
                     .collect(Collectors.toList());
             classId.add(-1L);
         }
-        Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
-        Page<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
-                isOnline, state, attendeeId, fsu, classId, search, pageable);
-        if(pages.getContent().size() > 0){
+        List<TrainingClass> pages = classRepo.getListClass(status, locationId, fromDate, toDate, period,
+                isOnline, state, attendeeId, fsu, classId, search.size() > 0 ? search.get(0) : "", Sort.by(order));
+        if (search.size() > 1){
+            for (int i = 1; i < search.size(); i++) {
+                String subSearch = search.get(i).toUpperCase();
+                pages = pages.stream().filter(c
+                                -> c.getClassName().toUpperCase().contains(subSearch) ||
+                                c.getClassCode().toUpperCase().contains(subSearch) ||
+                                c.getCreator().getFullName().toUpperCase().contains(subSearch))
+                        .collect(Collectors.toList());
+            }
+        }
+        if(pages.size() > 0){
             return new PageImpl<>(
-                    pages.stream().map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                    pages.getPageable(),
-                    pages.getTotalElements());
+                    pages.stream().skip(skipCount).limit(row.orElse(10)).map(TrainingClassMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    PageRequest.of(page.orElse(0), row.orElse(10), Sort.by(order)),
+                    pages.size());
         }else {
             throw new NotFoundException("Training Class not found!");
         }
+    }
+
+    private static String transferProperty(String property){
+        switch (property) {
+            case "creator":
+                return "creator.fullName";
+            case "attendee":
+                return "attendee.attendeeName";
+            case "location":
+                return "location.locationName";
+            case "fsu":
+                return "fsu.fsuName";
+            default:
+                return property;
+        }
+    }
+
+    private static Set<String> getAllFields(final Class<?> type) {
+        Set<String> fields = new HashSet<>();
+        //loop the fields using Java Reflections
+        for (Field field : type.getDeclaredFields()) {
+            fields.add(field.getName());
+        }
+        //recursive call to getAllFields
+        if (type.getSuperclass() != null) {
+            fields.addAll(getAllFields(type.getSuperclass()));
+        }
+        return fields;
+    }
+
+    private static boolean ifPropertpresent(final Set<String> properties, final String propertyName) {
+        if (properties.contains(propertyName)) {
+            return true;
+        }
+        return false;
     }
 
     public Sort.Direction getSortDirection(String direction) {

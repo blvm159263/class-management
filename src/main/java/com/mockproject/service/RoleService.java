@@ -21,7 +21,7 @@ public class RoleService implements IRoleService {
     private final RoleRepository repository;
 
     @Override
-    public RoleDTO getRoleById(long id){
+    public RoleDTO getRoleById(Long id){
         Optional<Role> role = repository.getRoleById(id);
         if (role.isPresent()){
             return RoleMapper.INSTANCE.toDTO(role.get());
@@ -30,10 +30,10 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    public Long getRoleByRoleName(String roleName) {
+    public RoleDTO getRoleByRoleName(String roleName) {
         Optional<Role> role = repository.getRoleByRoleName(roleName);
         if (role.isPresent()){
-            return repository.getRoleByRoleName(roleName).get().getId();
+            return RoleMapper.INSTANCE.toDTO(repository.getRoleByRoleName(roleName).get());
         }
         else return null;
     }
@@ -54,12 +54,11 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    public Boolean checkDuplicatedByRoleName(String name) {
-        System.out.println(repository.findAllByRoleName(name).size() + "===================================================================");
-        if (repository.findAllByRoleName(name).size() > 1){
+    public Boolean checkDuplicatedByRoleIdAndRoleName(Long id, String name) {
+        List<Role> role = repository.getRoleByIdIsNotAndRoleName(id, name);
+        if (!role.isEmpty()){
             return true;
-        } else
-        return false;
+        } else return false;
     }
 
 }

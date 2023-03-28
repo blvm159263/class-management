@@ -5,33 +5,35 @@ import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.OutputStandardRepository;
-import com.mockproject.dto.SyllabusDTO;
-import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.TrainingProgram;
-import com.mockproject.entity.TrainingProgramSyllabus;
-import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.SyllabusRepository;
-import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.repository.TrainingProgramSyllabusRepository;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.service.interfaces.ISessionService;
 import com.mockproject.service.interfaces.ISyllabusService;
-import com.mockproject.utils.ListUtils;
+import com.mockproject.utils.FileUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.security.InvalidParameterException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,15 +41,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SyllabusService implements ISyllabusService {
 
+    private final SyllabusRepository syllabusRepo;
+
+    private final OutputStandardRepository outputStandardRepo;
+
+    private final UnitDetailRepository unitDetailRepo;
+
     private final SyllabusRepository syllabusRepository;
 
     private final ISessionService sessionService;
 
     private final TrainingProgramSyllabusRepository trainingProgramSyllabusRepository;
 
-    private final UnitDetailRepository detailRepository;
-
-    private final OutputStandardRepository outputStandardRepository;
+    private static final String TEMPLATE_FILE_PATH = "file-format\\syllabus-template.csv";
 
     @Override
     public List<SyllabusDTO> listByTrainingProgramIdTrue(Long trainingProgramId) {
@@ -55,61 +61,117 @@ public class SyllabusService implements ISyllabusService {
         tp.setId(trainingProgramId);
         List<TrainingProgramSyllabus> listTPS = trainingProgramSyllabusRepository.findByTrainingProgramAndStatus(tp, true);
         List<Syllabus> listSyllabus = new ArrayList<>();
-//        listTPS.forEach(p -> listSyllabus.add(syllabusRepository.findById(p.getSyllabus())));
-//        if(listTPS.isEmpty()){
-//            return null;
-//        }
+
         listTPS.forEach(p -> listSyllabus.add(p.getSyllabus()));
         return listSyllabus.stream().map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
-    // List syllabus for user
-    @Override
-    public List<SyllabusDTO> getAll(boolean state, boolean status){
-        Optional<List<Syllabus>> syllabusList = syllabusRepository.findByStateAndStatus(state, status);
-        ListUtils.checkList(syllabusList);
 
-        List<SyllabusDTO> syllabusDTOList = new ArrayList<>();
-        for (Syllabus s : syllabusList.get()){
-            syllabusDTOList.add(SyllabusMapper.INSTANCE.toDTO(s));
-        }
-        return syllabusDTOList;
-    }
-
-    // List syllabus for admin
     @Override
     public Page<SyllabusDTO> getListSyllabus(boolean status, LocalDate fromDate, LocalDate toDate,
-                                             String search, String[] sort, Optional<Integer> page) {
+                                             List<String> search, String[] sort, Optional<Integer> page, Optional<Integer> row) {
         List<Sort.Order> order = new ArrayList<>();
+        if(row.orElse(10) < 1)  throw new InvalidParameterException("Page size must not be less than one!");
+        if(page.orElse(0) < 0)  throw new InvalidParameterException("Page number must not be less than zero!");
+        int skipCount = page.orElse(0) * row.orElse(10);
+        Set<String> sourceFieldList = getAllFields(new Syllabus().getClass());
         if(sort[0].contains(",")){
             for (String sortItem: sort) {
                 String[] subSort = sortItem.split(",");
-                order.add(new Sort.Order(getSortDirection(subSort[1]),subSort[0]));
+                if(ifPropertpresent(sourceFieldList, subSort[0])){
+                    order.add(new Sort.Order(getSortDirection(subSort[1]), transferProperty(subSort[0])));
+                } else {
+                    throw new NotFoundException(subSort[0] + " is not a propertied of Syllabus!");
+                }
             }
-        }else {
-            order.add(new Sort.Order(getSortDirection(sort[1]),sort[0]));
+        } else {
+            if(sort.length == 1){
+                throw new ArrayIndexOutOfBoundsException("Sort direction(asc/desc) not found!");
+            }
+            if(ifPropertpresent(sourceFieldList, sort[0])){
+                order.add(new Sort.Order(getSortDirection(sort[1]), transferProperty(sort[0])));
+            } else {
+                throw new NotFoundException(sort[0] + " is not a propertied of Syllabus!");
+            }
         }
-        Pageable pageable = PageRequest.of(page.orElse(0), 10, Sort.by(order));
-        Page<Syllabus> pages = syllabusRepository.getListSyllabus(status, fromDate, toDate, search, getListSyllabusIdByOSD(search), pageable);
-        if(pages.getContent().size() > 0){
+        List<Syllabus> pages = syllabusRepo.getListSyllabus(status, fromDate, toDate, search.size() > 0 ? search.get(0) : "", getListSyllabusIdByOSD(search.size() > 0 ? search.get(0) : ""), Sort.by(order));
+        if (search.size() > 1){
+            for (int i = 1; i < search.size(); i++) {
+                String subSearch = search.get(i).toUpperCase();
+                pages = pages.stream().filter(s
+                        -> s.getName().toUpperCase().contains(subSearch) ||
+                                s.getCode().toUpperCase().contains(subSearch) ||
+                                s.getCreator().getFullName().toUpperCase().contains(subSearch) ||
+                                checkOsdBelongSyllabus(s.getId(), subSearch))
+                        .collect(Collectors.toList());
+            }
+        }
+        if(pages.size() > 0){
             return new PageImpl<>(
-                    pages.stream().map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
-                    pages.getPageable(),
-                    pages.getTotalElements());
+                    pages.stream().skip(skipCount).limit(row.orElse(10)).map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    PageRequest.of(page.orElse(0), row.orElse(10), Sort.by(order)),
+                    pages.size());
         } else {
             throw new NotFoundException("Syllabus not found!");
         }
     }
 
-    @Override
-    public List<SyllabusDTO> getSyllabusList(boolean status){
-        Optional<List<Syllabus>> syllabusList = syllabusRepository.findAllByStatus(status);
-        ListUtils.checkList(syllabusList);
-        List<SyllabusDTO> syllabusDTOList = new ArrayList<>();
-
-        for (Syllabus s: syllabusList.get()) {
-            syllabusDTOList.add(SyllabusMapper.INSTANCE.toDTO(s));
+    private static String transferProperty(String property){
+        switch (property) {
+            case "creator":
+                return "creator.fullName";
+            default:
+                return property;
         }
-        return syllabusDTOList;
+    }
+
+    private boolean checkOsdBelongSyllabus(long syllabusId, String search) {
+        if (getListSyllabusIdByOSD(search).contains(syllabusId)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public List<Syllabus> getAllSyllabusEntityById(List<Long> sId) {
+        List<Syllabus> syllabus = syllabusRepository.getAllSyllabusByIdInAndStatus(sId,true);
+        return syllabus;
+    }
+
+    @Override
+    public SyllabusDTO getSyllabusById(Long id){
+        Syllabus syllabus = syllabusRepository.getSyllabusById(id);
+        return SyllabusMapper.INSTANCE.toDTO(syllabus);
+    }
+
+//    @Autowired
+//    private final SyllabusRepository repository;
+//    public Syllabus getSyllabusById(Long id){
+//         Optional<Syllabus> syllabusOptional = repository.findById(id);
+//         if(syllabusOptional.isPresent()){
+//             return syllabusOptional.get();
+//         }else {
+//             return new Syllabus();
+//         }
+//    }
+
+    private static boolean ifPropertpresent(final Set<String> properties, final String propertyName) {
+        if (properties.contains(propertyName)) {
+            return true;
+        }
+        return false;
+    }
+
+    private static Set<String> getAllFields(final Class<?> type) {
+        Set<String> fields = new HashSet<>();
+        //loop the fields using Java Reflections
+        for (Field field : type.getDeclaredFields()) {
+            fields.add(field.getName());
+        }
+        //recursive call to getAllFields
+        if (type.getSuperclass() != null) {
+            fields.addAll(getAllFields(type.getSuperclass()));
+        }
+        return fields;
     }
 
     public Sort.Direction getSortDirection(String direction) {
@@ -123,13 +185,26 @@ public class SyllabusService implements ISyllabusService {
 
     @Override
     public List<Long> getListSyllabusIdByOSD(String osd) {
-        List<UnitDetail> detailList = detailRepository.findByStatusAndOutputStandardIn(true, outputStandardRepository.findByStatusAndStandardCodeContainingIgnoreCase(true, osd));
+        List<UnitDetail> detailList = unitDetailRepo.findByStatusAndOutputStandardIn(true, outputStandardRepo.findByStatusAndStandardCodeContainingIgnoreCase(true, osd));
         return detailList.stream().map(ob
                 -> ob.getUnit().getSession().getSyllabus().getId()).collect(Collectors.toList());
     }
 
     @Override
-    public long create(SyllabusDTO syllabus, User user){
+    public boolean replace(SyllabusDTO syllabusDTO, boolean status){
+        sessionService.deleteSessions(syllabusDTO.getId(), true);
+
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabusDTO));
+
+        sessionService.createSession(syllabusDTO.getId(), syllabusDTO.getSessionDTOList(), user.getUser());
+
+        return true;
+    }
+
+    @Override
+    public Long create(SyllabusDTO syllabus, User user){
         syllabus.setCreatorId(user.getId());
         syllabus.setLastModifierId(user.getId());
         syllabus.setDateCreated(java.time.LocalDate.now());
@@ -174,7 +249,7 @@ public class SyllabusService implements ISyllabusService {
     }
 
     @Override
-    public boolean deleteSyllabus(long syllabusId, boolean status){
+    public boolean deleteSyllabus(Long syllabusId, boolean status){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusId, status);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         syllabus.get().setStatus(false);
@@ -184,17 +259,167 @@ public class SyllabusService implements ISyllabusService {
     }
 
     @Override
-    public Syllabus getSyllabusById(long id){
-        return syllabusRepository.getSyllabusById(id);
+    public SyllabusDTO readFileCsv(MultipartFile file, int condition, int handle) throws IOException {
+
+        final String[] HEADERS = {"Syllabus Name","Syllabus Code","Syllabus Version","Syllabus Level","Attendee Amount","Technical Requirements","Course Objectives","Quiz","Assignment","Final","Final Theory","Final Practice","GPA","Training Description","Retest Description","Marking Description","Waiver Criteria Description","Other Description","State","Status"};
+        CSVParser parser = CSVParser.parse(file.getInputStream(), Charset.defaultCharset(), CSVFormat.DEFAULT.builder().setHeader(HEADERS).setSkipHeaderRecord(true).build());
+        List<CSVRecord> records = parser.getRecords();
+
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        SyllabusDTO syllabusDTO = new SyllabusDTO();
+        for(CSVRecord record: records) {
+            String name = record.get(0);
+            if(name.isBlank())
+              throw new NotFoundException("Name cannot empty");
+            String code = record.get(1);
+            if(code.isBlank())
+                throw new NotFoundException("Code cannot empty");
+            String version = record.get(2);
+            String level = record.get(3);
+            int attendee = Integer.parseInt(record.get(4));
+            String technicalRequirements = record.get(5);
+            String courseObjectives = record.get(6);
+            BigDecimal quiz = new BigDecimal(Double.parseDouble(record.get(7)));
+            BigDecimal assignment = new BigDecimal(Double.valueOf(record.get(8)));
+            BigDecimal finalExam = new BigDecimal(Double.valueOf(record.get(9)));
+            BigDecimal finalTheory = new BigDecimal(Double.valueOf(record.get(10)));
+            BigDecimal finalPractice = new BigDecimal(Double.valueOf(record.get(11)));
+            BigDecimal gpa = new BigDecimal(Double.parseDouble(record.get(12)));
+            String trainingDes = record.get(13);
+            String reTestDes = record.get(14);
+            String markingDes = record.get(15);
+            String waiverCriteriaDes = record.get(16);
+            String otherDes = record.get(17);
+            boolean status = true;
+            boolean state = true;
+            Syllabus syllabus = Syllabus.builder()
+                    .name(name)
+                    .code(code)
+                    .version(version)
+                    .level(level)
+                    .attendee(attendee)
+                    .technicalRequirements(technicalRequirements)
+                    .courseObjectives(courseObjectives)
+                    .dateCreated(java.time.LocalDate.now())
+                    .lastDateModified(java.time.LocalDate.now())
+                    .quiz(quiz)
+                    .assignment(assignment)
+                    .finalExam(finalExam)
+                    .finalTheory(finalTheory)
+                    .finalPractice(finalPractice)
+                    .gpa(gpa)
+                    .trainingDes(trainingDes)
+                    .reTestDes(reTestDes)
+                    .markingDes(markingDes)
+                    .waiverCriteriaDes(waiverCriteriaDes)
+                    .otherDes(otherDes)
+                    .state(state)
+                    .status(status)
+                    .creator(user.getUser())
+                    .lastModifier(user.getUser())
+                    .build();
+            syllabusDTO = SyllabusMapper.INSTANCE.toDTO(syllabus);
+        }
+
+        syllabusDTO.setHour(BigDecimal.valueOf(0));
+
+        // condition Name or code
+        // 1 Name
+        // 2 Code
+        // 3 Name and Code
+
+        // handle Allow, Replace or Skip
+        // 1 Allow
+        // 2 Replace
+        // 3 Skip
+        if(condition == 3){
+            if (handle == 1){
+                return syllabusDTO;
+            }
+            else if (handle == 2) {
+                Optional<List<Syllabus>> syllabusList = syllabusRepository.findByNameAndCodeAndStatus(syllabusDTO.getName(), syllabusDTO.getCode(),true);
+                if (syllabusList.isEmpty()){
+                    return syllabusDTO;
+                } else {
+                    Syllabus syllabus = syllabusList.get().get(syllabusList.get().size()-1);
+                    syllabusDTO.setId(syllabus.getId());
+                    return syllabusDTO;
+                }
+            }
+            else if (handle == 3){
+                Optional<List<Syllabus>> syllabusList = syllabusRepository.findByNameAndCodeAndStatus(syllabusDTO.getName(), syllabusDTO.getCode(),true);
+                if (syllabusList.isEmpty()){
+                    return syllabusDTO;
+                }
+                else {
+                    return new SyllabusDTO();
+                }
+            }
+        }
+        else if (condition == 1){
+            if(handle == 1) {
+                return syllabusDTO;
+            }
+            else if (handle == 2) {
+                Optional<List<Syllabus>> syllabusList = syllabusRepository.findByNameAndStatus(syllabusDTO.getName(), true);
+                if (syllabusList.isEmpty()){
+                    return syllabusDTO;
+                } else {
+                    Syllabus syllabus = syllabusList.get().get(syllabusList.get().size()-1);
+                    syllabusDTO.setId(syllabus.getId());
+                    return syllabusDTO;
+                }
+            }
+            else if (handle == 3){
+                Optional<List<Syllabus>> syllabusList = syllabusRepository.findByNameAndStatus(syllabusDTO.getName(), true);
+                if (syllabusList.isEmpty()){
+                    return syllabusDTO;
+                }
+                else {
+                    return new SyllabusDTO();
+                }
+            }
+        } else if (condition == 2){
+            if(handle == 1){
+                return syllabusDTO;
+            }
+            else if (handle == 2) {
+                Optional<List<Syllabus>> syllabusList = syllabusRepository.findByCodeAndStatus(syllabusDTO.getName(), true);
+                if (syllabusList.isEmpty()){
+                    return syllabusDTO;
+                } else {
+                    Syllabus syllabus = syllabusList.get().get(syllabusList.get().size()-1);
+                    syllabusDTO.setId(syllabus.getId());
+                    return syllabusDTO;
+                }
+            }
+            else if (handle == 3){
+                Optional<List<Syllabus>> syllabusList = syllabusRepository.findByCodeAndStatus(syllabusDTO.getName(), true);
+                if (syllabusList.isEmpty()){
+                    return syllabusDTO;
+                }
+                else {
+                    return new SyllabusDTO();
+                }
+            }
+        }
+        return syllabusDTO;
     }
 
     @Override
-    public SyllabusDTO getSyllabusById(long syllabusId,boolean state, boolean status){
+    public SyllabusDTO getSyllabusById(Long syllabusId,boolean state, boolean status){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, state, status);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         SyllabusDTO syllabusDTO = SyllabusMapper.INSTANCE.toDTO(syllabus.get());
         List<SessionDTO> sessionDTOList = sessionService.getAllSessionBySyllabusId(syllabusId, true);
         syllabusDTO.setSessionDTOList(sessionDTOList);
         return syllabusDTO;
+    }
+
+    public byte[] getTemplateCsvFile() throws IOException {
+        byte[] bytes = FileUtils.getFileBytes(TEMPLATE_FILE_PATH);
+
+        return bytes;
     }
 }
