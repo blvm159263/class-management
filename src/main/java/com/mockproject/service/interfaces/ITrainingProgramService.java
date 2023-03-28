@@ -27,4 +27,6 @@ public interface ITrainingProgramService {
     List<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList);
 
     void deactiveTrainingProgram(Long trainingProgramID);
+
+    void activeTrainingProgram(Long trainingProgramID);
 }

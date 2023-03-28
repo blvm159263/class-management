@@ -140,4 +140,10 @@ public class TrainingProgramController {
         return ResponseEntity.ok("De-active training program successfully.");
     }
 
+    @PutMapping("/active-training-program/{trainingProgramID}")
+    public ResponseEntity activeTraningProgramByID(@PathVariable Long trainingProgramID) {
+        trainingProgramService.activeTrainingProgram(trainingProgramID);
+        return ResponseEntity.ok("Active training program successfully.");
+    }
+
 }

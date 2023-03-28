@@ -114,6 +114,15 @@ public class TrainingProgramService implements ITrainingProgramService {
                 });
     }
 
+    @Override
+    public void activeTrainingProgram(Long trainingProgramID) {
+        trainingProgramRepository.findById(trainingProgramID)
+                .map(trainingProgram -> {
+                    trainingProgram.setState(true);
+                    return trainingProgramRepository.save(trainingProgram);
+                });
+    }
+
     private List<TrainingProgram> doSearch(List<TrainingProgram> trainingPrograms, List<String> searchList) {
         List<TrainingProgram> result = trainingPrograms.stream()
                 .filter(trainingProgram1 -> trainingProgram1.getCreator() != null
