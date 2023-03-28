@@ -269,12 +269,6 @@ public class UserService implements IUserService {
                 // read the data rows and map them to Product objects
                 String[] rowData;
                 while ((rowData = reader.readNext()) != null) {
-                    System.out.println(rowData[0]);
-                    System.out.println(rowData[1]);
-                    System.out.println(rowData[2]);
-                    System.out.println(rowData[3]);
-                    System.out.println(rowData[4]);
-                    System.out.println(rowData[5]);
                     User user = new User();
                     user.setEmail(rowData[0]);
                     user.setPassword(passwordEncoder.encode("123456"));
