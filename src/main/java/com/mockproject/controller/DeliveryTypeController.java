@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,10 +30,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DeliveryTypeController {
 
+    public static final String VIEW = "ROLE_View_Syllabus";
+    public static final String MODIFY = "ROLE_Modify_Syllabus";
+    public static final String CREATE = "ROLE_Create_Syllabus";
+    public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
+
     private final IDeliveryTypeService deliveryTypeService;
 
     @GetMapping("")
     @Operation(summary = "Get all delivery type")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<List<DeliveryTypeDTO>> getAll(){
         List<DeliveryTypeDTO> deliveryTypeDTOList = deliveryTypeService.getDeliveryTypes(true);
         return ResponseEntity.ok(deliveryTypeDTOList);
@@ -40,6 +47,7 @@ public class DeliveryTypeController {
 
     @GetMapping("/{deliveryTypeId}")
     @Operation(summary = "get Delivery type by delivery type id")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<DeliveryTypeDTO> getDeliveryTypeById(@PathVariable("deliveryTypeId") long id){
         DeliveryTypeDTO deliveryTypeDTO = deliveryTypeService.getDeliveryType(id, true);
         return ResponseEntity.ok(deliveryTypeDTO);
@@ -52,6 +60,7 @@ public class DeliveryTypeController {
     })
     @Operation(summary = "Get Delivery Type by given ID")
     @GetMapping("{id}")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getById(@Parameter(description = "Delivery Type ID") @PathVariable("id") Long id) {
         DeliveryTypeDTO deliveryTypeDTO = deliveryTypeService.getByIdTrue(id);
         if (deliveryTypeDTO != null) {
@@ -67,6 +76,7 @@ public class DeliveryTypeController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = DeliveryTypeDTO.class)))
     })
     @GetMapping("/class-delivery-types")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getAllDeliveryTypes(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(deliveryTypeService.getAllDeliveryTypesByTrainingClassId(id));

@@ -38,13 +38,13 @@ public class TrainingClassController {
 
     private final ITrainingClassService trainingClassService;
 
-
     @Operation(summary = "Get all fields from TrainingClass entity by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TrainingClassDTO.class)))
     })
     @GetMapping("/{id}")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getAll(@PathVariable("id") Long id) {
         try {
             return ResponseEntity.ok(trainingClassService.getAllDetails(id));
@@ -59,6 +59,7 @@ public class TrainingClassController {
     })
     @Operation(summary = "Create new Training Class")
     @PostMapping("")
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity<?> create(@Valid @RequestBody TrainingClassDTO dto){
         Long id = trainingClassService.create(dto);
         if(id!=null){

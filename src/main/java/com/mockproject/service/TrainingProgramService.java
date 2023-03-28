@@ -105,6 +105,24 @@ public class TrainingProgramService implements ITrainingProgramService {
         return result.stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
+    @Override
+    public void deactiveTrainingProgram(Long trainingProgramID) {
+        trainingProgramRepository.findById(trainingProgramID)
+                .map(trainingProgram -> {
+                    trainingProgram.setState(false);
+                    return trainingProgramRepository.save(trainingProgram);
+                });
+    }
+
+    @Override
+    public void activeTrainingProgram(Long trainingProgramID) {
+        trainingProgramRepository.findById(trainingProgramID)
+                .map(trainingProgram -> {
+                    trainingProgram.setState(true);
+                    return trainingProgramRepository.save(trainingProgram);
+                });
+    }
+
     private List<TrainingProgram> doSearch(List<TrainingProgram> trainingPrograms, List<String> searchList) {
         List<TrainingProgram> result = trainingPrograms.stream()
                 .filter(trainingProgram1 -> trainingProgram1.getCreator() != null
@@ -133,7 +151,7 @@ public class TrainingProgramService implements ITrainingProgramService {
 
     @Override
     public TrainingProgramDTO getTrainingProgramById(Long id) {
-        return TrainingProgramMapper.INSTANCE.toDTO(trainingProgramRepository.getTrainingProgramById(id));
+        return TrainingProgramMapper.INSTANCE.toDTO(trainingProgramRepository.getTrainingProgramByIdAndStatus(id, true));
     }
 
     @Override
@@ -160,6 +178,7 @@ public class TrainingProgramService implements ITrainingProgramService {
                         .lastDateModified(nowDay)
                         .day(day)
                         .hour(hour)
+                        .state(true)
                         .status(true)
                         .programId(lastTrainingProgramId)
                         .creator(user)
@@ -198,6 +217,7 @@ public class TrainingProgramService implements ITrainingProgramService {
                         trainProgramInDatabase.setName(trainingProgram.getName());
                         trainProgramInDatabase.setDateCreated(trainingProgram.getDateCreated());
                         trainProgramInDatabase.setLastDateModified(trainingProgram.getLastDateModified());
+                        trainProgramInDatabase.setState(trainingProgram.isState());
                         trainProgramInDatabase.setStatus(trainingProgram.isStatus());
                         List<Long> syllabusIdList = trainingProgramHashMap.get(trainingProgram);
                         trainingProgramHashMap.remove(trainingProgram);
@@ -292,7 +312,7 @@ public class TrainingProgramService implements ITrainingProgramService {
                     throw new FileException(e.getMessage(), HttpStatus.BAD_REQUEST.value());
                 }
 
-                var trainingProgram = new TrainingProgram(null, programId, name, dateCreated, lastDateModified, null, 0, status, null, null, null, null);
+                var trainingProgram = new TrainingProgram(null, programId, name, dateCreated, lastDateModified, null, 0, true, status, null, null, null, null);
                 trainingProgramHashMap.put(trainingProgram, listTrainingProgramSyllabusesId);
             }
             save(null, trainingProgramHashMap, readFileDto);
