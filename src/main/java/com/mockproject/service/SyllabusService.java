@@ -210,6 +210,7 @@ public class SyllabusService implements ISyllabusService {
         syllabus.setDateCreated(java.time.LocalDate.now());
         syllabus.setLastDateModified(java.time.LocalDate.now());
         syllabus.setHour(BigDecimal.valueOf(0));
+        syllabus.setState(true);
         Syllabus newSyllabus = syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabus));
         sessionService.createSession(newSyllabus.getId(), syllabus.getSessionDTOList(), user);
         return newSyllabus.getId();
@@ -229,7 +230,7 @@ public class SyllabusService implements ISyllabusService {
         syllabusDTO.setLastModifierId(user.getUser().getId());
         syllabusDTO.setLastDateModified(java.time.LocalDate.now());
 
-        if(syllabusDTO.isStatus() == true)
+        if(syllabusDTO.isStatus())
         {
             for (SessionDTO s : syllabusDTO.getSessionDTOList()) {
                 if (s.getId() == null) {
@@ -280,12 +281,12 @@ public class SyllabusService implements ISyllabusService {
             int attendee = Integer.parseInt(record.get(4));
             String technicalRequirements = record.get(5);
             String courseObjectives = record.get(6);
-            BigDecimal quiz = new BigDecimal(Double.parseDouble(record.get(7)));
-            BigDecimal assignment = new BigDecimal(Double.valueOf(record.get(8)));
-            BigDecimal finalExam = new BigDecimal(Double.valueOf(record.get(9)));
-            BigDecimal finalTheory = new BigDecimal(Double.valueOf(record.get(10)));
-            BigDecimal finalPractice = new BigDecimal(Double.valueOf(record.get(11)));
-            BigDecimal gpa = new BigDecimal(Double.parseDouble(record.get(12)));
+            BigDecimal quiz = BigDecimal.valueOf(Double.parseDouble(record.get(7)));
+            BigDecimal assignment = BigDecimal.valueOf(Double.parseDouble(record.get(8)));
+            BigDecimal finalExam = BigDecimal.valueOf(Double.parseDouble(record.get(9)));
+            BigDecimal finalTheory = BigDecimal.valueOf(Double.parseDouble(record.get(10)));
+            BigDecimal finalPractice = BigDecimal.valueOf(Double.parseDouble(record.get(11)));
+            BigDecimal gpa = BigDecimal.valueOf(Double.parseDouble(record.get(12)));
             String trainingDes = record.get(13);
             String reTestDes = record.get(14);
             String markingDes = record.get(15);
@@ -339,13 +340,11 @@ public class SyllabusService implements ISyllabusService {
             }
             else if (handle == 2) {
                 Optional<List<Syllabus>> syllabusList = syllabusRepository.findByNameAndCodeAndStatus(syllabusDTO.getName(), syllabusDTO.getCode(),true);
-                if (syllabusList.isEmpty()){
-                    return syllabusDTO;
-                } else {
-                    Syllabus syllabus = syllabusList.get().get(syllabusList.get().size()-1);
+                if (syllabusList.isPresent()) {
+                    Syllabus syllabus = syllabusList.get().get(syllabusList.get().size() - 1);
                     syllabusDTO.setId(syllabus.getId());
-                    return syllabusDTO;
                 }
+                return syllabusDTO;
             }
             else if (handle == 3){
                 Optional<List<Syllabus>> syllabusList = syllabusRepository.findByNameAndCodeAndStatus(syllabusDTO.getName(), syllabusDTO.getCode(),true);
@@ -363,13 +362,11 @@ public class SyllabusService implements ISyllabusService {
             }
             else if (handle == 2) {
                 Optional<List<Syllabus>> syllabusList = syllabusRepository.findByNameAndStatus(syllabusDTO.getName(), true);
-                if (syllabusList.isEmpty()){
-                    return syllabusDTO;
-                } else {
-                    Syllabus syllabus = syllabusList.get().get(syllabusList.get().size()-1);
+                if (syllabusList.isPresent()) {
+                    Syllabus syllabus = syllabusList.get().get(syllabusList.get().size() - 1);
                     syllabusDTO.setId(syllabus.getId());
-                    return syllabusDTO;
                 }
+                return syllabusDTO;
             }
             else if (handle == 3){
                 Optional<List<Syllabus>> syllabusList = syllabusRepository.findByNameAndStatus(syllabusDTO.getName(), true);
@@ -386,13 +383,11 @@ public class SyllabusService implements ISyllabusService {
             }
             else if (handle == 2) {
                 Optional<List<Syllabus>> syllabusList = syllabusRepository.findByCodeAndStatus(syllabusDTO.getName(), true);
-                if (syllabusList.isEmpty()){
-                    return syllabusDTO;
-                } else {
-                    Syllabus syllabus = syllabusList.get().get(syllabusList.get().size()-1);
+                if (syllabusList.isPresent()) {
+                    Syllabus syllabus = syllabusList.get().get(syllabusList.get().size() - 1);
                     syllabusDTO.setId(syllabus.getId());
-                    return syllabusDTO;
                 }
+                return syllabusDTO;
             }
             else if (handle == 3){
                 Optional<List<Syllabus>> syllabusList = syllabusRepository.findByCodeAndStatus(syllabusDTO.getName(), true);
@@ -418,8 +413,7 @@ public class SyllabusService implements ISyllabusService {
     }
 
     public byte[] getTemplateCsvFile() throws IOException {
-        byte[] bytes = FileUtils.getFileBytes(TEMPLATE_FILE_PATH);
 
-        return bytes;
+        return FileUtils.getFileBytes(TEMPLATE_FILE_PATH);
     }
 }

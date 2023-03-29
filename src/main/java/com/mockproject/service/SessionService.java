@@ -49,7 +49,6 @@ public class SessionService implements ISessionService {
     @Override
     public List<SessionDTO> getAllSessionBySyllabusId(Long syllabusId, boolean status) {
         Optional<List<Session>> listSession = sessionRepository.findBySyllabusIdAndStatus(syllabusId, status);
-        ListUtils.checkList(listSession);
         List<SessionDTO> sessionDTOList = new ArrayList<>();
         for (Session s: listSession.get()) {
             sessionDTOList.add(SessionMapper.INSTANCE.toDTO(s));
@@ -79,6 +78,7 @@ public class SessionService implements ISessionService {
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true,true);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
 
+        sessionDTO.setStatus(true);
         sessionDTO.setSyllabusId(syllabusId);
         Session session = sessionRepository.save(SessionMapper.INSTANCE.toEntity(sessionDTO));
         unitService.createUnit(session.getId(), sessionDTO.getUnitDTOList(), user);
