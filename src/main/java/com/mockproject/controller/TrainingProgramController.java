@@ -130,7 +130,7 @@ public class TrainingProgramController {
     @GetMapping("/{id}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     @Operation(summary = "Get training program by ID")
-    public ResponseEntity getTrainingProgramById(@PathVariable("id") Long id) {
+    public ResponseEntity<TrainingProgramDTO> getTrainingProgramByID(@PathVariable("id") Long id) {
         return ResponseEntity.ok(trainingProgramService.getTrainingProgramById(id));
     }
 
