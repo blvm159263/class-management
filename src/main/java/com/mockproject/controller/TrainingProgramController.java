@@ -1,13 +1,13 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.ReadFileDto;
-import com.mockproject.dto.SearchTPDTO;
 import com.mockproject.dto.TrainingProgramAddDto;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
 import com.mockproject.service.interfaces.IFileService;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -73,11 +73,11 @@ public class TrainingProgramController {
                     content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
     })
     @Operation(summary = "Get Training Program by searching name or creator")
-    @PostMapping("/search-name")
+    @GetMapping("/search-name")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<?> searchByName(@RequestBody SearchTPDTO search) {
-//        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
-        List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(search);
+    public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search") @RequestParam(defaultValue = "") String name) {
+        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
+//        List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(search);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
@@ -128,22 +128,31 @@ public class TrainingProgramController {
     }
 
     @GetMapping("/{id}")
-    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     @Operation(summary = "Get training program by ID")
     public ResponseEntity getTrainingProgramById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(trainingProgramService.getTrainingProgramById(id));
     }
 
     @PutMapping("/de-active-training-program/{trainingProgramID}")
-    public ResponseEntity deactiveTraningProgramByID(@PathVariable Long trainingProgramID) {
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<?> deactiveTrainingProgramByID(@PathVariable Long trainingProgramID) {
         trainingProgramService.deactiveTrainingProgram(trainingProgramID);
         return ResponseEntity.ok("De-active training program successfully.");
     }
 
     @PutMapping("/active-training-program/{trainingProgramID}")
-    public ResponseEntity activeTraningProgramByID(@PathVariable Long trainingProgramID) {
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<?> activeTrainingProgramByID(@PathVariable Long trainingProgramID) {
         trainingProgramService.activeTrainingProgram(trainingProgramID);
         return ResponseEntity.ok("Active training program successfully.");
+    }
+
+    @PutMapping("/delete-training-program/{trainingProgramID}")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<?> deleteTrainingProgramByID(@PathVariable Long trainingProgramID) {
+        trainingProgramService.deleteTrainingProgram(trainingProgramID);
+        return ResponseEntity.ok("Delete training program successfully.");
     }
 
 }
