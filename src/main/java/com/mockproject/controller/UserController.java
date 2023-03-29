@@ -225,7 +225,7 @@ public class UserController {
                 rolePermissionScopeService.updateRolePermissionScopeByPermissionNameAndRoleIdAndScopeId(fdto.getUserPermission(), fdto.getId(), permissionScopeService.getPermissionScopeIdByPermissionScopeName("User"));
             }
         }
-        return ResponseEntity.ok(roleService.getAllRoleDetail());
+        return ResponseEntity.ok("Successfully");
     }
 
     @PostMapping("/createRole")
