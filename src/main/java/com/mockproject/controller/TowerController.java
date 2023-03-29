@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,11 @@ import java.util.List;
 @SecurityRequirement(name = "Authorization")
 public class TowerController {
 
+    public static final String VIEW = "ROLE_View_Class";
+    public static final String MODIFY = "ROLE_Modify_Class";
+    public static final String CREATE = "ROLE_Create_Class";
+    public static final String FULL_ACCESS = "ROLE_Full access_Class";
+
     private final ITowerService service;
 
     @ApiResponses(value = {
@@ -37,6 +43,7 @@ public class TowerController {
     })
     @Operation(summary = "Get all Tower have status true by given Location Id")
     @GetMapping("location/{id}")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> listByLocationIdTrue(@Parameter(description = "Location ID want to get Tower") @PathVariable("id") Long id) {
         List<TowerDTO> list = service.listByTowerIdTrue(id);
         if (!list.isEmpty()) {
@@ -54,6 +61,7 @@ public class TowerController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TowerDTO.class)))
     })
     @GetMapping("/class-towers")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getAllTowers(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(service.getAllTowersByTrainingClassId(id));
@@ -73,6 +81,7 @@ public class TowerController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = TowerDTO.class)))
     })
     @GetMapping("/class-towers-for-a-date")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getAllTowersForADate(
             @Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id,
             @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth

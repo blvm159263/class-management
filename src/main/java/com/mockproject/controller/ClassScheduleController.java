@@ -40,7 +40,7 @@ public class ClassScheduleController {
     public static final String FULL_ACCESS = "ROLE_Full access_Class";
 
     @PostMapping("/day")
-    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     @Operation(summary = "Get training class for the typical day")
     public ResponseEntity getTrainingClassByDay(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO) {
         var trainingClass = classScheduleService.getTrainingClassByDay(filterRequestDTO);
@@ -52,7 +52,7 @@ public class ClassScheduleController {
     }
 
     @PostMapping("/week")
-    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS, CREATE})
     @Operation(summary = "Get a class schedule for a week")
     public ResponseEntity getTrainingClassByWeek(@RequestBody TrainingClassFilterRequestDTO filterRequestDTO) {
         var trainingClass = classScheduleService.getTrainingClassByWeek(filterRequestDTO);
@@ -65,7 +65,7 @@ public class ClassScheduleController {
     }
 
     @PostMapping("/search/day")
-    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS, CREATE})
     @Operation(summary = "Search training class in day by text")
     public ResponseEntity searchTrainingClassInDay(@RequestBody @Valid SearchByDTO searchByDTO) {
         var trainingClass = classScheduleService.searchTrainingClassInDate(searchByDTO.getSearchText(), searchByDTO.getNowDate());
@@ -77,7 +77,7 @@ public class ClassScheduleController {
     }
 
     @PostMapping("/search/week")
-    @Secured({VIEW, MODIFY, FULL_ACCESS, CREATE})
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     @Operation(summary = "Search training class in week by text")
     public ResponseEntity searchTrainingClassInWeek(@io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = @ExampleObject(value = "[\"2023-03-14\",\"2023-03-15\"]"))
@@ -95,7 +95,8 @@ public class ClassScheduleController {
             @ApiResponse(responseCode = "400", description = "When Saving fail!")
     })
     @Operation(summary = "Save list of ClassSchedule by given Training Class")
-    @PostMapping("list/traing-class/{tcId}")
+    @PostMapping("list/training-class/{tcId}")
+    @Secured({MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> createListSchedule(@io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = @ExampleObject(value = "[\"2023-03-14\",\"2023-03-15\"]")))
                                                 @Valid @RequestBody List<LocalDate> listDate,
@@ -115,6 +116,7 @@ public class ClassScheduleController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = ClassScheduleDTO.class)))
     })
     @GetMapping("/in-class")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getClassSchedule(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try {
             return ResponseEntity.ok(classScheduleService.getClassScheduleByTrainingClassId(id));

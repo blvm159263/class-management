@@ -12,9 +12,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -24,8 +24,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +55,8 @@ public class TrainingProgramController {
                     content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
     })
     @Operation(summary = "Get all Training Program")
-    @GetMapping("list")
+    @GetMapping("/list")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getAllTrainingProgram(@RequestParam(defaultValue = "0") Integer pageNo,
                                                    @RequestParam(defaultValue = "10") Integer pageSize) {
         Page<TrainingProgramDTO> list = trainingProgramService.getAll(pageNo, pageSize);
@@ -69,10 +72,12 @@ public class TrainingProgramController {
             @ApiResponse(responseCode = "200", description = "When find training program and return list program",
                     content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
     })
-    @Operation(summary = "Get Training Program by searching name")
-    @GetMapping("search-name")
+    @Operation(summary = "Get Training Program by searching name or creator")
+    @GetMapping("/search-name")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search") @RequestParam(defaultValue = "") String name) {
         List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
+//        List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(search);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
@@ -81,6 +86,7 @@ public class TrainingProgramController {
     }
 
     @PostMapping("/uploadCsv")
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity readFileCsv(@Valid @ModelAttribute ReadFileDto readFileDto) {
         MultipartFile file = readFileDto.getFile();
         List<TrainingProgram> trainingProgramList = new ArrayList<>();
@@ -99,6 +105,7 @@ public class TrainingProgramController {
 
     }
     @GetMapping("/downloadFile/csv")
+    @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity<byte[]> downLoadFileExample(){
         try {
             Resource resource = resourceLoader.getResource("classpath:CSVFile/trainingProgram.csv");
@@ -114,10 +121,38 @@ public class TrainingProgramController {
     }
 
     @PostMapping("/saveTrainingProgram")
+    @Secured({MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> saveTrain(@Valid @RequestBody TrainingProgramAddDto trainingProgramDTO) {
         trainingProgramService.save(trainingProgramDTO, null, null);
         return ResponseEntity.ok("Add training program successfully");
     }
 
+    @GetMapping("/{id}")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+    @Operation(summary = "Get training program by ID")
+    public ResponseEntity getTrainingProgramById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(trainingProgramService.getTrainingProgramById(id));
+    }
+
+    @PutMapping("/de-active-training-program/{trainingProgramID}")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<?> deactiveTrainingProgramByID(@PathVariable Long trainingProgramID) {
+        trainingProgramService.deactiveTrainingProgram(trainingProgramID);
+        return ResponseEntity.ok("De-active training program successfully.");
+    }
+
+    @PutMapping("/active-training-program/{trainingProgramID}")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<?> activeTrainingProgramByID(@PathVariable Long trainingProgramID) {
+        trainingProgramService.activeTrainingProgram(trainingProgramID);
+        return ResponseEntity.ok("Active training program successfully.");
+    }
+
+    @PutMapping("/delete-training-program/{trainingProgramID}")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<?> deleteTrainingProgramByID(@PathVariable Long trainingProgramID) {
+        trainingProgramService.deleteTrainingProgram(trainingProgramID);
+        return ResponseEntity.ok("Delete training program successfully.");
+    }
 
 }

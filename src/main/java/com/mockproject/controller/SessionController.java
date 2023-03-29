@@ -25,8 +25,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Session API")
-@Tag(name = "Session", description = "API realted session")
+@Tag(name = "Session", description = "API related session")
 @RequestMapping(value = "/api/session")
 @SecurityRequirement(name = "Authorization")
 @Slf4j
@@ -56,7 +55,7 @@ public class SessionController {
 
     @PutMapping("/edit")
     @Operation(summary = "Edit session by sessionDTO")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Session> editSession(@RequestBody SessionDTO sessionDTO)throws IOException {
         Session updateSession = sessionService.editSession(sessionDTO, true);
         return ResponseEntity.ok(updateSession);
@@ -64,14 +63,14 @@ public class SessionController {
 
     @PutMapping("/delete/{id}")
     @Operation(summary = "Delete session by session id")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteSession(@PathVariable("id") @Parameter(description = "Session id") Long sessionId){
         return ResponseEntity.ok(sessionService.deleteSession(sessionId, true));
     }
 
     @PutMapping("/multi-delete/{id}")
     @Operation(summary = "Delete session by session id")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<Boolean> deleteSessions(@PathVariable("id")@Parameter(description = "Session id") Long syllabusId){
         return ResponseEntity.ok(sessionService.deleteSessions(syllabusId, true));
     }
@@ -82,7 +81,8 @@ public class SessionController {
             content = @Content(schema = @Schema(implementation = SessionDTO.class)))
     })
     @Operation(summary = "Get all Session by given syllabus ID")
-    @GetMapping("list-by-syllus/{sid}")
+    @GetMapping("/list-by-syllus/{sid}")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> listBySyllabusId(@Parameter(description = "Syllabus's ID") @PathVariable("sid") Long sid) {
         List<SessionDTO> list = sessionService.listBySyllabus(sid);
         if (!list.isEmpty()) {

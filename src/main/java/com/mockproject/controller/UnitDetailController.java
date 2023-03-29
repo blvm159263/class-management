@@ -34,7 +34,7 @@ public class UnitDetailController {
     private final IUnitDetailService unitDetailService;
 
     @GetMapping("/{unitId}")
-    @Operation(summary = "Get all unit by unit id")
+    @Operation(summary = "Get all unit detail by unit id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<List<UnitDetailDTO>> getAllUnitDetailByUnitId(@PathVariable("unitId") Long unitId) {
         List<UnitDetailDTO> listUnitDetail = unitDetailService.getAllUnitDetailByUnitId(unitId, true);

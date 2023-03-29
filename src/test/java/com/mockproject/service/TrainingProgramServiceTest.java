@@ -3,6 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
 import com.mockproject.repository.TrainingProgramRepository;
+import com.mockproject.service.interfaces.IFileService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +28,18 @@ class TrainingProgramServiceTest {
     @MockBean
     private SyllabusService syllabusService;
 
+    @MockBean
+    private TrainingProgramSyllabusService trainingProgramSyllabusService;
+
+    @MockBean
+    private IFileService fileService;
+
     @Autowired
     private TrainingProgramService trainingProgramService;
 
-    TrainingProgram tp1 = new TrainingProgram(1L,1, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, null, null, null, null);
-    TrainingProgram tp2 = new TrainingProgram(2L,2, "Java for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, null, null, null, null);
-    TrainingProgram tp3 = new TrainingProgram(3L,3, "Java for junior", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, false, null, null, null, null);
+    TrainingProgram tp1 = new TrainingProgram(1L,1, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, true, null, null, null, null);
+    TrainingProgram tp2 = new TrainingProgram(2L,2, "Java for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, true, null, null, null, null);
+    TrainingProgram tp3 = new TrainingProgram(3L,3, "Java for junior", LocalDate.now(), LocalDate.now(), BigDecimal.TEN, 30, true, false, null, null, null, null);
 
     /**
      * Method under test: {@link TrainingProgramService#searchByName(String)}

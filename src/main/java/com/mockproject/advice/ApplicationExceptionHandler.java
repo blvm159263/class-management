@@ -8,12 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
@@ -21,10 +18,9 @@ import org.webjars.NotFoundException;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.time.format.DateTimeParseException;
-
-import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
@@ -34,15 +30,17 @@ public class ApplicationExceptionHandler {
     public String handleRowOfPage(InvalidParameterException ex) { return "Error Message : " + ex.getMessage(); }
 
     @ExceptionHandler(NotFoundException.class)
-    public String handleNotFound(NotFoundException ex){
+    public String handleNotFound(NotFoundException ex) {
         return "Error Message : " + ex.getMessage();
     }
+
     @ExceptionHandler(IOException.class)
     public String handleIOException(IOException ex){
         return "Error Message : " + ex.getMessage();
     }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public Map<String, String> handleBadRequest(MethodArgumentTypeMismatchException ex){
+    public Map<String, String> handleBadRequest(MethodArgumentTypeMismatchException ex) {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put("Error Paramater", ex.getParameter().toString());
         errorMap.put("Error Property Name", ex.getPropertyName());
@@ -51,7 +49,7 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    public String handleNoContent(ResponseStatusException ex){
+    public String handleNoContent(ResponseStatusException ex) {
         return "Error Message : " + ex.getMessage();
     }
 
@@ -71,9 +69,9 @@ public class ApplicationExceptionHandler {
                     .body("Invalid date format: " + mostSpecificCause.getMessage().substring(startIndex,endIndex));
         } else if(mostSpecificCause instanceof IllegalArgumentException){
 //            if (mostSpecificCause.getMessage().contains("java.sql.Time")){
-                return ResponseEntity
-                        .badRequest()
-                        .body("Invalid Time Format !");
+            return ResponseEntity
+                    .badRequest()
+                    .body("Invalid Time Format !");
 
         }else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

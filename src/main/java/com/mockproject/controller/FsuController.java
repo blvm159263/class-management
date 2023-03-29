@@ -44,6 +44,7 @@ public class FsuController {
     })
     @Operation(summary = "Get all FSU have status = True")
     @GetMapping("")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> listAll() {
         List<FsuDTO> list = fsuService.listAllTrue();
         if (!list.isEmpty()) {
@@ -83,6 +84,7 @@ public class FsuController {
             @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = FsuDTO.class)))
     })
     @GetMapping("/class-fsu")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getClassFsu(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(fsuService.getFsuByTrainingClassId(id));

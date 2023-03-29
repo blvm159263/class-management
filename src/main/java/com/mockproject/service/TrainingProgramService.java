@@ -1,7 +1,7 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.ReadFileDto;
-import com.mockproject.dto.SyllabusDTO;
+import com.mockproject.dto.SearchTPDTO;
 import com.mockproject.dto.TrainingProgramAddDto;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.*;
@@ -20,9 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,7 +29,9 @@ import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,6 +68,7 @@ public class TrainingProgramService implements ITrainingProgramService {
     public List<TrainingProgram> getAll() {
         return trainingProgramRepository.findAll();
     }
+
     @Override
     public List<TrainingProgram> getByName(String keyword) {
         return trainingProgramRepository.getTrainingProgramByNameContains(keyword);
@@ -92,9 +93,63 @@ public class TrainingProgramService implements ITrainingProgramService {
     }
 
     @Override
+    public List<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList) {
+        boolean check = searchList.getSearch().isEmpty();
+        List<TrainingProgram> result = new ArrayList<>();
+        if (!check) {
+            List<String> lowerCaseSearchTerms = searchList.getSearch().stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+            result = doSearch(trainingProgramRepository.findAll(), lowerCaseSearchTerms);
+        }
+        return result.stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public void deactiveTrainingProgram(Long trainingProgramID) {
+        trainingProgramRepository.findById(trainingProgramID)
+                .map(trainingProgram -> {
+                    trainingProgram.setState(false);
+                    return trainingProgramRepository.save(trainingProgram);
+                });
+    }
+
+    @Override
+    public void activeTrainingProgram(Long trainingProgramID) {
+        trainingProgramRepository.findById(trainingProgramID)
+                .map(trainingProgram -> {
+                    trainingProgram.setState(true);
+                    return trainingProgramRepository.save(trainingProgram);
+                });
+    }
+
+    @Override
+    public void deleteTrainingProgram(Long trainingProgramID) {
+        trainingProgramRepository.findById(trainingProgramID)
+                .map(trainingProgram -> {
+                    trainingProgram.setStatus(false);
+                    return trainingProgramRepository.save(trainingProgram);
+                });
+    }
+
+    private List<TrainingProgram> doSearch(List<TrainingProgram> trainingPrograms, List<String> searchList) {
+        List<TrainingProgram> result = trainingPrograms.stream()
+                .filter(trainingProgram1 -> trainingProgram1.getCreator() != null
+                        && trainingProgram1.isStatus()).collect(Collectors.toList());
+        List<TrainingProgram> result2 = new ArrayList<>();
+        for (String search : searchList) {
+            result2 = result.stream()
+                    .filter(trainingProgram -> trainingProgram.getName().toLowerCase().contains(search)
+                            || trainingProgram.getCreator().getFullName().toLowerCase().contains(search)).collect(Collectors.toList());
+        }
+        return result2;
+    }
+
+    @Override
     public List<TrainingProgramDTO> searchByName(String name) {
         return trainingProgramRepository.findByNameContainingAndStatus(name, true).stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
+
     @Override
     public Page<TrainingProgramDTO> getAll(Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
@@ -105,13 +160,13 @@ public class TrainingProgramService implements ITrainingProgramService {
 
     @Override
     public TrainingProgramDTO getTrainingProgramById(Long id) {
-        return TrainingProgramMapper.INSTANCE.toDTO(trainingProgramRepository.getTrainingProgramById(id));
+        return TrainingProgramMapper.INSTANCE.toDTO(trainingProgramRepository.getTrainingProgramByIdAndStatus(id, true));
     }
 
     @Override
     public void save(TrainingProgramAddDto trainingProgramDTO, HashMap<TrainingProgram, List<Long>> trainingProgramHashMap, ReadFileDto readFileDto) {
         //add without read csv file
-        CustomUserDetails CusUserDetails= (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomUserDetails CusUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = CusUserDetails.getUser();
         if (trainingProgramHashMap == null || trainingProgramHashMap.isEmpty()) {
             // get list of syllabus
@@ -132,6 +187,7 @@ public class TrainingProgramService implements ITrainingProgramService {
                         .lastDateModified(nowDay)
                         .day(day)
                         .hour(hour)
+                        .state(true)
                         .status(true)
                         .programId(lastTrainingProgramId)
                         .creator(user)
@@ -151,7 +207,7 @@ public class TrainingProgramService implements ITrainingProgramService {
             List<String> scanning = readFileDto.getScanning().stream().map(String::toLowerCase).collect(Collectors.toList());
 
             if (!scanning.isEmpty()) {
-                List<TrainingProgram> trainingProgramFilter = filterExistTrainingClassByScanning(scanning,trainingProgramHashMap);
+                List<TrainingProgram> trainingProgramFilter = filterExistTrainingClassByScanning(scanning, trainingProgramHashMap);
 
                 String dupHandle = readFileDto.getDuplicateHandle().toLowerCase();
                 //check by scanning
@@ -163,17 +219,18 @@ public class TrainingProgramService implements ITrainingProgramService {
                         trainingProgramHashMap.remove(trainingProgram);
                     });
                 } else if (dupHandle.equals(REPLACE)) {
-                        var a = trainingProgramRepository.findTopByProgramIdOrderByIdDesc(1001);
+                    var a = trainingProgramRepository.findTopByProgramIdOrderByIdDesc(1001);
                     trainingProgramFilter.stream().forEach(trainingProgram ->
                     {
-                        var trainProgramInDatabase= trainingProgramRepository.findTopByProgramIdOrderByIdDesc(trainingProgram.getProgramId());
+                        var trainProgramInDatabase = trainingProgramRepository.findTopByProgramIdOrderByIdDesc(trainingProgram.getProgramId());
                         trainProgramInDatabase.setName(trainingProgram.getName());
                         trainProgramInDatabase.setDateCreated(trainingProgram.getDateCreated());
                         trainProgramInDatabase.setLastDateModified(trainingProgram.getLastDateModified());
+                        trainProgramInDatabase.setState(trainingProgram.isState());
                         trainProgramInDatabase.setStatus(trainingProgram.isStatus());
-                        List<Long> syllabusIdList= trainingProgramHashMap.get(trainingProgram);
+                        List<Long> syllabusIdList = trainingProgramHashMap.get(trainingProgram);
                         trainingProgramHashMap.remove(trainingProgram);
-                        trainingProgramHashMap.put(trainProgramInDatabase,syllabusIdList);
+                        trainingProgramHashMap.put(trainProgramInDatabase, syllabusIdList);
                     });
 
                 } else {
@@ -195,7 +252,7 @@ public class TrainingProgramService implements ITrainingProgramService {
                 for (TrainingProgram key : trainingProgramSyllabusHashMap.keySet()) {
                     System.out.println(key.getId());
                     var syllabusList = trainingProgramSyllabusHashMap.get(key);
-                    if(key.getId() == null ){
+                    if (key.getId() == null) {
 
                         int day = getDay(syllabusList);
                         BigDecimal hour = getHour(syllabusList);
@@ -208,9 +265,9 @@ public class TrainingProgramService implements ITrainingProgramService {
                                 .map(syllabus -> new TrainingProgramSyllabus(null, true, syllabus, key))
                                 .collect(Collectors.toList());
 
-                    trainingProgramRepository.save(key);
-                    trainingProgramSyllabusService.saveAll(programSyllabus);
-                    }else{
+                        trainingProgramRepository.save(key);
+                        trainingProgramSyllabusService.saveAll(programSyllabus);
+                    } else {
                         List<TrainingProgramSyllabus> programSyllabus = syllabusList.stream()
                                 .map(syllabus -> new TrainingProgramSyllabus(null, true, syllabus, key))
                                 .collect(Collectors.toList());
@@ -235,7 +292,7 @@ public class TrainingProgramService implements ITrainingProgramService {
         boolean status;
         List<Long> listTrainingClassesId, listTrainingProgramSyllabusesId;
 
-        CSVParser parser = fileService.readFile(file, readFileDto.getEncodingType(),readFileDto.getSeparator());
+        CSVParser parser = fileService.readFile(file, readFileDto.getEncodingType(), readFileDto.getSeparator());
 //        // skip header of csv file
         parser.iterator().next();
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -243,7 +300,7 @@ public class TrainingProgramService implements ITrainingProgramService {
         try {
 
             for (CSVRecord record : parser.getRecords()) {
-                if(record.size()<5){
+                if (record.size() < 5) {
                     throw new FileException("File is Wrong format", HttpStatus.BAD_REQUEST.value());
                 }
                 try {
@@ -264,7 +321,7 @@ public class TrainingProgramService implements ITrainingProgramService {
                     throw new FileException(e.getMessage(), HttpStatus.BAD_REQUEST.value());
                 }
 
-                var trainingProgram = new TrainingProgram(null, programId, name, dateCreated, lastDateModified, null, 0, status, null, null, null, null);
+                var trainingProgram = new TrainingProgram(null, programId, name, dateCreated, lastDateModified, null, 0, true, status, null, null, null, null);
                 trainingProgramHashMap.put(trainingProgram, listTrainingProgramSyllabusesId);
             }
             save(null, trainingProgramHashMap, readFileDto);
@@ -274,8 +331,9 @@ public class TrainingProgramService implements ITrainingProgramService {
 
         return "No error";
     }
+
     private List<TrainingProgram> filterExistTrainingClassByScanning(List<String> scanning,
-                                                                     HashMap<TrainingProgram, List<Long>>trainingProgramHashMap){
+                                                                     HashMap<TrainingProgram, List<Long>> trainingProgramHashMap) {
         List<TrainingProgram> trainingProgramFilter = new ArrayList<>();
         if (scanning.contains(PROGRAMID)) {
             trainingProgramFilter = trainingProgramHashMap.keySet().stream()
@@ -296,6 +354,5 @@ public class TrainingProgramService implements ITrainingProgramService {
 //        TrainingProgram trainingProgram = trainingProgramRepository.getTrainingProgramById(id);
 //        return TrainingProgramMapper.INSTANCE.toDTO(trainingProgram);
 //    }
-
 
 }
