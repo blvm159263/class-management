@@ -210,7 +210,7 @@ public class SyllabusService implements ISyllabusService {
         syllabus.setDateCreated(java.time.LocalDate.now());
         syllabus.setLastDateModified(java.time.LocalDate.now());
         syllabus.setHour(BigDecimal.valueOf(0));
-        syllabus.setState(true);
+        syllabus.setStatus(true);
         Syllabus newSyllabus = syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabus));
         sessionService.createSession(newSyllabus.getId(), syllabus.getSessionDTOList(), user);
         return newSyllabus.getId();
