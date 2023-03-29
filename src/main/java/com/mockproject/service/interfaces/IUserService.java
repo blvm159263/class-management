@@ -1,9 +1,6 @@
 package com.mockproject.service.interfaces;
 
-import com.mockproject.dto.FormRoleDTO;
-import com.mockproject.dto.RoleDTO;
 import com.mockproject.dto.UserDTO;
-import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.entity.User;
 import org.springframework.data.domain.Page;
 
