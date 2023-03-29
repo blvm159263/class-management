@@ -18,7 +18,7 @@ public class TrainingClassSpecification {
     public static Specification<TrainingClass> hasLocationIn(List<String> locations) {
 //        return (root, query, builder) -> root.get("location").get("locationName").in(locations);
         Specification<TrainingClass> trainingClassSpecification = null;
-        locations = locations.stream().map(loca -> "%" + loca + "%").collect(Collectors.toList());
+        locations = locations.stream().map(local -> "%" + local + "%").collect(Collectors.toList());
         for (String location : locations) {
             if (trainingClassSpecification == null) {
                 trainingClassSpecification = (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("location").get("locationName"), location);
