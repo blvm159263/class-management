@@ -269,12 +269,6 @@ public class UserService implements IUserService {
                 // read the data rows and map them to Product objects
                 String[] rowData;
                 while ((rowData = reader.readNext()) != null) {
-                    System.out.println(rowData[0]);
-                    System.out.println(rowData[1]);
-                    System.out.println(rowData[2]);
-                    System.out.println(rowData[3]);
-                    System.out.println(rowData[4]);
-                    System.out.println(rowData[5]);
                     User user = new User();
                     user.setEmail(rowData[0]);
                     user.setPassword(passwordEncoder.encode("123456"));
@@ -355,7 +349,7 @@ public class UserService implements IUserService {
 
             count = 0L;
 
-            List<String> listEmail = new ArrayList<>();
+           // List<String> listEmail = new ArrayList<>();
 
             for (CSVRecord csvRecord : csvRecords) {
                 String email = csvRecord.get("Email");
@@ -411,7 +405,13 @@ public class UserService implements IUserService {
                 }
                 //check phone number
                 String phone = csvRecord.get("Phone");
-                if (userRepo.findByPhone(phone).isPresent() && (idUser != userRepo.findByPhone(phone).get().getId()))
+                int index = -1;
+                for (User u : result) {
+                    if (u != null && u.getPhone().equals(phone)){
+                        index = result.indexOf(u);
+                    }
+                }
+                if (  (userRepo.findByPhone(phone).isPresent() && (idUser != userRepo.findByPhone(phone).get().getId()))  || index != -1 )
                     throw new NotFoundException("Record " + (count + 1) +
                             " (" + email + ")" + " is invalid phone number (phone number is exits!!!)");
                 //check gender
@@ -466,7 +466,6 @@ public class UserService implements IUserService {
                 }
                 count++;
             }
-
             return result;
 
         } catch (IOException e) {
