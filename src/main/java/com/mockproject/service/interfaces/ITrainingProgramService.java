@@ -29,4 +29,6 @@ public interface ITrainingProgramService {
     void deactiveTrainingProgram(Long trainingProgramID);
 
     void activeTrainingProgram(Long trainingProgramID);
+
+    void deleteTrainingProgram(Long trainingProgramID);
 }
