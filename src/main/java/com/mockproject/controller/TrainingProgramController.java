@@ -166,7 +166,7 @@ public class TrainingProgramController {
 
     @PutMapping("/restore-status-training-program")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<?> restoreStatusTrainingProgram() {
+    public ResponseEntity<?> restoreALlTrainingPrograms() {
         trainingProgramService.restoreAllTrainingPrograms();
         return ResponseEntity.ok("Restore all training programs successfully.");
     }
