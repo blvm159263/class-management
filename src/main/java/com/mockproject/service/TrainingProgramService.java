@@ -123,6 +123,15 @@ public class TrainingProgramService implements ITrainingProgramService {
                 });
     }
 
+    @Override
+    public void deleteTrainingProgram(Long trainingProgramID) {
+        trainingProgramRepository.findById(trainingProgramID)
+                .map(trainingProgram -> {
+                    trainingProgram.setStatus(false);
+                    return trainingProgramRepository.save(trainingProgram);
+                });
+    }
+
     private List<TrainingProgram> doSearch(List<TrainingProgram> trainingPrograms, List<String> searchList) {
         List<TrainingProgram> result = trainingPrograms.stream()
                 .filter(trainingProgram1 -> trainingProgram1.getCreator() != null
