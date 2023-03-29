@@ -1,7 +1,6 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.ReadFileDto;
-import com.mockproject.dto.SearchTPDTO;
 import com.mockproject.dto.TrainingProgramAddDto;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
