@@ -47,7 +47,6 @@ public class UnitDetailService implements IUnitDetailService {
     @Override
     public List<UnitDetailDTO> getAllUnitDetailByUnitId(Long unitId, boolean status) {
         Optional<List<UnitDetail>> unitDetails = unitDetailRepository.findByUnitIdAndStatus(unitId, status);
-        unitDetails.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         List<UnitDetailDTO> unitDetailDTOList = new ArrayList<>();
 
         for (UnitDetail u: unitDetails.get()){
@@ -77,6 +76,7 @@ public class UnitDetailService implements IUnitDetailService {
         unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
         BigDecimal duration = unit.get().getDuration();
 
+        unitDetailDTO.setStatus(true);
         unitDetailDTO.setUnitId(unitId);
         duration = duration.add(unitDetailDTO.getDuration().divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP));
         UnitDetail unitDetail = unitDetailRepository.save(UnitDetailMapper.INSTANCE.toEntity(unitDetailDTO));
