@@ -1,6 +1,7 @@
 package com.mockproject.controller;
 
 import com.mockproject.dto.ReadFileDto;
+import com.mockproject.dto.SearchTPDTO;
 import com.mockproject.dto.TrainingProgramAddDto;
 import com.mockproject.dto.TrainingProgramDTO;
 import com.mockproject.entity.TrainingProgram;
@@ -72,7 +73,7 @@ public class TrainingProgramController {
             @ApiResponse(responseCode = "200", description = "When find training program and return list program",
                     content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
     })
-    @Operation(summary = "Get Training Program by searching name or creator")
+    @Operation(summary = "Get Training Program by searching name")
     @GetMapping("/search-name")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search") @RequestParam(defaultValue = "") String name) {
@@ -169,5 +170,16 @@ public class TrainingProgramController {
     public ResponseEntity<?> restoreALlTrainingPrograms() {
         trainingProgramService.restoreAllTrainingPrograms();
         return ResponseEntity.ok("Restore all training programs successfully.");
+    }
+
+    @PostMapping("/search-training-program-by-keywords")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+    public ResponseEntity<?> searchTrainingProgramByKeyWords(@RequestBody SearchTPDTO searchList) {
+      List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(searchList);
+        if (!list.isEmpty()) {
+            return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
+        }
     }
 }
