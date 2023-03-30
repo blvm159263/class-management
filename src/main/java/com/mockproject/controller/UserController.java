@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -253,23 +254,29 @@ public class UserController {
     @GetMapping("/searchByFilter")
     @Operation(summary = "Search User by filter and order")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity searchByFilter(@RequestParam(value = "search", required = false) @Parameter(description = "Search string") List<String> search,
-                                         @RequestParam(value = "Dob", required = false) @Parameter(description = "Date of birth(dd/MM/yyyy)") String dob,
-                                         @RequestParam(value = "Gender", required = false) @Parameter(description = "true = Male, false = Female") Boolean gender,
+    public ResponseEntity searchByFilter(@RequestParam(value = "search", required = false, defaultValue = "") @Parameter(description = "Search string") List<String> search,
+                                         @RequestParam(value = "Dob", required = false,defaultValue = "") @Parameter(description = "Date of birth(dd/MM/yyyy)") String dob,
+                                         @RequestParam(value = "Gender", required = false, defaultValue = "") @Parameter(description = "true = Male, false = Female") Boolean gender,
                                          @RequestParam(value = "AtendeeId", required = false, defaultValue = "") List<Long> atendeeId,
-                                         @RequestParam(value = "Page", required = false) Optional<Integer> page,
-                                         @RequestParam(value = "Size", required = false) Optional<Integer> size,
+                                         @RequestParam(value = "Page", required = false, defaultValue = "1") Optional<Integer> page,
+                                         @RequestParam(value = "Size", required = false, defaultValue = "10") Optional<Integer> size,
                                          @RequestParam(value = "Order", defaultValue = "fullName-asc") @Parameter(description = "Order by attribute" + "\nExample: "  + "email-asc\n" + "fullName-asc\n" + "state-asc\n" + "dob-asc\n" + "phone-asc\n" + "attendee-asc\n" + "level-asc\n" + "role-asc\n" + "NOTE:::::::: asc = ascending; desc = descending") List<String> order
 
     ) {
         Page<UserDTO> result;
         try {
+            if (dob.equals("")){
+                dob=null;
+            }
             result = userService.searchByFilter(search, dob,gender, atendeeId, page, size, order);
         } catch (InvalidDataAccessApiUsageException e) {
             return ResponseEntity.badRequest().body("==============================================\nCOULD NOT FOUND ATTRIBUTE ORDER" + "\nExample: " + "id-asc\n" + "email-asc\n" + "fullname-asc\n" + "state-asc\n" + "dob-asc\n" + "phone-asc\n" + "attendee-asc\n" + "level-asc\n" + "role-asc\n" + "NOTE:::::::: asc = ascending; desc = descending");
         } catch (ArrayIndexOutOfBoundsException e) {
             return ResponseEntity.badRequest().body("==============================================\nFORMAT ORDER LIST INVALID" + "\nExample: " + "id-asc\n" + "email-asc\n" + "fullname-asc\n" + "state-asc\n" + "dob-asc\n" + "phone-asc\n" + "attendee-asc\n" + "level-asc\n" + "role-asc\n" + "NOTE:::::::: asc = ascending; desc = descending");
-        } catch (Exception e) {
+        } catch (DateTimeParseException e){
+            return ResponseEntity.badRequest().body("DOB invalid");
+        }
+        catch (Exception e) {
             return ResponseEntity.badRequest().body("Parameter invalid");
         }
 
