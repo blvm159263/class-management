@@ -1,5 +1,6 @@
 package com.mockproject.service.interfaces;
 
+import com.mockproject.dto.FormRoleDTO;
 import com.mockproject.dto.RoleDTO;
 import com.mockproject.entity.Role;
 
@@ -17,4 +18,6 @@ public interface IRoleService {
     RoleDTO getRoleById(Long id);
 
     RoleDTO getRoleByRoleName(String roleName);
+
+    List<FormRoleDTO> getAllRoleDetail();
 }

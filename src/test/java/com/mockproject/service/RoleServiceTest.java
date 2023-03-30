@@ -3,6 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.RoleDTO;
 import com.mockproject.entity.Role;
 import com.mockproject.mapper.RoleMapper;
+import com.mockproject.repository.RolePermissionScopeRepository;
 import com.mockproject.repository.RoleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +26,9 @@ public class RoleServiceTest {
 
     @MockBean
     private RoleRepository repository;
+
+    @MockBean
+    private RolePermissionScopeRepository rolePermissionScopeRepository;
 
     @Autowired
     private RoleService roleService;
