@@ -98,7 +98,7 @@ public class TrainingClassService implements ITrainingClassService {
         Year yearCode = Year.now().minusYears(2000);
         StringBuilder builder = new StringBuilder();
         List<TrainingClass> listExisting = classRepo.findByClassNameContaining(trainingClassDTO.getClassName());
-        String versionCode = String.valueOf(listExisting.size() + 1);
+        String versionCode = String.format("%02d",listExisting.size() + 1);
 
         builder.append(locationCode)
                 .append(yearCode)
