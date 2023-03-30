@@ -147,6 +147,42 @@ public class UserController {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping("/getRoleDetailByRoleId")
+    @Operation(summary = "Get role detail by role id")
+    @Secured({VIEW, FULL_ACCESS, CREATE, MODIFY})
+    public ResponseEntity getRoleDetailByRoleID(@RequestParam(value = "id", required = true) @Parameter(description = "Role id") long id){
+        FormRoleDTO roleDTO = new FormRoleDTO();
+        RoleDTO role = roleService.getRoleById(id);
+        if (role == null) return ResponseEntity.badRequest().body("Not found Role");
+        List<RolePermissionScope> listRolePermissionScope = rolePermissionScopeService.findAllByRoleId(role.getId());
+        roleDTO.setId(role.getId());
+        roleDTO.setRoleName(role.getRoleName());
+
+        for (RolePermissionScope rpc : listRolePermissionScope) {
+            switch (rpc.getPermissionScope().getScopeName()) {
+                case "Syllabus":
+                    roleDTO.setSyllabusPermission(rpc.getPermission().getPermissionName());
+                    break;
+                case "Training program":
+                    roleDTO.setTraningProgramPermission(rpc.getPermission().getPermissionName());
+                    break;
+                case "Class":
+                    roleDTO.setClassPermission(rpc.getPermission().getPermissionName());
+                    break;
+                case "Learning material":
+                    roleDTO.setLeaningMaterialPermission(rpc.getPermission().getPermissionName());
+                    break;
+                case "User":
+                    roleDTO.setUserPermission(rpc.getPermission().getPermissionName());
+                    break;
+            }
+        }
+
+        return ResponseEntity.ok(roleDTO);
+    }
+
+
+
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any User"),
             @ApiResponse(responseCode = "200", description = "When get list admin successfully!",
