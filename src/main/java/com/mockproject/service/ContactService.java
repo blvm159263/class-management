@@ -9,6 +9,7 @@ import com.mockproject.service.interfaces.IContactService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ public class ContactService implements IContactService {
     @Override
     public ContactDTO getContactByTrainingClassId(Long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        if(tc.getContact().isStatus()){return ContactMapper.INSTANCE.toDTO(tc.getContact());}
-        return null;
+        if(!tc.getContact().isStatus()){throw new NullPointerException();}
+        return ContactMapper.INSTANCE.toDTO(tc.getContact());
     }
 }

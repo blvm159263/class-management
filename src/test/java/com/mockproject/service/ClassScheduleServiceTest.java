@@ -3,6 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.ClassScheduleDTO;
 import com.mockproject.entity.ClassSchedule;
 import com.mockproject.entity.TrainingClass;
+import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.mapper.TrainingClassFilterMap;
 import com.mockproject.repository.ClassScheduleRepository;
 import com.mockproject.repository.TrainingClassRepository;
@@ -14,9 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -112,4 +111,42 @@ class ClassScheduleServiceTest {
         verify(classScheduleRepository).saveAll(listScheduleBefore);
     }
 
+
+    /**
+     * Method under test: {@link ClassScheduleService#getClassScheduleByTrainingClassId(Long)}
+     */
+    @Test
+    void canGetClassScheduleByTrainingClassId() {
+        TrainingClass tc = new TrainingClass();
+
+        cs1.setTrainingClass(tc);
+        cs2.setTrainingClass(tc); cs2.setDate(cs2.getDate().plusDays(2));
+        cs3.setTrainingClass(tc); cs3.setDate(cs2.getDate().plusDays(2));
+
+        List<ClassSchedule> schedules = new ArrayList<>(Arrays.asList(cs1, cs2, cs3));
+
+
+        when(trainingClassRepository.findByIdAndStatus(1L, true)).thenReturn(Optional.of(tc));
+        when(classScheduleRepository.findByTrainingClassAndStatusOrderByDateAsc(tc, true))
+                .thenReturn(Optional.of(schedules.stream().filter(ClassSchedule::isStatus).toList()));
+
+        List<ClassScheduleDTO> scheduleDTOS = classScheduleService.getClassScheduleByTrainingClassId(1L);
+        assertEquals(tc.getId(), scheduleDTOS.stream().map(ClassScheduleDTO::getTrainingClassId).distinct().toList().get(0));
+        assertEquals(2, scheduleDTOS.size());
+        assertTrue(scheduleDTOS.stream().filter(p-> !p.isStatus()).toList().isEmpty());
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+        verify(classScheduleRepository).findByTrainingClassAndStatusOrderByDateAsc(tc, true);
+    }
+
+
+    @Test
+    void itShouldThrowExceptionWhenTrainingClassIdIsNotFound() {
+
+        when(trainingClassRepository.findByIdAndStatus(1L, true)).thenReturn(Optional.empty());
+        when(classScheduleRepository.findByTrainingClassAndStatusOrderByDateAsc(null, true)).thenReturn(Optional.empty());
+
+        assertThrows(Exception.class, () -> classScheduleService.getClassScheduleByTrainingClassId(1L));
+
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
 }

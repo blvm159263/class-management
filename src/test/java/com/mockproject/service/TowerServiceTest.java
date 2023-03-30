@@ -3,6 +3,8 @@ package com.mockproject.service;
 import com.mockproject.dto.TowerDTO;
 import com.mockproject.entity.Location;
 import com.mockproject.entity.Tower;
+import com.mockproject.entity.TrainingClass;
+import com.mockproject.entity.TrainingClassUnitInformation;
 import com.mockproject.repository.TowerRepository;
 import com.mockproject.repository.TrainingClassRepository;
 import com.mockproject.repository.TrainingClassUnitInformationRepository;
@@ -16,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -70,6 +73,30 @@ class TowerServiceTest {
         assertEquals(3L, result.get(1).getId());
         assertEquals("999 Ba Trieu", result.get(1).getAddress());
         verify(towerRepository).findByLocationAndStatus(location,true);
+    }
+
+    /**
+     * Method under test: {@link TowerService#getAllTowersByTrainingClassId(Long)} (Long)}
+     */
+
+    @Test
+    void canGetAllTowersByTrainingClassId() {
+
+        TrainingClass tc = new TrainingClass();
+
+        TrainingClassUnitInformation t1 = new TrainingClassUnitInformation();
+        t1.setTower(tower1);
+
+        tc.setListTrainingClassUnitInformations(null);
+        List<TrainingClassUnitInformation> list = tc.getListTrainingClassUnitInformations().stream().filter(TrainingClassUnitInformation::isStatus).toList();
+
+        when(trainingClassRepository.findByIdAndStatus(1L, true)).thenReturn(Optional.of(tc));
+        when(trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc, true)).thenReturn(Optional.of(list));
+        list.forEach(i -> when(towerRepository.findByIdAndStatus(i.getTower().getId(), true))
+                .thenReturn(Optional.of(list.get(list.indexOf(i)).getTower())));
+
+
+//        assertEquals();
     }
 }
 
