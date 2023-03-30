@@ -109,6 +109,7 @@ public class UserService implements IUserService {
             if (size.get() < 0) throw new InvalidParameterException("Page number must not be less than zero!");
             size1 = size.get();
         }
+
         if (sort != null || !sort.isEmpty()) {
             for (String sortItem : sort) {
                 String[] subSort = sortItem.split("-");
@@ -125,7 +126,7 @@ public class UserService implements IUserService {
                 dob = LocalDate.parse(dobString, formatter);
             }
         } catch (DateTimeParseException e) {
-            throw new NotFoundException("Date format Error");
+            throw e;
         }
         List<User> pages;
         List<UserDTO> result = new ArrayList<>();
