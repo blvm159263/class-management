@@ -37,7 +37,6 @@ public class UnitService implements IUnitService {
     @Override
     public List<UnitDTO> getAllUnitBySessionId(Long sessionId, boolean status){
         Optional<List<Unit>> listUnit = unitRepository.findUnitBySessionIdAndStatus(sessionId, status);
-        ListUtils.checkList(listUnit);
         List<UnitDTO> unitDTOList = new ArrayList<>();
 
         for (Unit u : listUnit.get()) {
@@ -72,6 +71,7 @@ public class UnitService implements IUnitService {
         BigDecimal duration = syllabus.get().getHour();
 
         unitDTO.setSessionId(sessionId);
+        unitDTO.setStatus(true);
         Unit unit = UnitMapper.INSTANCE.toEntity(unitDTO);
         unit.setDuration(BigDecimal.valueOf(0));
         unitRepository.save(unit);
