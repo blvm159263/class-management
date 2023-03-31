@@ -50,7 +50,6 @@ public class TrainingMaterial implements Serializable {
 
     @Column(
             name = "type",
-            nullable = false,
             length = 200
     )
     private String type;
