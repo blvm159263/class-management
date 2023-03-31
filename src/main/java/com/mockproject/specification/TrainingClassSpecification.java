@@ -48,13 +48,13 @@ public class TrainingClassSpecification {
 
     public static Specification<TrainingClass> hasStartTimeBetween(List<TimeRangeDTO> timeRangeList) {
         Specification<TrainingClass> trainingClassSpecification = null;
-
         for (TimeRangeDTO timeRange : timeRangeList) {
+            log.info(timeRange.getFrom().toString()+" "+timeRange.getTo().toString());
             if (trainingClassSpecification == null) {
-                trainingClassSpecification = (root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("startTime"), timeRange.getFrom(), timeRange.getTo());
-
+                trainingClassSpecification = (root, query, criteriaBuilder) -> {
+                    return criteriaBuilder.between(root.get("startTime"), timeRange.getFrom(), timeRange.getTo());
+                };
             } else {
-
                 trainingClassSpecification = trainingClassSpecification.or(trainingClassSpecification = (root, query, criteriaBuilder) ->
                         criteriaBuilder.between(root.get("startTime"), timeRange.getFrom(), timeRange.getTo()));
             }
