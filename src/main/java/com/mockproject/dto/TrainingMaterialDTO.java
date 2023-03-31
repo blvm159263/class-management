@@ -18,18 +18,14 @@ import java.time.LocalDate;
 public class TrainingMaterialDTO implements Serializable {
     private Long id;
     private LocalDate uploadDate;
-
-
     @NotNull
-
     private String data;
-
+    @NotNull
     private String name;
     @NotNull
     private String type;
     @Min(0)
     private BigDecimal size;
-    @NotNull
     private boolean status;
     private Long unitDetailId;
     private Long userId;

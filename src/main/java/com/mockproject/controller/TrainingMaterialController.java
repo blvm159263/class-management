@@ -4,6 +4,9 @@ import com.mockproject.dto.CreateTrainingMaterialDTO;
 import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.repository.UserRepository;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/training-material")
+@SecurityRequirement(name = "Authorization")
 @AllArgsConstructor
 public class TrainingMaterialController {
 
@@ -43,14 +47,14 @@ public class TrainingMaterialController {
 
     @GetMapping("get-all/{id}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<TrainingMaterialDTO>> getFiles(@PathVariable("id") long unitDetailId){
+    public ResponseEntity<List<TrainingMaterialDTO>> getFiles(@PathVariable("id") @NotBlank long unitDetailId){
         return ResponseEntity.ok(trainingMaterialService.getFiles(unitDetailId, true));
     }
 
 
     @PostMapping("/upload-file/{unitDetailID}")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@PathVariable("unitDetailID") long unitDetailID,@RequestBody List<CreateTrainingMaterialDTO> createTrainingMaterialDTO) throws IOException{
+    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@PathVariable("unitDetailID") @NotBlank long unitDetailID,@Valid @RequestBody List<CreateTrainingMaterialDTO> createTrainingMaterialDTO) throws IOException{
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 
@@ -60,7 +64,7 @@ public class TrainingMaterialController {
 
     @GetMapping("/get-file/{id}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<TrainingMaterialDTO> getFile(@PathVariable("id") long id) throws DataFormatException, IOException {
+    public ResponseEntity<TrainingMaterialDTO> getFile(@PathVariable("id") @NotBlank long id) throws DataFormatException, IOException {
         TrainingMaterialDTO trainingMaterialDTO = trainingMaterialService.getFile(id, true);
         return ResponseEntity.ok()
                // .contentType(MediaType.valueOf(trainingMaterialDTO.getType()))
@@ -69,23 +73,20 @@ public class TrainingMaterialController {
 
     @PutMapping("/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<TrainingMaterialDTO> updateFile(
-            @PathVariable("id") long id,
-            @RequestParam(name = "file") CreateTrainingMaterialDTO dto
-            ) throws IOException {
+    public ResponseEntity<TrainingMaterialDTO> updateFile(@PathVariable("id") @NotBlank long id, @Valid @RequestBody CreateTrainingMaterialDTO dto) throws IOException {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(trainingMaterialService.updateFile(id, dto, user.getUser(), true));
     }
 
     @PutMapping("/delete/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteFile(@PathVariable("id") long trainingMaterialId){
+    public ResponseEntity<Boolean> deleteFile(@PathVariable("id") @NotBlank long trainingMaterialId){
         return ResponseEntity.ok(trainingMaterialService.deleteTrainingMaterial(trainingMaterialId, true));
     }
 
     @PutMapping("/multi-delete/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteFiles(@PathVariable("id") long unitDetailId){
+    public ResponseEntity<Boolean> deleteFiles(@PathVariable("id") @NotBlank long unitDetailId){
         return ResponseEntity.ok(trainingMaterialService.deleteTrainingMaterials(unitDetailId, true));
     }
 }

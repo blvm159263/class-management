@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SyllabusDTO implements Serializable {
 
-    @NotEmpty
+
 
     private Long id;
 

@@ -9,6 +9,7 @@ import com.mockproject.service.SyllabusService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -39,7 +40,7 @@ public class SyllabusController {
 
     @GetMapping("/{id}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Syllabus> getSyllabus(@PathVariable("id") long syllabusId){
+    public ResponseEntity<Syllabus> getSyllabus(@PathVariable("id") @NotBlank long syllabusId){
         Syllabus syllabus = syllabusService.getSyllabusById(syllabusId, true, true);
         return ResponseEntity.ok(syllabus);
     }
@@ -52,7 +53,7 @@ public class SyllabusController {
 
     @PostMapping(value = "/create")
     @Secured({CREATE,FULL_ACCESS})
-    public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus){
+    public ResponseEntity<Long> create(@Valid @RequestBody SyllabusDTO syllabus){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         long syllabusID = syllabusService.create(syllabus, user.getUser());
         return ResponseEntity.ok(syllabusID);
@@ -60,7 +61,7 @@ public class SyllabusController {
 
     @PutMapping("edit/{id}")
     @Secured({MODIFY,CREATE, FULL_ACCESS})
-    public ResponseEntity<Syllabus> editSyllabus(@PathVariable("id") long id, @RequestBody SyllabusDTO syllabusDTO){
+    public ResponseEntity<Syllabus> editSyllabus(@PathVariable("id") @NotBlank long id, @Valid @RequestBody SyllabusDTO syllabusDTO){
 
 
         Syllabus editsyllabus = syllabusService.editSyllabus(id, syllabusDTO, true);
@@ -70,7 +71,7 @@ public class SyllabusController {
 
     @PutMapping("delete/{id}")
     @Secured({MODIFY,CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id") long syllabusId){
+    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id") @NotBlank long syllabusId){
         return ResponseEntity.ok(syllabusService.deleteSyllabus(syllabusId, true));
     }
 }

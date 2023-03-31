@@ -6,6 +6,8 @@ import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Unit;
 import com.mockproject.entity.UnitDetail;
 import com.mockproject.service.UnitDetailService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -28,40 +30,40 @@ public class UnitDetailController {
 
     @GetMapping("/{id}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<UnitDetail>> getAllUnitDetailByUnitId(@PathVariable("id") long unitId){
+    public ResponseEntity<List<UnitDetail>> getAllUnitDetailByUnitId(@PathVariable("id") @NotBlank long unitId){
         List<UnitDetail> listUnitDetail = unitDetailService.getAllUnitDetailByUnitId(unitId, true);
         return ResponseEntity.ok(listUnitDetail);
     }
 
     @PostMapping("/create/{id}")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> createUnitDetail(@PathVariable("id") long unitId, @RequestBody List<UnitDetailDTO> listUnitDetail){
+    public ResponseEntity<Boolean> createUnitDetail(@PathVariable("id") @NotBlank long unitId, @Valid @RequestBody List<UnitDetailDTO> listUnitDetail){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(unitDetailService.createUnitDetail(unitId,listUnitDetail, user.getUser()));
     }
 
     @PutMapping("/edit/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<UnitDetail> editUnitDetail(@PathVariable("id") long id, @RequestBody UnitDetailDTO unitDetailDTO){
+    public ResponseEntity<UnitDetail> editUnitDetail(@PathVariable("id") @NotBlank long id, @Valid @RequestBody UnitDetailDTO unitDetailDTO){
         UnitDetail updateUnitDetail = unitDetailService.editUnitDetail(id, unitDetailDTO, true);
         return ResponseEntity.ok(updateUnitDetail);
     }
 
     @PutMapping("/delete/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnitDetail(@PathVariable("id") long unitDetailId){
+    public ResponseEntity<Boolean> deleteUnitDetail(@PathVariable("id") @NotBlank long unitDetailId){
         return ResponseEntity.ok(unitDetailService.deleteUnitDetail(unitDetailId, true));
     }
 
     @PutMapping("/multi-delete/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnitDetails(@PathVariable("id") long unitId){
+    public ResponseEntity<Boolean> deleteUnitDetails(@PathVariable("id") @NotBlank long unitId){
         return ResponseEntity.ok(unitDetailService.deleteUnitDetails(unitId, true));
     }
 
     @PutMapping("/toggle/{id}")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> toggleUnitDetailType(@PathVariable("id") long unitDetailId){
+    public ResponseEntity<Boolean> toggleUnitDetailType(@PathVariable("id") @NotBlank long unitDetailId){
         return ResponseEntity.ok(unitDetailService.toggleUnitDetailType(unitDetailId, true));
     }
 }

@@ -17,17 +17,13 @@ import java.util.List;
 @AllArgsConstructor
 public class UnitDTO implements Serializable {
 
-
-    @NotNull
-
     private Long id;
-
+    @NotNull
     private String unitTitle;
     @Min(0)
     private int unitNumber;
     @Min(0)
     private BigDecimal duration;
-    @NotNull
     private boolean status;
     private Long sessionId;
     private List<UnitDetailDTO> unitDetailDTOList;
