@@ -11,7 +11,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,6 +41,8 @@ public class FileController {
     public static final String FULL_ACCESS = "ROLE_Full access_Class";
 
     private final IFileService service;
+
+    private final ResourceLoader resourceLoader;
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "When read successful and return object",
@@ -61,8 +67,13 @@ public class FileController {
     @GetMapping("/download/class-format")
     @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity<?> downClassFormatFile() throws IOException {
-        Path path = Paths.get("file-format", "create-class-format.csv");
-        byte[] buffer = Files.readAllBytes(path);
+//        Path path = Paths.get("file-format", "create-class-format.csv");
+//        byte[] buffer = Files.readAllBytes(path);
+
+        Resource fileResource = resourceLoader.getResource("classpath:" + "file-format/create-class-format.csv");
+        InputStream inputStream = fileResource.getInputStream();
+        byte[] buffer = inputStream.readAllBytes();
+
         ByteArrayResource resource = new ByteArrayResource(buffer);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=create-class-format.csv");
