@@ -6,4 +6,8 @@ public interface ITrainingClassService {
 
     Long create(TrainingClassDTO trainingClassDTO);
 
+    boolean deleteTrainingClass(Long id);
+
+    boolean duplicateClass(Long id);
+
 }
