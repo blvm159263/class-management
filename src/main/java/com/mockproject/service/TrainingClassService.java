@@ -1,6 +1,10 @@
 package com.mockproject.service;
 
+import com.mockproject.dto.ClassScheduleDTO;
+import com.mockproject.dto.TrainingClassAdminDTO;
 import com.mockproject.dto.TrainingClassDTO;
+import com.mockproject.dto.TrainingClassUnitInformationDTO;
+import com.mockproject.entity.ClassSchedule;
 import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingClassAdmin;
 import com.mockproject.entity.TrainingClassUnitInformation;
