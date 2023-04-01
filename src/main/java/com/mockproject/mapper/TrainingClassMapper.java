@@ -119,5 +119,4 @@ public interface TrainingClassMapper {
         return attendee;
     }
 
-
 }
