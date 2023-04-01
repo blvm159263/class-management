@@ -64,7 +64,7 @@ public class TrainingClassController {
         Long id = trainingClassService.create(dto);
         if(id!=null){
             return new ResponseEntity<>(id, HttpStatus.CREATED);
-        }else{
+        } else {
             return new ResponseEntity<>("Can't not create Training Class", HttpStatus.BAD_REQUEST);
         }
     }
@@ -174,5 +174,28 @@ public class TrainingClassController {
                 .ok(trainingClassService.getListClass(true, location, fromDate, toDate, period,
                         isOnline? "Online" : "", state, attendee, fsu.orElse(0L), trainerId, search, sort, page, row));
     }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "When Training Class created successfully!"),
+            @ApiResponse(responseCode = "400", description = "When Training Class can't be created - Object is not valid!")
+    })
+    @Operation(summary = "Duplicate new Training Class")
+    @PostMapping("/duplicate/{id}")
+    public ResponseEntity<?> duplicateClass(@PathVariable("id") Long id) {
+        boolean status = service.duplicateClass(id);
+        if (status) {
+            return new ResponseEntity<>("Created!", HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>("Can't not duplicate Training Class", HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "When Training Class deleted successfully!"),
+            @ApiResponse(responseCode = "404", description = "When Training Class can't be found!")
+    })
+    @Operation(summary = "Delete Training Class")
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<?> deleteClass(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(service.deleteTrainingClass(id));
+    }
 }

@@ -30,4 +30,8 @@ public interface ITrainingClassService {
 
     TrainingClassDTO getAllDetails(Long id);
 
+    boolean deleteTrainingClass(Long id);
+
+    boolean duplicateClass(Long id);
+
 }
