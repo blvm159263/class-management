@@ -3,17 +3,15 @@ package com.mockproject.service;
 import com.mockproject.dto.ClassScheduleDTO;
 import com.mockproject.dto.TrainingClassAdminDTO;
 import com.mockproject.dto.TrainingClassDTO;
-import com.mockproject.entity.TrainingClass;
 import com.mockproject.dto.TrainingClassUnitInformationDTO;
-import com.mockproject.entity.*;
+import com.mockproject.entity.ClassSchedule;
+import com.mockproject.entity.TrainingClass;
+import com.mockproject.entity.TrainingClassAdmin;
+import com.mockproject.entity.TrainingClassUnitInformation;
 import com.mockproject.exception.entity.EntityNotFoundException;
 import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.mapper.TrainingClassAdminMapper;
 import com.mockproject.mapper.TrainingClassMapper;
-import com.mockproject.repository.LocationRepository;
-import com.mockproject.repository.TrainingClassRepository;
-import com.mockproject.repository.TrainingClassUnitInformationRepository;
-import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.mapper.TrainingClassUnitInformationMapper;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.ITrainingClassService;
@@ -97,33 +95,33 @@ public class TrainingClassService implements ITrainingClassService {
 
     @Override
     public boolean deleteTrainingClass(Long id) {
-        TrainingClass trainingClass = trainingClassRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Don't find any class"));
+        TrainingClass trainingClass = classRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("Don't find any class"));
         trainingClass.setStatus(false);
-        return trainingClassRepository.save(trainingClass) != null;
+        return classRepo.save(trainingClass) != null;
     }
 
     @Override
     public boolean duplicateClass(Long id) {
-        TrainingClass trainingClass = trainingClassRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Don't find any class"));
+        TrainingClass trainingClass = classRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("Don't find any class"));
         TrainingClassDTO dto = TrainingClassMapper.INSTANCE.toDTO(trainingClass);
         dto.setId(null);
         dto.setClassCode(generateClassCode(dto));
-        TrainingClass newTrainingClass = trainingClassRepository.save(TrainingClassMapper.INSTANCE.toEntity(dto));
+        TrainingClass newTrainingClass = classRepo.save(TrainingClassMapper.INSTANCE.toEntity(dto));
         if (newTrainingClass != null) {
             Long newId = newTrainingClass.getId();
             List<TrainingClassAdmin> trainingClassAdminList = trainingClass.getListTrainingClassAdmins().stream().map(
-                    p -> TrainingClassAdminMapper.INSTANCE.toEntity(new TrainingClassAdminDTO(null, true, p.getAdmin().getId(), newId))
+                    p -> TrainingClassAdminMapper.INSTANCE.toEntity(new TrainingClassAdminDTO(null, true, p.getAdmin().getId(), p.getAdmin().getFullName(),  newId, newTrainingClass.getClassName()))
             ).toList();
             trainingClassAdminRepository.saveAll(trainingClassAdminList);
 
             List<ClassSchedule> classScheduleList = trainingClass.getListClassSchedules().stream().map(p ->
-                    ClassScheduleMapper.INSTANCE.toEntity(new ClassScheduleDTO(null, p.getDate(), true, newId))
+                    ClassScheduleMapper.INSTANCE.toEntity(new ClassScheduleDTO(null, p.getDate(), true, newId, newTrainingClass.getClassName()))
             ).toList();
             classScheduleRepository.saveAll(classScheduleList);
 
             List<TrainingClassUnitInformation> trainingClassUnitInformationList = trainingClass.getListTrainingClassUnitInformations().stream().map(p ->
                     TrainingClassUnitInformationMapper.INSTANCE.toEntity(
-                            new TrainingClassUnitInformationDTO(null, true, p.getTrainer().getId(), p.getUnit().getId(), newId, p.getTower().getId())
+                            new TrainingClassUnitInformationDTO(null, true, p.getTrainer().getId(), p.getTrainer().getFullName(), p.getUnit().getId(), p.getUnit().getUnitTitle(), newId, newTrainingClass.getClassName(), p.getTower().getId(), p.getTower().getTowerName())
                             )).toList();
             trainingClassUnitInformationRepository.saveAll(trainingClassUnitInformationList);
 
@@ -150,7 +148,7 @@ public class TrainingClassService implements ITrainingClassService {
         String programCode = programName.split(" ", 2)[0];
         Year yearCode = Year.now().minusYears(2000);
         StringBuilder builder = new StringBuilder();
-        List<TrainingClass> listExisting = trainingClassRepository.findByClassNameContaining(trainingClassDTO.getClassName());
+        List<TrainingClass> listExisting = classRepo.findByClassNameContaining(trainingClassDTO.getClassName());
         String versionCode = String.format("%02d", listExisting.size());
 
         builder.append(locationCode)

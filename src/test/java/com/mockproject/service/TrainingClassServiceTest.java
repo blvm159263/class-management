@@ -1,33 +1,10 @@
 package com.mockproject.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyBoolean;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.*;
-import com.mockproject.entity.Location;
-import com.mockproject.entity.TrainingClass;
-import com.mockproject.entity.TrainingProgram;
-import com.mockproject.entity.User;
 import com.mockproject.exception.entity.EntityNotFoundException;
 import com.mockproject.mapper.TrainingClassMapper;
 import com.mockproject.repository.*;
-import com.mockproject.repository.ClassScheduleRepository;
-import com.mockproject.repository.LocationRepository;
-import com.mockproject.repository.TrainingClassAdminRepository;
-import com.mockproject.repository.TrainingClassRepository;
-import com.mockproject.repository.TrainingClassUnitInformationRepository;
-import com.mockproject.repository.TrainingProgramRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {TrainingClassService.class})
@@ -58,9 +35,6 @@ class TrainingClassServiceTest {
 
     @MockBean
     private TrainingClassRepository trainingClassRepository;
-
-    @MockBean
-    private TrainingClassUnitInformationRepository classUnitRepo;
 
     @MockBean
     private TrainingClassMapper trainingClassMapper;
@@ -78,8 +52,6 @@ class TrainingClassServiceTest {
     private TrainingClassService trainingClassService;
 
     Attendee attendee = new Attendee(1L, "", "", true, null, null);
-    TrainingProgram trainingProgram = new TrainingProgram(1L, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
-            30, true, null, null, null, null);
     Location location = new Location(1L, "Ha Noi", "123 Le Loi", true, null, null);
     Fsu fsu = new Fsu(1L, "", "", true, null);
     Contact contact = new Contact(1L, "", "", true, null);
@@ -87,8 +59,6 @@ class TrainingClassServiceTest {
             true, null, null, null, null, null, null,
             null, null, null, null, null,
             null, null, null);
-
-    Attendee attendee = new Attendee(1L, "", "", true, null, null);
 
     TrainingProgram trainingProgram = new TrainingProgram(1L, 1, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
             30, true, true, user, null, null, null);
@@ -98,12 +68,6 @@ class TrainingClassServiceTest {
             30, true, true, user, null, null, null);
     TrainingProgram trainingProgram3 = new TrainingProgram(4L, 4, "Pascal for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
             30, true, true, user, null, null, null);
-
-    Location location = new Location(1L, "Ha Noi", "123 Le Loi", true, null, null);
-
-    Fsu fsu = new Fsu(1L, "", "", true, null);
-
-    Contact contact = new Contact(1L, "", "", true, null);
 
     TrainingClass trainingClass = new TrainingClass(1L, "Class Name 1", " Code113", LocalDate.now(),
                 Time.valueOf("09:00:00"), Time.valueOf("11:00:00"), BigDecimal.ONE, 10, 4, 5, 6, "1", LocalDate.now(),

@@ -181,7 +181,7 @@ public class TrainingClassController {
     @Operation(summary = "Duplicate new Training Class")
     @PostMapping("/duplicate/{id}")
     public ResponseEntity<?> duplicateClass(@PathVariable("id") Long id) {
-        boolean status = service.duplicateClass(id);
+        boolean status = trainingClassService.duplicateClass(id);
         if (status) {
             return new ResponseEntity<>("Created!", HttpStatus.CREATED);
         } else {
@@ -196,6 +196,6 @@ public class TrainingClassController {
     @Operation(summary = "Delete Training Class")
     @PutMapping("/delete/{id}")
     public ResponseEntity<?> deleteClass(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(service.deleteTrainingClass(id));
+        return ResponseEntity.ok(trainingClassService.deleteTrainingClass(id));
     }
 }

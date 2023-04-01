@@ -70,13 +70,6 @@ public interface TrainingClassMapper {
         return trainingProgram;
     }
 
-    @Named("mapLocation")
-    default Location mapLocation(Long id) {
-        Location location = new Location();
-        location.setId(id);
-        return location;
-    }
-
     @Named("mapReviewer")
     default User mapReviewer(Long id) {
         User user = new User();
