@@ -1,6 +1,7 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.FileClassResponseDTO;
+import com.mockproject.entity.*;
 import com.mockproject.exception.FileException;
 import com.mockproject.exception.entity.DateNotValidExption;
 import com.mockproject.exception.entity.EntityNotFoundException;
@@ -24,8 +25,7 @@ import java.sql.Time;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -95,26 +95,32 @@ public class FileService implements IFileService {
         }
 
         String[] listAdminEmail = record.get(14).split("/");
-        Long locationId = locationRepository.findFirstByLocationNameAndStatus(locationName, true)
-                .orElseThrow(() -> new EntityNotFoundException("Location not found!")).getId();
-        Long fsuId = fsuRepository.findByFsuNameAndStatus(fsuName, true)
-                .orElseThrow(() -> new EntityNotFoundException("Fsu not found!")).getId();
-        Long contactId = contactRepository.findByContactEmailAndStatus(contactEmail, true)
-                .orElseThrow(()-> new EntityNotFoundException("Contact not found!")).getId();
-        Long trainingProgramId = trainingProgramRepository.findFirstByNameAndStatus(trainingProgramName, true)
-                .orElseThrow(()-> new EntityNotFoundException("Tranining class not found!")).getId();
-        Long attendeeId = attendeeRepository.findByAttendeeNameAndStatus(attendeeName, true)
-                .orElseThrow(() -> new EntityNotFoundException("Attendee not found!")).getId();
+        Location location = locationRepository.findFirstByLocationNameAndStatus(locationName, true)
+                .orElseThrow(() -> new EntityNotFoundException("Location not found!"));
+        Fsu fsu = fsuRepository.findByFsuNameAndStatus(fsuName, true)
+                .orElseThrow(() -> new EntityNotFoundException("Fsu not found!"));
+        Contact contact = contactRepository.findByContactEmailAndStatus(contactEmail, true)
+                .orElseThrow(()-> new EntityNotFoundException("Contact not found!"));
+        TrainingProgram trainingProgram = trainingProgramRepository.findFirstByNameAndStatus(trainingProgramName, true)
+                .orElseThrow(()-> new EntityNotFoundException("Tranining class not found!"));
+        Attendee attendee = attendeeRepository.findByAttendeeNameAndStatus(attendeeName, true)
+                .orElseThrow(() -> new EntityNotFoundException("Attendee not found!"));
 
-        List<Long> listAdminId = Arrays.stream(listAdminEmail)
+        List<User> listAdmin = Arrays.stream(listAdminEmail)
                 .map(p ->
                         userRepository.findByEmailAndStatus(p, true)
-                                .orElseThrow(() -> new EntityNotFoundException("User not found!")).getId()
+                                .orElseThrow(() -> new EntityNotFoundException("User not found!"))
                 ).toList();
 
+        List<Map<Long,String>> listMapAdmin = new ArrayList<>();
+        for (User admin : listAdmin) {
+            var adminMap = Map.of(admin.getId(), admin.getFullName());
+            listMapAdmin.add(adminMap);
+        }
         return new FileClassResponseDTO(className, startDate, startTime, endTime, hour,
-                day, planned, accepted, actual, locationId, fsuId,
-                contactId, trainingProgramId, attendeeId, listAdminId);
+                day, planned, accepted, actual, location.getId(),location.getLocationName() ,fsu.getId(),
+                fsu.getFsuName(), contact.getId(),contact.getContactEmail(), trainingProgram.getId(),
+                trainingProgram.getName(), attendee.getId(),attendee.getAttendeeName(), listMapAdmin);
     }
 
     @Override
