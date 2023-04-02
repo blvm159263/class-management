@@ -52,7 +52,7 @@ public class FileController {
     @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity<?> readFile(@RequestParam("file") MultipartFile file) throws IOException {
         String fileName = file.getOriginalFilename();
-        String fileFormat = fileName.split(".")[1];
+        String fileFormat = fileName.split("\\.")[1];
         if(!fileFormat.equals("csv")){
             throw new FileFormatException("File doesn't .csv format!");
         }

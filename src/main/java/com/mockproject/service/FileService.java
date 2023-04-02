@@ -75,7 +75,7 @@ public class FileService implements IFileService {
             startDate = LocalDate.parse(record.get(1), formatter);
             startTime = Time.valueOf(record.get(2));
             endTime = Time.valueOf(record.get(3));
-        } catch (DateTimeException dateTimeException) {
+        } catch (Exception e) {
             throw new DateNotValidExption("Date time doesn't match with format! (yyyy/mm/dd) / Time (hh/mm)");
         }
         try {
