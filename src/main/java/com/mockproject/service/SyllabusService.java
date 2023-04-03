@@ -219,7 +219,7 @@ public class SyllabusService implements ISyllabusService {
     @Override
     public Syllabus editSyllabus(SyllabusDTO syllabusDTO, boolean status) throws IOException{
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusDTO.getId(), status);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // Set day and hour
@@ -252,7 +252,7 @@ public class SyllabusService implements ISyllabusService {
     @Override
     public boolean deleteSyllabus(Long syllabusId, boolean status){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusId, status);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT,"Syllabus not found"));
         syllabus.get().setStatus(false);
         sessionService.deleteSessions(syllabusId, status);
         syllabusRepository.save(syllabus.get());
@@ -405,7 +405,7 @@ public class SyllabusService implements ISyllabusService {
     @Override
     public SyllabusDTO getSyllabusById(Long syllabusId,boolean state, boolean status){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, state, status);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
         SyllabusDTO syllabusDTO = SyllabusMapper.INSTANCE.toDTO(syllabus.get());
         List<SessionDTO> sessionDTOList = sessionService.getAllSessionBySyllabusId(syllabusId, true);
         syllabusDTO.setSessionDTOList(sessionDTOList);

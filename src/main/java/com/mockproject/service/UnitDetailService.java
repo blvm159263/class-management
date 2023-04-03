@@ -63,7 +63,7 @@ public class UnitDetailService implements IUnitDetailService {
     @Override
     public boolean createUnitDetail(Long unitId, List<UnitDetailDTO> listUnitDetail, User user){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, true);
-        unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Unit not found"));
         for (UnitDetailDTO i: listUnitDetail) {
             createUnitDetail(unitId, i, user);
         }
@@ -73,7 +73,7 @@ public class UnitDetailService implements IUnitDetailService {
     @Override
     public boolean createUnitDetail(Long unitId, UnitDetailDTO unitDetailDTO, User user){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, true);
-        unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Unit not found"));
         BigDecimal duration = unit.get().getDuration();
 
         unitDetailDTO.setStatus(true);
@@ -91,14 +91,14 @@ public class UnitDetailService implements IUnitDetailService {
     @Override
     public UnitDetail getUnitDetailById(Long id, boolean status){
         Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(id, status);
-        unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "UnitDetail not found"));
         return unitDetail.get();
     }
 
     @Override
     public UnitDetail editUnitDetail(UnitDetailDTO unitDetailDTO, boolean status) throws IOException {
         Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(unitDetailDTO.getId(), status);
-        unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "UnitDetail not found"));
         unitDetailDTO.setUnitId(unitDetail.get().getUnit().getId());
 
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitDetailDTO.getUnitId(), true);
@@ -128,7 +128,7 @@ public class UnitDetailService implements IUnitDetailService {
     @Override
     public boolean deleteUnitDetail(Long unitDetailId, boolean status){
         Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(unitDetailId, status);
-        unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "unitDetail "+ unitDetailId));
+        unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "UnitDetail not found"));
         unitDetail.get().setStatus(false);
         trainingMaterialService.deleteTrainingMaterials(unitDetailId,status);
         unitDetailRepository.save(unitDetail.get());
@@ -146,7 +146,7 @@ public class UnitDetailService implements IUnitDetailService {
     @Override
     public boolean toggleUnitDetailType(Long unitDetailId, boolean status){
         Optional<UnitDetail> unitDetail = unitDetailRepository.findByIdAndStatus(unitDetailId, status);
-        unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "UnitDetail not found"));
         unitDetail.get().setType(unitDetail.get().isType() == true ? false: true);
         unitDetailRepository.save(unitDetail.get());
         return true;

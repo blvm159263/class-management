@@ -54,7 +54,7 @@ public class DeliveryTypeController {
     @GetMapping("{id}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> getById(@Parameter(description = "Delivery Type ID") @PathVariable("id") Long id) {
-        DeliveryTypeDTO deliveryTypeDTO = deliveryTypeService.getByIdTrue(id);
+        DeliveryTypeDTO deliveryTypeDTO = deliveryTypeService.getDeliveryType(id, true);
         if (deliveryTypeDTO != null) {
             return ResponseEntity.ok(deliveryTypeDTO);
         } else {
