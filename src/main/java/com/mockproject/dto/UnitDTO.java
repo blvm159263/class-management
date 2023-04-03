@@ -1,5 +1,7 @@
 package com.mockproject.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,8 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UnitDTO implements Serializable {
+
     private Long id;
+    @NotNull
     private String unitTitle;
+    @Min(0)
     private int unitNumber;
     private BigDecimal duration;
     private boolean status;

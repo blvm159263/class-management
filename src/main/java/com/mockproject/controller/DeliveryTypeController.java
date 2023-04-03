@@ -45,14 +45,6 @@ public class DeliveryTypeController {
         return ResponseEntity.ok(deliveryTypeDTOList);
     }
 
-    @GetMapping("/{deliveryTypeId}")
-    @Operation(summary = "get Delivery type by delivery type id")
-    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<DeliveryTypeDTO> getDeliveryTypeById(@PathVariable("deliveryTypeId") long id){
-        DeliveryTypeDTO deliveryTypeDTO = deliveryTypeService.getDeliveryType(id, true);
-        return ResponseEntity.ok(deliveryTypeDTO);
-    }
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any delivery type"),
             @ApiResponse(responseCode = "200", description = "When found delivery type",

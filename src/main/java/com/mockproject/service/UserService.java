@@ -1,11 +1,8 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.FormRoleDTO;
-import com.mockproject.dto.RoleDTO;
 import com.mockproject.dto.UserDTO;
 import com.mockproject.entity.Level;
 import com.mockproject.entity.Role;
-import com.mockproject.entity.RolePermissionScope;
 import com.mockproject.entity.User;
 import com.mockproject.mapper.UserMapper;
 import com.mockproject.repository.*;

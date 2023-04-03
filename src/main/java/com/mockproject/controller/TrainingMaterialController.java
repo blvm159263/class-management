@@ -7,8 +7,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.mockproject.repository.UserRepository;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,14 +43,14 @@ public class TrainingMaterialController {
     @GetMapping("get-all/{unitDetailId}")
     @Operation(summary = "Get files training material by unit detail id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<TrainingMaterialDTO>> getFiles(@PathVariable("unitDetailId") Long unitDetailId){
+    public ResponseEntity<List<TrainingMaterialDTO>> getFiles(@PathVariable("unitDetailId") @NotNull Long unitDetailId){
         return ResponseEntity.ok(trainingMaterialService.getFiles(unitDetailId, true));
     }
 
     @PostMapping("/upload-file/{unitDetailID}")
     @Operation(summary = "Upload file by unit detail id")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@PathVariable("unitDetailID") Long unitDetailID,@RequestBody List<TrainingMaterialDTO> trainingMaterialDTOList){
+    @Secured({CREATE, FULL_ACCESS})
+    public ResponseEntity<List<TrainingMaterialDTO>> uploadFile(@PathVariable("unitDetailID") @NotBlank Long unitDetailID,@Valid @RequestBody List<TrainingMaterialDTO> trainingMaterialDTOList){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return ResponseEntity.ok(trainingMaterialService.uploadFile(trainingMaterialDTOList,
@@ -53,7 +60,7 @@ public class TrainingMaterialController {
     @GetMapping("/get-file/{id}")
     @Operation(summary = "Get file by Training material id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<TrainingMaterialDTO> getFile(@PathVariable("id") @Parameter(description = "Traning material id") Long id) throws DataFormatException, IOException {
+    public ResponseEntity<TrainingMaterialDTO> getFile(@PathVariable("id") @Parameter(description = "Traning material id") @NotNull Long id) throws DataFormatException, IOException {
         TrainingMaterialDTO trainingMaterialDTO = trainingMaterialService.getFile(id, true);
         return ResponseEntity.ok()
                // .contentType(MediaType.valueOf(trainingMaterialDTO.getType()))
@@ -63,9 +70,8 @@ public class TrainingMaterialController {
     @PutMapping("/{id}")
     @Operation(summary = "Update file by training material id")
     @Secured({MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<TrainingMaterialDTO> updateFile(
-            @PathVariable("id") @Parameter(description = "Training material id") Long id,
-            @RequestBody TrainingMaterialDTO dto
+    public ResponseEntity<TrainingMaterialDTO> updateFile(@PathVariable("id") @Parameter(description = "Training material id") @NotBlank Long id,
+            @Valid @RequestBody TrainingMaterialDTO dto
             ) throws IOException {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(trainingMaterialService.updateFile(id, dto, user.getUser(), true));
@@ -74,14 +80,14 @@ public class TrainingMaterialController {
     @PutMapping("/delete/{id}")
     @Operation(summary = "Delete file by training material id")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteFile(@PathVariable("id")@Parameter(description = "Training material id") Long trainingMaterialId){
+    public ResponseEntity<Boolean> deleteFile(@PathVariable("id") @Parameter(description = "Training material id") @NotNull Long trainingMaterialId){
         return ResponseEntity.ok(trainingMaterialService.deleteTrainingMaterial(trainingMaterialId, true));
     }
 
     @PutMapping("/multi-delete/{id}")
     @Operation(summary = "Delete file by Unit detail id")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteFiles(@PathVariable("id")@Parameter(description = "Unit detail id") Long unitDetailId){
+    public ResponseEntity<Boolean> deleteFiles(@PathVariable("id") @Parameter(description = "Unit detail id") @NotBlank Long unitDetailId){
         return ResponseEntity.ok(trainingMaterialService.deleteTrainingMaterials(unitDetailId, true));
     }
 }

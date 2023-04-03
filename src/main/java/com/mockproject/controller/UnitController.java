@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
@@ -41,7 +43,7 @@ public class UnitController {
     @GetMapping("/{sessionId}")
     @Operation(summary = "Get all unit by session id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<UnitDTO>> getAllUnitBySessionId(@PathVariable("sessionId") Long sessionId){
+    public ResponseEntity<List<UnitDTO>> getAllUnitBySessionId(@PathVariable("sessionId") @NotNull Long sessionId){
         List<UnitDTO> listUnit = unitService.getAllUnitBySessionId(sessionId, true);
         return ResponseEntity.ok(listUnit);
     }
@@ -49,7 +51,7 @@ public class UnitController {
     @PostMapping("/create/{id}")
     @Operation(summary = "Create unit by session id")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> createUnit(@PathVariable("id") @Parameter(description = "Session id") Long sessionId, @RequestBody List<UnitDTO> listUnit){
+    public ResponseEntity<Boolean> createUnit(@PathVariable("id") @Parameter(description = "Session id") @NotNull Long sessionId, @Valid @RequestBody List<UnitDTO> listUnit){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(unitService.createUnit(sessionId, listUnit, user.getUser()));
     }
@@ -57,22 +59,22 @@ public class UnitController {
     @PutMapping("/edit")
     @Operation(summary = "Edit unit by UnitDTO")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Unit> editUnit(@RequestBody UnitDTO unitDTO)throws IOException {
+    public ResponseEntity<Unit> editUnit(@Valid @RequestBody UnitDTO unitDTO) throws IOException{
         Unit updateUnit = unitService.editUnit(unitDTO, true);
         return ResponseEntity.ok(updateUnit);
     }
 
-    @PutMapping("/delete/{id}")
+    @PutMapping("delete/{id}")
     @Operation(summary = "Delete unit by unit id")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnit(@PathVariable("id") @Parameter(description = "Unit id") Long unitId){
+    public ResponseEntity<Boolean> deleteUnit(@PathVariable("id") @Parameter(description = "Unit id") @NotNull Long unitId){
         return ResponseEntity.ok(unitService.deleteUnit(unitId, true));
     }
 
     @PutMapping("/multi-delete/{id}")
     @Operation(summary = "Delete multi units by sessionId")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteUnits(@PathVariable("id") @Parameter(description = "Session id") Long sessionId){
+    public ResponseEntity<Boolean> deleteUnits(@PathVariable("id") @Parameter(description = "Session id") @NotNull Long sessionId){
         return ResponseEntity.ok(unitService.deleteUnits(sessionId, true));
     }
 

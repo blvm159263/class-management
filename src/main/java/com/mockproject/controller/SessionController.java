@@ -3,7 +3,7 @@ package com.mockproject.controller;
 import com.mockproject.dto.SessionDTO;
 import com.mockproject.entity.CustomUserDetails;
 import com.mockproject.entity.Session;
-import com.mockproject.service.interfaces.ISessionService;
+import com.mockproject.service.SessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,8 +12,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -36,19 +39,20 @@ public class SessionController {
     public static final String CREATE = "ROLE_Create_Syllabus";
     public static final String FULL_ACCESS = "ROLE_Full access_Syllabus";
 
-    private final ISessionService sessionService;
+    @Autowired
+    public SessionService sessionService;
 
     @GetMapping("/{syllabusId}")
     @Operation(summary = "get all session by syllabus id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<List<SessionDTO>> getAll(@PathVariable ("syllabusId") Long syllabusId){
+    public ResponseEntity<List<SessionDTO>> getAll(@PathVariable ("syllabusId") @NotNull Long syllabusId){
         return ResponseEntity.ok(sessionService.getAllSessionBySyllabusId(syllabusId, true));
     }
 
     @PostMapping("/create/{id}")
     @Operation(summary = "Create sessions by syllabus id")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<Boolean> createSessions(@PathVariable("id") @Parameter(description = "Syllabus id") Long syllabusId, @RequestBody List<SessionDTO> listSession){
+    public ResponseEntity<Boolean> createSessions(@PathVariable("id") @Parameter(description = "Syllabus id") @NotNull Long syllabusId, @Valid @RequestBody List<SessionDTO> listSession){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(sessionService.createSession(syllabusId, listSession, user.getUser()));
     }
@@ -56,7 +60,7 @@ public class SessionController {
     @PutMapping("/edit")
     @Operation(summary = "Edit session by sessionDTO")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Session> editSession(@RequestBody SessionDTO sessionDTO)throws IOException {
+    public ResponseEntity<Session> editSession(@Valid @RequestBody SessionDTO sessionDTO) throws IOException {
         Session updateSession = sessionService.editSession(sessionDTO, true);
         return ResponseEntity.ok(updateSession);
     }
@@ -64,14 +68,14 @@ public class SessionController {
     @PutMapping("/delete/{id}")
     @Operation(summary = "Delete session by session id")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteSession(@PathVariable("id") @Parameter(description = "Session id") Long sessionId){
+    public ResponseEntity<Boolean> deleteSession(@PathVariable("id") @Parameter(description = "Session id") @NotNull Long sessionId){
         return ResponseEntity.ok(sessionService.deleteSession(sessionId, true));
     }
 
     @PutMapping("/multi-delete/{id}")
     @Operation(summary = "Delete session by session id")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteSessions(@PathVariable("id")@Parameter(description = "Session id") Long syllabusId){
+    public ResponseEntity<Boolean> deleteSessions(@PathVariable("id") @Parameter(description = "Session id") @NotNull Long syllabusId){
         return ResponseEntity.ok(sessionService.deleteSessions(syllabusId, true));
     }
 
