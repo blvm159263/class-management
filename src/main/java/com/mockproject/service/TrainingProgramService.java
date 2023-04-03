@@ -1,9 +1,6 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.ReadFileDto;
-import com.mockproject.dto.SearchTPDTO;
-import com.mockproject.dto.TrainingProgramAddDto;
-import com.mockproject.dto.TrainingProgramDTO;
+import com.mockproject.dto.*;
 import com.mockproject.entity.*;
 import com.mockproject.exception.FileException;
 import com.mockproject.exception.SyllabusException;
@@ -152,10 +149,49 @@ public class TrainingProgramService implements ITrainingProgramService {
         });
     }
 
+    @Override
+    public boolean duplicateProgram(Long trainingProgramID) {
+        Optional<TrainingProgram> trainingProgramModel = trainingProgramRepository.findById(trainingProgramID);
+        List<TrainingProgramSyllabusDTO> programSyllabusList = trainingProgramSyllabusService.getAllSyllabusByTrainingProgramId(trainingProgramID, true);
+        List<Long> syllabusIDList = new ArrayList<>();
+        CustomUserDetails CusUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = CusUserDetails.getUser();
+        programSyllabusList.forEach(programSyllabus -> {
+            syllabusIDList.add(programSyllabus.getSyllabusId());
+        });
+        List<Syllabus> syllabusList = syllabusService.getAllSyllabusEntityById(syllabusIDList);
+        LocalDate nowDay = LocalDate.now();
+        int day = getDay(syllabusList);
+        BigDecimal hour = getHour(syllabusList);
+        //create trainingProgram
+        if (trainingProgramModel.isPresent()) {
+            TrainingProgram trainingProgram = TrainingProgram.builder()
+                    .name(trainingProgramModel.get().getName())
+                    .dateCreated(nowDay)
+                    .lastDateModified(nowDay)
+                    .day(day)
+                    .hour(hour)
+                    .state(true)
+                    .status(true)
+                    .programId(trainingProgramModel.get().getProgramId())
+                    .creator(user)
+                    .lastModifier(user)
+                    .build();
+            // create programSyllabus
+            List<TrainingProgramSyllabus> programSyllabus = syllabusList.stream()
+                    .map(syllabus -> new TrainingProgramSyllabus(null, true, syllabus, trainingProgram))
+                    .collect(Collectors.toList());
+            // save to database
+            trainingProgramRepository.save(trainingProgram);
+            trainingProgramSyllabusService.saveAll(programSyllabus);
+        }
+        return trainingProgramModel.isPresent();
+    }
+
     private List<TrainingProgram> doSearch(List<TrainingProgram> trainingPrograms, List<String> searchList) {
         List<TrainingProgram> result = trainingPrograms.stream()
                 .filter(trainingProgram1 -> trainingProgram1.getCreator() != null
-                        && trainingProgram1.isStatus()).collect(Collectors.toList());
+                        && trainingProgram1.isStatus()).toList();
         List<TrainingProgram> result2 = new ArrayList<>();
         for (String search : searchList) {
             result2 = result.stream()
@@ -371,8 +407,5 @@ public class TrainingProgramService implements ITrainingProgramService {
         return trainingProgramFilter;
     }
 
-//        TrainingProgram trainingProgram = trainingProgramRepository.getTrainingProgramById(id);
-//        return TrainingProgramMapper.INSTANCE.toDTO(trainingProgram);
-//    }
 
 }
