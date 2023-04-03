@@ -161,7 +161,7 @@ public class TrainingProgramService implements ITrainingProgramService {
         });
         List<Syllabus> syllabusList = syllabusService.getAllSyllabusEntityById(syllabusIDList);
         LocalDate nowDay = LocalDate.now();
-        int day = getDay(syllabusList);
+//        int day = getDay(syllabusList);
         BigDecimal hour = getHour(syllabusList);
         //create trainingProgram
         if (trainingProgramModel.isPresent()) {
@@ -169,7 +169,7 @@ public class TrainingProgramService implements ITrainingProgramService {
                     .name(trainingProgramModel.get().getName())
                     .dateCreated(nowDay)
                     .lastDateModified(nowDay)
-                    .day(day)
+                    .day(trainingProgramModel.get().getDay())
                     .hour(hour)
                     .state(true)
                     .status(true)
