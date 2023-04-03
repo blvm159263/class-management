@@ -175,7 +175,7 @@ public class TrainingProgramController {
 
     @PutMapping("/restore-status-training-program")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<?> restoreALlTrainingPrograms() {
+    public ResponseEntity<?> restoreAllTrainingPrograms() {
         trainingProgramService.restoreAllTrainingPrograms();
         return ResponseEntity.ok("Restore all training programs successfully.");
     }
@@ -186,6 +186,15 @@ public class TrainingProgramController {
       List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(searchList);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
+        }
+    }
+
+    @PostMapping("/duplicate-training-program/{trainingProgramID}")
+    public ResponseEntity<?> duplicateTrainingProgram(@PathVariable Long trainingProgramID) {
+        if (trainingProgramService.duplicateProgram(trainingProgramID)) {
+            return ResponseEntity.ok("Duplicate training program successfully");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
         }
