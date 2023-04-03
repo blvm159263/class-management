@@ -91,7 +91,7 @@ class TrainingClassServiceTest {
      * Method under test: {@link TrainingClassService#create(TrainingClassDTO)}
      */
 //    @Test
-//    @Disabled
+//   @Disabled
 //    void canCreateNewTrainingClass() {
 //        TrainingClass tcAfterSave = new TrainingClass(1L, "Class Name 1", " Code113", LocalDate.now(),
 //                Time.valueOf("09:00:00"), Time.valueOf("11:00:00"), BigDecimal.ONE, 10, 4, 5, 6, "1", LocalDate.now(),
@@ -100,8 +100,10 @@ class TrainingClassServiceTest {
 //
 //        TrainingClassDTO dto = new TrainingClassDTO(null, "Class Name 1", " Code113", LocalDate.now(),
 //                Time.valueOf("09:00:00"), Time.valueOf("11:00:00"), BigDecimal.ONE, 10, 4, 5, 6, "1", LocalDate.now(),
-//                LocalDate.now(), LocalDate.now(), LocalDate.now(), 0, true, location.getId(), attendee.getId(), trainingProgram.getId(), fsu.getId(),
-//                contact.getId(), user.getId(), user.getId(), user.getId(), user.getId());
+//                LocalDate.now(), LocalDate.now(), LocalDate.now(), 0, true, location.getId(),location.getLocationName(), attendee.getId(),
+//                attendee.getAttendeeName(), trainingProgram.getId(), trainingProgram.getName(), fsu.getId(), fsu.getFsuName(),
+//                contact.getId(), contact.getContactEmail(), user.getId(),user.getFullName(), user.getId(),user.getFullName(), user.getId(),
+//                user.getFullName(), user.getId(),user.getFullName());
 //
 //        when(trainingClassRepository.save(any())).thenReturn(tcAfterSave);
 //

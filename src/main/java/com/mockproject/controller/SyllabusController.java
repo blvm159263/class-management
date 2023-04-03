@@ -15,8 +15,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +56,9 @@ public class SyllabusController {
 
     private final ITrainingProgramSyllabusService trainingProgramSyllabusService;
 
+    private final ResourceLoader resourceLoader;
+
+
     @GetMapping("/getSyllabusByTrainingProgram/{trainingProgramId}")
     @Operation(summary = "Get all syllabus by training program id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
@@ -60,7 +70,7 @@ public class SyllabusController {
     @GetMapping("/{syllabusId}")
     @Operation(summary = "Get syllabus by syllabus id")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<SyllabusDTO> getSyllabus(@PathVariable("syllabusId") Long syllabusId) {
+    public ResponseEntity<SyllabusDTO> getSyllabus(@PathVariable("syllabusId") @NotBlank Long syllabusId){
         SyllabusDTO syllabus = syllabusService.getSyllabusById(syllabusId, true, true);
         return ResponseEntity.ok(syllabus);
     }
@@ -75,7 +85,7 @@ public class SyllabusController {
     @PostMapping(value = "/create")
     @Operation(summary = "Create Syllabus")
     @Secured({CREATE,FULL_ACCESS})
-    public ResponseEntity<Long> create(@RequestBody SyllabusDTO syllabus) {
+    public ResponseEntity<Long> create(@Valid @RequestBody SyllabusDTO syllabus){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long syllabusID = syllabusService.create(syllabus, user.getUser());
         return ResponseEntity.ok(syllabusID);
@@ -84,7 +94,7 @@ public class SyllabusController {
     @PutMapping("edit")
     @Operation(summary = "Edit syllabus by SyllabusDTO")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Syllabus> editSyllabus(@RequestBody SyllabusDTO syllabusDTO)throws IOException {
+    public ResponseEntity<Syllabus> editSyllabus(@Valid @RequestBody SyllabusDTO syllabusDTO) throws IOException {
         Syllabus editsyllabus = syllabusService.editSyllabus(syllabusDTO, true);
         return ResponseEntity.ok(editsyllabus);
     }
@@ -92,7 +102,7 @@ public class SyllabusController {
     @PutMapping("delete/{id}")
     @Operation(summary = "Delete syllabus by syllabusId")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id")@Parameter(description = "Syllabus id") long syllabusId) {
+    public ResponseEntity<Boolean> deleteSyllabus(@PathVariable("id") @Parameter(description = "Syllabus id") @NotNull Long syllabusId){
         return ResponseEntity.ok(syllabusService.deleteSyllabus(syllabusId, true));
     }
 
@@ -193,13 +203,19 @@ public class SyllabusController {
     @GetMapping("get-template-file")
     @Operation(summary = "Download file")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<byte[]> getTemplateFile() throws IOException {
+    public ResponseEntity<?> getTemplateFile() throws IOException {
 
-        String filename = "Syllabus_import.csv";
+        Resource fileResource = resourceLoader.getResource("classpath:" + "file-format/syllabus-template.csv");
+        InputStream inputStream = fileResource.getInputStream();
+        byte[] buffer = inputStream.readAllBytes();
 
+        ByteArrayResource resource = new ByteArrayResource(buffer);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Syllabus_import.csv");
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/csv"))
-                .body(syllabusService.getTemplateCsvFile());
+                .headers(headers)
+                .contentLength(buffer.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 }

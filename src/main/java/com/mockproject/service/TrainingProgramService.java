@@ -29,10 +29,7 @@ import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -106,21 +103,53 @@ public class TrainingProgramService implements ITrainingProgramService {
     }
 
     @Override
-    public void deactiveTrainingProgram(Long trainingProgramID) {
-        trainingProgramRepository.findById(trainingProgramID)
-                .map(trainingProgram -> {
-                    trainingProgram.setState(false);
-                    return trainingProgramRepository.save(trainingProgram);
-                });
+    public boolean de_activeTrainingProgram(Long trainingProgramID) {
+        Optional<TrainingProgram> trainingProgramModel = trainingProgramRepository.findById(trainingProgramID);
+        if (trainingProgramModel.isEmpty()) {
+            return false;
+        } else {
+            trainingProgramModel.map(trainingProgram -> {
+                trainingProgram.setState(false);
+                return trainingProgramRepository.save(trainingProgram);
+            });
+        }
+        return true;
     }
 
     @Override
-    public void activeTrainingProgram(Long trainingProgramID) {
-        trainingProgramRepository.findById(trainingProgramID)
-                .map(trainingProgram -> {
-                    trainingProgram.setState(true);
-                    return trainingProgramRepository.save(trainingProgram);
-                });
+    public boolean activeTrainingProgram(Long trainingProgramID) {
+        Optional<TrainingProgram> trainingProgramModel = trainingProgramRepository.findById(trainingProgramID);
+        if (trainingProgramModel.isPresent()) {
+            trainingProgramModel.map(trainingProgram -> {
+                trainingProgram.setState(true);
+                return trainingProgramRepository.save(trainingProgram);
+            });
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean deleteTrainingProgram(Long trainingProgramID) {
+        Optional<TrainingProgram> trainingProgramModel = trainingProgramRepository.findById(trainingProgramID);
+        if (trainingProgramModel.isPresent()) {
+            trainingProgramModel.map(trainingProgram -> {
+                trainingProgram.setStatus(false);
+                return trainingProgramRepository.save(trainingProgram);
+            });
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void restoreAllTrainingPrograms() {
+        trainingProgramRepository.findAll().forEach(trainingProgram -> {
+            trainingProgram.setStatus(true);
+            trainingProgramRepository.save(trainingProgram);
+        });
     }
 
     private List<TrainingProgram> doSearch(List<TrainingProgram> trainingPrograms, List<String> searchList) {
