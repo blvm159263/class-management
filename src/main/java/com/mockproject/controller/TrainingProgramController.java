@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -113,17 +114,20 @@ public class TrainingProgramController {
     @GetMapping("/downloadFile/csv")
     @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity<?> downLoadFileExample() {
-
-        Path path = Paths.get("file-format", "TrainingProgram.csv");
-        byte[] buffer = new byte[0];
+        Resource fileResource = resourceLoader.getResource("classpath:file-format/TrainingProgram.csv");
         try {
-            buffer = Files.readAllBytes(path);
-            ByteArrayResource csvFileContent = new ByteArrayResource(buffer);
+            InputStream inputStream = fileResource.getInputStream();
+            byte[] buffer = inputStream.readAllBytes();
+
+            ByteArrayResource resource = new ByteArrayResource(buffer);
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType("text/csv"));
-            headers.setContentDispositionFormData("attachment", "Training_Program.csv");
-            return new ResponseEntity<>(csvFileContent,headers,HttpStatus.OK);
-        } catch (IOException e) {
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=TrainingProgram.csv");
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentLength(buffer.length)
+                    .contentType(MediaType.parseMediaType("application/csv"))
+                    .body(resource);
+        }catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
