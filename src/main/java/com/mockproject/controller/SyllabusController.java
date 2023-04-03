@@ -15,16 +15,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +55,9 @@ public class SyllabusController {
     private final ISyllabusService syllabusService;
 
     private final ITrainingProgramSyllabusService trainingProgramSyllabusService;
+
+    private final ResourceLoader resourceLoader;
+
 
     @GetMapping("/getSyllabusByTrainingProgram/{trainingProgramId}")
     @Operation(summary = "Get all syllabus by training program id")
@@ -198,13 +203,19 @@ public class SyllabusController {
     @GetMapping("get-template-file")
     @Operation(summary = "Download file")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<byte[]> getTemplateFile() throws IOException {
+    public ResponseEntity<?> getTemplateFile() throws IOException {
 
-        String filename = "Syllabus_import.csv";
+        Resource fileResource = resourceLoader.getResource("classpath:" + "file-format/syllabus-template.csv");
+        InputStream inputStream = fileResource.getInputStream();
+        byte[] buffer = inputStream.readAllBytes();
 
+        ByteArrayResource resource = new ByteArrayResource(buffer);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Syllabus_import.csv");
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/csv"))
-                .body(syllabusService.getTemplateCsvFile());
+                .headers(headers)
+                .contentLength(buffer.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 }
