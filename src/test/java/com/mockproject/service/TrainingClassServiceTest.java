@@ -62,13 +62,13 @@ class TrainingClassServiceTest {
             null, null, null);
 
     TrainingProgram trainingProgram = new TrainingProgram(1L, 1, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
-            30, true, user, null, null, null);
+            30,true, true, user, null, null, null);
     TrainingProgram trainingProgram1= new TrainingProgram(2L, 2, "Java for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
-            30, true, user, null, null, null);
+            30, true, true, user, null, null, null);
     TrainingProgram trainingProgram2 = new TrainingProgram(3L, 3, "Python for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
-            30, true, user, null, null, null);
+            30, true, true, user, null, null, null);
     TrainingProgram trainingProgram3 = new TrainingProgram(4L, 4, "Pascal for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
-            30, true, user, null, null, null);
+            30, true, true, user, null, null, null);
 
     TrainingClass trainingClass = new TrainingClass(1L, "Class Name 1", " Code113", LocalDate.now(),
                 Time.valueOf("09:00:00"), Time.valueOf("11:00:00"), BigDecimal.ONE, 10, 4, 5, 6, "1", LocalDate.now(),
