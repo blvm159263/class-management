@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +41,7 @@ class DeliveryTypeServiceTest {
 
     //Create Delivery Type
     DeliveryType deliveryType1 = new DeliveryType(1L, "On Meeting", true, null);
-    DeliveryType deliveryType2 = new DeliveryType(2L, "Offline", true, null);
+    DeliveryType deliveryType2 = new DeliveryType(2L, "Offline", false, null);
     DeliveryType deliveryType3 = new DeliveryType(3L, "Practice", true, null);
 
     //Create Training Class
@@ -85,12 +86,15 @@ class DeliveryTypeServiceTest {
      */
     @Test
     void canGetAllDeliveryTypesByTrainingClassId() {
+        //Create training class Id
         Long trainingClassId = 1L;
 
+        //Create list unit
         List<Unit> unitList = new ArrayList<>();
         unitList.add(unit1);
         unitList.add(unit2);
 
+        //Create list unit detail
         List<UnitDetail> unitDetailList = new ArrayList<>();
         unitDetailList.add(unitDetails1);
         unitDetailList.add(unitDetails2);
@@ -99,8 +103,10 @@ class DeliveryTypeServiceTest {
         when(unitDetailRepository.findByUnitInAndStatus(unitList,true)).thenReturn(Optional.of(unitDetailList));
 
         List<DeliveryTypeDTO> deliveryType = deliveryTypeService.getAllDeliveryTypesByTrainingClassId(tc1.getId());
+
         assertEquals(1L, deliveryType.get(0).getId());
         assertEquals("On Meeting", deliveryType.get(0).getTypeName());
+        assertTrue(deliveryType.stream().filter(p -> !p.isStatus()).toList().isEmpty());
 
         verify(iUnitService).getListUnitsByTrainingClassId(trainingClassId);
         verify(unitDetailRepository).findByUnitInAndStatus(unitList, true);

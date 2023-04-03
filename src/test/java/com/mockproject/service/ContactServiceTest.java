@@ -71,18 +71,17 @@ class ContactServiceTest {
      */
     @Test
     void canGetContactByTrainingClassId() {
+
         Long trainingClassId = 1L;
-        TrainingClass trainingClass = new TrainingClass();
-        trainingClass.setId(trainingClassId);
-        trainingClass.setContact(contact1);
 
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
-                .thenReturn(Optional.of(trainingClass));
+                .thenReturn(Optional.of(tc1));
 
-        ContactDTO result = contactService.getContactByTrainingClassId(trainingClass.getId());
+        ContactDTO result = contactService.getContactByTrainingClassId(tc1.getId());
         assertEquals(1L, result.getId());
         assertEquals("contacmail1@gmail.com", result.getContactEmail());
         assertEquals("Des 1", result.getDescription());
+        assertTrue(result.isStatus());
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
     }

@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.webjars.NotFoundException;
 
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -89,9 +91,12 @@ class AttendeeServiceTest {
                 .thenReturn(Optional.of(tc1));
 
         AttendeeDTO result = attendeeService.getAttendeeByTrainingClassId(tc1.getId());
+
+        assertThrows(NoSuchElementException.class, () -> attendeeService.getAttendeeByTrainingClassId(2L), "Can't find any training class with id is 4");
         assertEquals(1L, result.getId());
         assertEquals("Name 1", result.getAttendeeName());
         assertEquals("Des 1", result.getDescription());
+        assertTrue(result.isStatus());
 
         verify(trainingClassRepository).findByIdAndStatus(tc1.getId(), true);
     }

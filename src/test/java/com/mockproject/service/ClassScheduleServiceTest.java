@@ -14,10 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,7 +61,7 @@ class ClassScheduleServiceTest {
     ClassSchedule cs1 = new ClassSchedule(1L, LocalDate.now(), true, tc1);
     ClassSchedule cs2 = new ClassSchedule(2L, LocalDate.now(), false, tc2);
     ClassSchedule cs3 = new ClassSchedule(3L, LocalDate.now(), true, tc3);
-
+    ClassSchedule cs4 = new ClassSchedule(4L, LocalDate.now(), true, tc1);
 
 
     /**
@@ -140,30 +137,35 @@ class ClassScheduleServiceTest {
     @Test
     void canGetListClassScheduleByTrainingClassId() {
 
+        //Create list class schedule
         List<ClassSchedule> classSchedules = new ArrayList<>();
         classSchedules.add(cs1);
         classSchedules.add(cs2);
         classSchedules.add(cs3);
+        classSchedules.add(cs4);
 
-        Long id = 1L;
-        TrainingClass trainingClass = new TrainingClass();
-        trainingClass.setId(id);
-        trainingClass.setListClassSchedules(classSchedules);
+        //Create training class Id
+        Long trainingClassId = 1L;
 
-        when(trainingClassRepository.findByIdAndStatus(id, true))
-                .thenReturn(Optional.of(trainingClass));
+        when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
+                .thenReturn(Optional.of(tc1));
 
-        when(classScheduleRepository.findByTrainingClassAndStatus(trainingClass, true))
+        when(classScheduleRepository.findByTrainingClassAndStatus(tc1, true))
                 .thenReturn(classSchedules.stream().filter(p -> p.isStatus() &&
-                        p.getTrainingClass().getId() == trainingClass.getId()).toList());
+                        p.getTrainingClass().getId() == tc1.getId()).toList());
 
-        List<ClassScheduleDTO> result = classScheduleService.getClassScheduleByTrainingClassId(trainingClass.getId());
+        List<ClassScheduleDTO> result = classScheduleService.getClassScheduleByTrainingClassId(tc1.getId());
 
+        assertThrows(NoSuchElementException.class,
+                () -> classScheduleService.getClassScheduleByTrainingClassId(4L),
+                "Can't find any training class with id is 4");
+        assertEquals(2, result.size());
         assertEquals(1L, result.get(0).getId());
         assertEquals(LocalDate.now(), result.get(0).getDate());
         assertEquals(1L, result.get(0).getTrainingClassId());
+        assertTrue(result.stream().filter(p -> !p.isStatus()).toList().isEmpty());
 
-        verify(trainingClassRepository).findByIdAndStatus(id, true);
-        verify(classScheduleRepository).findByTrainingClassAndStatus(trainingClass, true);
+        verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
+        verify(classScheduleRepository).findByTrainingClassAndStatus(tc1, true);
     }
 }
