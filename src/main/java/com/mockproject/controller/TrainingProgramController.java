@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,20 +110,26 @@ public class TrainingProgramController {
         return ResponseEntity.ok().body("uploadFile Success");
 
     }
+
     @GetMapping("/downloadFile/csv")
     @Secured({CREATE, FULL_ACCESS})
-    public ResponseEntity<byte[]> downLoadFileExample(){
+    public ResponseEntity<?> downLoadFileExample() {
+        Resource fileResource = resourceLoader.getResource("classpath:file-format/TrainingProgram.csv");
         try {
-            Resource resource = resourceLoader.getResource("classpath:CSVFile/trainingProgram.csv");
-            byte[] csvFileContent = fileService.getCsvFile(resource.getFile());
+            InputStream inputStream = fileResource.getInputStream();
+            byte[] buffer = inputStream.readAllBytes();
+
+            ByteArrayResource resource = new ByteArrayResource(buffer);
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType("text/csv"));
-            headers.setContentDispositionFormData("attachment", "file.csv");
-            return new ResponseEntity<>(csvFileContent,headers,HttpStatus.OK);
-        } catch (IOException e) {
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=TrainingProgram.csv");
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentLength(buffer.length)
+                    .contentType(MediaType.parseMediaType("application/csv"))
+                    .body(resource);
+        }catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @PostMapping("/saveTrainingProgram")
