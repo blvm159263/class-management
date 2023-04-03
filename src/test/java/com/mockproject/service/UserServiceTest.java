@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -83,7 +84,7 @@ class UserServiceTest {
 
     //Create training class unit information
     TrainingClassUnitInformation ui1 = new TrainingClassUnitInformation(1L, true, user3, unit1, tc1, null);
-    TrainingClassUnitInformation ui2 = new TrainingClassUnitInformation(2L, true, user3, unit2, tc1, null);
+    TrainingClassUnitInformation ui2 = new TrainingClassUnitInformation(2L, true, user1, unit2, tc1, null);
 
     /**
      * Method under test: {@link UserService#listClassAdminTrue()}
@@ -179,31 +180,70 @@ class UserServiceTest {
      */
     @Test
     void canGetTrainerOnThisDayById() {
+        //Create training class id and day number
         Long trainingClassId = 1L;
         int dayNth = 1;
 
+        //Create id
+        AtomicReference<Long> id = new AtomicReference<>(1L);
+
+        //Create list unit
         List<Unit> unitList = new ArrayList<>();
         unitList.add(unit1);
         unitList.add(unit2);
+
+        //Assign value for each unit
+        unitList.forEach(i -> {
+            i.setId(id.get());
+            id.getAndSet(id.get() + 1);
+            i.setListTrainingClassUnitInformations(new ArrayList<>(List.of(new TrainingClassUnitInformation())));
+            i.setStatus(true);
+        });
+
+        //Reset id
+        id.getAndSet(1L);
+
+        //Create list training class unit infor
+        List<TrainingClassUnitInformation> trainingClassUnitInfor = new ArrayList<>();
+
+        //Assign value for training class unit infor
+        unitList.forEach(p -> {
+            TrainingClassUnitInformation tr = p.getListTrainingClassUnitInformations().get(0);
+            tr.setId(id.get());
+            id.getAndSet(id.get() + 1);
+            tr.setTrainingClass(tc1);
+            tr.setUnit(p);
+            tr.setTrainer(p.getId() % 2 == 0 ? user1 : user3);
+            tr.setTower(null);
+            tr.setStatus(true);
+            trainingClassUnitInfor.add(tr);
+        });
 
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
                 .thenReturn(Optional.of(tc1));
         when(unitService.getListUnitsInASessionByTrainingClassId(trainingClassId, dayNth))
                 .thenReturn(unitList);
-        when(trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(unit1, tc1, true))
-                .thenReturn(Optional.of(ui1));
-        when(trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(unit2, tc1, true))
-                .thenReturn(Optional.of(ui2));
+        unitList.forEach(p -> when(trainingClassUnitInformationRepository.
+                findByUnitAndTrainingClassAndStatus(p, tc1, true))
+                .thenReturn(Optional.of(p.getListTrainingClassUnitInformations().get(0))));
+//        when(trainingClassUnitInformationRepository
+//                .findByUnitAndTrainingClassAndStatus(unit1, tc1, true))
+//                .thenReturn(Optional.of(ui1));
+//        when(trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(unit2, tc1, true))
+//                .thenReturn(Optional.of(ui2));
 
         List<UserDTO> trainerOnDay = userService.getTrainerOnThisDayById(trainingClassId, dayNth);
+        assertEquals(2, trainerOnDay.size());
         assertEquals(3L, trainerOnDay.get(0).getId());
         assertEquals("user3@gmail.com", trainerOnDay.get(0).getEmail());
         assertEquals("Tui la user 3", trainerOnDay.get(0).getFullName());
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
         verify(unitService).getListUnitsInASessionByTrainingClassId(trainingClassId, dayNth);
-        verify(trainingClassUnitInformationRepository).findByUnitAndTrainingClassAndStatus(unit1, tc1, true);
-        verify(trainingClassUnitInformationRepository).findByUnitAndTrainingClassAndStatus(unit2, tc1, true);
+//        verify(trainingClassUnitInformationRepository).findByUnitAndTrainingClassAndStatus(unit1, tc1, true);
+//        verify(trainingClassUnitInformationRepository).findByUnitAndTrainingClassAndStatus(unit2, tc1, true);
+        unitList.forEach(p -> verify(trainingClassUnitInformationRepository).
+                findByUnitAndTrainingClassAndStatus(p, tc1, true));
 }
 
     /**
