@@ -73,7 +73,7 @@ public class TrainingProgramController {
                     content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
     })
     @Operation(summary = "Get Training Program by searching name or creator")
-    @PostMapping("/search-name")
+    @GetMapping("/search-name")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     public ResponseEntity<?> searchByName(@RequestBody SearchTPDTO search) {
 //        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
@@ -128,10 +128,24 @@ public class TrainingProgramController {
     }
 
     @GetMapping("/{id}")
-    @Secured({VIEW, FULL_ACCESS, MODIFY, CREATE})
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     @Operation(summary = "Get training program by ID")
     public ResponseEntity getTrainingProgramById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(trainingProgramService.getTrainingProgramById(id));
+    }
+
+    @PutMapping("/de-active-training-program/{trainingProgramID}")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity deactiveTraningProgramByID(@PathVariable Long trainingProgramID) {
+        trainingProgramService.deactiveTrainingProgram(trainingProgramID);
+        return ResponseEntity.ok("De-active training program successfully.");
+    }
+
+    @PutMapping("/active-training-program/{trainingProgramID}")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity activeTraningProgramByID(@PathVariable Long trainingProgramID) {
+        trainingProgramService.activeTrainingProgram(trainingProgramID);
+        return ResponseEntity.ok("Active training program successfully.");
     }
 
 }

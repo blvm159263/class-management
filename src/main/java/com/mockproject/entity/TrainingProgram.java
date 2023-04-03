@@ -62,6 +62,9 @@ public class TrainingProgram implements Serializable {
     )
     private int day;
 
+    @Column(name = "state")
+    private boolean state;
+
     @Column(name = "status")
     private boolean status;
 
