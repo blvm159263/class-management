@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {TrainingClassService.class})
@@ -154,5 +154,25 @@ class TrainingClassServiceTest {
                 Sort.by(Sort.Direction.ASC, "className"));
     }
 
+
+    /**
+     * Method under test: {@link TrainingClassService#getAllDetails(Long)}
+     */
+    @Test
+    void canGetTrainingClassById() {
+
+        when(trainingClassRepository.findByIdAndStatus(1L, true)).thenReturn(Optional.of(new TrainingClass()));
+        TrainingClassDTO dto = trainingClassService.getAllDetails(1L);
+        assertNotNull(dto);
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
+
+
+    @Test
+    void itShouldThrowExceptionWhenTrainingClassIdNotFound() {
+        when(trainingClassRepository.findByIdAndStatus(1L, true)).thenReturn(Optional.empty());
+        assertThrows(Exception.class, () -> trainingClassService.getAllDetails(1L));
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
 }
 

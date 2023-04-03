@@ -185,10 +185,10 @@ class UserServiceTest {
 
         boolean result = userService.editUser(userDTO);
 
-        assertEquals(true, result);
+        assertTrue(result);
         assertEquals("Test", user1.getFullName());
         assertEquals(dob, user1.getDob());
-        assertEquals(true, user1.isGender());
+        assertTrue(user1.isGender());
 
         verify(userRepository, times(1)).findById(1l);
         verify(levelRepository,times(1)).getLevelById(1l);
