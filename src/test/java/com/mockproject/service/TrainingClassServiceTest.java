@@ -1,13 +1,10 @@
 package com.mockproject.service;
 
-
 import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.*;
+import com.mockproject.exception.entity.EntityNotFoundException;
 import com.mockproject.mapper.TrainingClassMapper;
-import com.mockproject.repository.LocationRepository;
-import com.mockproject.repository.TrainingClassRepository;
-import com.mockproject.repository.TrainingClassUnitInformationRepository;
-import com.mockproject.repository.TrainingProgramRepository;
+import com.mockproject.repository.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {TrainingClassService.class})
@@ -40,20 +37,28 @@ class TrainingClassServiceTest {
     private TrainingClassRepository trainingClassRepository;
 
     @MockBean
-    private TrainingClassUnitInformationRepository classUnitRepo;
+    private TrainingClassMapper trainingClassMapper;
 
     @MockBean
-    private TrainingClassMapper trainingClassMapper;
+    private ClassScheduleRepository classScheduleRepository;
+
+    @MockBean
+    private TrainingClassUnitInformationRepository trainingClassUnitInformationRepository;
+
+    @MockBean
+    private TrainingClassAdminRepository trainingClassAdminRepository;
 
     @Autowired
     private TrainingClassService trainingClassService;
 
+    Attendee attendee = new Attendee(1L, "", "", true, null, null);
+    Location location = new Location(1L, "Ha Noi", "123 Le Loi", true, null, null);
+    Fsu fsu = new Fsu(1L, "", "", true, null);
+    Contact contact = new Contact(1L, "", "", true, null);
     User user = new User(1L, "", "", "", "", 1, LocalDate.now(), "", true,
             true, null, null, null, null, null, null,
             null, null, null, null, null,
             null, null, null);
-
-    Attendee attendee = new Attendee(1L, "", "", true, null, null);
 
     TrainingProgram trainingProgram = new TrainingProgram(1L, 1, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
             30, true, true, user, null, null, null);
@@ -64,15 +69,9 @@ class TrainingClassServiceTest {
     TrainingProgram trainingProgram3 = new TrainingProgram(4L, 4, "Pascal for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
             30, true, true, user, null, null, null);
 
-    Location location = new Location(1L, "Ha Noi", "123 Le Loi", true, null, null);
-
-    Fsu fsu = new Fsu(1L, "", "", true, null);
-
-    Contact contact = new Contact(1L, "", "", true, null);
-
     TrainingClass trainingClass = new TrainingClass(1L, "Class Name 1", " Code113", LocalDate.now(),
                 Time.valueOf("09:00:00"), Time.valueOf("11:00:00"), BigDecimal.ONE, 10, 4, 5, 6, "1", LocalDate.now(),
-                LocalDate.now(), LocalDate.now(), LocalDate.now(),0 , true, attendee, trainingProgram, location, fsu,
+                LocalDate.now(), LocalDate.now(), LocalDate.now(), 0, true, attendee, trainingProgram, location, fsu,
                 contact, user, user, user, user, null, null, null);
     TrainingClass trainingClass1 = new TrainingClass(2L, "Class Name 2", " Code113", LocalDate.now(),
                 Time.valueOf("09:00:00"), Time.valueOf("11:00:00"), BigDecimal.ONE, 10, 4, 5, 6, "1", LocalDate.now(),
@@ -91,7 +90,7 @@ class TrainingClassServiceTest {
      * Method under test: {@link TrainingClassService#create(TrainingClassDTO)}
      */
 //    @Test
-//    @Disabled
+//   @Disabled
 //    void canCreateNewTrainingClass() {
 //        TrainingClass tcAfterSave = new TrainingClass(1L, "Class Name 1", " Code113", LocalDate.now(),
 //                Time.valueOf("09:00:00"), Time.valueOf("11:00:00"), BigDecimal.ONE, 10, 4, 5, 6, "1", LocalDate.now(),
@@ -100,8 +99,10 @@ class TrainingClassServiceTest {
 //
 //        TrainingClassDTO dto = new TrainingClassDTO(null, "Class Name 1", " Code113", LocalDate.now(),
 //                Time.valueOf("09:00:00"), Time.valueOf("11:00:00"), BigDecimal.ONE, 10, 4, 5, 6, "1", LocalDate.now(),
-//                LocalDate.now(), LocalDate.now(), LocalDate.now(), 0, true, location.getId(), attendee.getId(), trainingProgram.getId(), fsu.getId(),
-//                contact.getId(), user.getId(), user.getId(), user.getId(), user.getId());
+//                LocalDate.now(), LocalDate.now(), LocalDate.now(), 0, true, location.getId(),location.getLocationName(), attendee.getId(),
+//                attendee.getAttendeeName(), trainingProgram.getId(), trainingProgram.getName(), fsu.getId(), fsu.getFsuName(),
+//                contact.getId(), contact.getContactEmail(), user.getId(),user.getFullName(), user.getId(),user.getFullName(), user.getId(),
+//                user.getFullName(), user.getId(),user.getFullName());
 //
 //        when(trainingClassRepository.save(any())).thenReturn(tcAfterSave);
 //
@@ -153,6 +154,34 @@ class TrainingClassServiceTest {
                 null, "", null, null, 0L, classId, "",
                 Sort.by(Sort.Direction.ASC, "className"));
     }
+
+    /**
+     * Method under test: {@link TrainingClassService#deleteTrainingClass(Long)}
+     */
+    @Test
+    void canDeleteTrainingClass() {
+        when(trainingClassRepository.save((TrainingClass) any())).thenReturn(new TrainingClass());
+        when(trainingClassRepository.findById((Long) any())).thenReturn(Optional.of(new TrainingClass()));
+        assertTrue(trainingClassService.deleteTrainingClass(1L));
+        verify(trainingClassRepository).save((TrainingClass) any());
+        verify(trainingClassRepository).findById((Long) any());
+    }
+
+    /**
+     * Method under test: {@link TrainingClassService#deleteTrainingClass(Long)}
+     */
+    @Test
+    void itShouldThrowIfCanNotFindTrainingClassById() {
+        when(trainingClassRepository.save((TrainingClass) any()))
+                .thenThrow(new EntityNotFoundException("An error occurred"));
+        when(trainingClassRepository.findById((Long) any())).thenReturn(Optional.of(new TrainingClass()));
+        assertThrows(EntityNotFoundException.class, () -> trainingClassService.deleteTrainingClass(1L));
+        verify(trainingClassRepository).save((TrainingClass) any());
+        verify(trainingClassRepository).findById((Long) any());
+    }
+
+
+
 
 }
 

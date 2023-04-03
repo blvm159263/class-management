@@ -8,6 +8,7 @@ import com.mockproject.entity.TrainingProgram;
 import com.mockproject.service.interfaces.IFileService;
 import com.mockproject.service.interfaces.ITrainingProgramService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -72,12 +73,12 @@ public class TrainingProgramController {
             @ApiResponse(responseCode = "200", description = "When find training program and return list program",
                     content = @Content(schema = @Schema(implementation = TrainingProgramDTO.class)))
     })
-    @Operation(summary = "Get Training Program by searching name or creator")
+    @Operation(summary = "Get Training Program by searching name")
     @GetMapping("/search-name")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<?> searchByName(@RequestBody SearchTPDTO search) {
-//        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
-        List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(search);
+    public ResponseEntity<?> searchByName(@Parameter(description = "Training Program Name want to search") @RequestParam(defaultValue = "") String name) {
+        List<TrainingProgramDTO> list = trainingProgramService.searchByName(name);
+//        List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(search);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {
@@ -130,22 +131,55 @@ public class TrainingProgramController {
     @GetMapping("/{id}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     @Operation(summary = "Get training program by ID")
-    public ResponseEntity getTrainingProgramById(@PathVariable("id") Long id) {
+    public ResponseEntity<TrainingProgramDTO> getTrainingProgramByID(@PathVariable("id") Long id) {
         return ResponseEntity.ok(trainingProgramService.getTrainingProgramById(id));
     }
 
     @PutMapping("/de-active-training-program/{trainingProgramID}")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity deactiveTraningProgramByID(@PathVariable Long trainingProgramID) {
-        trainingProgramService.deactiveTrainingProgram(trainingProgramID);
-        return ResponseEntity.ok("De-active training program successfully.");
+    public ResponseEntity<?> de_activeTrainingProgramByID(@PathVariable Long trainingProgramID) {
+        if (trainingProgramService.de_activeTrainingProgram(trainingProgramID)) {
+            return ResponseEntity.ok("De-active training program successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training program not found");
+        }
     }
 
     @PutMapping("/active-training-program/{trainingProgramID}")
     @Secured({MODIFY, FULL_ACCESS})
-    public ResponseEntity activeTraningProgramByID(@PathVariable Long trainingProgramID) {
-        trainingProgramService.activeTrainingProgram(trainingProgramID);
-        return ResponseEntity.ok("Active training program successfully.");
+    public ResponseEntity<?> activeTrainingProgramByID(@PathVariable Long trainingProgramID) {
+        if (trainingProgramService.activeTrainingProgram(trainingProgramID)) {
+            return ResponseEntity.ok("Active training program successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training program not found");
+        }
     }
 
+    @PutMapping("/delete-training-program/{trainingProgramID}")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<?> deleteTrainingProgramByID(@PathVariable Long trainingProgramID) {
+        if (trainingProgramService.deleteTrainingProgram(trainingProgramID)) {
+            return ResponseEntity.ok("Delete training program successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training program not found");
+        }
+    }
+
+    @PutMapping("/restore-status-training-program")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<?> restoreALlTrainingPrograms() {
+        trainingProgramService.restoreAllTrainingPrograms();
+        return ResponseEntity.ok("Restore all training programs successfully.");
+    }
+
+    @PostMapping("/search-training-program-by-keywords")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+    public ResponseEntity<?> searchTrainingProgramByKeyWords(@RequestBody SearchTPDTO searchList) {
+      List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(searchList);
+        if (!list.isEmpty()) {
+            return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
+        }
+    }
 }

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -36,14 +37,24 @@ public class FileClassResponseDTO {
 
     private Long locationId;
 
+    private String locationName;
+
     private Long fsuId;
+
+    private String fsuName;
 
     private Long contactId;
 
+    private String contactEmail;
+
     private Long trainingProgramId;
+
+    private String trainingProgramName;
 
     private Long attendeeId;
 
-    private List<Long> listAdminId;
+    private String attendeeName;
+
+    private List<Map<Long,String>> listAdmin;
 
 }
