@@ -1,10 +1,8 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.AttendeeDTO;
 import com.mockproject.dto.FsuDTO;
 import com.mockproject.entity.Fsu;
 import com.mockproject.entity.TrainingClass;
-import com.mockproject.mapper.AttendeeMapper;
 import com.mockproject.mapper.FsuMapper;
 import com.mockproject.repository.FsuRepository;
 import com.mockproject.repository.TrainingClassRepository;
@@ -20,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {FsuService.class})

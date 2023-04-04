@@ -474,8 +474,6 @@ public class UserService implements IUserService {
         }
     }
 
-
-
     @Override
     public List<UserDTO> getAllTrainersByTrainingClassId(long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
@@ -507,8 +505,5 @@ public class UserService implements IUserService {
         List<User> trainers = list.stream().map(p-> userRepo.findByIdAndStatus(p.getTrainer().getId(), true).orElseThrow()).toList();
         return trainers.stream().map(UserMapper.INSTANCE::toDTO).toList();
     }
-
-
-
 
 }

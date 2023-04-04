@@ -447,8 +447,6 @@ public class UserController {
         }
     }
 
-
-
     @Operation(summary = "Get class's Admins by TrainingClass id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
@@ -463,8 +461,6 @@ public class UserController {
         }
     }
 
-
-
     @Operation(summary = "Get class's Creator by TrainingClass id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
@@ -478,8 +474,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
         }
     }
-
-
 
     @Operation(
             summary = "Get all class's Trainers for day-nth of total days of the class schedule",

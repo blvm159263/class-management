@@ -3,7 +3,6 @@ package com.mockproject.service;
 import com.mockproject.dto.ClassScheduleDTO;
 import com.mockproject.entity.ClassSchedule;
 import com.mockproject.entity.TrainingClass;
-import com.mockproject.mapper.ClassScheduleMapper;
 import com.mockproject.mapper.TrainingClassFilterMap;
 import com.mockproject.repository.ClassScheduleRepository;
 import com.mockproject.repository.TrainingClassRepository;
