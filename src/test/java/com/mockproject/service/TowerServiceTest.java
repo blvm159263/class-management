@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,7 +68,7 @@ class TowerServiceTest {
     //Create Training Class Unit Information
     TrainingClassUnitInformation ui1 = new TrainingClassUnitInformation(1L, true, null, unit1, tc1, tower1);
     TrainingClassUnitInformation ui2 = new TrainingClassUnitInformation(2L, true, null, unit2, tc2, tower2);
-    TrainingClassUnitInformation ui3 = new TrainingClassUnitInformation(3L, true, null, unit2, tc1, tower1);
+    TrainingClassUnitInformation ui3 = new TrainingClassUnitInformation(3L, true, null, unit2, tc1, tower3);
 
 
     /**
@@ -107,17 +108,17 @@ class TowerServiceTest {
         trainingClassUnitInformations.add(ui2);
 
         Long trainingClassId = 1L;
-        TrainingClass trainingClass = new TrainingClass();
-        trainingClass.setId(trainingClassId);
-        trainingClass.setListTrainingClassUnitInformations(trainingClassUnitInformations);
+        tc1.setListTrainingClassUnitInformations(trainingClassUnitInformations);
 
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
-                .thenReturn(Optional.of(trainingClass));
+                .thenReturn(Optional.of(tc1));
 
-        List<TowerDTO> result = towerService.getAllTowersByTrainingClassId(trainingClass.getId());
+        List<TowerDTO> result = towerService.getAllTowersByTrainingClassId(tc1.getId());
+
         assertEquals(1L, result.get(0).getId());
         assertEquals("FTown 1", result.get(0).getTowerName());
         assertEquals("123 Le Loi", result.get(0).getAddress());
+        assertTrue(result.stream().filter(p -> !p.isStatus()).toList().isEmpty());
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
     }

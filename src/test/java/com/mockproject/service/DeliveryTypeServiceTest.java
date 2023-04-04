@@ -62,6 +62,10 @@ class DeliveryTypeServiceTest {
             unit1, deliveryType1, null, null);
     UnitDetail unitDetails2 = new UnitDetail(2L, "Unit details title 2",  BigDecimal.TEN, true, true,
             unit2, deliveryType2, null, null);
+    UnitDetail unitDetails3 = new UnitDetail(3L, "Unit details title 3",  BigDecimal.TEN, true, true,
+            unit1, deliveryType1, null, null);
+    UnitDetail unitDetails4 = new UnitDetail(4L, "Unit details title 4",  BigDecimal.TEN, true, true,
+            unit2, deliveryType3, null, null);
 
 
     /**
@@ -98,8 +102,13 @@ class DeliveryTypeServiceTest {
         List<UnitDetail> unitDetailList = new ArrayList<>();
         unitDetailList.add(unitDetails1);
         unitDetailList.add(unitDetails2);
+        unitDetailList.add(unitDetails3);
+        unitDetailList.add(unitDetails4);
 
+        unitList.stream().filter(Unit::isStatus).toList();
         when(iUnitService.getListUnitsByTrainingClassId(trainingClassId)).thenReturn(unitList);
+
+        unitDetailList.stream().filter(UnitDetail::isStatus).toList();
         when(unitDetailRepository.findByUnitInAndStatus(unitList,true)).thenReturn(Optional.of(unitDetailList));
 
         List<DeliveryTypeDTO> deliveryType = deliveryTypeService.getAllDeliveryTypesByTrainingClassId(tc1.getId());
