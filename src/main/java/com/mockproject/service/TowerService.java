@@ -35,13 +35,20 @@ public class TowerService implements ITowerService {
     @Override
     public List<TowerDTO> getAllTowersByTrainingClassId(Long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        List<TrainingClassUnitInformation> classUnitInformations = tc.getListTrainingClassUnitInformations()
-                .stream()
-                .filter(TrainingClassUnitInformation::isStatus)
-                .toList();
+//        List<TrainingClassUnitInformation> classUnitInformations = tc.getListTrainingClassUnitInformations()
+//                .stream()
+//                .filter(TrainingClassUnitInformation::isStatus)
+//                .toList();
+//        List<Tower> towers = classUnitInformations.stream()
+//                .map(TrainingClassUnitInformation :: getTower)
+//                .filter(Tower::isStatus)
+//                .distinct()
+//                .toList();
+        List<TrainingClassUnitInformation> classUnitInformations = trainingClassUnitInformationRepository
+                .findByTrainingClassAndStatus(tc, true).orElseThrow();
         List<Tower> towers = classUnitInformations.stream()
-                .map(TrainingClassUnitInformation :: getTower)
-                .filter(Tower::isStatus)
+                .map(p -> repository.findByIdAndStatus(p.getTower().getId(), true)
+                        .orElseThrow())
                 .distinct()
                 .toList();
         return towers.stream().map(TowerMapper.INSTANCE::toDTO).toList();
@@ -57,8 +64,8 @@ public class TowerService implements ITowerService {
                         .orElseThrow())
                 .toList();
         List<Tower> towers = list.stream()
-                .map(TrainingClassUnitInformation::getTower)
-                .filter(Tower::isStatus)
+                .map(p -> repository.findByIdAndStatus(p.getTower().getId(), true).orElseThrow())
+                .distinct()
                 .toList();
         return towers.stream().map(TowerMapper.INSTANCE::toDTO).toList();
     }

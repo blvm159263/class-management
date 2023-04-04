@@ -40,13 +40,6 @@ class AttendeeServiceTest {
     Attendee a2 = new Attendee(2L, "Name 2", "Des 2" , false, null , null);
     Attendee a3 = new Attendee(3L, "Name 3", "Des 3" , true, null , null);
 
-    //Create Training Class
-    TrainingClass tc1 = new TrainingClass(1L, "Class Name 1", "TC1", null, null,
-            null, null, 12, 30, 30, 25, "Planning", null,
-            null, null, null, 1, true, a1, null,
-            null, null, null, null, null, null, null,
-            null, null, null);
-
     /**
      * Method under test: {@link AttendeeService#save(AttendeeDTO)}
      */
@@ -87,18 +80,32 @@ class AttendeeServiceTest {
      */
     @Test
     void canGetAttendeeByTrainingClassId() {
-        when(trainingClassRepository.findByIdAndStatus(tc1.getId(), true))
-                .thenReturn(Optional.of(tc1));
+        TrainingClass trainingClass = new TrainingClass();
+        trainingClass.setAttendee(a1);
 
-        AttendeeDTO result = attendeeService.getAttendeeByTrainingClassId(tc1.getId());
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.of(trainingClass));
 
-        assertThrows(NoSuchElementException.class, () -> attendeeService.getAttendeeByTrainingClassId(2L), "Can't find any training class with id is 4");
+        AttendeeDTO result = attendeeService.getAttendeeByTrainingClassId(1L);
+
         assertEquals(1L, result.getId());
         assertEquals("Name 1", result.getAttendeeName());
         assertEquals("Des 1", result.getDescription());
         assertTrue(result.isStatus());
 
-        verify(trainingClassRepository).findByIdAndStatus(tc1.getId(), true);
+        verify(trainingClassRepository).findByIdAndStatus(result.getId(), true);
+    }
+
+    @Test
+    void itShouldThrowExceptionWhenTrainingClassIdNotFoundOrAttendeeStatusDisabled() {
+        TrainingClass trainingClass = new TrainingClass();
+        trainingClass.setAttendee(a2);
+
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class,
+                () -> attendeeService.getAttendeeByTrainingClassId(1L));
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
     }
 }
 

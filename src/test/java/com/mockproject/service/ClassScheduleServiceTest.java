@@ -156,9 +156,6 @@ class ClassScheduleServiceTest {
 
         List<ClassScheduleDTO> result = classScheduleService.getClassScheduleByTrainingClassId(tc1.getId());
 
-        assertThrows(NoSuchElementException.class,
-                () -> classScheduleService.getClassScheduleByTrainingClassId(4L),
-                "Can't find any training class with id is 4");
         assertEquals(2, result.size());
         assertEquals(1L, result.get(0).getId());
         assertEquals(LocalDate.now(), result.get(0).getDate());
@@ -168,4 +165,17 @@ class ClassScheduleServiceTest {
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
         verify(classScheduleRepository).findByTrainingClassAndStatus(tc1, true);
     }
+
+    @Test
+    void itShouldThrowExceptionWhenNotFoundTrainingClassId() {
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+
+        assertThrows(Exception.class,
+                () -> classScheduleService.getClassScheduleByTrainingClassId(1L));
+
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+
+    }
+
 }

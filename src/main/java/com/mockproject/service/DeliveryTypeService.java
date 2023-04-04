@@ -59,10 +59,16 @@ public class DeliveryTypeService implements IDeliveryTypeService {
     public List<DeliveryTypeDTO> getAllDeliveryTypesByTrainingClassId(Long id) {
         List<Unit> unitList = service.getListUnitsByTrainingClassId(id);
         List<UnitDetail> unitDetailList = unitDetailRepository.findByUnitInAndStatus(unitList, true).orElseThrow();
-        List<DeliveryType> deliveryType = unitDetailList
-                .stream()
-                .map(UnitDetail::getDeliveryType)
-                .filter(DeliveryType::isStatus)
+//        List<DeliveryType> deliveryType = unitDetailList
+//                .stream()
+//                .map(UnitDetail::getDeliveryType)
+//                .filter(DeliveryType::isStatus)
+//                .distinct()
+//                .toList();
+        List<DeliveryType> deliveryType = unitDetailList.stream()
+                .map(p -> deliveryTypeRepository
+                        .findByIdAndStatus(p.getDeliveryType().getId(), true)
+                        .orElseThrow())
                 .distinct()
                 .toList();
         return deliveryType.stream().map(DeliveryTypeMapper.INSTANCE::toDTO).toList();

@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -85,5 +84,16 @@ class ContactServiceTest {
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
     }
+
+    @Test
+    void itShouldThrowExceptionWhenNotFoundTrainingClassId() {
+        when(trainingClassRepository.findByIdAndStatus(2L, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class, () ->
+            contactService.getContactByTrainingClassId(2L)
+        );
+        verify(trainingClassRepository).findByIdAndStatus(2L, true);
+    }
+
 }
 

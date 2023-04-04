@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {FsuService.class})
@@ -70,18 +69,30 @@ class FsuServiceTest {
      */
     @Test
     void canGetFsuByTrainingClassId() {
-        Long trainingClassId = 1L;
 
-        when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
                 .thenReturn(Optional.of(tc1));
 
         FsuDTO result = fsuService.getFsuByTrainingClassId(tc1.getId());
+
         assertEquals(1L, result.getId());
         assertEquals("Fsu 1", result.getFsuName());
         assertEquals("Desc 1", result.getDescription());
         assertTrue(result.isStatus());
 
-        verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
     }
+
+    @Test
+    void itShouldThrowExceptionWhenNotFoundTrainingClassId() {
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+
+        assertThrows(Exception.class, () ->
+                fsuService.getFsuByTrainingClassId(1L));
+
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
+
 }
 

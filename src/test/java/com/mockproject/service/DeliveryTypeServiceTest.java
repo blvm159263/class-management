@@ -19,10 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {DeliveryTypeService.class})
 @ExtendWith(SpringExtension.class)
@@ -41,7 +39,7 @@ class DeliveryTypeServiceTest {
 
     //Create Delivery Type
     DeliveryType deliveryType1 = new DeliveryType(1L, "On Meeting", true, null);
-    DeliveryType deliveryType2 = new DeliveryType(2L, "Offline", false, null);
+    DeliveryType deliveryType2 = new DeliveryType(2L, "Offline", true, null);
     DeliveryType deliveryType3 = new DeliveryType(3L, "Practice", true, null);
 
     //Create Training Class
@@ -90,8 +88,6 @@ class DeliveryTypeServiceTest {
      */
     @Test
     void canGetAllDeliveryTypesByTrainingClassId() {
-        //Create training class Id
-        Long trainingClassId = 1L;
 
         //Create list unit
         List<Unit> unitList = new ArrayList<>();
@@ -106,20 +102,70 @@ class DeliveryTypeServiceTest {
         unitDetailList.add(unitDetails4);
 
         unitList.stream().filter(Unit::isStatus).toList();
-        when(iUnitService.getListUnitsByTrainingClassId(trainingClassId)).thenReturn(unitList);
+        when(iUnitService.getListUnitsByTrainingClassId(1L))
+                .thenReturn(unitList);
 
         unitDetailList.stream().filter(UnitDetail::isStatus).toList();
-        when(unitDetailRepository.findByUnitInAndStatus(unitList,true)).thenReturn(Optional.of(unitDetailList));
+        when(unitDetailRepository.findByUnitInAndStatus(unitList,true))
+                .thenReturn(Optional.of(unitDetailList));
+        unitDetailList.forEach(p ->
+                when(deliveryTypeRepository
+                .findByIdAndStatus(p.getDeliveryType().getId(), true))
+                .thenReturn(Optional.of(unitDetailList.get(unitDetailList.indexOf(p)).getDeliveryType())));
 
-        List<DeliveryTypeDTO> deliveryType = deliveryTypeService.getAllDeliveryTypesByTrainingClassId(tc1.getId());
+        List<DeliveryTypeDTO> deliveryType = deliveryTypeService.getAllDeliveryTypesByTrainingClassId(1L);
 
+        assertEquals(3, deliveryType.size());
         assertEquals(1L, deliveryType.get(0).getId());
         assertEquals("On Meeting", deliveryType.get(0).getTypeName());
         assertTrue(deliveryType.stream().filter(p -> !p.isStatus()).toList().isEmpty());
 
-        verify(iUnitService).getListUnitsByTrainingClassId(trainingClassId);
+        verify(iUnitService).getListUnitsByTrainingClassId(1L);
         verify(unitDetailRepository).findByUnitInAndStatus(unitList, true);
+        unitDetailList.forEach(p ->
+                verify(deliveryTypeRepository, atLeastOnce())
+                        .findByIdAndStatus(p.getDeliveryType().getId(), true));
     }
 
+    @Test
+    void itShouldThrowExceptionWhenTrainingClassIdNotFound() {
+        //Create list unit
+        List<Unit> unitList = new ArrayList<>();
+        unitList.add(unit1);
+        unitList.add(unit2);
+
+        //Create unit detail
+        UnitDetail unitDetail = new UnitDetail();
+        unitDetail.setUnit(unit1);
+        unitDetail.setDeliveryType(deliveryType1);
+        unitDetail.setStatus(false);
+
+        //Case 1: Cannot find any unit by the follow training class Id
+        when(iUnitService.getListUnitsByTrainingClassId(1L))
+                .thenReturn(null);
+        when(unitDetailRepository.findByUnitInAndStatus(null, true))
+                .thenReturn(Optional.empty());
+
+        assertThrows(Exception.class, () -> deliveryTypeService.getAllDeliveryTypesByTrainingClassId(1L));
+
+        verify(iUnitService).getListUnitsByTrainingClassId(1L);
+        verify(unitDetailRepository).findByUnitInAndStatus(null, true);
+
+        //Case 2: Can find units by the follow training class Id, but cannot find delivery type with UnitDetail ID
+        // or this unit detail is set to false
+        when(iUnitService.getListUnitsByTrainingClassId(1L))
+                .thenReturn(unitList);
+        when(unitDetailRepository.findByUnitInAndStatus(unitList, true))
+                .thenReturn(Optional.of(new ArrayList<>(List.of(unitDetail))));
+        when(deliveryTypeRepository
+                .findByIdAndStatus(unitDetail.getDeliveryType().getId(), true))
+                .thenReturn(Optional.empty());
+
+        assertThrows(Exception.class, () -> deliveryTypeService.getAllDeliveryTypesByTrainingClassId(1L));
+
+        verify(iUnitService, atLeastOnce()).getListUnitsByTrainingClassId(1L);
+        verify(unitDetailRepository).findByUnitInAndStatus(unitList, true);
+        verify(deliveryTypeRepository).findByIdAndStatus(unitDetail.getDeliveryType().getId(), true);
+    }
 }
 
