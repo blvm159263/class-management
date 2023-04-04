@@ -116,9 +116,8 @@ public class SyllabusService implements ISyllabusService {
     }
 
     public List<String> getOsdBySyllabusId(boolean status, Long id) {
-        List<String> osd = unitDetailRepo.findUnitDetailBySyllabusId(status, id)
-                .stream().filter(g -> g.getOutputStandard().isStatus() == true)
-                .map(k -> k.getOutputStandard().getStandardCode()).distinct().collect(Collectors.toList());
+        List<String> osd = unitDetailRepo.findUnitDetailBySyllabusId(status, id).stream()
+                .map(o -> o.getStandardCode()).distinct().collect(Collectors.toList());
         if(osd.size() > 0){
             return osd.stream().limit(3).collect(Collectors.toList());
         }else {

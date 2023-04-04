@@ -40,9 +40,7 @@ public class OutputStandardService implements IOutputStandardService {
     @Override
     public List<OutputStandardDTO> getOsdBySyllabusId(boolean status, Long id) {
         List<OutputStandard> osd = unitDetailRepo.findUnitDetailBySyllabusId(status, id)
-                .stream()
-                .filter(g -> g.getOutputStandard().isStatus() == true)
-                .map(k -> k.getOutputStandard()).distinct().collect(Collectors.toList());
+                .stream().distinct().collect(Collectors.toList());
         if(osd.size() > 0){
             return osd.stream().map(OutputStandardMapper.INSTANCE::toDTO).collect(Collectors.toList());
         }else {
