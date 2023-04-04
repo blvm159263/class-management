@@ -43,4 +43,13 @@ public interface IUserService {
 
     void storeListUser(List<User> list);
 
+    List<UserDTO> getAllTrainersByTrainingClassId(long id);
+
+    List<UserDTO> getAllAdminsByTrainingClassId(long id);
+
+    UserDTO getCreatorByTrainingClassId(long id);
+
+    List<UserDTO> getAllTrainersForADateByTrainingClassId(long id, int dayNth);
+
+
 }

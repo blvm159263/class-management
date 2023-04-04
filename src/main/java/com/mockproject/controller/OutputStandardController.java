@@ -18,7 +18,6 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Output Standard API")
 @Tag(name = "Output Standard", description = "API related Output standard")
 @RequestMapping(value = "/api/osd")
 @SecurityRequirement(name = "Authorization")

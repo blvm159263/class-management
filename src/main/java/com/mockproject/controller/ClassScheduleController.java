@@ -79,9 +79,7 @@ public class ClassScheduleController {
     @PostMapping("/search/week")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
     @Operation(summary = "Search training class in week by text")
-    public ResponseEntity searchTrainingClassInWeek(@io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(examples = @ExampleObject(value = "[\"2023-03-14\",\"2023-03-15\"]"))
-    ) @Valid SearchByDTO searchByDTO) {
+    public ResponseEntity searchTrainingClassInWeek(@RequestBody @Valid SearchByDTO searchByDTO) {
         var trainingClass = classScheduleService.searchTrainingClassInWeek(searchByDTO.getSearchText(), searchByDTO.getStartDate(), searchByDTO.getEndDate());
         if (trainingClass.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't have any training class");

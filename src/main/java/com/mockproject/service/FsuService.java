@@ -31,8 +31,8 @@ public class FsuService implements IFsuService {
     @Override
     public FsuDTO getFsuByTrainingClassId(Long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        if(tc.getFsu().isStatus()){return FsuMapper.INSTANCE.toDTO(tc.getFsu());}
-        return null;
+        if(!tc.getFsu().isStatus()){throw new NullPointerException();}
+        return FsuMapper.INSTANCE.toDTO(tc.getFsu());
     }
 
     @Override

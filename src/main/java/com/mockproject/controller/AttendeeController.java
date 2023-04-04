@@ -53,7 +53,7 @@ public class AttendeeController {
     @Operation(
             summary = "Get attendee list"
     )
-    public ResponseEntity<?> getAllAttendee(){
+    public ResponseEntity<?> getAllAttendee() {
         return ResponseEntity.ok(attendeeService.getAllAttendee(true));
     }
 
@@ -71,7 +71,6 @@ public class AttendeeController {
     }
 
 
-
     @Operation(summary = "Get class's Attendee type (Fresher,...) by TrainingClass id ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
@@ -79,9 +78,11 @@ public class AttendeeController {
     })
     @GetMapping("/class-attendee")
     public ResponseEntity<?> getAttendeeName(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
-        try{
+        try {
             return ResponseEntity.ok(attendeeService.getAttendeeByTrainingClassId(id));
-        }catch (Exception e){
+        } catch (NullPointerException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Attendee from training class id[" + id + "] disabled!!!");
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
         }
     }

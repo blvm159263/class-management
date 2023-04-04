@@ -45,7 +45,7 @@ public class TrainingClassController {
     })
     @GetMapping("/{id}")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<?> getAll(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getAll(@Parameter(example = "1") @PathVariable("id") Long id) {
         try {
             return ResponseEntity.ok(trainingClassService.getAllDetails(id));
         }catch (Exception ex){

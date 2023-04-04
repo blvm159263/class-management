@@ -88,6 +88,8 @@ public class FsuController {
     public ResponseEntity<?> getClassFsu(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(fsuService.getFsuByTrainingClassId(id));
+        }catch (NullPointerException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("fsu from training class id[" + id + "] disabled!!!");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
         }

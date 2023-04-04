@@ -64,7 +64,9 @@ public class ContactController {
     public ResponseEntity<?> getClassContact(@Parameter(description = "TrainingClass id", example = "1") @Param("id") Long id) {
         try{
             return ResponseEntity.ok(service.getContactByTrainingClassId(id));
-        }catch (Exception e){
+        } catch (NullPointerException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Contact from training class id[" + id + "] disabled!!!");
+        } catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
         }
     }

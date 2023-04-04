@@ -33,4 +33,6 @@ public interface ITrainingProgramService {
     boolean deleteTrainingProgram(Long trainingProgramID);
 
     void restoreAllTrainingPrograms();
+
+    boolean duplicateProgram(Long trainingProgramID);
 }

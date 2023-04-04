@@ -29,7 +29,7 @@ public class ContactService implements IContactService {
     @Override
     public ContactDTO getContactByTrainingClassId(Long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        if(tc.getContact().isStatus()){return ContactMapper.INSTANCE.toDTO(tc.getContact());}
-        return null;
+        if(!tc.getContact().isStatus()){throw new NullPointerException();}
+        return ContactMapper.INSTANCE.toDTO(tc.getContact());
     }
 }

@@ -28,6 +28,7 @@ import java.util.List;
 @Tag(name = "Delivery type", description = "API related delivery type")
 @SecurityRequirement(name = "Authorization")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Authorization")
 public class DeliveryTypeController {
 
     public static final String VIEW = "ROLE_View_Syllabus";
