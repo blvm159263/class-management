@@ -39,10 +39,10 @@ public class OutputStandardService implements IOutputStandardService {
 
     @Override
     public List<OutputStandardDTO> getOsdBySyllabusId(boolean status, Long id) {
-        List<OutputStandard> osd = unitDetailRepo.findUnitDetailBySyllabusId(status, id)
-                .stream().distinct().collect(Collectors.toList());
+        List<OutputStandardDTO> osd = unitDetailRepo.findUnitDetailBySyllabusId(status, id)
+                .stream().map(OutputStandardMapper.INSTANCE::toDTO).distinct().collect(Collectors.toList());
         if(osd.size() > 0){
-            return osd.stream().map(OutputStandardMapper.INSTANCE::toDTO).collect(Collectors.toList());
+            return osd;
         }else {
             throw new NotFoundException("Output standard not found with syllabus id: " + id);
         }
