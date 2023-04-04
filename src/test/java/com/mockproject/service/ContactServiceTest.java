@@ -62,7 +62,7 @@ class ContactServiceTest {
      * Method under test: {@link ContactService#getContactByTrainingClassId(Long)} ()}
      */
     @Test
-    void canlistAllContactInATrainingClass() {
+    void canListAllContactInATrainingClass() {
 
         TrainingClass tc = new TrainingClass();
         tc.setContact(contact1);
@@ -76,7 +76,7 @@ class ContactServiceTest {
 
 
     @Test
-    void itShouldThrowExceptionWhenTrainingClassIdNotFound() {
+    void itShouldThrowExceptionWhenTrainingClassContactNotFound() {
 
         TrainingClass tc = new TrainingClass();
         tc.setContact(contact2);

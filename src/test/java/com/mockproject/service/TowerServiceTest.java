@@ -110,7 +110,7 @@ class TowerServiceTest {
 
 
     @Test
-    void itShouldThrowExceptionWhenTrainingClassIdNotFound() {
+    void itShouldThrowExceptionWhenTrainingClassTowersNotFound() {
 
         when(trainingClassRepository.findByIdAndStatus(1L, true)).thenReturn(Optional.empty());
         assertThrows(Exception.class, () -> towerService.getAllTowersByTrainingClassId(1L));
@@ -189,7 +189,7 @@ class TowerServiceTest {
 
 
     @Test
-    void itShouldThrowExceptionWhenTrainingClassNotFound() {
+    void itShouldThrowExceptionWhenTrainingClassDateTowersNotFound() {
 
         TrainingClass tc = new TrainingClass();
 

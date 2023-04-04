@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -429,5 +430,77 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any attendee");
         }
     }
+
+
+
+    @Operation(summary = "Get all class's Trainers by TrainingClass id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
+    @GetMapping("/all-class-trainers")
+    public ResponseEntity<?> getAllTrainers(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+        try{
+            return ResponseEntity.ok(userService.getAllTrainersByTrainingClassId(id));
+        }catch (Exception ex){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
+        }
+    }
+
+
+
+    @Operation(summary = "Get class's Admins by TrainingClass id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
+    @GetMapping("/all-class-admins")
+    public ResponseEntity<?> getAllAdmins(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+        try{
+            return ResponseEntity.ok(userService.getAllAdminsByTrainingClassId(id));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
+        }
+    }
+
+
+
+    @Operation(summary = "Get class's Creator by TrainingClass id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
+    @GetMapping("/class-creator")
+    public ResponseEntity<?> getCreator(@Parameter(description = "TrainingClass id", example = "1") @Param("id") long id) {
+        try {
+            return ResponseEntity.ok(userService.getCreatorByTrainingClassId(id));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Training class id[" + id + "] not found!!!");
+        }
+    }
+
+
+
+    @Operation(
+            summary = "Get all class's Trainers for day-nth of total days of the class schedule",
+            description = "Get list of Trainers in a date clicked in the class schedule table by the user"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No Such Value", content = @Content(schema = @Schema(defaultValue = "Day [-] of Training class id[-] not found!!!"))),
+            @ApiResponse(responseCode = "200", description = "Return Sample", content = @Content(schema = @Schema(implementation = UserDTO.class)))
+    })
+    @GetMapping("/class-trainers-for-a-date")
+    public ResponseEntity<?> getAllTrainersForADate(
+            @Parameter(description = "TrainingClass id", example = "1") @Param("id") long id,
+            @Parameter(description = "day-nth of total days of the class schedule", example = "1") @Param("dayNth") int dayNth
+    ) {
+        try{
+            return ResponseEntity.ok(userService.getAllTrainersForADateByTrainingClassId(id, dayNth));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Day [" + dayNth + "] of Training class id[" + id + "] not found!!!");
+        }
+    }
 }
+
+
 

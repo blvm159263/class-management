@@ -165,7 +165,7 @@ class UnitServiceTest {
 
 
     @Test
-    void itShouldThrowExceptionWhenTrainingClassIdNotFound() {
+    void itShouldThrowExceptionWhenTrainingClassUnitsNotFound() {
 
         when(trainingClassRepository.findByIdAndStatus(1L, true)).thenReturn(null);
         assertThrows(Exception.class, () -> unitService.getListUnitsByTrainingClassId(1L));

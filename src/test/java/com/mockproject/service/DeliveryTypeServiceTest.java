@@ -114,7 +114,7 @@ class DeliveryTypeServiceTest {
 
 
     @Test
-    void itShouldThrowExceptionWhenTrainingClassIdOrUnitOrUnitDetailOrDeliveryTypeNotFound() {
+    void itShouldThrowExceptionWhenTrainingClassDeliveryTypesNotFound() {
 
         Unit u1 = new Unit();
         u1.setId(1L);

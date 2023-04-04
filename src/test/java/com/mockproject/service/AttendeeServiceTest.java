@@ -104,7 +104,7 @@ class AttendeeServiceTest {
                 () -> attendeeService.getAttendeeById(true, 4L));
 
         String msg = "Attendee not found with id: 4";
-        assertEquals("Attendee not found with id: 4", thrown.getMessage());
+        assertEquals(msg, thrown.getMessage());
         verify(attendeeRepository).findByStatusAndId(true, 4L);
     }
 
