@@ -18,9 +18,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -122,15 +123,16 @@ class TrainingClassServiceTest {
     @Test
     void canGetTrainingClassByClassId() {
         Long trainingClassId = 1L;
-        trainingClass.setId(trainingClassId);
 
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
                 .thenReturn(Optional.of(trainingClass));
 
         TrainingClassDTO result = trainingClassService.getTrainingClassByClassId(trainingClass.getId());
+
         assertEquals(1L, result.getId());
         assertEquals("Class Name 1", result.getClassName());
         assertEquals("Code113", result.getClassCode());
+        assertTrue(result.isStatus());
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
 

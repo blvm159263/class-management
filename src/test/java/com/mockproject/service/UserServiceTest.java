@@ -131,22 +131,28 @@ class UserServiceTest {
      */
     @Test
     void canGetAdminByTrainingClassId() {
+        //Create list training class admin
         List<TrainingClassAdmin> adminList = new ArrayList<>();
         adminList.add(admin1);
         adminList.add(admin2);
+        adminList.stream().filter(TrainingClassAdmin::isStatus).toList();
 
+        //Create training class Id
         Long trainingClassId = 1L;
-        TrainingClass trainingClass = new TrainingClass();
-        trainingClass.setId(trainingClassId);
-        trainingClass.setListTrainingClassAdmins(adminList);
+        tc1.setListTrainingClassAdmins(adminList);
 
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
-                .thenReturn(Optional.of(trainingClass));
+                .thenReturn(Optional.of(tc1));
 
-        List<UserDTO> admin = userService.getAdminByClassId(trainingClass.getId());
+        List<UserDTO> admin = userService.getAdminByClassId(tc1.getId());
+
+        assertEquals(2, admin.size());
         assertEquals(1L, admin.get(0).getId());
         assertEquals("user1@gmail.com", admin.get(0).getEmail());
         assertEquals("Tui la user 1", admin.get(0).getFullName());
+        assertEquals("user2@gmail.com", admin.get(1).getEmail());
+        assertEquals("Tui la user 2", admin.get(1).getFullName());
+        assertTrue(admin.stream().filter(a -> !a.isStatus()).toList().isEmpty());
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
     }
@@ -156,21 +162,25 @@ class UserServiceTest {
      */
     @Test
     void canGetTrainerByClassId() {
+        //Create training class unit information
         List<TrainingClassUnitInformation> trainingClassUnitInformations =
                 new ArrayList<>();
         trainingClassUnitInformations.add(ui1);
+        trainingClassUnitInformations.add(ui2);
 
+        //Create training class
         Long trainingClassId = 1L;
-        TrainingClass trainingClass = new TrainingClass();
-        trainingClass.setId(trainingClassId);
-        trainingClass.setListTrainingClassUnitInformations(trainingClassUnitInformations);
+        tc1.setListTrainingClassUnitInformations(trainingClassUnitInformations);
 
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
-                .thenReturn(Optional.of(trainingClass));
+                .thenReturn(Optional.of(tc1));
 
-        List<UserDTO> trainersList = userService.getTrainerByClassId(trainingClass.getId());
+        List<UserDTO> trainersList = userService.getTrainerByClassId(tc1.getId());
+        assertEquals(2, trainersList.size());
         assertEquals(3L, trainersList.get(0).getId());
         assertEquals("user3@gmail.com", trainersList.get(0).getEmail());
+        assertEquals(1L, trainersList.get(1).getId());
+        assertEquals("Tui la user 1", trainersList.get(1).getFullName());
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
     }

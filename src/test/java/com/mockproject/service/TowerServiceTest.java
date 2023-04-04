@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -128,31 +129,70 @@ class TowerServiceTest {
      */
     @Test
     void canGetTowerForTheDayByTrainingClassId() {
+        //Create Training Class ID
         Long trainingClassId = 1L;
         int dayNth = 1;
 
+        //Create id
+        AtomicReference<Long> id = new AtomicReference<>(1L);
+
+        //Create list unit
         List<Unit> unitList = new ArrayList<>();
         unitList.add(unit1);
         unitList.add(unit2);
+
+        //Assign value for each unit
+        unitList.forEach(u -> {
+            u.setId(id.get());
+            id.getAndSet(id.get() + 1);
+            u.setListTrainingClassUnitInformations(new ArrayList<>(List.of(new TrainingClassUnitInformation())));
+            u.setStatus(true);
+        });
+
+        //Reset id
+        id.getAndSet(1L);
+
+        //Create list training class unit infor
+        List<TrainingClassUnitInformation> informationList = new ArrayList<>();
+
+        //Assign value for each training class unit infor
+        unitList.forEach(i -> {
+            TrainingClassUnitInformation trainingClassUnitInfor = i.getListTrainingClassUnitInformations().get(0);
+            trainingClassUnitInfor.setId(id.get());
+            id.getAndSet(id.get() + 1);
+            trainingClassUnitInfor.setTrainingClass(tc1);
+            trainingClassUnitInfor.setUnit(i);
+            trainingClassUnitInfor.setTrainer(null);
+            trainingClassUnitInfor.setTower(id.get() % 2 == 0 ? tower1 : tower3);
+            trainingClassUnitInfor.setStatus(true);
+            informationList.add(trainingClassUnitInfor);
+        });
 
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
                 .thenReturn(Optional.of(tc1));
         when(unitService.getListUnitsInASessionByTrainingClassId(tc1.getId(), dayNth))
                 .thenReturn(unitList);
-        when(trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(unit1 , tc1, true))
-                .thenReturn(Optional.of(ui1) );
-        when(trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(unit2 , tc1, true))
-                .thenReturn(Optional.of(ui3) );
+        unitList.stream().filter(Unit::isStatus).toList();
+
+        unitList.forEach(u ->
+                when(trainingClassUnitInformationRepository
+                        .findByUnitAndTrainingClassAndStatus(u, tc1, true))
+                        .thenReturn(Optional.of(u.getListTrainingClassUnitInformations().get(0))));
 
         List<TowerDTO> towers = towerService.getTowerForTheDayByTrainingClassId(trainingClassId, dayNth);
+
+        assertEquals(2, towers.size());
         assertEquals(1L, towers.get(0).getId());
         assertEquals("FTown 1", towers.get(0).getTowerName());
         assertEquals("123 Le Loi", towers.get(0).getAddress());
+        assertEquals("FTown 3", towers.get(1).getTowerName());
+        assertEquals("999 Ba Trieu", towers.get(1).getAddress());
+        assertTrue(towers.stream().filter(t -> !t.isStatus()).toList().isEmpty());
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
         verify(unitService).getListUnitsInASessionByTrainingClassId(trainingClassId, dayNth);
-        verify(trainingClassUnitInformationRepository).findByUnitAndTrainingClassAndStatus(unit1, tc1, true);
-        verify(trainingClassUnitInformationRepository).findByUnitAndTrainingClassAndStatus(unit2, tc1, true);
+        unitList.forEach(u -> verify(trainingClassUnitInformationRepository)
+                .findByUnitAndTrainingClassAndStatus(u, tc1, true));
 
     }
 }

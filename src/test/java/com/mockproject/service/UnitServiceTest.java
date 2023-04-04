@@ -86,21 +86,27 @@ class UnitServiceTest {
      */
     @Test
     void getGetListUnitsByTrainingClassId() {
+        //Create training class Id
         Long trainingClassId = 1L;
 
+        //Create training class unit information
         List<TrainingClassUnitInformation> classUnitInformations = new ArrayList<>();
         classUnitInformations.add(ui1);
         classUnitInformations.add(ui2);
+
 
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
                 .thenReturn(Optional.of(trainingClass1));
         when(trainingClassUnitInformationRepository.findByTrainingClassAndStatus(trainingClass1, true))
                 .thenReturn(Optional.of(classUnitInformations));
+        classUnitInformations.stream().filter(TrainingClassUnitInformation::isStatus).toList();
 
         List<Unit> unitList = unitService.getListUnitsByTrainingClassId(trainingClassId);
         assertEquals(2, unitList.size());
         assertEquals(1L, unitList.get(0).getId());
         assertEquals("Unit title 123", unitList.get(0).getUnitTitle());
+        assertEquals(2L, unitList.get(1).getId());
+        assertEquals("Unit title 234", unitList.get(1).getUnitTitle());
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
         verify(trainingClassUnitInformationRepository).findByTrainingClassAndStatus(trainingClass1, true);
