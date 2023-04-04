@@ -78,5 +78,5 @@ public class SyllabusDTO implements Serializable {
     private Long lastModifierId;
     private String lastModifierName;
     private List<SessionDTO> sessionDTOList;
-
+    private List<String> outputStandardCodeList;
 }
