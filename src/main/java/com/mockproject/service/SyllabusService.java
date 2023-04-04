@@ -105,13 +105,26 @@ public class SyllabusService implements ISyllabusService {
                         .collect(Collectors.toList());
             }
         }
+        List<SyllabusDTO> listSyllabus = pages.stream().skip(skipCount).limit(row.orElse(10)).map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
+        listSyllabus.stream().forEach(p -> p.setOutputStandardCodeList(getOsdBySyllabusId(true, p.getId())));
         if(pages.size() > 0){
             return new PageImpl<>(
-                    pages.stream().skip(skipCount).limit(row.orElse(10)).map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList()),
+                    listSyllabus,
                     PageRequest.of(page.orElse(0), row.orElse(10), Sort.by(order)),
                     pages.size());
         } else {
             throw new NotFoundException("Syllabus not found!");
+        }
+    }
+
+    public List<String> getOsdBySyllabusId(boolean status, Long id) {
+        List<String> osd = unitDetailRepo.findUnitDetailBySyllabusId(status, id)
+                .stream().filter(g -> g.getOutputStandard().isStatus() == true)
+                .map(k -> k.getOutputStandard().getStandardCode()).distinct().collect(Collectors.toList());
+        if(osd.size() > 0){
+            return osd.stream().limit(3).collect(Collectors.toList());
+        }else {
+            return null;
         }
     }
 
