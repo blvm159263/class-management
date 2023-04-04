@@ -44,19 +44,14 @@ public class OutputStandardService implements IOutputStandardService {
     @Override
     public List<OutputStandardDTO> getOsdBySyllabusId(boolean status, Long id) {
         List<OutputStandard> osd = unitDetailRepo.findUnitDetailBySyllabusId(status, id)
-                .stream().filter(distinctByKey(o -> o.getOutputStandard()))
-                .filter(g -> g.getOutputStandard().isStatus()== true)
-                .map(k -> k.getOutputStandard()).collect(Collectors.toList());
+                .stream()
+                .filter(g -> g.getOutputStandard().isStatus() == true)
+                .map(k -> k.getOutputStandard()).distinct().collect(Collectors.toList());
         if(osd.size() > 0){
             return osd.stream().map(OutputStandardMapper.INSTANCE::toDTO).collect(Collectors.toList());
         }else {
             throw new NotFoundException("Output standard not found with syllabus id: " + id);
         }
-    }
-
-    public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
-        Map<Object, Boolean> map = new ConcurrentHashMap<>();
-        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
     @Override
