@@ -105,11 +105,9 @@ public class SyllabusService implements ISyllabusService {
                         .collect(Collectors.toList());
             }
         }
-        List<SyllabusDTO> listSyllabus = pages.stream().skip(skipCount).limit(row.orElse(10)).map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
-        listSyllabus.stream().forEach(p -> p.setOutputStandardCodeList(getOsdBySyllabusId(true, p.getId())));
         if(pages.size() > 0){
             return new PageImpl<>(
-                    listSyllabus,
+                    pages.stream().skip(skipCount).limit(row.orElse(10)).map(SyllabusMapper.INSTANCE::toDTO).peek(p -> p.setOutputStandardCodeList(getOsdBySyllabusId(true, p.getId()))).collect(Collectors.toList()),
                     PageRequest.of(page.orElse(0), row.orElse(10), Sort.by(order)),
                     pages.size());
         } else {
