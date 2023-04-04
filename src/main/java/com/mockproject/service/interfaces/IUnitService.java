@@ -11,13 +11,14 @@ import java.util.List;
 public interface IUnitService {
     List<UnitDTO> getListUnit(List<SessionDTO> session);
 
-    List<UnitDTO> listBySessionId(Long sid);
-
-    List<UnitDTO> getAllUnitsForADateByTrainingClassId(Long id, int dayNth);
 
     List<Unit> getListUnitsByTrainingClassId(Long id);
 
+    List<UnitDTO> getAllUnitsForADateByTrainingClassId(Long id, int dayNth);
+
     List<Unit> getListUnitsInASessionByTrainingClassId(Long id, int dayNth);
+
+    List<UnitDTO> listBySessionId(Long sid);
 
     List<UnitDTO> getUnitBySessionId(Long idSession);
 

@@ -1,10 +1,7 @@
 package com.mockproject.service;
 
 import com.mockproject.dto.UnitDTO;
-import com.mockproject.entity.Session;
-import com.mockproject.entity.Syllabus;
-import com.mockproject.entity.Unit;
-import com.mockproject.entity.User;
+import com.mockproject.entity.*;
 import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitDetailService;
@@ -20,8 +17,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {UnitService.class})
@@ -108,9 +107,78 @@ class UnitServiceTest {
 
         boolean result = unitService.createUnit(s1.getId(), list, new User());
 
-        assertEquals(true, result);
+        assertTrue(result);
 
         verify(unitRepository,times(2)).save(any());
     }
+
+
+    /**
+     * Method under test: {@link UnitService#getListUnitsByTrainingClassId(Long)}
+     */
+    @Test
+    void canGetListUnitsByTrainingClassId() {
+
+        TrainingClass tc = new TrainingClass();
+        tc.setId(1L);
+        tc.setStatus(true);
+
+        AtomicReference<Long> index = new AtomicReference<>(1L);
+
+//        List<TrainingClassUnitInformation> infos = new ArrayList<>(Arrays.asList(new TrainingClassUnitInformation(), new TrainingClassUnitInformation(), new TrainingClassUnitInformation()));
+        List<TrainingClassUnitInformation> infos = Stream.of(1, 2, 3, 4)
+                        .map(i -> new TrainingClassUnitInformation())
+                                .toList();
+
+        infos.forEach(i -> {
+            i.setId(index.get());
+
+            Unit unit = new Unit();
+            unit.setId(index.get());
+            unit.setStatus(true);
+            i.setUnit(unit);
+
+            i.setTrainingClass(tc);
+            i.setStatus(index.get() % 2 == 0);
+
+            index.updateAndGet(v -> v + 1);
+        });
+
+        when(trainingClassRepository.findByIdAndStatus(1L, true)).thenReturn(Optional.of(tc));
+        List<TrainingClassUnitInformation> list = infos.stream().filter(TrainingClassUnitInformation::isStatus).toList();
+        when(trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc, true)).thenReturn(Optional.of(list));
+        list.forEach(i -> when(unitRepository.findByIdAndStatus(i.getUnit().getId(), true))
+                .thenReturn(Optional.of(i.getUnit())));
+
+        List<Unit> imp = unitService.getListUnitsByTrainingClassId(1L);
+        assertNotNull(imp);
+        assertEquals(2, imp.size());
+
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+        verify(trainingClassUnitInformationRepository).findByTrainingClassAndStatus(tc, true);
+        list.forEach(i -> verify(unitRepository).findByIdAndStatus(i.getUnit().getId(), true));
+    }
+
+
+
+    @Test
+    void itShouldThrowExceptionWhenTrainingClassUnitsNotFound() {
+
+        when(trainingClassRepository.findByIdAndStatus(1L, true)).thenReturn(null);
+        assertThrows(Exception.class, () -> unitService.getListUnitsByTrainingClassId(1L));
+
+        when(trainingClassUnitInformationRepository.findByTrainingClassAndStatus(null, true)).thenReturn(Optional.empty());
+        assertThrows(Exception.class, () -> unitService.getListUnitsByTrainingClassId(1L));
+
+        when(unitRepository.findByIdAndStatus(null, true)).thenReturn(Optional.empty());
+        assertThrows(Exception.class, () -> unitService.getListUnitsByTrainingClassId(1L));
+
+        verify(trainingClassRepository, times(3)).findByIdAndStatus(1L, true);
+    }
+
+
+
+
 }
+
 

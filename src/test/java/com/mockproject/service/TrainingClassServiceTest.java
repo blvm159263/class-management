@@ -1,5 +1,6 @@
 package com.mockproject.service;
 
+
 import com.mockproject.dto.TrainingClassDTO;
 import com.mockproject.entity.*;
 import com.mockproject.exception.entity.EntityNotFoundException;
@@ -61,7 +62,7 @@ class TrainingClassServiceTest {
             null, null, null);
 
     TrainingProgram trainingProgram = new TrainingProgram(1L, 1, "C# for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
-            30, true, true, user, null, null, null);
+            30,true, true, user, null, null, null);
     TrainingProgram trainingProgram1= new TrainingProgram(2L, 2, "Java for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
             30, true, true, user, null, null, null);
     TrainingProgram trainingProgram2 = new TrainingProgram(3L, 3, "Python for beginner", LocalDate.now(), LocalDate.now(), BigDecimal.TEN,
@@ -183,5 +184,25 @@ class TrainingClassServiceTest {
 
 
 
+
+    /**
+     * Method under test: {@link TrainingClassService#getAllDetails(Long)}
+     */
+    @Test
+    void canGetTrainingClassById() {
+
+        when(trainingClassRepository.findByIdAndStatus(1L, true)).thenReturn(Optional.of(new TrainingClass()));
+        TrainingClassDTO dto = trainingClassService.getAllDetails(1L);
+        assertNotNull(dto);
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
+
+
+    @Test
+    void itShouldThrowExceptionWhenTrainingClassIdNotFound() {
+        when(trainingClassRepository.findByIdAndStatus(1L, true)).thenReturn(Optional.empty());
+        assertThrows(Exception.class, () -> trainingClassService.getAllDetails(1L));
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
 }
 
