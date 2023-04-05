@@ -1,6 +1,7 @@
 package com.mockproject.specification;
 
 import com.mockproject.dto.SearchTPDTO;
+import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingProgram;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -36,10 +37,12 @@ public class TrainingProgramSpecification {
         }
         return trainingProgramSpecification;
     }
-
+    public static Specification<TrainingProgram> hasStatus() {
+        return (root, query, builder) -> builder.equal(root.get("status"), true);
+    }
     public static Specification<TrainingProgram> getTrainingProgramSpecification(SearchTPDTO filter) {
         Specification<TrainingProgram> spec = Specification.where(null);
-        spec = spec.or(hasNameLike(filter.getSearch())).or(hasCreatorNameLike(filter.getSearch()));
+        spec = spec.or(hasNameLike(filter.getSearch())).or(hasCreatorNameLike(filter.getSearch())).and(hasStatus());
         return spec;
     }
 }
