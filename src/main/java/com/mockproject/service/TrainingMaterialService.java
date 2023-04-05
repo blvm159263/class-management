@@ -58,7 +58,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
     @Override
     public TrainingMaterialDTO getFile(Long id, boolean status) throws DataFormatException, IOException {
         Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(id, status);
-        trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Training Material not found"));
         TrainingMaterialDTO trainingMaterialDTO = TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterial.get());
         return trainingMaterialDTO;
     }
@@ -72,7 +72,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
                     try {
                         trainingMaterialDTOS.add(uploadAFile(dto, unitDetail, user));
                     } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+                        throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Add training material file failed");
                     }
                 }
         );
@@ -82,7 +82,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
     @Override
     public TrainingMaterialDTO updateFile(Long id, TrainingMaterialDTO createDTO, User user, boolean status) throws IOException {
         Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(id, status);
-        trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Training Material not found"));
         return TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterialRepository.save(TrainingMaterial.builder()
                 .id(id)
                 .data(createDTO.getData())
@@ -109,7 +109,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
                     TrainingMaterialDTO trainingMaterialDTO = TrainingMaterialMapper.INSTANCE.toDTO(trainingMaterial);
                     trainingMaterialDTOS.add(trainingMaterialDTO);
                 } catch (Exception e) {
-                    throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+                    throw new ResponseStatusException(HttpStatus.NO_CONTENT,"Get failed");
                 }
             });
             return trainingMaterialDTOS;
@@ -120,7 +120,7 @@ public class TrainingMaterialService implements ITrainingMaterialService {
     public boolean deleteTrainingMaterial(Long trainingMaterialId, boolean status){
         try {
             Optional<TrainingMaterial> trainingMaterial = trainingMaterialRepository.findByIdAndStatus(trainingMaterialId, status);
-            trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Training "+ trainingMaterialId));
+            trainingMaterial.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Training Material not found"));
             trainingMaterial.get().setStatus(false);
             trainingMaterialRepository.save(trainingMaterial.get());
         } catch (Exception e){

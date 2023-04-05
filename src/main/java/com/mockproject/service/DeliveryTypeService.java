@@ -43,7 +43,7 @@ public class DeliveryTypeService implements IDeliveryTypeService {
     @Override
     public DeliveryTypeDTO getDeliveryType(Long deliveryId, boolean status){
         Optional<DeliveryType> deliveryType = deliveryTypeRepository.findByIdAndStatus(deliveryId,status);
-        deliveryType.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        deliveryType.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Delivery type not found"));
         DeliveryTypeDTO deliveryTypeDTO = DeliveryTypeMapper.INSTANCE.toDTO(deliveryType.get());
         return deliveryTypeDTO;
     }

@@ -4,6 +4,7 @@ import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.*;
+import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitDetailService;
@@ -53,7 +54,7 @@ public class UnitService implements IUnitService {
     @Override
     public boolean createUnit(Long sessionId, List<UnitDTO> listUnit, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
-        session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT,"Session not found"));
 
         for (UnitDTO i: listUnit) {
             createUnit(sessionId, i, user);
@@ -65,9 +66,9 @@ public class UnitService implements IUnitService {
     @Override
     public boolean createUnit(Long sessionId, UnitDTO unitDTO, User user){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, true);
-        session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Session not found"));
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(session.get().getSyllabus().getId(),true,true);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
         BigDecimal duration = syllabus.get().getHour();
 
         unitDTO.setSessionId(sessionId);
@@ -87,7 +88,7 @@ public class UnitService implements IUnitService {
     @Override
     public Unit editUnit(UnitDTO unitDTO, boolean status) throws IOException {
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitDTO.getId(), status);
-        unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Unit not found"));
 
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -106,7 +107,7 @@ public class UnitService implements IUnitService {
         }
 
         unit = unitRepository.findByIdAndStatus(unitDTO.getId(), status);
-        unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        unit.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT,"Unit not found"));
 
         unitDTO.setSessionId(unit.get().getSession().getId());
         unitDTO.setDuration(unit.get().getDuration());
@@ -118,9 +119,17 @@ public class UnitService implements IUnitService {
     @Override
     public boolean deleteUnit(Long unitId, boolean status){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, status);
-        unit.orElseThrow(() -> new  ResponseStatusException(HttpStatus.NO_CONTENT));
+        unit.orElseThrow(() -> new  ResponseStatusException(HttpStatus.NO_CONTENT, "Unit not found"));
+        List<UnitDetailDTO> unitDetailDTOList = unitDetailService.getAllUnitDetailByUnitId(unitId, true);
+        List<UnitDetail>   unitDetailList = new ArrayList<>();
+
+        for(UnitDetailDTO unitDetailDTO : unitDetailDTOList){
+            unitDetailList.add(UnitDetailMapper.INSTANCE.toEntity(unitDetailDTO));
+        }
+        unit.get().setListUnitDetail(unitDetailList);
         unit.get().setStatus(false);
-        unitDetailService.deleteUnitDetails(unitId, status);
+        if(!unit.get().getListUnitDetail().isEmpty())
+            unitDetailService.deleteUnitDetails(unitId, status);
         unitRepository.save(unit.get());
         return true;
     }

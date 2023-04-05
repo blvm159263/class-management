@@ -3,6 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.*;
+import com.mockproject.mapper.SessionMapper;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.OutputStandardRepository;
 import com.mockproject.repository.SyllabusRepository;
@@ -212,7 +213,7 @@ public class SyllabusService implements ISyllabusService {
     @Override
     public Syllabus editSyllabus(SyllabusDTO syllabusDTO, boolean status) throws IOException{
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusDTO.getId(), status);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // Set day and hour
@@ -245,9 +246,17 @@ public class SyllabusService implements ISyllabusService {
     @Override
     public boolean deleteSyllabus(Long syllabusId, boolean status){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusId, status);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT,"Syllabus not found"));
+        List<SessionDTO> sessionDTOList = sessionService.getAllSessionBySyllabusId(syllabusId, true);
+        List<Session>   sessionList = new ArrayList<>();
+
+        for(SessionDTO sessionDTO : sessionDTOList){
+            sessionList.add(SessionMapper.INSTANCE.toEntity(sessionDTO));
+        }
+        syllabus.get().setListSessions(sessionList);
         syllabus.get().setStatus(false);
-        sessionService.deleteSessions(syllabusId, status);
+        if(!(syllabus.get().getListSessions().isEmpty()))
+            sessionService.deleteSessions(syllabusId, status);
         syllabusRepository.save(syllabus.get());
         return true;
     }
@@ -398,7 +407,7 @@ public class SyllabusService implements ISyllabusService {
     @Override
     public SyllabusDTO getSyllabusById(Long syllabusId,boolean state, boolean status){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, state, status);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
         SyllabusDTO syllabusDTO = SyllabusMapper.INSTANCE.toDTO(syllabus.get());
         List<SessionDTO> sessionDTOList = sessionService.getAllSessionBySyllabusId(syllabusId, true);
         syllabusDTO.setSessionDTOList(sessionDTOList);
