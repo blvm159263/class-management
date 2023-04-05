@@ -141,9 +141,9 @@ public class UnitDetailService implements IUnitDetailService {
         if(!unitDetail.get().getListMaterials().isEmpty())
             trainingMaterialService.deleteTrainingMaterials(unitDetailId,status);
 
-        unitDetail.get().getUnit().setDuration(unitDetail.get().getUnit().getDuration().subtract(unitDetail.get().getDuration().divide(BigDecimal.valueOf(60))));
+        unitDetail.get().getUnit().setDuration(unitDetail.get().getUnit().getDuration().subtract(unitDetail.get().getDuration().divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP)));
 
-        unitDetail.get().getUnit().getSession().getSyllabus().setHour(unitDetail.get().getUnit().getSession().getSyllabus().getHour().subtract(unitDetail.get().getDuration().divide(BigDecimal.valueOf(60))));
+        unitDetail.get().getUnit().getSession().getSyllabus().setHour(unitDetail.get().getUnit().getSession().getSyllabus().getHour().subtract(unitDetail.get().getDuration().divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP)));
 
         unitRepository.save(unitDetail.get().getUnit());
         syllabusRepository.save(unitDetail.get().getUnit().getSession().getSyllabus());
