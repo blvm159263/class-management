@@ -8,6 +8,7 @@ import com.mockproject.mapper.TrainingProgramMapper;
 import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.service.interfaces.IFileService;
 import com.mockproject.service.interfaces.ITrainingProgramService;
+import com.mockproject.specification.TrainingProgramSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,7 +86,21 @@ public class TrainingProgramService implements ITrainingProgramService {
         return trainingProgramRepository.getAllByCreatorFullNameContains(keyword).stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 
-
+    @Override
+    public Page<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList,Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        boolean check = searchList.getSearch().isEmpty();
+        Page<TrainingProgram> result = null;
+        if (!check) {
+//            List<String> lowerCaseSearchTerms = searchList.getSearch().stream()
+//                    .map(String::toLowerCase)
+//                    .collect(Collectors.toList());
+//            result = doSearch(trainingProgramRepository.findAll(), lowerCaseSearchTerms);
+            result = trainingProgramRepository.findAll(TrainingProgramSpecification.getTrainingProgramSpecification(searchList),pageable);
+        }
+        Page<TrainingProgramDTO> programDTOPage = result.map(TrainingProgramMapper.INSTANCE::toDTO);
+        return programDTOPage;
+    }
 
     @Override
     public boolean de_activeTrainingProgram(Long trainingProgramID) {
@@ -189,18 +204,18 @@ public class TrainingProgramService implements ITrainingProgramService {
         Page<TrainingProgramDTO> programDTOPage = page.map(TrainingProgramMapper.INSTANCE::toDTO);
         return programDTOPage;
     }
-    @Override
-    public List<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList) {
-        boolean check = searchList.getSearch().isEmpty();
-        List<TrainingProgram> result = new ArrayList<>();
-        if (!check) {
-            List<String> lowerCaseSearchTerms = searchList.getSearch().stream()
-                    .map(String::toLowerCase)
-                    .collect(Collectors.toList());
-            result = doSearch(trainingProgramRepository.findAll(), lowerCaseSearchTerms);
-        }
-        return result.stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
-    }
+//    @Override
+//    public List<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList) {
+//        boolean check = searchList.getSearch().isEmpty();
+//        List<TrainingProgram> result = new ArrayList<>();
+//        if (!check) {
+//            List<String> lowerCaseSearchTerms = searchList.getSearch().stream()
+//                    .map(String::toLowerCase)
+//                    .collect(Collectors.toList());
+//            result = doSearch(trainingProgramRepository.findAll(), lowerCaseSearchTerms);
+//        }
+//        return result.stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
+//    }
 
     private List<TrainingProgram> doSearch(List<TrainingProgram> trainingPrograms, List<String> searchList) {
         List<TrainingProgram> result = trainingPrograms.stream()
