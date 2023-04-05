@@ -1,11 +1,9 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.TrainingMaterialDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.*;
-import com.mockproject.mapper.SessionMapper;
 import com.mockproject.mapper.TrainingMaterialMapper;
 import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.repository.SyllabusRepository;
@@ -157,7 +155,6 @@ public class UnitDetailService implements IUnitDetailService {
     @Override
     public boolean deleteUnitDetails(Long unitId, boolean status){
         Optional<List<UnitDetail>> unitDetails = unitDetailRepository.findByUnitIdAndStatus(unitId, status);
-        System.out.println("Dang o Unitdetail");
         ListUtils.checkList(unitDetails);
         unitDetails.get().forEach((i) -> deleteUnitDetail(i.getId(), status));
         return true;

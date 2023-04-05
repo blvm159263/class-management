@@ -144,7 +144,6 @@ public class SessionService implements ISessionService {
     @Override
     public boolean deleteSessions(Long syllabusId, boolean status){
         Optional<List<Session>> sessions = sessionRepository.findBySyllabusIdAndStatus(syllabusId, status);
-        System.out.println("Dang o Session");
         ListUtils.checkList(sessions);
         sessions.get().forEach((i) ->
                 deleteSession(i.getId(), status));

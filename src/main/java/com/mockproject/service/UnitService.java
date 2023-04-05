@@ -4,7 +4,6 @@ import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.*;
-import com.mockproject.mapper.SessionMapper;
 import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.*;
@@ -138,7 +137,6 @@ public class UnitService implements IUnitService {
     @Override
     public boolean deleteUnits(Long sessionId, boolean status){
         Optional<List<Unit>> units = unitRepository.findAllBySessionIdAndStatus(sessionId, status);
-        System.out.println("Dang o Unit");
         ListUtils.checkList(units);
         units.get().forEach((i) -> deleteUnit(i.getId(), status));
         return true;
