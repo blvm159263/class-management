@@ -199,6 +199,11 @@ public class TrainingProgramController {
     public ResponseEntity<?> searchTrainingProgramByKeyWords(@RequestParam(defaultValue = "0") Integer pageNo,
                                                              @RequestParam(defaultValue = "10") Integer pageSize,
                                                              @RequestBody SearchTPDTO searchList) {
+        if(searchList.getSearch() == null || searchList.getSearch().size() == 0){
+            List<String> searchText = new ArrayList<>();
+            searchText.add("");
+            searchList.setSearch( searchText);
+        }
         Page<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(searchList,pageNo,pageSize);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
