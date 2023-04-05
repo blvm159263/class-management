@@ -4,6 +4,7 @@ import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.SessionMapper;
+import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitRepository;
@@ -126,8 +127,16 @@ public class SessionService implements ISessionService {
     public boolean deleteSession(Long sessionId, boolean status){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, status);
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Session not found"));
+        List<UnitDTO> unitDTOList = unitService.getAllUnitBySessionId(sessionId, true);
+        List<Unit>   unitList = new ArrayList<>();
+
+        for(UnitDTO unitDTO : unitDTOList){
+            unitList.add(UnitMapper.INSTANCE.toEntity(unitDTO));
+        }
+        session.get().setListUnit(unitList);
         session.get().setStatus(false);
-        unitService.deleteUnits(sessionId, status);
+        if(!session.get().getListUnit().isEmpty())
+            unitService.deleteUnits(sessionId, status);
         sessionRepository.save(session.get());
         return true;
     }
@@ -135,8 +144,10 @@ public class SessionService implements ISessionService {
     @Override
     public boolean deleteSessions(Long syllabusId, boolean status){
         Optional<List<Session>> sessions = sessionRepository.findBySyllabusIdAndStatus(syllabusId, status);
+        System.out.println("Dang o Session");
         ListUtils.checkList(sessions);
-        sessions.get().forEach((i) -> deleteSession(i.getId(), status));
+        sessions.get().forEach((i) ->
+                deleteSession(i.getId(), status));
         return true;
     }
 

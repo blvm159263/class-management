@@ -4,6 +4,8 @@ import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.*;
+import com.mockproject.mapper.SessionMapper;
+import com.mockproject.mapper.UnitDetailMapper;
 import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.*;
 import com.mockproject.service.interfaces.IUnitDetailService;
@@ -119,8 +121,16 @@ public class UnitService implements IUnitService {
     public boolean deleteUnit(Long unitId, boolean status){
         Optional<Unit> unit = unitRepository.findByIdAndStatus(unitId, status);
         unit.orElseThrow(() -> new  ResponseStatusException(HttpStatus.NO_CONTENT, "Unit not found"));
+        List<UnitDetailDTO> unitDetailDTOList = unitDetailService.getAllUnitDetailByUnitId(unitId, true);
+        List<UnitDetail>   unitDetailList = new ArrayList<>();
+
+        for(UnitDetailDTO unitDetailDTO : unitDetailDTOList){
+            unitDetailList.add(UnitDetailMapper.INSTANCE.toEntity(unitDetailDTO));
+        }
+        unit.get().setListUnitDetail(unitDetailList);
         unit.get().setStatus(false);
-        unitDetailService.deleteUnitDetails(unitId, status);
+        if(!unit.get().getListUnitDetail().isEmpty())
+            unitDetailService.deleteUnitDetails(unitId, status);
         unitRepository.save(unit.get());
         return true;
     }
@@ -128,6 +138,7 @@ public class UnitService implements IUnitService {
     @Override
     public boolean deleteUnits(Long sessionId, boolean status){
         Optional<List<Unit>> units = unitRepository.findAllBySessionIdAndStatus(sessionId, status);
+        System.out.println("Dang o Unit");
         ListUtils.checkList(units);
         units.get().forEach((i) -> deleteUnit(i.getId(), status));
         return true;

@@ -3,6 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.UnitDetailDTO;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.UnitDetailMapper;
+import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitDetailRepository;
 import com.mockproject.repository.UnitRepository;
 import com.mockproject.service.interfaces.ITrainingMaterialService;
@@ -30,6 +31,9 @@ class UnitDetailServiceTest {
 
     @MockBean
     private UnitRepository unitRepository;
+
+    @MockBean
+    private SyllabusRepository syllabusRepository;
 
     @MockBean
     private ITrainingMaterialService trainingMaterialService;

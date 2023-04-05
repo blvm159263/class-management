@@ -10,6 +10,6 @@ public class ListUtils {
 
     public static <T> void checkList(Optional<List<T>> list){
         if(list.get().size() == 0)
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Dang loi o day");
     }
 }
