@@ -15,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,8 +42,20 @@ class UnitDetailServiceTest {
     @Autowired
     private UnitDetailService unitDetailService;
 
-    Unit unit1 = new Unit(1L, "Unit title 123", 1, BigDecimal.TEN, true, null, null, null);
-    Unit unit2 = new Unit(2L, "Unit title 234", 2, BigDecimal.TEN, true, null, null, null);
+    User user = new User(1L, "abc@gmail.com", "***", "Pham Quoc Thinh", "avatar", 1, LocalDate.now(), "0938081927", true, true,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+    Syllabus syllabus = new Syllabus(1L, "ABC", "SLB1", "1.0", "All level",
+            1, BigDecimal.TEN, 10,"Technical Requirements", "Course Objectives",
+            LocalDate.now(), LocalDate.now(), BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN,
+            BigDecimal.TEN, "Training Description", "ReTest Description", "Marking Description",
+            "Waiver CriteriaDes", "Other Description", true, true, user, new User(),
+            null, null);
+
+    Session session1 = new Session(1L,1,true,syllabus, null);
+
+    Unit unit1 = new Unit(1L, "Unit title 123", 1, BigDecimal.TEN, true, session1, null, null);
+    Unit unit2 = new Unit(2L, "Unit title 234", 2, BigDecimal.TEN, true, session1, null, null);
 
     UnitDetail unitDetail1 = new UnitDetail(1L, "Unit Detail 1", BigDecimal.TEN, true,
             true, unit1, new DeliveryType(), new OutputStandard(), null);
