@@ -72,6 +72,17 @@ public class TrainingProgramController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
         }
     }
+    @PostMapping("/search-training-program-by-keywords")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+    public ResponseEntity<?> searchTrainingProgramByKeyWords(@RequestBody SearchTPDTO searchList) {
+            List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(searchList);
+
+        if (!list.isEmpty()) {
+            return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
+        }
+    }
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any Training Program"),
@@ -183,16 +194,7 @@ public class TrainingProgramController {
         return ResponseEntity.ok("Restore all training programs successfully.");
     }
 
-    @PostMapping("/search-training-program-by-keywords")
-    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<?> searchTrainingProgramByKeyWords(@RequestBody SearchTPDTO searchList) {
-      List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(searchList);
-        if (!list.isEmpty()) {
-            return ResponseEntity.ok(list);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
-        }
-    }
+
 
     @PostMapping("/duplicate-training-program/{trainingProgramID}")
     public ResponseEntity<?> duplicateTrainingProgram(@PathVariable Long trainingProgramID) {
