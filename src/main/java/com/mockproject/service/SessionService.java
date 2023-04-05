@@ -4,6 +4,7 @@ import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.UnitDTO;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.SessionMapper;
+import com.mockproject.mapper.UnitMapper;
 import com.mockproject.repository.SessionRepository;
 import com.mockproject.repository.SyllabusRepository;
 import com.mockproject.repository.UnitRepository;
@@ -63,7 +64,7 @@ public class SessionService implements ISessionService {
     @Override
     public boolean createSession(Long syllabusId, List<SessionDTO> listSession, User user){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true,true);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
         syllabus.get().setDay(listSession.size());
         syllabusRepository.save(syllabus.get());
         listSession.forEach((i) ->
@@ -76,7 +77,7 @@ public class SessionService implements ISessionService {
     @Override
     public boolean createSession(Long syllabusId, SessionDTO sessionDTO, User user){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true,true);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
 
         sessionDTO.setStatus(true);
         sessionDTO.setSyllabusId(syllabusId);
@@ -89,7 +90,7 @@ public class SessionService implements ISessionService {
     @Override
     public Session editSession(SessionDTO sessionDTO, boolean status) throws IOException{
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionDTO.getId(), status);
-        session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Session not found"));
         sessionDTO.setSyllabusId(session.get().getSyllabus().getId());
 
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(session.get().getSyllabus().getId(), true);
@@ -125,9 +126,17 @@ public class SessionService implements ISessionService {
     @Override
     public boolean deleteSession(Long sessionId, boolean status){
         Optional<Session> session = sessionRepository.findByIdAndStatus(sessionId, status);
-        session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Session not found"));
+        List<UnitDTO> unitDTOList = unitService.getAllUnitBySessionId(sessionId, true);
+        List<Unit>   unitList = new ArrayList<>();
+
+        for(UnitDTO unitDTO : unitDTOList){
+            unitList.add(UnitMapper.INSTANCE.toEntity(unitDTO));
+        }
+        session.get().setListUnit(unitList);
         session.get().setStatus(false);
-        unitService.deleteUnits(sessionId, status);
+        if(!session.get().getListUnit().isEmpty())
+            unitService.deleteUnits(sessionId, status);
         sessionRepository.save(session.get());
         return true;
     }
@@ -136,7 +145,8 @@ public class SessionService implements ISessionService {
     public boolean deleteSessions(Long syllabusId, boolean status){
         Optional<List<Session>> sessions = sessionRepository.findBySyllabusIdAndStatus(syllabusId, status);
         ListUtils.checkList(sessions);
-        sessions.get().forEach((i) -> deleteSession(i.getId(), status));
+        sessions.get().forEach((i) ->
+                deleteSession(i.getId(), status));
         return true;
     }
 

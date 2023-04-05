@@ -3,6 +3,7 @@ package com.mockproject.service;
 import com.mockproject.dto.SessionDTO;
 import com.mockproject.dto.SyllabusDTO;
 import com.mockproject.entity.*;
+import com.mockproject.mapper.SessionMapper;
 import com.mockproject.mapper.SyllabusMapper;
 import com.mockproject.repository.OutputStandardRepository;
 import com.mockproject.repository.SyllabusRepository;
@@ -77,7 +78,7 @@ public class SyllabusService implements ISyllabusService {
         if(sort[0].contains(",")){
             for (String sortItem: sort) {
                 String[] subSort = sortItem.split(",");
-                if(ifPropertpresent(sourceFieldList, subSort[0])){
+                if(sourceFieldList.contains(subSort[0])){
                     order.add(new Sort.Order(getSortDirection(subSort[1]), transferProperty(subSort[0])));
                 } else {
                     throw new NotFoundException(subSort[0] + " is not a propertied of Syllabus!");
@@ -87,7 +88,7 @@ public class SyllabusService implements ISyllabusService {
             if(sort.length == 1){
                 throw new ArrayIndexOutOfBoundsException("Sort direction(asc/desc) not found!");
             }
-            if(ifPropertpresent(sourceFieldList, sort[0])){
+            if(sourceFieldList.contains(sort[0])){
                 order.add(new Sort.Order(getSortDirection(sort[1]), transferProperty(sort[0])));
             } else {
                 throw new NotFoundException(sort[0] + " is not a propertied of Syllabus!");
@@ -105,26 +106,13 @@ public class SyllabusService implements ISyllabusService {
                         .collect(Collectors.toList());
             }
         }
-        List<SyllabusDTO> listSyllabus = pages.stream().skip(skipCount).limit(row.orElse(10)).map(SyllabusMapper.INSTANCE::toDTO).collect(Collectors.toList());
-        listSyllabus.stream().forEach(p -> p.setOutputStandardCodeList(getOsdBySyllabusId(true, p.getId())));
         if(pages.size() > 0){
             return new PageImpl<>(
-                    listSyllabus,
+                    pages.stream().skip(skipCount).limit(row.orElse(10)).map(SyllabusMapper.INSTANCE::toDTO).peek(p -> p.setOutputStandardCodeList(unitDetailRepo.getOsdCodeBySyllabusID(true, p.getId()))).collect(Collectors.toList()),
                     PageRequest.of(page.orElse(0), row.orElse(10), Sort.by(order)),
                     pages.size());
         } else {
             throw new NotFoundException("Syllabus not found!");
-        }
-    }
-
-    public List<String> getOsdBySyllabusId(boolean status, Long id) {
-        List<String> osd = unitDetailRepo.findUnitDetailBySyllabusId(status, id)
-                .stream().filter(g -> g.getOutputStandard().isStatus() == true)
-                .map(k -> k.getOutputStandard().getStandardCode()).distinct().collect(Collectors.toList());
-        if(osd.size() > 0){
-            return osd.stream().limit(3).collect(Collectors.toList());
-        }else {
-            return null;
         }
     }
 
@@ -166,13 +154,6 @@ public class SyllabusService implements ISyllabusService {
 //             return new Syllabus();
 //         }
 //    }
-
-    private static boolean ifPropertpresent(final Set<String> properties, final String propertyName) {
-        if (properties.contains(propertyName)) {
-            return true;
-        }
-        return false;
-    }
 
     private static Set<String> getAllFields(final Class<?> type) {
         Set<String> fields = new HashSet<>();
@@ -232,7 +213,7 @@ public class SyllabusService implements ISyllabusService {
     @Override
     public Syllabus editSyllabus(SyllabusDTO syllabusDTO, boolean status) throws IOException{
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusDTO.getId(), status);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // Set day and hour
@@ -265,9 +246,17 @@ public class SyllabusService implements ISyllabusService {
     @Override
     public boolean deleteSyllabus(Long syllabusId, boolean status){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusId, status);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT,"Syllabus not found"));
+        List<SessionDTO> sessionDTOList = sessionService.getAllSessionBySyllabusId(syllabusId, true);
+        List<Session>   sessionList = new ArrayList<>();
+
+        for(SessionDTO sessionDTO : sessionDTOList){
+            sessionList.add(SessionMapper.INSTANCE.toEntity(sessionDTO));
+        }
+        syllabus.get().setListSessions(sessionList);
         syllabus.get().setStatus(false);
-        sessionService.deleteSessions(syllabusId, status);
+        if(!(syllabus.get().getListSessions().isEmpty()))
+            sessionService.deleteSessions(syllabusId, status);
         syllabusRepository.save(syllabus.get());
         return true;
     }
@@ -418,7 +407,7 @@ public class SyllabusService implements ISyllabusService {
     @Override
     public SyllabusDTO getSyllabusById(Long syllabusId,boolean state, boolean status){
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, state, status);
-        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT));
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
         SyllabusDTO syllabusDTO = SyllabusMapper.INSTANCE.toDTO(syllabus.get());
         List<SessionDTO> sessionDTOList = sessionService.getAllSessionBySyllabusId(syllabusId, true);
         syllabusDTO.setSessionDTOList(sessionDTOList);

@@ -17,10 +17,19 @@ public interface UnitDetailRepository extends JpaRepository<UnitDetail, Long> {
 
     Optional<List<UnitDetail>> findByUnitIdAndStatus(Long unitId, boolean status);
 
-    @Query("SELECT u FROM UnitDetail u " +
+    @Query("SELECT u.outputStandard FROM UnitDetail u " +
             "WHERE u.status = ?1 " +
+            "AND u.outputStandard.status = ?1 " +
             "AND u.unit.session.syllabus.id = ?2")
-    List<UnitDetail> findUnitDetailBySyllabusId(boolean status, Long syllabusId);
+    List<OutputStandard> findUnitDetailBySyllabusId(boolean status, Long syllabusId);
+
+    @Query("SELECT DISTINCT u.outputStandard.standardCode FROM UnitDetail u " +
+            "WHERE (u.status = ?1 " +
+            "AND u.outputStandard.status = ?1 " +
+            "AND u.unit.session.syllabus.id = ?2) " +
+            "ORDER BY u.outputStandard.standardCode ASC " +
+            "LIMIT 3")
+    List<String> getOsdCodeBySyllabusID(boolean status, Long syllabusId);
 
     List<UnitDetail> findByUnitAndStatus(Unit unit, boolean status);
 

@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -72,7 +73,7 @@ public class OutputStandardServiceTest {
         detailList.add(detail3);
         detailList.add(detail4);
 
-        when(unitDetailRepo.findUnitDetailBySyllabusId(true, 1L)).thenReturn(detailList);
+        when(unitDetailRepo.findUnitDetailBySyllabusId(true, 1L)).thenReturn(detailList.stream().map(u -> u.getOutputStandard()).collect(Collectors.toList()));
 
         List<OutputStandardDTO> result = outputStandardService.getOsdBySyllabusId(true, 1L);
         assertEquals(3, result.size());
