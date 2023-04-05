@@ -8,6 +8,7 @@ import com.mockproject.mapper.TrainingProgramMapper;
 import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.service.interfaces.IFileService;
 import com.mockproject.service.interfaces.ITrainingProgramService;
+import com.mockproject.specification.TrainingProgramSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,16 +88,19 @@ public class TrainingProgramService implements ITrainingProgramService {
     }
 
     @Override
-    public List<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList) {
+    public Page<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList,Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
         boolean check = searchList.getSearch().isEmpty();
-        List<TrainingProgram> result = new ArrayList<>();
+        Page<TrainingProgram> result = null;
         if (!check) {
-            List<String> lowerCaseSearchTerms = searchList.getSearch().stream()
-                    .map(String::toLowerCase)
-                    .collect(Collectors.toList());
-            result = doSearch(trainingProgramRepository.findAll(), lowerCaseSearchTerms);
+//            List<String> lowerCaseSearchTerms = searchList.getSearch().stream()
+//                    .map(String::toLowerCase)
+//                    .collect(Collectors.toList());
+//            result = doSearch(trainingProgramRepository.findAll(), lowerCaseSearchTerms);
+            result = trainingProgramRepository.findAll(TrainingProgramSpecification.getTrainingProgramSpecification(searchList),pageable);
         }
-        return result.stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
+        Page<TrainingProgramDTO> programDTOPage = result.map(TrainingProgramMapper.INSTANCE::toDTO);
+        return programDTOPage;
     }
 
     @Override

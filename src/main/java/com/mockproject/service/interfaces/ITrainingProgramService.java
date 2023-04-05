@@ -24,7 +24,7 @@ public interface ITrainingProgramService {
     String addFromFileCsv( MultipartFile file, ReadFileDto readFileDto);
     List<TrainingProgramDTO> getByCreatorFullname(String keyword);
 
-    List<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList);
+    Page<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList,Integer pageNo, Integer pageSize);
 
     boolean de_activeTrainingProgram(Long trainingProgramID);
 
