@@ -93,11 +93,11 @@ class AttendeeServiceTest {
         assertEquals("Des 1", result.getDescription());
         assertTrue(result.isStatus());
 
-        verify(trainingClassRepository).findByIdAndStatus(result.getId(), true);
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
     }
 
     @Test
-    void itShouldThrowExceptionWhenTrainingClassIdNotFoundOrAttendeeStatusDisabled() {
+    void itShouldThrowExceptionWhenTrainingClassAttendeeNotFoundOrAttendeeStatusDisabled() {
         TrainingClass trainingClass = new TrainingClass();
         trainingClass.setAttendee(a2);
 
@@ -105,6 +105,7 @@ class AttendeeServiceTest {
                 .thenReturn(Optional.empty());
         assertThrows(Exception.class,
                 () -> attendeeService.getAttendeeByTrainingClassId(1L));
+
         verify(trainingClassRepository).findByIdAndStatus(1L, true);
     }
 }

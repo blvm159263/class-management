@@ -51,14 +51,14 @@ public class UserService implements IUserService {
     @Override
     public List<UserDTO> getTrainerByClassId(Long id) {
         TrainingClass trainingClass = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        List<TrainingClassUnitInformation> classUnitInformations = trainingClass.getListTrainingClassUnitInformations()
-                .stream()
-                .filter(TrainingClassUnitInformation::isStatus)
+        List<TrainingClassUnitInformation> classUnitInformation =
+                trainingClassUnitInformationRepository.findByTrainingClassAndStatus(trainingClass, true)
+                        .orElseThrow();
+        List<User> trainer = classUnitInformation.stream()
+                .map(p -> userRepo.findByIdAndStatus(p.getTrainer().getId(), true)
+                        .orElseThrow())
+                .distinct()
                 .toList();
-        List<User> trainer = classUnitInformations.stream()
-                .map(TrainingClassUnitInformation :: getTrainer)
-                .filter(User::isStatus)
-                .distinct().toList();
         return trainer.stream().map(UserMapper.INSTANCE :: toDTO).toList();
     }
 
@@ -68,11 +68,13 @@ public class UserService implements IUserService {
         List<Unit> unitListFromSession = unitService.getListUnitsInASessionByTrainingClassId(id, dayNth);
         List<TrainingClassUnitInformation> list = unitListFromSession.stream()
                 .map(p -> trainingClassUnitInformationRepository
-                        .findByUnitAndTrainingClassAndStatus(p, trainingClass, true).orElseThrow())
+                        .findByUnitAndTrainingClassAndStatus(p, trainingClass, true)
+                        .orElseThrow())
                 .toList();
         List<User> trainers = list.stream()
-                .map(TrainingClassUnitInformation::getTrainer)
-                .filter(User::isStatus)
+                .map(t -> userRepo.findByIdAndStatus(t.getTrainer().getId(), true)
+                        .orElseThrow())
+                .distinct()
                 .toList();
         return trainers.stream().map(UserMapper.INSTANCE::toDTO).toList();
     }
@@ -80,12 +82,11 @@ public class UserService implements IUserService {
     @Override
     public List<UserDTO> getAdminByClassId(long id) {
         TrainingClass tc = trainingClassRepository.findByIdAndStatus(id, true).orElseThrow();
-        List<TrainingClassAdmin> trainingClassAdmins = tc.getListTrainingClassAdmins()
-                .stream()
-                .filter(TrainingClassAdmin :: isStatus)
-                .toList();
-        List<User> userList = trainingClassAdmins.stream().map(TrainingClassAdmin::getAdmin)
-                .filter(User::isStatus)
+        List<TrainingClassAdmin> trainingClassAdmins =
+                trainingClassAdminRepository.findByTrainingClassAndStatus(tc, true);
+        List<User> userList = trainingClassAdmins.stream()
+                .map(p -> userRepo.findByIdAndStatus(p.getAdmin().getId(), true)
+                        .orElseThrow())
                 .distinct()
                 .toList();
         return userList.stream().map(UserMapper.INSTANCE::toDTO).toList();

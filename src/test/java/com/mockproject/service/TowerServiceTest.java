@@ -140,18 +140,12 @@ class TowerServiceTest {
         assertThrows(Exception.class, () -> towerService.getAllTowersByTrainingClassId(1L));
 
         //Case 2: Not found any training class unit
-        when(trainingClassRepository.findByIdAndStatus(2L, true))
-                .thenReturn(Optional.empty());
         when(trainingClassUnitInformationRepository.findByTrainingClassAndStatus(new TrainingClass(), true))
                 .thenReturn(Optional.empty());
         assertThrows(Exception.class, () -> towerService.getAllTowersByTrainingClassId(2L));
 
         //Case 3: Not found any training class tower
-        when(trainingClassRepository.findByIdAndStatus(3L, true))
-                .thenReturn(Optional.empty());
-        when(trainingClassUnitInformationRepository.findByTrainingClassAndStatus(new TrainingClass(), true))
-                .thenReturn(Optional.empty());
-        when(towerRepository.findByIdAndStatus(tower1.getId(), true))
+        when(towerRepository.findByIdAndStatus(1L, true))
                 .thenReturn(Optional.empty());
         assertThrows(Exception.class, () -> towerService.getAllTowersByTrainingClassId(3L));
     }

@@ -18,8 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {TrainingProgramService.class})
@@ -73,15 +72,23 @@ class TrainingProgramServiceTest {
      */
     @Test
     void getTrainingProgramByClassId() {
-        when(trainingClassRepository.findByIdAndStatus(tc1.getId(), true))
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
                 .thenReturn(Optional.of(tc1));
 
-        TrainingProgramDTO result = trainingProgramService.getTrainingProgramByClassId(tc1.getId());
+        TrainingProgramDTO result = trainingProgramService.getTrainingProgramByClassId(1L);
         assertEquals(1L, result.getId());
         assertEquals("C# for beginner", result.getName());
         assertTrue(result.isStatus());
 
-        verify(trainingClassRepository).findByIdAndStatus(tc1.getId(), true);
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
+
+    @Test
+    void itShouldThrowExceptionWhenNotFoundTrainingClassProgram() {
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class, () -> trainingProgramService.getTrainingProgramByClassId(1L));
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
     }
 }
 

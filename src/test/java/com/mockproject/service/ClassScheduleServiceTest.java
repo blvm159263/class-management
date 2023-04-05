@@ -167,7 +167,7 @@ class ClassScheduleServiceTest {
     }
 
     @Test
-    void itShouldThrowExceptionWhenNotFoundTrainingClassId() {
+    void itShouldThrowExceptionWhenTrainingClassScheduleNotFound() {
         when(trainingClassRepository.findByIdAndStatus(1L, true))
                 .thenReturn(Optional.empty());
 

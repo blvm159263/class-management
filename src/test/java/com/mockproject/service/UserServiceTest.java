@@ -19,8 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {UserService.class})
@@ -135,7 +134,6 @@ class UserServiceTest {
         List<TrainingClassAdmin> adminList = new ArrayList<>();
         adminList.add(admin1);
         adminList.add(admin2);
-        adminList.stream().filter(TrainingClassAdmin::isStatus).toList();
 
         //Create training class Id
         Long trainingClassId = 1L;
@@ -144,7 +142,14 @@ class UserServiceTest {
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
                 .thenReturn(Optional.of(tc1));
 
-        List<UserDTO> admin = userService.getAdminByClassId(tc1.getId());
+        adminList.stream().filter(TrainingClassAdmin::isStatus).toList();
+        when(trainingClassAdminRepository.findByTrainingClassAndStatus(tc1, true))
+                .thenReturn(adminList);
+        adminList.forEach(a ->
+                when(userRepository.findByIdAndStatus(a.getAdmin().getId(), true))
+                        .thenReturn(Optional.of(adminList.get(adminList.indexOf(a)).getAdmin())));
+
+        List<UserDTO> admin = userService.getAdminByClassId(trainingClassId);
 
         assertEquals(2, admin.size());
         assertEquals(1L, admin.get(0).getId());
@@ -155,6 +160,18 @@ class UserServiceTest {
         assertTrue(admin.stream().filter(a -> !a.isStatus()).toList().isEmpty());
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
+        verify(trainingClassAdminRepository).findByTrainingClassAndStatus(tc1, true);
+        adminList.forEach(a ->
+                verify(userRepository).findByIdAndStatus(a.getAdmin().getId(), true));
+    }
+
+    @Test
+    void itShouldThrowExceptionWhenTrainingClassAdminNotFound() {
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class,
+                () -> userService.getAdminByClassId(1L));
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
     }
 
     /**
@@ -163,19 +180,25 @@ class UserServiceTest {
     @Test
     void canGetTrainerByClassId() {
         //Create training class unit information
-        List<TrainingClassUnitInformation> trainingClassUnitInformations =
+        List<TrainingClassUnitInformation> trainingClassUnitInformation =
                 new ArrayList<>();
-        trainingClassUnitInformations.add(ui1);
-        trainingClassUnitInformations.add(ui2);
+        trainingClassUnitInformation.add(ui1);
+        trainingClassUnitInformation.add(ui2);
 
         //Create training class
         Long trainingClassId = 1L;
-        tc1.setListTrainingClassUnitInformations(trainingClassUnitInformations);
+        tc1.setListTrainingClassUnitInformations(trainingClassUnitInformation);
 
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
                 .thenReturn(Optional.of(tc1));
+        when(trainingClassUnitInformationRepository.findByTrainingClassAndStatus(tc1, true))
+                .thenReturn(Optional.of(trainingClassUnitInformation));
+        trainingClassUnitInformation.forEach(t ->
+                when(userRepository.findByIdAndStatus(t.getTrainer().getId(), true))
+                        .thenReturn(Optional.of(trainingClassUnitInformation
+                                .get(trainingClassUnitInformation.indexOf(t)).getTrainer())));
 
-        List<UserDTO> trainersList = userService.getTrainerByClassId(tc1.getId());
+        List<UserDTO> trainersList = userService.getTrainerByClassId(trainingClassId);
         assertEquals(2, trainersList.size());
         assertEquals(3L, trainersList.get(0).getId());
         assertEquals("user3@gmail.com", trainersList.get(0).getEmail());
@@ -183,7 +206,38 @@ class UserServiceTest {
         assertEquals("Tui la user 1", trainersList.get(1).getFullName());
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
+        verify(trainingClassUnitInformationRepository).findByTrainingClassAndStatus(tc1, true);
+        trainingClassUnitInformation.forEach(t ->
+                verify(userRepository).findByIdAndStatus(t.getTrainer().getId(), true));
     }
+
+    @Test
+    void itShouldThrowExceptionWhenTrainingClassTrainerNotFound() {
+        //Create training class
+        TrainingClass trainingClass = new TrainingClass();
+        trainingClass.setStatus(true);
+
+        //Case 1: Not found training class
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class,
+                () -> userService.getTrainerByClassId(1L));
+
+        //Case 2: Not found training class unit information
+        when(trainingClassUnitInformationRepository.findByTrainingClassAndStatus(trainingClass, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class,
+                () -> userService.getTrainerByClassId(2L));
+
+        //Case 3: Not found trainer
+        when(userRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class,
+                () -> userService.getTrainerByClassId(3L));
+
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
+
 
     /**
      * Method under test: {@link UserService#getTrainerOnThisDayById(Long, int)}
@@ -206,7 +260,8 @@ class UserServiceTest {
         unitList.forEach(i -> {
             i.setId(id.get());
             id.getAndSet(id.get() + 1);
-            i.setListTrainingClassUnitInformations(new ArrayList<>(List.of(new TrainingClassUnitInformation())));
+            i.setListTrainingClassUnitInformations(new ArrayList<>
+                    (List.of(new TrainingClassUnitInformation())));
             i.setStatus(true);
         });
 
@@ -233,14 +288,13 @@ class UserServiceTest {
                 .thenReturn(Optional.of(tc1));
         when(unitService.getListUnitsInASessionByTrainingClassId(trainingClassId, dayNth))
                 .thenReturn(unitList);
-        unitList.forEach(p -> when(trainingClassUnitInformationRepository.
-                findByUnitAndTrainingClassAndStatus(p, tc1, true))
+        unitList.forEach(p -> when(trainingClassUnitInformationRepository
+                .findByUnitAndTrainingClassAndStatus(p, tc1, true))
                 .thenReturn(Optional.of(p.getListTrainingClassUnitInformations().get(0))));
-//        when(trainingClassUnitInformationRepository
-//                .findByUnitAndTrainingClassAndStatus(unit1, tc1, true))
-//                .thenReturn(Optional.of(ui1));
-//        when(trainingClassUnitInformationRepository.findByUnitAndTrainingClassAndStatus(unit2, tc1, true))
-//                .thenReturn(Optional.of(ui2));
+        trainingClassUnitInfor.forEach(t -> when(userRepository
+                .findByIdAndStatus(t.getTrainer().getId(), true))
+                .thenReturn(Optional.of(trainingClassUnitInfor
+                        .get(trainingClassUnitInfor.indexOf(t)).getTrainer())));
 
         List<UserDTO> trainerOnDay = userService.getTrainerOnThisDayById(trainingClassId, dayNth);
         assertEquals(2, trainerOnDay.size());
@@ -250,11 +304,43 @@ class UserServiceTest {
 
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
         verify(unitService).getListUnitsInASessionByTrainingClassId(trainingClassId, dayNth);
-//        verify(trainingClassUnitInformationRepository).findByUnitAndTrainingClassAndStatus(unit1, tc1, true);
-//        verify(trainingClassUnitInformationRepository).findByUnitAndTrainingClassAndStatus(unit2, tc1, true);
         unitList.forEach(p -> verify(trainingClassUnitInformationRepository).
                 findByUnitAndTrainingClassAndStatus(p, tc1, true));
-}
+        trainingClassUnitInfor.forEach(t -> userRepository
+                .findByIdAndStatus(t.getTrainer().getId(), true));
+    }
+
+    @Test
+    void itShouldThrowExceptionWhenTrainingClassTrainerOnDateNotFound() {
+        //Create training class
+        TrainingClass trainingClass = new TrainingClass();
+        trainingClass.setStatus(true);
+
+        //Create unit
+        Unit unit = new Unit();
+        unit.setStatus(true);
+
+        //Case 1: Not found training class
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class,
+                () -> userService.getTrainerOnThisDayById(1L, 1));
+
+        //Case 2: Not found training class unit information
+        when(trainingClassUnitInformationRepository
+                .findByUnitAndTrainingClassAndStatus(unit, trainingClass, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class,
+                () -> userService.getTrainerOnThisDayById(2L, 2));
+
+        //Case 3: Not found trainer
+        when(userRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class,
+                () -> userService.getTrainerOnThisDayById(3L, 3));
+
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
 
     /**
      * Method under test: {@link UserService#getCreatorByClassId(Long)}
@@ -262,12 +348,11 @@ class UserServiceTest {
     @Test
     void canGetCreatorByClassId() {
         Long trainingClassId = 1L;
-        tc1.setId(trainingClassId);
 
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
                 .thenReturn(Optional.of(tc1));
 
-        UserDTO creator = userService.getCreatorByClassId(tc1.getId());
+        UserDTO creator = userService.getCreatorByClassId(trainingClassId);
         assertEquals(2L, creator.getId());
         assertEquals("user2@gmail.com", creator.getEmail());
         assertEquals("Tui la user 2", creator.getFullName());
@@ -275,20 +360,38 @@ class UserServiceTest {
         verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
     }
 
+    @Test
+    void itShouldThrowExceptionWhenTrainingClassCreatorNotFound() {
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class,
+                () -> userService.getCreatorByClassId(1L));
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
+
     /**
      * Method under test: {@link UserService#getReviewerByClassId(Long)}
      */
     @Test
     void canGetReviewerByClassId() {
-        when(trainingClassRepository.findByIdAndStatus(tc1.getId(), true))
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
                 .thenReturn(Optional.of(tc1));
 
-        UserDTO reviewer = userService.getReviewerByClassId(tc1.getId());
+        UserDTO reviewer = userService.getReviewerByClassId(1L);
         assertEquals(1L, reviewer.getId());
         assertEquals("user1@gmail.com", reviewer.getEmail());
         assertEquals("Tui la user 1", reviewer.getFullName());
 
-        verify(trainingClassRepository).findByIdAndStatus(tc1.getId(), true);
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
+
+    @Test
+    void itShouldThrowExceptionWhenTrainingClassReviewerNotFound() {
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class,
+                () -> userService.getReviewerByClassId(1L));
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
     }
 
     /**
@@ -296,15 +399,26 @@ class UserServiceTest {
      */
     @Test
     void canGetApproverByClassId() {
-        when(trainingClassRepository.findByIdAndStatus(tc1.getId(), true))
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
                 .thenReturn(Optional.of(tc1));
 
-        UserDTO approver = userService.getApproverByClassId(tc1.getId());
+        UserDTO approver = userService.getApproverByClassId(1L);
         assertEquals(1L, approver.getId());
         assertEquals("user1@gmail.com", approver.getEmail());
         assertEquals("Tui la user 1", approver.getFullName());
 
-        verify(trainingClassRepository).findByIdAndStatus(tc1.getId(), true);
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
     }
+
+    @Test
+    void itShouldThrowExceptionWhenTrainingClassApproverNotFound() {
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class,
+                () -> userService.getApproverByClassId(1L));
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
+
+
 }
 

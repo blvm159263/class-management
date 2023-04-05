@@ -86,7 +86,7 @@ class ContactServiceTest {
     }
 
     @Test
-    void itShouldThrowExceptionWhenNotFoundTrainingClassId() {
+    void itShouldThrowExceptionWhenTrainingClassContactNotFound() {
         when(trainingClassRepository.findByIdAndStatus(2L, true))
                 .thenReturn(Optional.empty());
         assertThrows(Exception.class, () ->

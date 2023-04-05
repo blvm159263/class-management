@@ -84,7 +84,7 @@ class FsuServiceTest {
     }
 
     @Test
-    void itShouldThrowExceptionWhenNotFoundTrainingClassId() {
+    void itShouldThrowExceptionWhenNotFoundTrainingClassFSU() {
         when(trainingClassRepository.findByIdAndStatus(1L, true))
                 .thenReturn(Optional.empty());
 

@@ -122,9 +122,8 @@ class TrainingClassServiceTest {
      */
     @Test
     void canGetTrainingClassByClassId() {
-        Long trainingClassId = 1L;
 
-        when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
                 .thenReturn(Optional.of(trainingClass));
 
         TrainingClassDTO result = trainingClassService.getTrainingClassByClassId(trainingClass.getId());
@@ -134,8 +133,15 @@ class TrainingClassServiceTest {
         assertEquals("Code113", result.getClassCode());
         assertTrue(result.isStatus());
 
-        verify(trainingClassRepository).findByIdAndStatus(trainingClassId, true);
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
+    }
 
+    @Test
+    void itShouldThrowExceptionWhenNotFoundTrainingClass() {
+        when(trainingClassRepository.findByIdAndStatus(1L, true))
+                .thenReturn(Optional.empty());
+        assertThrows(Exception.class, () -> trainingClassService.getTrainingClassByClassId(1L));
+        verify(trainingClassRepository).findByIdAndStatus(1L, true);
     }
 
 }

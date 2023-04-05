@@ -85,21 +85,22 @@ class UnitServiceTest {
      * Method under test: {@link UnitService#getListUnitsByTrainingClassId(Long)}
      */
     @Test
-    void getGetListUnitsByTrainingClassId() {
+    void canGetListUnitsByTrainingClassId() {
         //Create training class Id
         Long trainingClassId = 1L;
 
         //Create training class unit information
-        List<TrainingClassUnitInformation> classUnitInformations = new ArrayList<>();
-        classUnitInformations.add(ui1);
-        classUnitInformations.add(ui2);
+        List<TrainingClassUnitInformation> classUnitInformation = new ArrayList<>();
+        classUnitInformation.add(ui1);
+        classUnitInformation.add(ui2);
 
 
         when(trainingClassRepository.findByIdAndStatus(trainingClassId, true))
                 .thenReturn(Optional.of(trainingClass1));
+
+        classUnitInformation.stream().filter(TrainingClassUnitInformation::isStatus).toList();
         when(trainingClassUnitInformationRepository.findByTrainingClassAndStatus(trainingClass1, true))
-                .thenReturn(Optional.of(classUnitInformations));
-        classUnitInformations.stream().filter(TrainingClassUnitInformation::isStatus).toList();
+                .thenReturn(Optional.of(classUnitInformation));
 
         List<Unit> unitList = unitService.getListUnitsByTrainingClassId(trainingClassId);
         assertEquals(2, unitList.size());

@@ -128,7 +128,7 @@ class DeliveryTypeServiceTest {
     }
 
     @Test
-    void itShouldThrowExceptionWhenTrainingClassIdNotFound() {
+    void itShouldThrowExceptionWhenTrainingClassDeliveryNotFound() {
         //Create list unit
         List<Unit> unitList = new ArrayList<>();
         unitList.add(unit1);
