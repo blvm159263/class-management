@@ -77,7 +77,7 @@ public class SyllabusService implements ISyllabusService {
         if(sort[0].contains(",")){
             for (String sortItem: sort) {
                 String[] subSort = sortItem.split(",");
-                if(ifPropertpresent(sourceFieldList, subSort[0])){
+                if(sourceFieldList.contains(subSort[0])){
                     order.add(new Sort.Order(getSortDirection(subSort[1]), transferProperty(subSort[0])));
                 } else {
                     throw new NotFoundException(subSort[0] + " is not a propertied of Syllabus!");
@@ -87,7 +87,7 @@ public class SyllabusService implements ISyllabusService {
             if(sort.length == 1){
                 throw new ArrayIndexOutOfBoundsException("Sort direction(asc/desc) not found!");
             }
-            if(ifPropertpresent(sourceFieldList, sort[0])){
+            if(sourceFieldList.contains(sort[0])){
                 order.add(new Sort.Order(getSortDirection(sort[1]), transferProperty(sort[0])));
             } else {
                 throw new NotFoundException(sort[0] + " is not a propertied of Syllabus!");
@@ -107,21 +107,11 @@ public class SyllabusService implements ISyllabusService {
         }
         if(pages.size() > 0){
             return new PageImpl<>(
-                    pages.stream().skip(skipCount).limit(row.orElse(10)).map(SyllabusMapper.INSTANCE::toDTO).peek(p -> p.setOutputStandardCodeList(getOsdBySyllabusId(true, p.getId()))).collect(Collectors.toList()),
+                    pages.stream().skip(skipCount).limit(row.orElse(10)).map(SyllabusMapper.INSTANCE::toDTO).peek(p -> p.setOutputStandardCodeList(unitDetailRepo.getOsdCodeBySyllabusID(true, p.getId()))).collect(Collectors.toList()),
                     PageRequest.of(page.orElse(0), row.orElse(10), Sort.by(order)),
                     pages.size());
         } else {
             throw new NotFoundException("Syllabus not found!");
-        }
-    }
-
-    public List<String> getOsdBySyllabusId(boolean status, Long id) {
-        List<String> osd = unitDetailRepo.findUnitDetailBySyllabusId(status, id).stream()
-                .map(o -> o.getStandardCode()).distinct().collect(Collectors.toList());
-        if(osd.size() > 0){
-            return osd.stream().limit(3).collect(Collectors.toList());
-        }else {
-            return null;
         }
     }
 
@@ -163,13 +153,6 @@ public class SyllabusService implements ISyllabusService {
 //             return new Syllabus();
 //         }
 //    }
-
-    private static boolean ifPropertpresent(final Set<String> properties, final String propertyName) {
-        if (properties.contains(propertyName)) {
-            return true;
-        }
-        return false;
-    }
 
     private static Set<String> getAllFields(final Class<?> type) {
         Set<String> fields = new HashSet<>();
