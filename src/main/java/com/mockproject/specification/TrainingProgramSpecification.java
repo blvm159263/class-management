@@ -1,7 +1,6 @@
 package com.mockproject.specification;
 
 import com.mockproject.dto.SearchTPDTO;
-import com.mockproject.entity.TrainingClass;
 import com.mockproject.entity.TrainingProgram;
 import org.springframework.data.jpa.domain.Specification;
 
