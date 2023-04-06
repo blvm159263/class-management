@@ -202,4 +202,14 @@ public class SyllabusController {
                 .contentType(MediaType.parseMediaType("application/csv"))
                 .body(syllabusService.getTemplateCsvFile());
     }
+
+    @GetMapping("search")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+    public ResponseEntity<?> searchByName(@RequestParam String search) {
+        var check = syllabusService.searchByName(search);
+        if (check != null) {
+            return ResponseEntity.ok(check);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Syllabus not found");
+    }
 }

@@ -422,4 +422,10 @@ public class SyllabusService implements ISyllabusService {
 
         return bytes;
     }
+
+    @Override
+    public List<Syllabus> searchByName(String search) {
+        var result = syllabusRepository.findByNameAndStatus(search, true);
+        return result.orElse(null);
+    }
 }

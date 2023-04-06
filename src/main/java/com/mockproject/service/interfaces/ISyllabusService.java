@@ -39,5 +39,7 @@ public interface ISyllabusService {
     SyllabusDTO readFileCsv(MultipartFile file, int condition, int handle) throws IOException;
 
     byte[] getTemplateCsvFile() throws IOException;
+
+    List<Syllabus> searchByName(String search);
 }
 
