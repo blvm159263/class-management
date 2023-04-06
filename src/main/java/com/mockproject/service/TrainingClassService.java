@@ -105,6 +105,7 @@ public class TrainingClassService implements ITrainingClassService {
         TrainingClass trainingClass = classRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("Don't find any class"));
         TrainingClassDTO dto = TrainingClassMapper.INSTANCE.toDTO(trainingClass);
         dto.setId(null);
+        dto.setClassName("Copy of " + dto.getClassName());
         dto.setClassCode(generateClassCode(dto));
         TrainingClass newTrainingClass = classRepo.save(TrainingClassMapper.INSTANCE.toEntity(dto));
         if (newTrainingClass != null) {
