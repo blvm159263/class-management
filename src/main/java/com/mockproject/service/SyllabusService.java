@@ -442,4 +442,10 @@ public class SyllabusService implements ISyllabusService {
 
         return create(syllabusDTO, user.getUser());
     }
+
+    @Override
+    public List<Syllabus> liveSearch() {
+        var result = syllabusRepository.findAllByStatus(true);
+        return result.orElse(null);
+    }
 }

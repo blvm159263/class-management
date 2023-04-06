@@ -225,4 +225,14 @@ public class SyllabusController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
+
+    @GetMapping("/live-search")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+    public ResponseEntity<?> liveSearch() {
+        var check = syllabusService.liveSearch();
+        if (check != null) {
+            return ResponseEntity.ok(check);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Syllabus not found");
+    }
 }

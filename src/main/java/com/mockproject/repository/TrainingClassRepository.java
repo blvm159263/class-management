@@ -46,7 +46,7 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "LEFT JOIN tc.listTrainingClassUnitInformations ti "+
             "LEFT JOIN tc.location lo " +
             "LEFT JOIN tc.attendee at " +
-            "where " +
+            "WHERE " +
             "(tc.className LIKE (:SearchText) OR " +
             "tc.classCode LIKE (:SearchText)  OR " +
             "tc.fsu.fsuName LIKE (:SearchText) OR " +
@@ -55,7 +55,8 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "ti.trainer.fullName LIKE (:SearchText) OR "+
             "lo.locationName LIKE (:SearchText)) AND " +
             "cs.date = :date AND " +
-            "tc.status = true ")
+            "tc.status = true AND " +
+            "cs.status = true ")
     public List<TrainingClass> findAllBySearchTextAndListClassSchedulesDate(
             @Param("SearchText") String SearchText,
             @Param("date") LocalDate date);
@@ -66,7 +67,7 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "LEFT JOIN tc.location lo " +
             "LEFT JOIN tc.listTrainingClassUnitInformations ti "+
             "LEFT JOIN tc.attendee at " +
-            "where " +
+            "WHERE " +
             "(tc.className LIKE (:searchText) OR " +
             "tc.classCode LIKE (:searchText)  OR " +
             "tc.fsu.fsuName LIKE (:searchText) OR " +
@@ -75,8 +76,8 @@ public interface TrainingClassRepository extends JpaRepository<TrainingClass, Lo
             "ti.trainer.fullName LIKE (:searchText) OR "+
             "lo.locationName LIKE (:searchText)) AND " +
             "cs.date BETWEEN :startDate AND :endDate AND " +
-            "tc.status = true ")
-
+            "tc.status = true AND " +
+            "cs.status = true ")
     public List<TrainingClass> findAllBySearchTextAndListClassSchedulesWeek(
             @Param("searchText") String searchText,
             @Param("startDate") LocalDate startDate,
