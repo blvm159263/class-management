@@ -217,4 +217,14 @@ public class TrainingProgramController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
         }
     }
+
+    @PutMapping("/edit-training-program/{trainingProgramID}/{newTrainingProgramName}")
+    public ResponseEntity<?> editTrainingProgram(@PathVariable Long trainingProgramID, @PathVariable String newTrainingProgramName) {
+
+        if (trainingProgramService.editProgram(trainingProgramID, newTrainingProgramName).isPresent()) {
+            return ResponseEntity.ok("Edit training program successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
+        }
+    }
 }

@@ -88,7 +88,7 @@ public class TrainingProgramService implements ITrainingProgramService {
     }
 
     @Override
-    public Page<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList,Integer pageNo, Integer pageSize) {
+    public Page<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList, Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         boolean check = searchList.getSearch().isEmpty();
         Page<TrainingProgram> result = null;
@@ -97,7 +97,7 @@ public class TrainingProgramService implements ITrainingProgramService {
 //                    .map(String::toLowerCase)
 //                    .collect(Collectors.toList());
 //            result = doSearch(trainingProgramRepository.findAll(), lowerCaseSearchTerms);
-            result = trainingProgramRepository.findAll(TrainingProgramSpecification.getTrainingProgramSpecification(searchList),pageable);
+            result = trainingProgramRepository.findAll(TrainingProgramSpecification.getTrainingProgramSpecification(searchList), pageable);
         }
         Page<TrainingProgramDTO> programDTOPage = result.map(TrainingProgramMapper.INSTANCE::toDTO);
         return programDTOPage;
@@ -192,6 +192,14 @@ public class TrainingProgramService implements ITrainingProgramService {
         return trainingProgramModel.isPresent();
     }
 
+    @Override
+    public Optional<TrainingProgram> editProgram(Long trainingProgramID, String newTrainingProgramName) {
+        return trainingProgramRepository.findById(trainingProgramID).map(trainingProgram -> {
+            trainingProgram.setName(newTrainingProgramName);
+            return trainingProgramRepository.save(trainingProgram);
+        });
+    }
+
 
     @Override
     public List<TrainingProgramDTO> searchByName(String name) {
@@ -201,7 +209,7 @@ public class TrainingProgramService implements ITrainingProgramService {
     @Override
     public Page<TrainingProgramDTO> getAll(Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<TrainingProgram> page = trainingProgramRepository.getTrainingProgramByStatus(true ,pageable);
+        Page<TrainingProgram> page = trainingProgramRepository.getTrainingProgramByStatus(true, pageable);
         Page<TrainingProgramDTO> programDTOPage = page.map(TrainingProgramMapper.INSTANCE::toDTO);
         return programDTOPage;
     }
