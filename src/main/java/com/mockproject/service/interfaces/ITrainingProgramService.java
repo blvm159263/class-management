@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public interface ITrainingProgramService {
     List<TrainingProgramDTO> searchByName(String name);
@@ -35,4 +36,6 @@ public interface ITrainingProgramService {
     void restoreAllTrainingPrograms();
 
     boolean duplicateProgram(Long trainingProgramID);
+
+    Optional<TrainingProgram> editProgram(Long trainingProgramID, String newTrainingProgramName);
 }
