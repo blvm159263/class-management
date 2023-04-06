@@ -99,6 +99,13 @@ public class SyllabusController {
         return ResponseEntity.ok(editsyllabus);
     }
 
+    @PostMapping("duplicate/{id}")
+    @Operation(summary = "Duplicate syllabus by SyllabusID")
+    @Secured({CREATE, FULL_ACCESS})
+    public ResponseEntity<Long> duplicateSyllabus(@PathVariable("id") @Parameter(description = "Syllabus id") @NotNull Long syllabusId){
+        return ResponseEntity.ok(syllabusService.duplicateSyllabus(syllabusId, true, true));
+    }
+
     @PutMapping("delete/{id}")
     @Operation(summary = "Delete syllabus by syllabusId")
     @Secured({MODIFY, FULL_ACCESS})
