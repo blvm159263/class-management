@@ -1,7 +1,6 @@
 package com.mockproject.service;
 
-import com.mockproject.dto.SessionDTO;
-import com.mockproject.dto.SyllabusDTO;
+import com.mockproject.dto.*;
 import com.mockproject.entity.*;
 import com.mockproject.mapper.SessionMapper;
 import com.mockproject.mapper.SyllabusMapper;
@@ -417,5 +416,30 @@ public class SyllabusService implements ISyllabusService {
     public byte[] getTemplateCsvFile() throws IOException {
 
         return FileUtils.getFileBytes(TEMPLATE_FILE_PATH);
+    }
+
+    public Long duplicateSyllabus(Long syllabusId, boolean status, boolean state){
+        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, state, status);
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
+        SyllabusDTO syllabusDTO = SyllabusMapper.INSTANCE.toDTO(syllabus.get());
+        List<SessionDTO> sessionDTOList = sessionService.getAllSessionBySyllabusId(syllabusId, true);
+        syllabusDTO.setSessionDTOList(sessionDTOList);
+        syllabusDTO.setId(null);
+
+        for (SessionDTO session: syllabusDTO.getSessionDTOList()) {
+            for(UnitDTO unit: session.getUnitDTOList()){
+                for(UnitDetailDTO unitDetail: unit.getUnitDetailDTOList()){
+                    for(TrainingMaterialDTO trainingMaterial: unitDetail.getTrainingMaterialDTOList()){
+                        trainingMaterial.setId(null);
+                    }
+                    unitDetail.setId(null);
+                }
+                unit.setId(null);
+            }
+            session.setId(null);
+        }
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return create(syllabusDTO, user.getUser());
     }
 }
