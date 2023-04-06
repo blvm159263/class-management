@@ -39,4 +39,7 @@ public interface SyllabusRepository extends JpaRepository<Syllabus, Long> {
     Optional<List<Syllabus>> findByCodeAndStatus(String code, boolean status);
 
     Optional<List<Syllabus>> findByNameAndCodeAndStatus(String name, String code, boolean status);
+
+    Optional<List<Syllabus>> findByNameContainsAndStatus(String name, boolean status);
+
 }

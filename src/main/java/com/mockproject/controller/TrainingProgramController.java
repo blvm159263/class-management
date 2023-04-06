@@ -99,7 +99,7 @@ public class TrainingProgramController {
         }
     }
 
-    @PostMapping("/uploadCsv")
+    @PostMapping(value = "/uploadCsv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Secured({CREATE, FULL_ACCESS})
     public ResponseEntity readFileCsv(@Valid @ModelAttribute ReadFileDto readFileDto) {
         MultipartFile file = readFileDto.getFile();

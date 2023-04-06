@@ -99,6 +99,13 @@ public class SyllabusController {
         return ResponseEntity.ok(editsyllabus);
     }
 
+    @PostMapping("duplicate/{id}")
+    @Operation(summary = "Duplicate syllabus by SyllabusID")
+    @Secured({CREATE, FULL_ACCESS})
+    public ResponseEntity<Long> duplicateSyllabus(@PathVariable("id") @Parameter(description = "Syllabus id") @NotNull Long syllabusId){
+        return ResponseEntity.ok(syllabusService.duplicateSyllabus(syllabusId, true, true));
+    }
+
     @PutMapping("delete/{id}")
     @Operation(summary = "Delete syllabus by syllabusId")
     @Secured({MODIFY, FULL_ACCESS})
@@ -217,5 +224,15 @@ public class SyllabusController {
                 .contentLength(buffer.length)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
+    }
+
+    @GetMapping("/live-search")
+    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+    public ResponseEntity<?> liveSearch() {
+        var check = syllabusService.liveSearch();
+        if (check != null) {
+            return ResponseEntity.ok(check);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Syllabus not found");
     }
 }
