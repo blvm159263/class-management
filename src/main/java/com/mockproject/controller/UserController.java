@@ -150,7 +150,6 @@ public class UserController {
 
     @GetMapping("/getRoleDetailByRoleId")
     @Operation(summary = "Get role detail by role id")
-    @Secured({VIEW, FULL_ACCESS, CREATE, MODIFY})
     public ResponseEntity getRoleDetailByRoleID(@RequestParam(value = "id", required = true) @Parameter(description = "Role id") long id){
         FormRoleDTO roleDTO = new FormRoleDTO();
         RoleDTO role = roleService.getRoleById(id);
