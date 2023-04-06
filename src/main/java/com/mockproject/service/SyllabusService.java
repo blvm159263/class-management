@@ -424,8 +424,8 @@ public class SyllabusService implements ISyllabusService {
     }
 
     @Override
-    public List<Syllabus> searchByName(String search) {
-        var result = syllabusRepository.findByNameAndStatus(search, true);
+    public List<Syllabus> liveSearch() {
+        var result = syllabusRepository.findAllByStatus(true);
         return result.orElse(null);
     }
 }

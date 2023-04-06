@@ -40,6 +40,6 @@ public interface ISyllabusService {
 
     byte[] getTemplateCsvFile() throws IOException;
 
-    List<Syllabus> searchByName(String search);
+    List<Syllabus> liveSearch();
 }
 

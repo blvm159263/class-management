@@ -203,10 +203,10 @@ public class SyllabusController {
                 .body(syllabusService.getTemplateCsvFile());
     }
 
-    @GetMapping("search")
+    @GetMapping("/live-search")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<?> searchByName(@RequestParam String search) {
-        var check = syllabusService.searchByName(search);
+    public ResponseEntity<?> liveSearch() {
+        var check = syllabusService.liveSearch();
         if (check != null) {
             return ResponseEntity.ok(check);
         }
