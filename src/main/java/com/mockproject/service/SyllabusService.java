@@ -414,7 +414,6 @@ public class SyllabusService implements ISyllabusService {
     }
 
     public byte[] getTemplateCsvFile() throws IOException {
-
         return FileUtils.getFileBytes(TEMPLATE_FILE_PATH);
     }
 
@@ -425,6 +424,7 @@ public class SyllabusService implements ISyllabusService {
         List<SessionDTO> sessionDTOList = sessionService.getAllSessionBySyllabusId(syllabusId, true);
         syllabusDTO.setSessionDTOList(sessionDTOList);
         syllabusDTO.setId(null);
+        syllabusDTO.setName("Copy of "+syllabusDTO.getName());
 
         for (SessionDTO session: syllabusDTO.getSessionDTOList()) {
             for(UnitDTO unit: session.getUnitDTOList()){
