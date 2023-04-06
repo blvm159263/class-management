@@ -69,6 +69,17 @@ public class TrainingProgramController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
         }
     }
+//    @PostMapping("/search-training-program-by-keywords")
+//    @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
+//    public ResponseEntity<?> searchTrainingProgramByKeyWords(@RequestBody SearchTPDTO searchList) {
+//            List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(searchList);
+//
+//        if (!list.isEmpty()) {
+//            return ResponseEntity.ok(list);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Don't find any Training Program!");
+//        }
+//    }
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any Training Program"),
@@ -182,8 +193,15 @@ public class TrainingProgramController {
 
     @PostMapping("/search-training-program-by-keywords")
     @Secured({VIEW, MODIFY, CREATE, FULL_ACCESS})
-    public ResponseEntity<?> searchTrainingProgramByKeyWords(@RequestBody SearchTPDTO searchList) {
-      List<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(searchList);
+    public ResponseEntity<?> searchTrainingProgramByKeyWords(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                             @RequestParam(defaultValue = "10") Integer pageSize,
+                                                             @RequestBody SearchTPDTO searchList) {
+        if(searchList.getSearch() == null || searchList.getSearch().size() == 0){
+            List<String> searchText = new ArrayList<>();
+            searchText.add("");
+            searchList.setSearch( searchText);
+        }
+        Page<TrainingProgramDTO> list = trainingProgramService.searchByNameOrCreator(searchList,pageNo,pageSize);
         if (!list.isEmpty()) {
             return ResponseEntity.ok(list);
         } else {

@@ -8,6 +8,7 @@ import com.mockproject.mapper.TrainingProgramMapper;
 import com.mockproject.repository.TrainingProgramRepository;
 import com.mockproject.service.interfaces.IFileService;
 import com.mockproject.service.interfaces.ITrainingProgramService;
+import com.mockproject.specification.TrainingProgramSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,16 +88,19 @@ public class TrainingProgramService implements ITrainingProgramService {
     }
 
     @Override
-    public List<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList) {
+    public Page<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList,Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
         boolean check = searchList.getSearch().isEmpty();
-        List<TrainingProgram> result = new ArrayList<>();
+        Page<TrainingProgram> result = null;
         if (!check) {
-            List<String> lowerCaseSearchTerms = searchList.getSearch().stream()
-                    .map(String::toLowerCase)
-                    .collect(Collectors.toList());
-            result = doSearch(trainingProgramRepository.findAll(), lowerCaseSearchTerms);
+//            List<String> lowerCaseSearchTerms = searchList.getSearch().stream()
+//                    .map(String::toLowerCase)
+//                    .collect(Collectors.toList());
+//            result = doSearch(trainingProgramRepository.findAll(), lowerCaseSearchTerms);
+            result = trainingProgramRepository.findAll(TrainingProgramSpecification.getTrainingProgramSpecification(searchList),pageable);
         }
-        return result.stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
+        Page<TrainingProgramDTO> programDTOPage = result.map(TrainingProgramMapper.INSTANCE::toDTO);
+        return programDTOPage;
     }
 
     @Override
@@ -188,6 +192,32 @@ public class TrainingProgramService implements ITrainingProgramService {
         return trainingProgramModel.isPresent();
     }
 
+
+    @Override
+    public List<TrainingProgramDTO> searchByName(String name) {
+        return trainingProgramRepository.findByNameContainingAndStatus(name, true).stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<TrainingProgramDTO> getAll(Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<TrainingProgram> page = trainingProgramRepository.getTrainingProgramByStatus(true ,pageable);
+        Page<TrainingProgramDTO> programDTOPage = page.map(TrainingProgramMapper.INSTANCE::toDTO);
+        return programDTOPage;
+    }
+//    @Override
+//    public List<TrainingProgramDTO> searchByNameOrCreator(SearchTPDTO searchList) {
+//        boolean check = searchList.getSearch().isEmpty();
+//        List<TrainingProgram> result = new ArrayList<>();
+//        if (!check) {
+//            List<String> lowerCaseSearchTerms = searchList.getSearch().stream()
+//                    .map(String::toLowerCase)
+//                    .collect(Collectors.toList());
+//            result = doSearch(trainingProgramRepository.findAll(), lowerCaseSearchTerms);
+//        }
+//        return result.stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
+//    }
+
     private List<TrainingProgram> doSearch(List<TrainingProgram> trainingPrograms, List<String> searchList) {
         List<TrainingProgram> result = trainingPrograms.stream()
                 .filter(trainingProgram1 -> trainingProgram1.getCreator() != null
@@ -199,19 +229,6 @@ public class TrainingProgramService implements ITrainingProgramService {
                             || trainingProgram.getCreator().getFullName().toLowerCase().contains(search)).collect(Collectors.toList());
         }
         return result2;
-    }
-
-    @Override
-    public List<TrainingProgramDTO> searchByName(String name) {
-        return trainingProgramRepository.findByNameContainingAndStatus(name, true).stream().map(TrainingProgramMapper.INSTANCE::toDTO).collect(Collectors.toList());
-    }
-
-    @Override
-    public Page<TrainingProgramDTO> getAll(Integer pageNo, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<TrainingProgram> page = trainingProgramRepository.findAll(pageable);
-        Page<TrainingProgramDTO> programDTOPage = page.map(TrainingProgramMapper.INSTANCE::toDTO);
-        return programDTOPage;
     }
 
     @Override
