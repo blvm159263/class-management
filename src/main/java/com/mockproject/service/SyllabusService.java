@@ -217,7 +217,6 @@ public class SyllabusService implements ISyllabusService {
 
         // Set day and hour
         syllabus.get().setDay(0);
-        syllabus.get().setHour(BigDecimal.valueOf(0));
         syllabusRepository.save(syllabus.get());
 
         syllabusDTO.setLastModifierId(user.getUser().getId());
@@ -233,11 +232,19 @@ public class SyllabusService implements ISyllabusService {
                 }
             }
         } else {
-            sessionService.deleteSessions(syllabusDTO.getId(), status);
+            deleteSyllabus(syllabusDTO.getId(), status);
         }
+
         syllabus = syllabusRepository.findByIdAndStatus(syllabusDTO.getId(), true);
+        List<SessionDTO> sessionDTOList = sessionService.getAllSessionBySyllabusId(syllabus.get().getId(), true);
         syllabusDTO.setHour(syllabus.get().getHour());
-        syllabusDTO.setDay(syllabus.get().getListSessions().size());
+        syllabusDTO.setSessionDTOList(sessionDTOList);
+
+        if(syllabusDTO.getSessionDTOList().isEmpty()){
+            syllabusDTO.setDay(0);
+        } else {
+            syllabusDTO.setDay(syllabus.get().getListSessions().size());
+        }
 
         return syllabusRepository.save(SyllabusMapper.INSTANCE.toEntity(syllabusDTO));
     }
@@ -408,13 +415,13 @@ public class SyllabusService implements ISyllabusService {
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, state, status);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
         SyllabusDTO syllabusDTO = SyllabusMapper.INSTANCE.toDTO(syllabus.get());
+        syllabusDTO.setOutputStandardCodeList(unitDetailRepo.getOsdCodeBySyllabusID1(true, syllabusId));
         List<SessionDTO> sessionDTOList = sessionService.getAllSessionBySyllabusId(syllabusId, true);
         syllabusDTO.setSessionDTOList(sessionDTOList);
         return syllabusDTO;
     }
 
     public byte[] getTemplateCsvFile() throws IOException {
-
         return FileUtils.getFileBytes(TEMPLATE_FILE_PATH);
     }
 
@@ -425,6 +432,7 @@ public class SyllabusService implements ISyllabusService {
         List<SessionDTO> sessionDTOList = sessionService.getAllSessionBySyllabusId(syllabusId, true);
         syllabusDTO.setSessionDTOList(sessionDTOList);
         syllabusDTO.setId(null);
+        syllabusDTO.setName("Copy of "+syllabusDTO.getName());
 
         for (SessionDTO session: syllabusDTO.getSessionDTOList()) {
             for(UnitDTO unit: session.getUnitDTOList()){

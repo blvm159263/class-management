@@ -92,7 +92,7 @@ public class UnitService implements IUnitService {
 
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(unitDTO.isStatus() == true){
+        if(unitDTO.isStatus()){
             unit.get().setDuration(BigDecimal.valueOf(0));
             unitRepository.save(unit.get());
             for (UnitDetailDTO u: unitDTO.getUnitDetailDTOList()){
@@ -103,7 +103,7 @@ public class UnitService implements IUnitService {
                 }
             }
         }else{
-            unitDetailService.deleteUnitDetails(unitDTO.getId(), true);
+            deleteUnit(unitDTO.getId(), true);
         }
 
         unit = unitRepository.findByIdAndStatus(unitDTO.getId(), status);

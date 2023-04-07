@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -93,31 +92,22 @@ public class SessionService implements ISessionService {
         session.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Session not found"));
         sessionDTO.setSyllabusId(session.get().getSyllabus().getId());
 
-        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(session.get().getSyllabus().getId(), true);
-
-        BigDecimal duration = syllabus.get().getHour();
-
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (sessionDTO.isStatus() == true){
+        if (sessionDTO.isStatus()){
             for(UnitDTO u : sessionDTO.getUnitDTOList()){
                 if(u.getId() == null){
                     unitService.createUnit(sessionDTO.getId(), u, user.getUser());
                 } else {
                     unitService.editUnit(u, true);
-                    if(u.isStatus() == true) {
-                        Optional<Unit> unit = unitRepository.findByIdAndStatus(u.getId(), true);
-                        duration = duration.add(unit.get().getDuration());
-                        syllabus.get().setHour(duration);
-                        syllabusRepository.save(syllabus.get());
-                    }
                 }
-
             }
         }else{
-            unitService.deleteUnits(sessionDTO.getId(), true);
+            deleteSession(sessionDTO.getId(), true);
         }
 
+        System.out.println("dang test o day");
+        System.out.println(sessionDTO.isStatus());
         Session updateSession = sessionRepository.save(SessionMapper.INSTANCE.toEntity(sessionDTO));
 
         return updateSession;
@@ -138,6 +128,7 @@ public class SessionService implements ISessionService {
         if(!session.get().getListUnit().isEmpty())
             unitService.deleteUnits(sessionId, status);
         sessionRepository.save(session.get());
+        System.out.println("da vao delete session");
         return true;
     }
 
