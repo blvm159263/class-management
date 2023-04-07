@@ -247,7 +247,7 @@ public class UserController {
     }
     @PutMapping("/updateRole")
     @Operation(summary = "Update role by list FormRoleDTO")
-    @Secured({CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity updateAllRole(@RequestBody List<FormRoleDTO> formRoleDTOList) {
 
         for (FormRoleDTO fdto : formRoleDTOList) {
