@@ -65,7 +65,7 @@ public class TrainingMaterialController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update file by training material id")
-    @Secured({MODIFY, CREATE, FULL_ACCESS})
+    @Secured({MODIFY, FULL_ACCESS})
     public ResponseEntity<TrainingMaterialDTO> updateFile(@PathVariable("id") @Parameter(description = "Training material id") @NotBlank Long id,
             @Valid @RequestBody TrainingMaterialDTO dto
             ) throws IOException {

@@ -75,6 +75,13 @@ public class SyllabusController {
         return ResponseEntity.ok(syllabus);
     }
 
+    @PutMapping("deactivate/{id}")
+    @Operation(summary = "De-active syllabus by syllabus id")
+    @Secured({MODIFY, FULL_ACCESS})
+    public ResponseEntity<Boolean> deactive(@PathVariable("id") @NotBlank Long syllabusId){
+        return ResponseEntity.ok(syllabusService.deactivate(syllabusId, true));
+    }
+
     @PostMapping(value = "/replace")
     @Operation(summary = "Replace Syllabus")
     @Secured({CREATE,FULL_ACCESS})
