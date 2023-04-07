@@ -30,6 +30,8 @@ public interface ISyllabusService {
 
     Long create(SyllabusDTO syllabus, User user);
 
+    boolean deactivate(Long syllabusId, boolean status);
+
     Syllabus editSyllabus(SyllabusDTO syllabusDTO, boolean status) throws IOException;
 
     boolean deleteSyllabus(Long syllabusId, boolean status);

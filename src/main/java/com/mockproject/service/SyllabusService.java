@@ -210,6 +210,18 @@ public class SyllabusService implements ISyllabusService {
     }
 
     @Override
+    public boolean deactivate(Long syllabusId, boolean status) {
+        Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStateAndStatus(syllabusId, true, status);
+        syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
+
+        syllabus.get().setState(syllabus.get().isState() == true ? false: true);
+
+        syllabusRepository.save(syllabus.get());
+
+        return syllabus.get().isState();
+    }
+
+    @Override
     public Syllabus editSyllabus(SyllabusDTO syllabusDTO, boolean status) throws IOException{
         Optional<Syllabus> syllabus = syllabusRepository.findByIdAndStatus(syllabusDTO.getId(), status);
         syllabus.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Syllabus not found"));
