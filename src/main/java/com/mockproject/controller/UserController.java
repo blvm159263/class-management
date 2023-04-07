@@ -181,8 +181,6 @@ public class UserController {
         return ResponseEntity.ok(roleDTO);
     }
 
-
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "When don't find any User"),
             @ApiResponse(responseCode = "200", description = "When get list admin successfully!",
