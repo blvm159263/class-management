@@ -102,12 +102,9 @@ public class UnitDetailService implements IUnitDetailService {
         unitDetail.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT, "UnitDetail not found"));
         unitDetailDTO.setUnitId(unitDetail.get().getUnit().getId());
 
-        Optional<Unit> unit = unitRepository.findByIdAndStatus(unitDetailDTO.getUnitId(), true);
-        BigDecimal duration = unit.get().getDuration();
-
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        duration = duration.add(unitDetailDTO.getDuration().divide(BigDecimal.valueOf(60)));
-        if(unitDetailDTO.isStatus() == true){
+
+        if(unitDetailDTO.isStatus()){
             for (TrainingMaterialDTO t: unitDetailDTO.getTrainingMaterialDTOList()){
                 if(t.getId() == null)
                     trainingMaterialService.uploadAFile(t, unitDetail.get(), user.getUser());
@@ -116,13 +113,18 @@ public class UnitDetailService implements IUnitDetailService {
                 }
             }
         }else {
-            trainingMaterialService.deleteTrainingMaterials(unitDetailDTO.getId(),true);
+            deleteUnitDetail(unitDetailDTO.getId(),true);
         }
+
+        unitDetail.get().getUnit().setDuration(unitDetail.get().getUnit().getDuration().subtract(unitDetail.get().getDuration().divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP)));
+
+        unitDetail.get().getUnit().getSession().getSyllabus().setHour(unitDetail.get().getUnit().getSession().getSyllabus().getHour().subtract(unitDetail.get().getDuration().divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP)));
+
+        unitRepository.save(unitDetail.get().getUnit());
+        syllabusRepository.save(unitDetail.get().getUnit().getSession().getSyllabus());
 
         UnitDetail updateUnitDetail = unitDetailRepository.save(UnitDetailMapper.INSTANCE.toEntity(unitDetailDTO));
 
-        unit.get().setDuration(duration);
-        unitRepository.save(unit.get());
         return updateUnitDetail;
     }
 
